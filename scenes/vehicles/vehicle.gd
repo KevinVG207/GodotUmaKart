@@ -14,7 +14,9 @@ var steer_accel = 50.0
 var cur_steer = 0.0
 var bounce_vector: Vector3 = Vector3.ZERO
 var bounce_decay = 30.0
-var max_wall_speed = max_speed * 0.25
+var min_bounce_speed = max_speed * 0.4
+var min_bounce_component = max_speed * 0.25
+var max_wall_speed = max_speed * 0.5
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -87,15 +89,35 @@ func _physics_process(delta):
 	for i in range(get_slide_collision_count()):
 		var col = get_slide_collision(i)
 		var col_obj = col.get_collider()
+		var col_normal = col.get_normal()
+		#var angle_difference = Vector2(tmp_vel.x, tmp_vel.z).normalized().dot(Vector2(col_normal.x, col_normal.z).normalized())
+		#angle_difference = min(angle_difference + 1, 1)
+		var v1 = Vector2(col_normal.x, col_normal.z)
+		var v2 = Vector2(tmp_vel.x, tmp_vel.z)
+		var angle_to = v2.angle_to(v1)
+		var component_along_wall = sin(abs(angle_to)) * v2.length()
+		var component_into_wall = abs(cos(abs(angle_to)) * v2.length())
+
 		if col_obj.is_in_group("Wall"):
-			cur_speed = max_wall_speed
-			tmp_vel = tmp_vel.bounce(col.get_normal())  # TODO: Per-wall absorbance?
-		if col_obj.is_in_group("Bouncy"):
-			bounced = true
-			tmp_vel = tmp_vel.bounce(col.get_normal())
-			cur_speed = 0
+			if abs(tmp_vel.x) > min_bounce_speed and component_into_wall > min_bounce_component:
+				var bounce_ratio = 0.5
+				bounced = true
+				if col_obj.get("physics_material_override") and col_obj.physics_material_override.get("bounce"):
+					bounce_ratio = col_obj.physics_material_override.bounce
+				tmp_vel = tmp_vel.bounce(col_normal) * bounce_ratio
+			
+
+			if component_along_wall > max_wall_speed:
+				var ratio = max_wall_speed / component_along_wall
+				print(ratio)
+				cur_speed *= ratio
+			#var max_wall_speed = max_speed * angle_difference
+			#print(max_wall_speed, " ", cur_speed)
+			#print("Project: ", tmp_vel.project(col_normal))
+			#if cur_speed > max_wall_speed:
+				#cur_speed = max_wall_speed
 	
 	if bounced:
 		bounce_vector = (tmp_vel - vel_before_bounce)
 	
-	print(bounce_vector.length())
+	#print(bounce_vector.length())

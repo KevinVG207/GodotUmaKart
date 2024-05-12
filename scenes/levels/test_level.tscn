@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bupntbjgpqqtn"]
+[gd_scene load_steps=15 format=3 uid="uid://bupntbjgpqqtn"]
 
 [ext_resource type="PackedScene" uid="uid://bs4xxwi8savoj" path="res://scenes/vehicles/vehicle.tscn" id="1_j11o3"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="1_qx5ne"]
@@ -17,6 +17,9 @@ size = Vector2(100, 100)
 [sub_resource type="BoxMesh" id="BoxMesh_aj8nn"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_6d0m0"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_1b8uv"]
+bounce = 1.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_axt8l"]
 size = Vector3(5, 5, 5)
@@ -152,10 +155,11 @@ shadow_opacity = 0.8
 [node name="Vehicle" parent="." instance=ExtResource("1_j11o3")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.02645, 3.14564)
 
-[node name="BouncyWall" type="StaticBody3D" parent="." groups=["Bouncy", "Wall"]]
+[node name="BouncyWall" type="StaticBody3D" parent="." groups=["Wall"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 2, 0)
 collision_layer = 4
 collision_mask = 3
+physics_material_override = SubResource("PhysicsMaterial_1b8uv")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BouncyWall"]
 shape = SubResource("BoxShape3D_axt8l")
@@ -172,4 +176,15 @@ collision_mask = 3
 shape = SubResource("BoxShape3D_axt8l")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Wall"]
+mesh = SubResource("BoxMesh_5spkk")
+
+[node name="Ramp" type="StaticBody3D" parent="."]
+transform = Transform3D(0.563267, -0.826275, 0, 0.826275, 0.563267, 0, 0, 0, 1, -14, -0.785615, 29.1392)
+collision_layer = 4
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ramp"]
+shape = SubResource("BoxShape3D_axt8l")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ramp"]
 mesh = SubResource("BoxMesh_5spkk")
