@@ -14,8 +14,12 @@ extends RigidBody3D
 @onready var reverse_initial_accel: float = initial_accel * 0.5
 @onready var reverse_exponent: float = accel_exponent
 
+@export var max_turn_speed: float
+var cur_turn_speed: float = 0
+var turn_accel: float = 10
+
 @export var small_boost_max_speed: float
-@onready var small_boost_initial_accel: float = initial_accel * 2
+@onready var small_boost_initial_accel: float = initial_accel * 3
 @onready var small_boost_exponent = accel_exponent
 
 @export var big_boost_max_speed: float
@@ -26,18 +30,23 @@ var still_turbo_max_speed: float = 1
 var still_turbo_ready: bool = false
 
 var cur_speed: float = 0
-var _vel: Vector3 = Vector3.ZERO
 
 var grounded: bool = false
 
-var gravity: Vector3 = Vector3.DOWN * 1
+var gravity: Vector3 = Vector3.DOWN * 20
+var terminal_velocity = 20
+
 
 func _ready():
 	pass
 
+
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var delta: float = physics_state.step
-	
+	var prev_vel: Vector3 = linear_velocity
+	var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
+	#Debug.print(str(prev_gravity_vel))
+
 	grounded = false
 	
 	#print("Contacts")
@@ -51,27 +60,50 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var new_vel = Vector3.ZERO
 	if grounded:
 		new_vel = get_grounded_vel(delta)
+		#print("grounded ", new_vel)
 	else:
 		new_vel = get_air_vel(delta)
+		#print("airborne ", new_vel)
 	
 	#print(speed_vec)
 	
-	linear_velocity = new_vel + (gravity * delta)
-	grounded = false
+	var _gravity: Vector3 = gravity
+	if (prev_gravity_vel.y < -terminal_velocity):
+		_gravity = Vector3.ZERO
+	if grounded:
+		_gravity *= 2
+		#if angular_velocity.z > 0:
+			#angular_velocity = Vector3.ZERO
+		#if angular_velocity.z
+	#if not grounded:
+		#angular_velocity = Vector3.ZERO
+		#_gravity *= 1
+	angular_velocity = Vector3.ZERO
+
+
+	linear_velocity = new_vel + (_gravity * delta)
+
+
+
+	# Turning
+	var steering: float = Input.get_axis("right", "left")
+	var turn_target: float = steering * max_turn_speed
+	cur_turn_speed = move_toward(cur_turn_speed, turn_target, turn_accel * delta)
+	rotation_degrees.y += cur_turn_speed
+	
 	
 	#TODO: Change this. Use function to determine angular velocity to turn back to 0.
-	rotation_degrees.x = move_toward(rotation_degrees.x, 0, 1.0)
-	rotation_degrees.z = move_toward(rotation_degrees.z, 0, 0.2)
+	#TODO: Rotate to match gravity!
+	rotation_degrees.x = move_toward(rotation_degrees.x, 0, 2.0)
+	if not grounded:
+		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 0.5)
+	
+	grounded = false
+
 
 func get_grounded_vel(delta: float) -> Vector3:
-	var prev_vel: Vector3 = linear_velocity
-
-	#var prev_vertical_vel: Vector3 = prev_vel.project(Vector3.UP)
-	#print("up_vel ", prev_vertical_vel)
-	
 	var is_accel = Input.is_action_pressed("accelerate")
 	var is_brake = Input.is_action_pressed("brake")
-	var steering = Input.get_axis("left", "right")
 	
 	#print(is_accel, is_brake, steering)
 	
@@ -85,13 +117,13 @@ func get_grounded_vel(delta: float) -> Vector3:
 			# Do miniturbo.
 			if not still_turbo_ready and $StillTurboTimer.is_stopped():
 				$StillTurboTimer.start()
-				print("Start building up miniturbo")
+				Debug.print("Start building up miniturbo")
 	else:
 		if is_accel:
 			if still_turbo_ready:
 				still_turbo_ready = false
 				# Perform miniturbo.
-				print("Performing miniturbo")
+				Debug.print("Performing miniturbo")
 				$SmallBoostTimer.start(miniturbo_duration)
 				
 			cur_speed += get_accel_speed(delta)
@@ -102,10 +134,10 @@ func get_grounded_vel(delta: float) -> Vector3:
 		
 		if not $StillTurboTimer.is_stopped():
 			$StillTurboTimer.stop()
-			print("Stopped building up miniturbo")
+			Debug.print("Stopped building up miniturbo")
 		if still_turbo_ready:
 			still_turbo_ready = false
-			print("Cancelled miniturbo")
+			Debug.print("Cancelled miniturbo")
 	
 	# Apply boosts
 	cur_speed += get_boost_speed(delta)
@@ -114,13 +146,14 @@ func get_grounded_vel(delta: float) -> Vector3:
 	
 	# TODO: Delet this
 	
-	var speed_vec = transform.basis.x.normalized() * cur_speed;
+	var vel = transform.basis.x.normalized() * cur_speed;
 	
-	return speed_vec
+	return vel
 
 
 func get_air_vel(delta: float) -> Vector3:
 	return linear_velocity
+
 
 func get_accel_speed(delta: float) -> float:
 	if cur_speed < 0:
@@ -170,14 +203,5 @@ func get_boost_speed(delta: float) -> float:
 	return 0
 
 func _on_still_turbo_timer_timeout():
-	print("Miniturbo ready")
+	Debug.print("Miniturbo ready")
 	still_turbo_ready = true
-
-
-func _on_body_entered(body: Node):
-	pass
-	#if body.is_in_group("floor"):
-		#grounded = true
-		#print("GROUNDED")
-		#while true:
-			#pass

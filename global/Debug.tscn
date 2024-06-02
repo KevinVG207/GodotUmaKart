@@ -1,0 +1,29 @@
+[gd_scene load_steps=2 format=3 uid="uid://dukwjg1gfypxk"]
+
+[ext_resource type="Script" path="res://global/Debug.gd" id="1_gxon6"]
+
+[node name="Debug" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_gxon6")
+
+[node name="EraseTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 20
+text = "Debug Log"
+
+[connection signal="timeout" from="EraseTimer" to="." method="_on_erase_timer_timeout"]

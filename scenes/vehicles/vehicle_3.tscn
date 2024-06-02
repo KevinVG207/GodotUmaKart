@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=6 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 
@@ -9,35 +9,45 @@ absorbent = true
 [sub_resource type="BoxShape3D" id="BoxShape3D_nk0h6"]
 size = Vector3(2, 1, 1)
 
-[sub_resource type="BoxMesh" id="BoxMesh_o5av0"]
-size = Vector3(2, 1, 1)
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_h0c43"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_80jr0"]
 
 [node name="Vehicle3" type="RigidBody3D"]
+mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_b3vot")
+gravity_scale = 0.0
 can_sleep = false
 max_contacts_reported = 50
 contact_monitor = true
 script = ExtResource("1_lrmky")
-max_speed = 10.0
+max_speed = 20.0
 initial_accel = 10.0
 accel_exponent = 10.0
+max_turn_speed = 1.5
 small_boost_max_speed = 15.0
 big_boost_max_speed = 25.0
 miniturbo_duration = 1.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+visible = false
 shape = SubResource("BoxShape3D_nk0h6")
+disabled = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_o5av0")
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_h0c43")
 
 [node name="StillTurboTimer" type="Timer" parent="."]
 process_callback = 0
-wait_time = 2.0
+wait_time = 1.5
 one_shot = true
 
 [node name="SmallBoostTimer" type="Timer" parent="."]
 one_shot = true
 
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_80jr0")
+
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]

@@ -11,13 +11,14 @@ config_version=5
 [application]
 
 config/name="Godot Arcade Racer Test"
-run/main_scene="res://scenes/levels/test_level2.tscn"
+run/main_scene="res://scenes/levels/test_level_3.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
 
 Util="*res://global/util.gd"
+Debug="*res://global/Debug.tscn"
 
 [input]
 
