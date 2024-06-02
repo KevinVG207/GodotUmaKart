@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://cu2lapnist235"]
+
+[ext_resource type="Script" path="res://scenes/vehicles/vehicle_2.gd" id="1_xb8tc"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h8cte"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k33oi"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_kf6mb"]
+material = SubResource("StandardMaterial3D_k33oi")
+size = Vector3(2, 1, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_70sax"]
+size = Vector3(2, 1, 1)
+
+[node name="Vehicle2" type="RigidBody3D"]
+collision_mask = 4
+mass = 10.0
+physics_material_override = SubResource("PhysicsMaterial_h8cte")
+script = ExtResource("1_xb8tc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = SubResource("BoxMesh_kf6mb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("BoxShape3D_70sax")

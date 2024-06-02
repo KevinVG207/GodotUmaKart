@@ -18,6 +18,8 @@ var min_bounce_speed = max_speed * 0.4
 var min_bounce_component = max_speed * 0.25
 var max_wall_speed = max_speed * 0.5
 
+var tmpaa = false
+
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
@@ -119,5 +121,46 @@ func _physics_process(delta):
 	
 	if bounced:
 		bounce_vector = (tmp_vel - vel_before_bounce)
+		
+	# Align vehicle
+	var collisions = []
+	var rays = $RayCasts.get_children()
+	for ray: RayCast3D in rays:
+		ray.clear_exceptions()
+		ray.force_raycast_update()
+		
+		var i = 0
+		var max_i = 6
+		while i < max_i:
+			i += 1
+			var col = ray.get_collider() as Node
+			if not col:
+				break
+			
+			if not col.is_in_group("Floor"):
+				ray.add_exception(col)
+				ray.force_raycast_update()
+				continue
+			
+			collisions.append(ray)
+	
+	if len(collisions) > 2:
+		# Align
+		var avg_normal: Vector3 = Vector3.ZERO
+		for ray: RayCast3D in collisions:
+			avg_normal += ray.get_collision_normal()
+		avg_normal /= len(collisions)
+		var forward_vec = avg_normal.rotated(transform.basis.z, deg_to_rad(-90)).rotated(transform.basis.y, deg_to_rad(90))
+		#print(forward_vec)
+		look_at(position + forward_vec, transform.basis.y)
+		
+		#if not tmpaa:
+			#look_at(position + forward_vec, transform.basis.y)
+			#tmpaa = true
+		
+	else:
+		# Airborne?
+		pass
+		
 	
 	#print(bounce_vector.length())

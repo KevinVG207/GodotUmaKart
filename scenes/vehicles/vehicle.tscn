@@ -24,3 +24,21 @@ mesh = SubResource("BoxMesh_cppbn")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 shape = SubResource("BoxShape3D_i3gam")
+
+[node name="RayCasts" type="Node3D" parent="."]
+
+[node name="RayCast3D" type="RayCast3D" parent="RayCasts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.25, -0.5)
+collision_mask = 4
+
+[node name="RayCast3D2" type="RayCast3D" parent="RayCasts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -0.25, 0.5)
+collision_mask = 4
+
+[node name="RayCast3D3" type="RayCast3D" parent="RayCasts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -0.25, -0.5)
+collision_mask = 4
+
+[node name="RayCast3D4" type="RayCast3D" parent="RayCasts"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, -0.25, 0.5)
+collision_mask = 4
