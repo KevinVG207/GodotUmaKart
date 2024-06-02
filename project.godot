@@ -52,7 +52,3 @@ right={
 3d_physics/layer_1="Player"
 3d_physics/layer_2="Opponents"
 3d_physics/layer_3="Static"
-
-[rendering]
-
-renderer/rendering_method="mobile"

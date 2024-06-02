@@ -14,6 +14,9 @@ size = Vector3(2, 1, 1)
 
 [node name="Vehicle3" type="RigidBody3D"]
 physics_material_override = SubResource("PhysicsMaterial_b3vot")
+can_sleep = false
+max_contacts_reported = 50
+contact_monitor = true
 script = ExtResource("1_lrmky")
 max_speed = 10.0
 initial_accel = 10.0
@@ -36,4 +39,5 @@ one_shot = true
 [node name="SmallBoostTimer" type="Timer" parent="."]
 one_shot = true
 
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]

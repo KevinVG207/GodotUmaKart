@@ -28,10 +28,47 @@ var still_turbo_ready: bool = false
 var cur_speed: float = 0
 var _vel: Vector3 = Vector3.ZERO
 
+var grounded: bool = false
+
+var gravity: Vector3 = Vector3.DOWN * 1
+
 func _ready():
 	pass
 
-func _physics_process(delta):
+func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
+	var delta: float = physics_state.step
+	
+	grounded = false
+	
+	#print("Contacts")
+	for i in range(physics_state.get_contact_count()):
+		var collider = physics_state.get_contact_collider_object(i) as Node
+		if collider.is_in_group("floor"):
+			grounded = true
+		#print(collider)
+	#print("===")
+	
+	var new_vel = Vector3.ZERO
+	if grounded:
+		new_vel = get_grounded_vel(delta)
+	else:
+		new_vel = get_air_vel(delta)
+	
+	#print(speed_vec)
+	
+	linear_velocity = new_vel + (gravity * delta)
+	grounded = false
+	
+	#TODO: Change this. Use function to determine angular velocity to turn back to 0.
+	rotation_degrees.x = move_toward(rotation_degrees.x, 0, 1.0)
+	rotation_degrees.z = move_toward(rotation_degrees.z, 0, 0.2)
+
+func get_grounded_vel(delta: float) -> Vector3:
+	var prev_vel: Vector3 = linear_velocity
+
+	#var prev_vertical_vel: Vector3 = prev_vel.project(Vector3.UP)
+	#print("up_vel ", prev_vertical_vel)
+	
 	var is_accel = Input.is_action_pressed("accelerate")
 	var is_brake = Input.is_action_pressed("brake")
 	var steering = Input.get_axis("left", "right")
@@ -76,8 +113,14 @@ func _physics_process(delta):
 	print(cur_speed)
 	
 	# TODO: Delet this
-	linear_velocity = Vector3(cur_speed, 0, 0)
+	
+	var speed_vec = transform.basis.x.normalized() * cur_speed;
+	
+	return speed_vec
 
+
+func get_air_vel(delta: float) -> Vector3:
+	return linear_velocity
 
 func get_accel_speed(delta: float) -> float:
 	if cur_speed < 0:
@@ -129,3 +172,12 @@ func get_boost_speed(delta: float) -> float:
 func _on_still_turbo_timer_timeout():
 	print("Miniturbo ready")
 	still_turbo_ready = true
+
+
+func _on_body_entered(body: Node):
+	pass
+	#if body.is_in_group("floor"):
+		#grounded = true
+		#print("GROUNDED")
+		#while true:
+			#pass
