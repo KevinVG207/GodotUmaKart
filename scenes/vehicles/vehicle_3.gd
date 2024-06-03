@@ -1,5 +1,7 @@
 extends RigidBody3D
 
+class_name Vehicle3
+
 @export var max_speed: float
 @onready var max_reverse_speed: float = max_speed * 0.5
 @export var initial_accel: float
@@ -26,6 +28,15 @@ var turn_accel: float = 10
 
 @export var miniturbo_duration: float
 
+@export var vehicle_length_ahead: float = 1.0
+@export var vehicle_length_behind: float = 1.0
+@export var vehicle_width_bottom: float = 0.5
+
+var stick_speed: float = 75
+var stick_distance: float = 0.5
+var stick_ray_count: int = 4
+var air_frames: int = 0
+
 var still_turbo_max_speed: float = 1
 var still_turbo_ready: bool = false
 
@@ -33,8 +44,13 @@ var cur_speed: float = 0
 
 var grounded: bool = false
 
-var gravity: Vector3 = Vector3.DOWN * 20
+var gravity: Vector3 = Vector3.DOWN * 10
 var terminal_velocity = 20
+
+@export var grip_multiplier: float = 1.0
+var cur_grip: float = 100.0
+
+var prev_vel: Vector3 = Vector3.ZERO
 
 
 func _ready():
@@ -45,45 +61,109 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var delta: float = physics_state.step
 	var prev_vel: Vector3 = linear_velocity
 	var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
+	var prev_up_spd: float = prev_vel.project(transform.basis.y).y
 	#Debug.print(str(prev_gravity_vel))
 
 	grounded = false
+
+	var contact_point_ahead: Vector3 = Vector3.INF
+	var contact_point_behind: Vector3 = Vector3.INF
 	
 	#print("Contacts")
 	for i in range(physics_state.get_contact_count()):
 		var collider = physics_state.get_contact_collider_object(i) as Node
 		if collider.is_in_group("floor"):
 			grounded = true
-		#print(collider)
+			var global_contact_position: Vector3 = physics_state.get_contact_local_position(i)
+			# Transform to local space
+			var local_contact_position: Vector3 = global_contact_position - transform.origin
+			# Rotate the point to match the rotation of the vehicle
+			var rotated_contact_position: Vector3 = transform.basis.x.rotated(transform.basis.y, -rotation_degrees.y).rotated(transform.basis.z, -rotation_degrees.z).rotated(transform.basis.x, -rotation_degrees.x).normalized() * local_contact_position
+			#print("Rotated: ", rotated_contact_position)
+			var point_distance = rotated_contact_position.length()
+
+			if rotated_contact_position.x > 0:
+				if point_distance < contact_point_ahead.length():
+					contact_point_ahead = rotated_contact_position
+			else:
+				if point_distance < contact_point_behind.length():
+					contact_point_behind = rotated_contact_position
+
+			#print(collider)
 	#print("===")
+
+	#print(contact_point_ahead, contact_point_behind)
 	
 	var new_vel = Vector3.ZERO
 	if grounded:
+		air_frames = 0
 		new_vel = get_grounded_vel(delta)
 		#print("grounded ", new_vel)
 	else:
+		air_frames += 1
 		new_vel = get_air_vel(delta)
 		#print("airborne ", new_vel)
 	
 	#print(speed_vec)
 	
 	var _gravity: Vector3 = gravity
-	if (prev_gravity_vel.y < -terminal_velocity):
-		_gravity = Vector3.ZERO
+	#if (prev_gravity_vel.y < -terminal_velocity):
+		#_gravity = Vector3.ZERO
 	if grounded:
 		_gravity *= 2
-		#if angular_velocity.z > 0:
-			#angular_velocity = Vector3.ZERO
-		#if angular_velocity.z
+		#angular_velocity *= 0.5
+		#if contact_point_ahead == Vector3.INF:
+			#Debug.print("A")
+			## Front of the capsule is in the air.
+			## Try to stick to the ground.
+			#var col_point = {}
+			#for i in range(1, stick_ray_count + 1):
+				#var hor_dist = vehicle_length_ahead / stick_ray_count * i
+				#var ray_origin = transform.origin + (transform.basis.y * -vehicle_width_bottom) + (transform.basis.x * (hor_dist))
+				#var ray_end = ray_origin + (transform.basis.y * -stick_distance)
+				#var col_dict = Util.raycast_for_group(self, ray_origin, ray_end, "floor", [])
+				##Debug.print(col_dict)
+				#if not col_dict:
+					#continue
+				#col_dict["hor_dist"] = hor_dist
+				#if not col_point:
+					#col_point = col_dict
+				#if col_dict["distance"] < col_point["distance"]:
+					#col_point = col_dict
+			#Debug.print("B")
+			#if col_point:
+				#var local_contact = to_local(contact_point_behind)
+				#var local_col = to_local(col_point["position"])
+#
+				#var opposite = local_col.y - local_contact.y
+				#var adjacent = local_col.x - local_contact.x
+#
+				#var angle = -atan(opposite / adjacent)
+#
+				#Debug.print([opposite, adjacent, angle])
+
+
 	#if not grounded:
 		#angular_velocity = Vector3.ZERO
-		#_gravity *= 1
 	angular_velocity = Vector3.ZERO
 
+	var target_vel: Vector3 = prev_vel.move_toward(new_vel, delta * cur_grip * grip_multiplier) + (_gravity * delta)
+	linear_velocity = target_vel
+	prev_vel = target_vel
+	
+	# Stick to ground.
+	# Perform raycast in local -y direction
+	if air_frames < 5:
+		var space_state = get_world_3d().direct_space_state
+		var ray_origin = transform.origin + transform.basis.y * -0.5
+		var ray_end = ray_origin + transform.basis.y * -0.9
+		var ray_result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
 
-	linear_velocity = new_vel + (_gravity * delta)
-
-
+		if ray_result:
+			# var distance = ray_result.position.distance_to(ray_origin)
+			# Apply stick_speed to stick to ground
+			linear_velocity += -transform.basis.y.project(gravity.normalized()) * stick_speed * delta
+			#Debug.print(linear_velocity.y)
 
 	# Turning
 	var steering: float = Input.get_axis("right", "left")
@@ -205,3 +285,4 @@ func get_boost_speed(delta: float) -> float:
 func _on_still_turbo_timer_timeout():
 	Debug.print("Miniturbo ready")
 	still_turbo_ready = true
+

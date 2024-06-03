@@ -35,7 +35,12 @@ transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 
 size = 51.042
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 9, 0)
+transform = Transform3D(0.683013, -0.707107, -0.183013, 0.258819, -4.2222e-08, 0.965926, -0.683013, -0.707107, 0.183013, 0, 166, 0)
+light_color = Color(1, 0.922912, 0.91767, 1)
+shadow_enabled = true
+shadow_opacity = 0.75
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 500.0
 
 [node name="Floor" type="StaticBody3D" parent="." groups=["floor"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -40.3556, 0)
@@ -63,12 +68,6 @@ shape = SubResource("BoxShape3D_iv18g")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Floor2"]
 mesh = SubResource("BoxMesh_f8gqm")
-
-[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.925637, 0.359711, 0.117489, -0.0476928, -0.418899, 0.90678, 0.375395, 0.833746, 0.404904, 0.989989, 8.88529, -1.24861)
-light_energy = 2.0
-shadow_enabled = true
-shadow_opacity = 0.8
 
 [node name="aaa" parent="." instance=ExtResource("4_w4b6d")]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, -131.395, -9)

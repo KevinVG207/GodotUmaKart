@@ -1,3 +1,3 @@
 extends Node
 
-var player_object: Vehicle = null
+var player_object: Vehicle3 = null
