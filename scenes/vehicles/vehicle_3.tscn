@@ -21,7 +21,6 @@ can_sleep = false
 max_contacts_reported = 50
 contact_monitor = true
 script = ExtResource("1_lrmky")
-small_boost_max_speed = 15.0
 big_boost_max_speed = 25.0
 miniturbo_duration = 1.0
 

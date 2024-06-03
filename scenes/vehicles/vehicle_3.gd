@@ -25,7 +25,7 @@ class_name Vehicle3
 var cur_turn_speed: float = 0
 var turn_accel: float = 15
 
-@export var small_boost_max_speed: float
+@onready var small_boost_max_speed: float = max_speed * 1.2
 @onready var small_boost_initial_accel: float = initial_accel * 3
 @onready var small_boost_exponent = accel_exponent
 
@@ -48,6 +48,10 @@ var drift_dir: int = 0
 @onready var min_hop_speed: float = max_speed * 0.5
 var hop_force: float = 4.0
 var can_hop: bool = true
+
+var drift_gauge: float = 0.0
+@export var drift_gauge_max: float = 100.0
+var drift_gauge_multi: float = 55.0
 
 var still_turbo_max_speed: float = 1
 var still_turbo_ready: bool = false
@@ -92,8 +96,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	if not is_brake:
 		can_hop = true
 		drift_dir = 0
-	
-	Debug.print(drift_dir)
 
 	grounded = false
 
@@ -215,6 +217,15 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			adjusted_steering = remap(adjusted_steering, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
 		else:
 			adjusted_steering = remap(adjusted_steering, -1, 1, -drift_turn_multiplier, -drift_turn_min_multiplier)
+		
+		drift_gauge += remap(abs(adjusted_steering), drift_turn_min_multiplier, drift_turn_multiplier, 1, 2) * drift_gauge_multi * delta
+		drift_gauge = min(drift_gauge, drift_gauge_max)
+	else:
+		if drift_gauge >= drift_gauge_max:
+			# Drift turbo
+			$SmallBoostTimer.start(miniturbo_duration)
+		drift_gauge = 0.0
+	Debug.print(drift_gauge)
 	
 	var adjusted_max_turn_speed = 0.5/(2*max(0.0, cur_speed)+1) + max_turn_speed
 	#Debug.print(adjusted_max_turn_speed)
@@ -254,7 +265,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 	if is_accel and is_brake:
 		if cur_speed > min_hop_speed:
 			if in_drift:
-				pass
+				cur_speed += get_accel_speed(delta)
 			elif can_hop:
 				# Perform hop for drift
 				in_hop = true
