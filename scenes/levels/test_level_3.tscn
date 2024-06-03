@@ -30,10 +30,6 @@ current = true
 [node name="Vehicle3" parent="." instance=ExtResource("1_3cfyl")]
 axis_lock_angular_y = true
 
-[node name="Camera3D2" type="Camera3D" parent="Vehicle3"]
-transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.854, 9)
-size = 51.042
-
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.683013, -0.707107, -0.183013, 0.258819, -4.2222e-08, 0.965926, -0.683013, -0.707107, 0.183013, 0, 166, 0)
 light_color = Color(1, 0.922912, 0.91767, 1)

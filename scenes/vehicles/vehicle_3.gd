@@ -2,10 +2,10 @@ extends RigidBody3D
 
 class_name Vehicle3
 
-@export var max_speed: float
+@export var max_speed: float = 20
 @onready var max_reverse_speed: float = max_speed * 0.5
-@export var initial_accel: float
-@export var accel_exponent: float
+@export var initial_accel: float = 10
+@export var accel_exponent: float = 10
 
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
@@ -17,8 +17,9 @@ class_name Vehicle3
 @onready var reverse_exponent: float = accel_exponent
 
 @export var max_turn_speed: float = 1.0
-@export var drift_turn_multiplier: float = 1.5
-@onready var max_turn_speed_drift: float = max_turn_speed * drift_turn_multiplier
+@export var drift_turn_multiplier: float = 1.75
+#@onready var max_turn_speed_drift: float = max_turn_speed * drift_turn_multiplier
+@export var drift_turn_min_multiplier: float = 0.5
 @export var air_turn_multiplier: float = 0.15
 
 var cur_turn_speed: float = 0
@@ -43,8 +44,10 @@ var air_frames: int = 0
 var in_hop: bool = false
 var in_hop_frames: int = 0
 var in_drift: bool = false
-var min_hop_speed: float = max_speed * 0.5
+var drift_dir: int = 0
+@onready var min_hop_speed: float = max_speed * 0.5
 var hop_force: float = 4.0
+var can_hop: bool = true
 
 var still_turbo_max_speed: float = 1
 var still_turbo_ready: bool = false
@@ -70,14 +73,27 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var delta: float = physics_state.step
 	var prev_vel: Vector3 = linear_velocity
 	var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
-	Debug.print(prev_gravity_vel)
+	#Debug.print(prev_gravity_vel)
 	var prev_up_spd: float = prev_vel.project(transform.basis.y).y
 	#Debug.print(str(prev_gravity_vel))
 	
+	var is_accel = Input.is_action_pressed("accelerate")
+	var is_brake = Input.is_action_pressed("brake")
+	var steering: float = Input.get_axis("right", "left")
+	
 	if in_hop:
 		in_hop_frames += 1
+		if drift_dir == 0 and !is_equal_approx(steering, 0.0):
+			drift_dir = -1
+			if steering > 0:
+				drift_dir = 1
 	if in_drift and !Input.is_action_pressed("brake"):
 		in_drift = false
+	if not is_brake:
+		can_hop = true
+		drift_dir = 0
+	
+	Debug.print(drift_dir)
 
 	grounded = false
 
@@ -90,9 +106,16 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		if collider.is_in_group("floor"):
 			grounded = true
 			if in_hop and in_hop_frames > 2:
+				# Switch from hop to drift
+				if is_brake:
+					# Block hopping
+					can_hop = false
 				in_hop = false
-				in_drift = true
 				in_hop_frames = 0
+				if drift_dir == 0:
+					in_drift = false
+				else:
+					in_drift = true
 			# var global_contact_position: Vector3 = physics_state.get_contact_local_position(i)
 			# # Transform to local space
 			# var local_contact_position: Vector3 = global_contact_position - transform.origin
@@ -185,10 +208,20 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			#Debug.print(linear_velocity.y)
 
 	# Turning
-	var steering: float = Input.get_axis("right", "left")
-	var turn_target = steering * max_turn_speed
+	var adjusted_steering = steering
+	
 	if in_drift:
-		turn_target = steering * max_turn_speed_drift
+		if drift_dir > 0:
+			adjusted_steering = remap(adjusted_steering, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
+		else:
+			adjusted_steering = remap(adjusted_steering, -1, 1, -drift_turn_multiplier, -drift_turn_min_multiplier)
+	
+	var adjusted_max_turn_speed = 0.5/(2*max(0.0, cur_speed)+1) + max_turn_speed
+	#Debug.print(adjusted_max_turn_speed)
+	
+	var turn_target = adjusted_steering * adjusted_max_turn_speed
+	#if in_drift:
+		#turn_target = steering * max_turn_speed_drift
 	if !grounded:
 		turn_target *= air_turn_multiplier
 	var cur_turn_accel = turn_accel
@@ -222,10 +255,12 @@ func get_grounded_vel(delta: float) -> Vector3:
 		if cur_speed > min_hop_speed:
 			if in_drift:
 				pass
-			else:
+			elif can_hop:
 				# Perform hop for drift
 				in_hop = true
 				hop_vel = transform.basis.y * hop_force / (in_hop_frames+1)
+			else:
+				cur_speed += get_friction_speed(delta)
 		else:
 			in_drift = false
 			# Decelerate to standstill
