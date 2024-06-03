@@ -17,11 +17,11 @@ func sum(array: Array):
 		out += ele
 	return out
 
-func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group: String, ignore_array: Array = []):
+func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group: String, ignore_array: Array = [], collision_mask=0xFFFFFFFF):
 	var space_state = obj.get_world_3d().direct_space_state
 	var out: Dictionary = {}
 	while true:
-		var result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(start_pos, end_pos, 0xFFFFFFFF, ignore_array))
+		var result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(start_pos, end_pos, collision_mask, ignore_array))
 		# Debug.print(result)
 		if not result:
 			break

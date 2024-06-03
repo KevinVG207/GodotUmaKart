@@ -36,6 +36,10 @@ var stick_speed: float = 75
 var stick_distance: float = 0.5
 var stick_ray_count: int = 4
 var air_frames: int = 0
+var in_hop: bool = false
+var in_drift: bool = false
+var min_hop_speed: float = max_speed * 0.5
+var hop_force: float = 10.0
 
 var still_turbo_max_speed: float = 1
 var still_turbo_ready: bool = false
@@ -74,20 +78,23 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		var collider = physics_state.get_contact_collider_object(i) as Node
 		if collider.is_in_group("floor"):
 			grounded = true
-			var global_contact_position: Vector3 = physics_state.get_contact_local_position(i)
-			# Transform to local space
-			var local_contact_position: Vector3 = global_contact_position - transform.origin
-			# Rotate the point to match the rotation of the vehicle
-			var rotated_contact_position: Vector3 = transform.basis.x.rotated(transform.basis.y, -rotation_degrees.y).rotated(transform.basis.z, -rotation_degrees.z).rotated(transform.basis.x, -rotation_degrees.x).normalized() * local_contact_position
-			#print("Rotated: ", rotated_contact_position)
-			var point_distance = rotated_contact_position.length()
+			if in_hop:
+				in_hop = false
+			in_drift = true
+			# var global_contact_position: Vector3 = physics_state.get_contact_local_position(i)
+			# # Transform to local space
+			# var local_contact_position: Vector3 = global_contact_position - transform.origin
+			# # Rotate the point to match the rotation of the vehicle
+			# var rotated_contact_position: Vector3 = transform.basis.x.rotated(transform.basis.y, -rotation_degrees.y).rotated(transform.basis.z, -rotation_degrees.z).rotated(transform.basis.x, -rotation_degrees.x).normalized() * local_contact_position
+			# #print("Rotated: ", rotated_contact_position)
+			# var point_distance = rotated_contact_position.length()
 
-			if rotated_contact_position.x > 0:
-				if point_distance < contact_point_ahead.length():
-					contact_point_ahead = rotated_contact_position
-			else:
-				if point_distance < contact_point_behind.length():
-					contact_point_behind = rotated_contact_position
+			# if rotated_contact_position.x > 0:
+			# 	if point_distance < contact_point_ahead.length():
+			# 		contact_point_ahead = rotated_contact_position
+			# else:
+			# 	if point_distance < contact_point_behind.length():
+			# 		contact_point_behind = rotated_contact_position
 
 			#print(collider)
 	#print("===")
@@ -153,7 +160,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	# Stick to ground.
 	# Perform raycast in local -y direction
-	if air_frames < 5:
+	if air_frames < 5 and !in_hop:
 		var space_state = get_world_3d().direct_space_state
 		var ray_origin = transform.origin + transform.basis.y * -0.5
 		var ray_end = ray_origin + transform.basis.y * -0.9
@@ -186,18 +193,23 @@ func get_grounded_vel(delta: float) -> Vector3:
 	var is_brake = Input.is_action_pressed("brake")
 	
 	#print(is_accel, is_brake, steering)
+	var hop_vel = Vector3.ZERO
 	
 	if is_accel and is_brake:
-		# TODO: Check for drift
-		# Decelerate to standstill
-		cur_speed += get_brake_speed(delta)
-		
-		# Check if we can miniturbo
-		if abs(cur_speed) <= still_turbo_max_speed:
-			# Do miniturbo.
-			if not still_turbo_ready and $StillTurboTimer.is_stopped():
-				$StillTurboTimer.start()
-				Debug.print("Start building up miniturbo")
+		if cur_speed > min_hop_speed:
+			# Perform hop for drift
+			in_hop = true
+			hop_vel = transform.basis.y * hop_force
+		else:
+			# Decelerate to standstill
+			cur_speed += get_brake_speed(delta)
+			
+			# Check if we can miniturbo
+			if abs(cur_speed) <= still_turbo_max_speed:
+				# Do miniturbo.
+				if not still_turbo_ready and $StillTurboTimer.is_stopped():
+					$StillTurboTimer.start()
+					Debug.print("Start building up miniturbo")
 	else:
 		if is_accel:
 			if still_turbo_ready:
@@ -224,9 +236,9 @@ func get_grounded_vel(delta: float) -> Vector3:
 
 	print(cur_speed)
 	
-	# TODO: Delet this
+	var speed_vel = transform.basis.x.normalized() * cur_speed
 	
-	var vel = transform.basis.x.normalized() * cur_speed;
+	var vel = speed_vel + hop_vel;
 	
 	return vel
 
