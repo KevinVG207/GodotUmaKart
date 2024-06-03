@@ -16,9 +16,13 @@ class_name Vehicle3
 @onready var reverse_initial_accel: float = initial_accel * 0.5
 @onready var reverse_exponent: float = accel_exponent
 
-@export var max_turn_speed: float
+@export var max_turn_speed: float = 1.0
+@export var drift_turn_multiplier: float = 1.5
+@onready var max_turn_speed_drift: float = max_turn_speed * drift_turn_multiplier
+@export var air_turn_multiplier: float = 0.15
+
 var cur_turn_speed: float = 0
-var turn_accel: float = 10
+var turn_accel: float = 15
 
 @export var small_boost_max_speed: float
 @onready var small_boost_initial_accel: float = initial_accel * 3
@@ -37,9 +41,10 @@ var stick_distance: float = 0.5
 var stick_ray_count: int = 4
 var air_frames: int = 0
 var in_hop: bool = false
+var in_hop_frames: int = 0
 var in_drift: bool = false
 var min_hop_speed: float = max_speed * 0.5
-var hop_force: float = 10.0
+var hop_force: float = 4.0
 
 var still_turbo_max_speed: float = 1
 var still_turbo_ready: bool = false
@@ -48,8 +53,8 @@ var cur_speed: float = 0
 
 var grounded: bool = false
 
-var gravity: Vector3 = Vector3.DOWN * 10
-var terminal_velocity = 20
+var gravity: Vector3 = Vector3.DOWN * 15
+var terminal_velocity = 30
 
 @export var grip_multiplier: float = 1.0
 var cur_grip: float = 100.0
@@ -65,8 +70,14 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var delta: float = physics_state.step
 	var prev_vel: Vector3 = linear_velocity
 	var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
+	Debug.print(prev_gravity_vel)
 	var prev_up_spd: float = prev_vel.project(transform.basis.y).y
 	#Debug.print(str(prev_gravity_vel))
+	
+	if in_hop:
+		in_hop_frames += 1
+	if in_drift and !Input.is_action_pressed("brake"):
+		in_drift = false
 
 	grounded = false
 
@@ -78,9 +89,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		var collider = physics_state.get_contact_collider_object(i) as Node
 		if collider.is_in_group("floor"):
 			grounded = true
-			if in_hop:
+			if in_hop and in_hop_frames > 2:
 				in_hop = false
-			in_drift = true
+				in_drift = true
+				in_hop_frames = 0
 			# var global_contact_position: Vector3 = physics_state.get_contact_local_position(i)
 			# # Transform to local space
 			# var local_contact_position: Vector3 = global_contact_position - transform.origin
@@ -114,8 +126,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	#print(speed_vec)
 	
 	var _gravity: Vector3 = gravity
-	#if (prev_gravity_vel.y < -terminal_velocity):
-		#_gravity = Vector3.ZERO
+	if (prev_gravity_vel + (_gravity*delta)).length() > terminal_velocity:
+		_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
 	if grounded:
 		_gravity *= 2
 		#angular_velocity *= 0.5
@@ -174,15 +186,26 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	# Turning
 	var steering: float = Input.get_axis("right", "left")
-	var turn_target: float = steering * max_turn_speed
-	cur_turn_speed = move_toward(cur_turn_speed, turn_target, turn_accel * delta)
+	var turn_target = steering * max_turn_speed
+	if in_drift:
+		turn_target = steering * max_turn_speed_drift
+	if !grounded:
+		turn_target *= air_turn_multiplier
+	var cur_turn_accel = turn_accel
+	if !grounded:
+		cur_turn_accel *= air_turn_multiplier * air_turn_multiplier*5
+	cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta)
 	rotation_degrees.y += cur_turn_speed
+	if !grounded:
+		linear_velocity = linear_velocity.rotated(transform.basis.y, deg_to_rad(cur_turn_speed))
+	#Debug.print(in_drift)
 	
 	
 	#TODO: Change this. Use function to determine angular velocity to turn back to 0.
 	#TODO: Rotate to match gravity!
 	rotation_degrees.x = move_toward(rotation_degrees.x, 0, 2.0)
-	if not grounded:
+	var floor_below = Util.raycast_for_group(self, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
+	if not grounded and (!in_hop or !floor_below):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 0.5)
 	
 	grounded = false
@@ -197,10 +220,14 @@ func get_grounded_vel(delta: float) -> Vector3:
 	
 	if is_accel and is_brake:
 		if cur_speed > min_hop_speed:
-			# Perform hop for drift
-			in_hop = true
-			hop_vel = transform.basis.y * hop_force
+			if in_drift:
+				pass
+			else:
+				# Perform hop for drift
+				in_hop = true
+				hop_vel = transform.basis.y * hop_force / (in_hop_frames+1)
 		else:
+			in_drift = false
 			# Decelerate to standstill
 			cur_speed += get_brake_speed(delta)
 			

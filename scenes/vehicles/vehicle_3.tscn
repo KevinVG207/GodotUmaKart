@@ -24,7 +24,6 @@ script = ExtResource("1_lrmky")
 max_speed = 20.0
 initial_accel = 10.0
 accel_exponent = 10.0
-max_turn_speed = 1.5
 small_boost_max_speed = 15.0
 big_boost_max_speed = 25.0
 miniturbo_duration = 1.0

@@ -43,7 +43,7 @@ directional_shadow_blend_splits = true
 directional_shadow_max_distance = 500.0
 
 [node name="Floor" type="StaticBody3D" parent="." groups=["floor"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -40.3556, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -252.356, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("BoxShape3D_iv18g")
@@ -52,7 +52,7 @@ shape = SubResource("BoxShape3D_iv18g")
 mesh = SubResource("BoxMesh_f8gqm")
 
 [node name="Floor3" type="StaticBody3D" parent="." groups=["floor"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, -40.3556, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, -252.356, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor3"]
 shape = SubResource("BoxShape3D_iv18g")
@@ -61,7 +61,7 @@ shape = SubResource("BoxShape3D_iv18g")
 mesh = SubResource("BoxMesh_f8gqm")
 
 [node name="Floor2" type="StaticBody3D" parent="." groups=["floor"]]
-transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 17, -38.3556, 0)
+transform = Transform3D(0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 0, 0, 1, 17, -250.356, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor2"]
 shape = SubResource("BoxShape3D_iv18g")
@@ -70,4 +70,4 @@ shape = SubResource("BoxShape3D_iv18g")
 mesh = SubResource("BoxMesh_f8gqm")
 
 [node name="aaa" parent="." instance=ExtResource("4_w4b6d")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, -131.395, -9)
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, -105.395, -9)
