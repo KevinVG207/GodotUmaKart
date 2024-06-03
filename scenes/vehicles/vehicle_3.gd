@@ -282,8 +282,10 @@ func get_grounded_vel(delta: float) -> Vector3:
 				
 			cur_speed += get_accel_speed(delta)
 		elif is_brake:
+			in_drift = false
 			cur_speed += get_reverse_speed(delta)
 		else:
+			in_drift = false
 			cur_speed += get_friction_speed(delta)
 		
 		if not $StillTurboTimer.is_stopped():
