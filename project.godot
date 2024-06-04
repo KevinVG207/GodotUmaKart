@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 Util="*res://global/util.gd"
 Debug="*res://global/Debug.tscn"
+UI="*res://global/UI.tscn"
 
 [input]
 

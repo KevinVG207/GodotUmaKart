@@ -3,9 +3,11 @@ extends RigidBody3D
 class_name Vehicle3
 
 @export var max_speed: float = 20
+@onready var cur_max_speed = max_speed
 @onready var max_reverse_speed: float = max_speed * 0.5
 @export var initial_accel: float = 10
 @export var accel_exponent: float = 10
+@export var spd_steering_decrease: float = 1.0
 
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
@@ -71,7 +73,7 @@ var prev_vel: Vector3 = Vector3.ZERO
 
 func _ready():
 	pass
-
+	
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var delta: float = physics_state.step
@@ -84,6 +86,11 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var is_accel = Input.is_action_pressed("accelerate")
 	var is_brake = Input.is_action_pressed("brake")
 	var steering: float = Input.get_axis("right", "left")
+	
+	# Determine effective max speed
+	cur_max_speed = max_speed
+	cur_max_speed -= abs(cur_turn_speed) * spd_steering_decrease
+	#Debug.print(cur_max_speed)
 	
 	if in_hop:
 		in_hop_frames += 1
@@ -139,9 +146,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	#print(contact_point_ahead, contact_point_behind)
 	
 	var new_vel = Vector3.ZERO
+	var ground_vel = get_grounded_vel(delta)
 	if grounded:
 		air_frames = 0
-		new_vel = get_grounded_vel(delta)
+		new_vel = ground_vel
 		#print("grounded ", new_vel)
 	else:
 		air_frames += 1
@@ -219,13 +227,14 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			adjusted_steering = remap(adjusted_steering, -1, 1, -drift_turn_multiplier, -drift_turn_min_multiplier)
 		
 		drift_gauge += remap(abs(adjusted_steering), drift_turn_min_multiplier, drift_turn_multiplier, 1, 2) * drift_gauge_multi * delta
-		drift_gauge = min(drift_gauge, drift_gauge_max)
+		if drift_gauge > drift_gauge_max:
+			drift_gauge = drift_gauge_max
 	else:
 		if drift_gauge >= drift_gauge_max:
 			# Drift turbo
 			$SmallBoostTimer.start(miniturbo_duration)
 		drift_gauge = 0.0
-	Debug.print(drift_gauge)
+	#Debug.print(drift_gauge)
 	
 	var adjusted_max_turn_speed = 0.5/(2*max(0.0, cur_speed)+1) + max_turn_speed
 	#Debug.print(adjusted_max_turn_speed)
@@ -251,6 +260,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var floor_below = Util.raycast_for_group(self, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
 	if not grounded and (!in_hop or !floor_below):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 0.5)
+		
+	determine_drift_particles()
 	
 	grounded = false
 
@@ -328,13 +339,16 @@ func get_accel_speed(delta: float) -> float:
 		return brake_initial_accel * delta
 
 	# Accelerating
-	return Util.get_vehicle_accel(max_speed, cur_speed, initial_accel, accel_exponent) * delta
+	return Util.get_vehicle_accel(cur_max_speed, cur_speed, initial_accel, accel_exponent) * delta
 
 
 func get_reverse_speed(delta: float) -> float:
 	if cur_speed > 0:
 		# Braking
 		return -brake_initial_accel * delta
+	
+	if !grounded:
+		return 0
 
 	# Reversing
 	return -Util.get_vehicle_accel(max_reverse_speed, -cur_speed, reverse_initial_accel, reverse_exponent) * delta
@@ -355,7 +369,7 @@ func get_friction_speed(delta: float) -> float:
 	if cur_speed < 0:
 		mult = 1.0
 
-	return Util.get_vehicle_accel(max_speed, abs(abs(cur_speed) - max_speed), friction_initial_accel, friction_exponent) * delta * mult
+	return Util.get_vehicle_accel(cur_max_speed, abs(abs(cur_speed) - cur_max_speed), friction_initial_accel, friction_exponent) * delta * mult
 
 
 func get_boost_speed(delta: float) -> float:
@@ -363,8 +377,8 @@ func get_boost_speed(delta: float) -> float:
 		# Small boost is active
 		return Util.get_vehicle_accel(small_boost_max_speed, cur_speed, small_boost_initial_accel, small_boost_exponent) * delta
 	
-	if cur_speed > max_speed:
-		var speed_range = big_boost_max_speed - max_speed
+	if cur_speed > cur_max_speed:
+		var speed_range = big_boost_max_speed - cur_max_speed
 		var ratio = big_boost_max_speed - cur_speed
 		return -Util.get_vehicle_accel(speed_range, ratio, friction_initial_accel, friction_exponent) * delta
 	return 0
@@ -373,3 +387,21 @@ func _on_still_turbo_timer_timeout():
 	Debug.print("Miniturbo ready")
 	still_turbo_ready = true
 
+func _process(delta):
+	# UI Stuff
+	var spd = linear_velocity.length()
+	UI.update_speed(spd)
+
+func determine_drift_particles():
+	$DriftChargingParticles.emitting = false
+	$DriftChargedParticles.emitting = false
+	
+	if in_drift:
+		if drift_gauge >= drift_gauge_max:
+			$DriftChargedParticles.emitting = true
+		else:
+			$DriftChargingParticles.emitting = true
+	elif !$StillTurboTimer.is_stopped():
+		$DriftChargingParticles.emitting = true
+	elif still_turbo_ready:
+		$DriftChargedParticles.emitting = true

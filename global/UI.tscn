@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://bu45yypdat4p4"]
+
+[ext_resource type="Script" path="res://global/UI.gd" id="1_4prdq"]
+[ext_resource type="PackedScene" uid="uid://b62d811jwymmd" path="res://scenes/ui/race_ui.tscn" id="2_xaqxf"]
+
+[node name="Ui" type="CanvasLayer"]
+script = ExtResource("1_4prdq")
+
+[node name="RaceUI" parent="." instance=ExtResource("2_xaqxf")]
