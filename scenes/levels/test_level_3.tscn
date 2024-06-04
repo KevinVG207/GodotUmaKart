@@ -25,6 +25,7 @@ projection = 1
 size = 51.042
 
 [node name="PlayerCamera" parent="." instance=ExtResource("1_ldxvr")]
+transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, 0, 2, 6)
 current = true
 
 [node name="Vehicle3" parent="." instance=ExtResource("1_3cfyl")]
@@ -66,5 +67,5 @@ shape = SubResource("BoxShape3D_iv18g")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Floor2"]
 mesh = SubResource("BoxMesh_f8gqm")
 
-[node name="aaa" parent="." instance=ExtResource("4_w4b6d")]
+[node name="WickedWoods" parent="." instance=ExtResource("4_w4b6d")]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, -105.395, -9)

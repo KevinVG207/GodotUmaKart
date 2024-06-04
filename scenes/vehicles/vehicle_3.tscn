@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=20 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="2_b5ade"]
@@ -102,6 +102,15 @@ gravity = Vector3(0, 0, 0)
 
 [sub_resource type="BoxMesh" id="BoxMesh_tyxqj"]
 size = Vector3(0.46, 0.445, 0.265)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_r0fog"]
+height = 0.1
+radius = 0.2
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_w6knp"]
+top_radius = 0.2
+bottom_radius = 0.2
+height = 0.1
 
 [node name="Vehicle3" type="RigidBody3D"]
 mass = 100.0
@@ -386,5 +395,27 @@ mesh = SubResource("CapsuleMesh_h0c43")
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
 shape = SubResource("CapsuleShape3D_80jr0")
+
+[node name="Wheels" type="Node3D" parent="."]
+visible = false
+
+[node name="Wheel" type="RigidBody3D" parent="Wheels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+axis_lock_linear_x = true
+axis_lock_linear_z = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+mass = 5.0
+gravity_scale = 0.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Wheels/Wheel"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+shape = SubResource("CylinderShape3D_r0fog")
+disabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheels/Wheel"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("CylinderMesh_w6knp")
 
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]

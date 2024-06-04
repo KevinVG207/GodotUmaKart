@@ -1,12 +1,33 @@
-[gd_scene load_steps=3 format=3 uid="uid://d0dhk013x7kj1"]
+[gd_scene load_steps=5 format=3 uid="uid://d0dhk013x7kj1"]
 
 [ext_resource type="Script" path="res://scenes/control/player_camera.gd" id="1_rf2un"]
 
 [sub_resource type="Environment" id="Environment_36oa2"]
 ssao_radius = 1.5
 ssil_enabled = true
+adjustment_enabled = true
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_xuuqo"]
+radius = 0.2
+
+[sub_resource type="SphereMesh" id="SphereMesh_d0ad1"]
+radius = 0.2
+height = 0.4
 
 [node name="PlayerCamera" type="Camera3D"]
-transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, -4.07881, 2.98554, 3.1433)
+transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, 0, 0, 0)
 environment = SubResource("Environment_36oa2")
 script = ExtResource("1_rf2un")
+
+[node name="CameraArea" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CameraArea"]
+transform = Transform3D(1, 0, 0, 0, 1, -3.26746e-16, 0, -3.26746e-16, 1, 0, 0, 0)
+shape = SubResource("SphereShape3D_xuuqo")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CameraArea"]
+visible = false
+mesh = SubResource("SphereMesh_d0ad1")
+
+[connection signal="area_entered" from="CameraArea" to="." method="_on_camera_area_area_entered"]
+[connection signal="area_exited" from="CameraArea" to="." method="_on_camera_area_area_exited"]

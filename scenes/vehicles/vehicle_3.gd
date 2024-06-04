@@ -69,6 +69,7 @@ var gravity: Vector3 = Vector3.DOWN * 15
 var terminal_velocity = 30
 
 @export var grip_multiplier: float = 1.0
+@export var default_grip: float = 100.0
 var cur_grip: float = 100.0
 
 var max_displacement_for_sleep = 0.003
@@ -80,10 +81,18 @@ var prev_transform: Transform3D = Transform3D.IDENTITY
 
 var sleep = false
 
+var in_water = false
+var water_bodies: Dictionary = {}
+
+@export var wheel_max_up: float = 0.2
+@export var wheel_max_down: float = 0.5
+var wheel_markers: Array = []
 
 func _ready():
-	pass
-	
+	for wheel in $Wheels.get_children():
+		var wheel_marker = Marker3D.new()
+		wheel_marker.transform = wheel.transform
+		wheel_markers.append(wheel_marker)
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var delta: float = physics_state.step
@@ -106,6 +115,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var steering: float = Input.get_axis("right", "left")
 	var contact_point_ahead: Vector3 = Vector3.INF
 	var contact_point_behind: Vector3 = Vector3.INF
+	cur_grip = default_grip
 	grounded = false
 	
 	# Determine effective max speed
@@ -215,6 +225,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		#angular_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
+	if in_water:
+		cur_grip *= 0.7
+
 	var target_vel: Vector3 = prev_vel.move_toward(new_vel, delta * cur_grip * grip_multiplier) + (_gravity * delta)
 	linear_velocity = target_vel
 	prev_vel = target_vel
@@ -276,9 +289,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var floor_below = Util.raycast_for_group(self, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
 	if not grounded and (!in_hop or !floor_below):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
-		
-	handle_particles()
-	
+
 
 	# REFUSE TO GO UPSIDE DOWN (assuming we were at some point right side up)
 	# TODO: Actually implement rolling over
@@ -291,6 +302,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			# PANIC
 			rotation_degrees.z += 180
 			Debug.print("ROTATION PANIC: Could not recover from upside down state")
+
+	handle_particles()
+	# handle_wheels()
 
 	grounded = false
 	prev_transform = transform
@@ -446,8 +460,42 @@ func handle_drift_particles():
 	elif still_turbo_ready:
 		$DriftParticles/CenterCharged.visible = true
 
+# func _physics_process(delta):
+# 	handle_wheels(delta)
+
+# func handle_wheels(delta):
+# 	for i in range(len($Wheels.get_children())):
+# 		var wheel = $Wheels.get_child(i) as RigidBody3D
+# 		var wheel_marker = wheel_markers[i]
+
+# 		var wheel_radius = wheel.get_node("CollisionShape3D").shape.radius
+
+# 		var ray_start = wheel_marker.transform.origin + wheel_marker.transform.basis.y * (wheel_max_up - wheel_radius)
+# 		var ray_end = wheel_marker.transform.origin + -wheel_marker.transform.basis.y * (wheel_max_down + wheel_radius)
+# 		var col_dict = Util.raycast_for_group(wheel_marker, ray_start, ray_end, "floor", [wheel])
+
+# 		var distance = wheel_max_down
+
+# 		if col_dict:
+# 			distance = col_dict["distance"]
+		
+# 		wheel.transform = wheel_marker.transform.translated(wheel_marker.transform.basis.y * (distance - wheel_radius))
+
 
 func _process(delta):
 	# UI Stuff
 	var spd = linear_velocity.length()
 	UI.update_speed(spd)
+
+
+func water_entered(area):
+	Debug.print("Entered water")
+	in_water = true
+	water_bodies[area] = true
+
+
+func water_exited(area):
+	water_bodies.erase(area)
+	if water_bodies.size() == 0:
+		Debug.print("Exited water")
+		in_water = false
