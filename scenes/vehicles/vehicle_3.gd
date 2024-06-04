@@ -31,9 +31,12 @@ var turn_accel: float = 15
 @onready var small_boost_initial_accel: float = initial_accel * 3
 @onready var small_boost_exponent = accel_exponent
 
-@export var big_boost_max_speed: float
+@onready var normal_boost_max_speed: float = max_speed * 1.6
+@onready var big_boost_max_speed: float = max_speed * 2.0
 
-@export var miniturbo_duration: float
+@export var small_boost_duration: float = 1.0
+@export var normal_boost_duration: float = 1.5
+@export var big_boost_duration: float = 2.0
 
 @export var vehicle_length_ahead: float = 1.0
 @export var vehicle_length_behind: float = 1.0
@@ -86,6 +89,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var is_accel = Input.is_action_pressed("accelerate")
 	var is_brake = Input.is_action_pressed("brake")
 	var steering: float = Input.get_axis("right", "left")
+	var contact_point_ahead: Vector3 = Vector3.INF
+	var contact_point_behind: Vector3 = Vector3.INF
+	grounded = false
 	
 	# Determine effective max speed
 	cur_max_speed = max_speed
@@ -103,11 +109,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	if not is_brake:
 		can_hop = true
 		drift_dir = 0
-
-	grounded = false
-
-	var contact_point_ahead: Vector3 = Vector3.INF
-	var contact_point_behind: Vector3 = Vector3.INF
 	
 	#print("Contacts")
 	for i in range(physics_state.get_contact_count()):
@@ -232,7 +233,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	else:
 		if drift_gauge >= drift_gauge_max:
 			# Drift turbo
-			$SmallBoostTimer.start(miniturbo_duration)
+			$SmallBoostTimer.start(small_boost_duration)
 		drift_gauge = 0.0
 	#Debug.print(drift_gauge)
 	
@@ -254,14 +255,13 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	#Debug.print(in_drift)
 	
 	
-	#TODO: Change this. Use function to determine angular velocity to turn back to 0.
-	#TODO: Rotate to match gravity!
+	#TODO: Make this dependent on gravity vector
 	rotation_degrees.x = move_toward(rotation_degrees.x, 0, 2.0)
 	var floor_below = Util.raycast_for_group(self, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
 	if not grounded and (!in_hop or !floor_below):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 0.5)
 		
-	determine_drift_particles()
+	handle_particles()
 	
 	grounded = false
 
@@ -300,7 +300,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 				still_turbo_ready = false
 				# Perform miniturbo.
 				#Debug.print("Performing miniturbo")
-				$SmallBoostTimer.start(miniturbo_duration)
+				$SmallBoostTimer.start(small_boost_duration)
 				
 			cur_speed += get_accel_speed(delta)
 		elif is_brake:
@@ -387,21 +387,38 @@ func _on_still_turbo_timer_timeout():
 	#Debug.print("Miniturbo ready")
 	still_turbo_ready = true
 
+
+func handle_particles():
+	handle_drift_particles()
+
+
+func handle_drift_particles():
+	$DriftParticles/CenterCharging.visible = false
+	$DriftParticles/CenterCharged.visible = false
+	$DriftParticles/LeftCharging.visible = false
+	$DriftParticles/LeftCharged.visible = false
+	$DriftParticles/RightCharging.visible = false
+	$DriftParticles/RightCharged.visible = false
+	
+	if in_drift:
+		Debug.print(drift_dir)
+		if drift_gauge >= drift_gauge_max:
+			if drift_dir > 0:
+				$DriftParticles/LeftCharged.visible = true
+			else:
+				$DriftParticles/RightCharged.visible = true
+		else:
+			if drift_dir > 0:
+				$DriftParticles/LeftCharging.visible = true
+			else:
+				$DriftParticles/RightCharging.visible = true
+	elif !$StillTurboTimer.is_stopped():
+		$DriftParticles/CenterCharging.visible = true
+	elif still_turbo_ready:
+		$DriftParticles/CenterCharged.visible = true
+
+
 func _process(delta):
 	# UI Stuff
 	var spd = linear_velocity.length()
 	UI.update_speed(spd)
-
-func determine_drift_particles():
-	$DriftChargingParticles.visible = false
-	$DriftChargedParticles.visible = false
-	
-	if in_drift:
-		if drift_gauge >= drift_gauge_max:
-			$DriftChargedParticles.visible = true
-		else:
-			$DriftChargingParticles.visible = true
-	elif !$StillTurboTimer.is_stopped():
-		$DriftChargingParticles.visible = true
-	elif still_turbo_ready:
-		$DriftChargedParticles.visible = true
