@@ -2,6 +2,9 @@ extends RigidBody3D
 
 class_name Vehicle3
 
+var check_idx = -1
+var lap = 0
+
 @export var max_speed: float = 20
 @onready var cur_max_speed = max_speed
 @onready var max_reverse_speed: float = max_speed * 0.5
@@ -27,16 +30,27 @@ class_name Vehicle3
 var cur_turn_speed: float = 0
 var turn_accel: float = 15
 
+@export var trick_cooldown_time: float = 0.3
+@export var trick_force: float = 1.0
+var in_trick: bool = false
+var trick_frames: int = 0
+@onready var trick_boost_timer: Timer = $NormalBoostTimer
+
 @onready var small_boost_max_speed: float = max_speed * 1.2
 @onready var small_boost_initial_accel: float = initial_accel * 3
 @onready var small_boost_exponent = accel_exponent
 
-@onready var normal_boost_max_speed: float = max_speed * 1.6
-@onready var big_boost_max_speed: float = max_speed * 2.0
+@onready var normal_boost_max_speed: float = max_speed * 1.4
+@onready var normal_boost_initial_accel: float = initial_accel * 2
+@onready var normal_boost_exponent = accel_exponent
 
-@export var small_boost_duration: float = 1.0
-@export var normal_boost_duration: float = 1.5
-@export var big_boost_duration: float = 2.0
+@onready var big_boost_max_speed: float = max_speed * 1.6
+
+@export var small_boost_duration: float = 0.6
+@export var normal_boost_duration: float = 1.0
+@export var big_boost_duration: float = 1.5
+
+@onready var trick_boost_duration = normal_boost_duration
 
 @export var vehicle_length_ahead: float = 1.0
 @export var vehicle_length_behind: float = 1.0
@@ -53,6 +67,7 @@ var drift_dir: int = 0
 @onready var min_hop_speed: float = max_speed * 0.5
 var hop_force: float = 4.0
 var can_hop: bool = true
+#var global_hop: Vector3 = Vector3.ZERO
 
 var drift_gauge: float = 0.0
 @export var drift_gauge_max: float = 100.0
@@ -80,6 +95,7 @@ var prev_vel: Vector3 = Vector3.ZERO
 var prev_transform: Transform3D = Transform3D.IDENTITY
 
 var sleep = false
+var extra_fov: float = 0.0
 
 var in_water = false
 var water_bodies: Dictionary = {}
@@ -113,6 +129,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var is_accel = Input.is_action_pressed("accelerate")
 	var is_brake = Input.is_action_pressed("brake")
 	var steering: float = Input.get_axis("right", "left")
+	var trick_input: bool = Input.is_action_pressed("trick")
 	var contact_point_ahead: Vector3 = Vector3.INF
 	var contact_point_behind: Vector3 = Vector3.INF
 	cur_grip = default_grip
@@ -151,6 +168,25 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 					in_drift = false
 				else:
 					in_drift = true
+			
+			if in_trick and trick_frames > 2:
+				in_trick = false
+				trick_frames = 0
+				Debug.print(["Starting trick boost", trick_boost_timer])
+				trick_boost_timer.start(trick_boost_duration)
+		
+		if collider.is_in_group("boost"):
+			$NormalBoostTimer.start(normal_boost_duration)
+		
+		if collider.is_in_group("trick"):
+			$TrickTimer.start(trick_cooldown_time)
+			trick_boost_timer = $NormalBoostTimer
+			trick_boost_duration = normal_boost_duration
+		if collider.is_in_group("small_trick"):
+			$TrickTimer.start(trick_cooldown_time)
+			trick_boost_timer = $SmallBoostTimer
+			trick_boost_duration = small_boost_duration
+
 			# var global_contact_position: Vector3 = physics_state.get_contact_local_position(i)
 			# # Transform to local space
 			# var local_contact_position: Vector3 = global_contact_position - transform.origin
@@ -171,6 +207,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	#print(contact_point_ahead, contact_point_behind)
 	
+	if not grounded and trick_input and not $TrickTimer.is_stopped():
+		Debug.print("Trick input detected")
+		in_trick = true
+	
 	var new_vel = Vector3.ZERO
 	var ground_vel = get_grounded_vel(delta)
 	if grounded:
@@ -181,6 +221,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		air_frames += 1
 		new_vel = get_air_vel(delta)
 		#print("airborne ", new_vel)
+	
+	if in_trick and not in_hop:
+		trick_frames += 1
+		new_vel += transform.basis.y * trick_force / (trick_frames+1)
 	
 	#print(speed_vec)
 	
@@ -226,7 +270,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	angular_velocity = Vector3.ZERO
 
 	if in_water:
-		cur_grip *= 0.7
+		cur_grip *= 0.5
 
 	var target_vel: Vector3 = prev_vel.move_toward(new_vel, delta * cur_grip * grip_multiplier) + (_gravity * delta)
 	linear_velocity = target_vel
@@ -271,8 +315,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var turn_target = adjusted_steering * adjusted_max_turn_speed
 	#if in_drift:
 		#turn_target = steering * max_turn_speed_drift
-	if !grounded:
-		turn_target *= air_turn_multiplier
+	#if !grounded:
+		#turn_target *= air_turn_multiplier
 	var cur_turn_accel = turn_accel
 	if !grounded:
 		cur_turn_accel *= air_turn_multiplier * air_turn_multiplier*5
@@ -317,14 +361,14 @@ func get_grounded_vel(delta: float) -> Vector3:
 	#print(is_accel, is_brake, steering)
 	var hop_vel = Vector3.ZERO
 	
+	var should_hop = false
 	if is_accel and is_brake:
 		if cur_speed > min_hop_speed:
 			if in_drift:
 				cur_speed += get_accel_speed(delta)
 			elif can_hop:
 				# Perform hop for drift
-				in_hop = true
-				hop_vel = transform.basis.y * hop_force / (in_hop_frames+1)
+				should_hop = true
 			else:
 				cur_speed += get_friction_speed(delta)
 		else:
@@ -363,6 +407,15 @@ func get_grounded_vel(delta: float) -> Vector3:
 	
 	# Apply boosts
 	cur_speed += get_boost_speed(delta)
+	
+	#global_hop = Vector3.ZERO
+	#if not grounded and in_trick:
+		#should_hop = true
+		#global_hop = transform.basis.y * hop_force / (in_hop_frames+1)
+	
+	if should_hop:
+		in_hop = true
+		hop_vel = transform.basis.y * hop_force / (in_hop_frames+1)
 
 	print(cur_speed)
 	
@@ -417,6 +470,10 @@ func get_friction_speed(delta: float) -> float:
 
 
 func get_boost_speed(delta: float) -> float:
+	if not $NormalBoostTimer.is_stopped():
+		# Normal boost is active
+		return Util.get_vehicle_accel(normal_boost_max_speed, cur_speed, normal_boost_initial_accel, normal_boost_exponent) * delta
+
 	if not $SmallBoostTimer.is_stopped():
 		# Small boost is active
 		return Util.get_vehicle_accel(small_boost_max_speed, cur_speed, small_boost_initial_accel, small_boost_exponent) * delta
@@ -486,10 +543,16 @@ func _process(delta):
 	# UI Stuff
 	var spd = linear_velocity.length()
 	UI.update_speed(spd)
+	
+	if cur_speed > max_speed:
+		extra_fov = (cur_speed - max_speed) * 0.25
+	else:
+		extra_fov = 0.0
+	
+	Debug.print([lap, check_idx])
 
 
 func water_entered(area):
-	Debug.print("Entered water")
 	in_water = true
 	water_bodies[area] = true
 
@@ -497,5 +560,4 @@ func water_entered(area):
 func water_exited(area):
 	water_bodies.erase(area)
 	if water_bodies.size() == 0:
-		Debug.print("Exited water")
 		in_water = false

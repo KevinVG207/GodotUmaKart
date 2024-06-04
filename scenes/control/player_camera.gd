@@ -1,8 +1,9 @@
 extends Camera3D
 
+@export var default_fov: float = 75
 var target: Vehicle3 = null
-var offset: Vector3 = Vector3(-5, 2, 0)
-var offset_bw: Vector3 = Vector3(5, 2, 0)
+var offset: Vector3 = Vector3(-5, 2.5, 0)
+var offset_bw: Vector3 = Vector3(5, 2.5, 0)
 #var offset: Vector3 = Vector3(0, 2, 5)
 var look_offset: Vector3 = Vector3(0, 1.2, 0)
 var lerp_speed: float = 12
@@ -63,3 +64,9 @@ func _on_camera_area_area_exited(area):
 	if water_areas.size() == 0:
 		in_water = false
 		UI.clear_effect()
+
+func _process(_delta):
+	if !target:
+		return
+		
+	fov = default_fov + target.extra_fov

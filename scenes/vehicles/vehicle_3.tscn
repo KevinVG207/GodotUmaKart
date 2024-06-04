@@ -11,6 +11,9 @@ absorbent = true
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_80jr0"]
 
+[sub_resource type="BoxMesh" id="BoxMesh_tyxqj"]
+size = Vector3(0.46, 0.445, 0.265)
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_43ekg"]
 angle_min = -90.0
 angle_max = 90.0
@@ -100,9 +103,6 @@ initial_velocity_max = 1.0
 radial_velocity_max = 1.0
 gravity = Vector3(0, 0, 0)
 
-[sub_resource type="BoxMesh" id="BoxMesh_tyxqj"]
-size = Vector3(0.46, 0.445, 0.265)
-
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_r0fog"]
 height = 0.1
 radius = 0.2
@@ -129,12 +129,38 @@ mesh = SubResource("CapsuleMesh_h0c43")
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 shape = SubResource("CapsuleShape3D_80jr0")
 
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
+mesh = SubResource("BoxMesh_tyxqj")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
+mesh = SubResource("CapsuleMesh_h0c43")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
+shape = SubResource("CapsuleShape3D_80jr0")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
+mesh = SubResource("CapsuleMesh_h0c43")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
+shape = SubResource("CapsuleShape3D_80jr0")
+
 [node name="StillTurboTimer" type="Timer" parent="."]
 process_callback = 0
 wait_time = 1.5
 one_shot = true
 
 [node name="SmallBoostTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="NormalBoostTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="TrickTimer" type="Timer" parent="."]
 one_shot = true
 
 [node name="DriftParticles" type="Node3D" parent="."]
@@ -375,26 +401,6 @@ visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_og57c")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
-mesh = SubResource("BoxMesh_tyxqj")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
-mesh = SubResource("CapsuleMesh_h0c43")
-
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
-shape = SubResource("CapsuleShape3D_80jr0")
-
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
-mesh = SubResource("CapsuleMesh_h0c43")
-
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
-shape = SubResource("CapsuleShape3D_80jr0")
 
 [node name="Wheels" type="Node3D" parent="."]
 visible = false
