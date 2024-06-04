@@ -39,7 +39,7 @@ var turn_accel: float = 15
 @export var vehicle_length_behind: float = 1.0
 @export var vehicle_width_bottom: float = 0.5
 
-var stick_speed: float = 75
+var stick_speed: float = 100
 var stick_distance: float = 0.5
 var stick_ray_count: int = 4
 var air_frames: int = 0
@@ -291,15 +291,15 @@ func get_grounded_vel(delta: float) -> Vector3:
 			# Check if we can miniturbo
 			if abs(cur_speed) <= still_turbo_max_speed:
 				# Do miniturbo.
-				if not still_turbo_ready and $StillTurboTimer.is_stopped():
+				if grounded and not still_turbo_ready and $StillTurboTimer.is_stopped():
 					$StillTurboTimer.start()
-					Debug.print("Start building up miniturbo")
+					#Debug.print("Start building up miniturbo")
 	else:
 		if is_accel:
 			if still_turbo_ready:
 				still_turbo_ready = false
 				# Perform miniturbo.
-				Debug.print("Performing miniturbo")
+				#Debug.print("Performing miniturbo")
 				$SmallBoostTimer.start(miniturbo_duration)
 				
 			cur_speed += get_accel_speed(delta)
@@ -312,10 +312,10 @@ func get_grounded_vel(delta: float) -> Vector3:
 		
 		if not $StillTurboTimer.is_stopped():
 			$StillTurboTimer.stop()
-			Debug.print("Stopped building up miniturbo")
+			#Debug.print("Stopped building up miniturbo")
 		if still_turbo_ready:
 			still_turbo_ready = false
-			Debug.print("Cancelled miniturbo")
+			#Debug.print("Cancelled miniturbo")
 	
 	# Apply boosts
 	cur_speed += get_boost_speed(delta)
@@ -384,7 +384,7 @@ func get_boost_speed(delta: float) -> float:
 	return 0
 
 func _on_still_turbo_timer_timeout():
-	Debug.print("Miniturbo ready")
+	#Debug.print("Miniturbo ready")
 	still_turbo_ready = true
 
 func _process(delta):
@@ -393,15 +393,15 @@ func _process(delta):
 	UI.update_speed(spd)
 
 func determine_drift_particles():
-	$DriftChargingParticles.emitting = false
-	$DriftChargedParticles.emitting = false
+	$DriftChargingParticles.visible = false
+	$DriftChargedParticles.visible = false
 	
 	if in_drift:
 		if drift_gauge >= drift_gauge_max:
-			$DriftChargedParticles.emitting = true
+			$DriftChargedParticles.visible = true
 		else:
-			$DriftChargingParticles.emitting = true
+			$DriftChargingParticles.visible = true
 	elif !$StillTurboTimer.is_stopped():
-		$DriftChargingParticles.emitting = true
+		$DriftChargingParticles.visible = true
 	elif still_turbo_ready:
-		$DriftChargedParticles.emitting = true
+		$DriftChargedParticles.visible = true

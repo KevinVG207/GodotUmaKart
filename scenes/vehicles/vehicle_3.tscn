@@ -56,7 +56,7 @@ gravity = Vector3(0, 0, 0)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s4sj8"]
 transparency = 1
 shading_mode = 0
-albedo_color = Color(0.792768, 0.921898, 1, 1)
+albedo_color = Color(1, 0.714868, 0.669018, 1)
 albedo_texture = ExtResource("2_b5ade")
 billboard_mode = 3
 billboard_keep_scale = true
