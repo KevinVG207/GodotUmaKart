@@ -279,6 +279,19 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		
 	handle_particles()
 	
+
+	# REFUSE TO GO UPSIDE DOWN (assuming we were at some point right side up)
+	# TODO: Actually implement rolling over
+	var angle_from_gravity = rad_to_deg(transform.basis.y.angle_to(-gravity))
+	if angle_from_gravity >= 90:
+		var prev_angle_from_gravity = rad_to_deg(prev_transform.basis.y.angle_to(-gravity))
+		if prev_angle_from_gravity < 90:
+			transform.basis = prev_transform.basis
+		else:
+			# PANIC
+			rotation_degrees.z += 180
+			Debug.print("ROTATION PANIC: Could not recover from upside down state")
+
 	grounded = false
 	prev_transform = transform
 
