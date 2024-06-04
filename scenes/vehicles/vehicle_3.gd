@@ -71,7 +71,14 @@ var terminal_velocity = 30
 @export var grip_multiplier: float = 1.0
 var cur_grip: float = 100.0
 
+var max_displacement_for_sleep = 0.003
+var max_degrees_change_for_sleep = 0.01
+
 var prev_vel: Vector3 = Vector3.ZERO
+
+var prev_transform: Transform3D = Transform3D.IDENTITY
+
+var sleep = false
 
 
 func _ready():
@@ -85,6 +92,14 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	#Debug.print(prev_gravity_vel)
 	var prev_up_spd: float = prev_vel.project(transform.basis.y).y
 	#Debug.print(str(prev_gravity_vel))
+
+	var prev_origin = prev_transform.origin
+	var prev_rotation = prev_transform.basis
+
+	sleep = false
+	if prev_origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
+		transform = prev_transform
+		sleep = true
 	
 	var is_accel = Input.is_action_pressed("accelerate")
 	var is_brake = Input.is_action_pressed("brake")
@@ -256,14 +271,16 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	
 	#TODO: Make this dependent on gravity vector
-	rotation_degrees.x = move_toward(rotation_degrees.x, 0, 2.0)
+	if not sleep:
+		rotation_degrees.x = move_toward(rotation_degrees.x, 0, 6 * delta)
 	var floor_below = Util.raycast_for_group(self, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
 	if not grounded and (!in_hop or !floor_below):
-		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 0.5)
+		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
 		
 	handle_particles()
 	
 	grounded = false
+	prev_transform = transform
 
 
 func get_grounded_vel(delta: float) -> Vector3:
@@ -401,7 +418,6 @@ func handle_drift_particles():
 	$DriftParticles/RightCharged.visible = false
 	
 	if in_drift:
-		Debug.print(drift_dir)
 		if drift_gauge >= drift_gauge_max:
 			if drift_dir > 0:
 				$DriftParticles/LeftCharged.visible = true
