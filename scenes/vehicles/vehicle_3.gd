@@ -3,6 +3,7 @@ extends RigidBody3D
 class_name Vehicle3
 
 var check_idx = -1
+var check_progress = 0.0
 var lap = 0
 
 @export var max_speed: float = 20
@@ -262,6 +263,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		# Check if we should bounce!
 		# If we are already moving away from the wall, don't bounce!
 		var dp = avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
+		Debug.print(dp)
 		if dp < 0:
 			linear_velocity = prev_frame_pre_sim_vel.bounce(avg_normal.normalized()) * bounce_ratio
 			grounded = false
@@ -621,7 +623,7 @@ func _process(delta):
 	else:
 		extra_fov = 0.0
 	
-	Debug.print([lap, check_idx])
+	Debug.print([lap, check_idx, check_progress])
 
 
 func water_entered(area):
