@@ -118,12 +118,9 @@ func _ready():
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var delta: float = physics_state.step
-	var prev_prev_vel: Vector3 = prev_vel
 	var prev_vel: Vector3 = linear_velocity
 	var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
-	#Debug.print(prev_gravity_vel)
-	var prev_up_spd: float = prev_vel.project(transform.basis.y).y
-	#Debug.print(str(prev_gravity_vel))
+
 
 	var prev_origin = prev_transform.origin
 	var prev_rotation = prev_transform.basis
@@ -137,8 +134,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var is_brake = Input.is_action_pressed("brake")
 	var steering: float = Input.get_axis("right", "left")
 	var trick_input: bool = Input.is_action_pressed("trick")
-	var contact_point_ahead: Vector3 = Vector3.INF
-	var contact_point_behind: Vector3 = Vector3.INF
 	cur_grip = default_grip
 	grounded = false
 	
@@ -202,38 +197,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				"position": physics_state.get_contact_local_position(i),
 				"object": collider
 			})
-			# Get position of the contact point in local space
-			#var local_contact_position: Vector3 = to_local(physics_state.get_contact_local_position(i))
-			#
-			##If the point is too low, ignore it
-			#if local_contact_position.y > -vehicle_width_bottom * (2./3.):
-				#wall_contacts.append({
-					#"normal": physics_state.get_contact_local_normal(i),
-					#"position": physics_state.get_contact_local_position(i),
-					#"object": collider
-				#})
-			
-		
-
-			# var global_contact_position: Vector3 = physics_state.get_contact_local_position(i)
-			# # Transform to local space
-			# var local_contact_position: Vector3 = global_contact_position - transform.origin
-			# # Rotate the point to match the rotation of the vehicle
-			# var rotated_contact_position: Vector3 = transform.basis.x.rotated(transform.basis.y, -rotation_degrees.y).rotated(transform.basis.z, -rotation_degrees.z).rotated(transform.basis.x, -rotation_degrees.x).normalized() * local_contact_position
-			# #print("Rotated: ", rotated_contact_position)
-			# var point_distance = rotated_contact_position.length()
-
-			# if rotated_contact_position.x > 0:
-			# 	if point_distance < contact_point_ahead.length():
-			# 		contact_point_ahead = rotated_contact_position
-			# else:
-			# 	if point_distance < contact_point_behind.length():
-			# 		contact_point_behind = rotated_contact_position
-
-			#print(collider)
-	#print("===")
-
-	#print(contact_point_ahead, contact_point_behind)
 
 
 	# Handle walls
@@ -259,14 +222,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				if cur_bounce_ratio > bounce_ratio:
 					bounce_ratio = cur_bounce_ratio
 		
-		# var dist_from_plane = transform.basis.z.dot(avg_position)
-		# var deg = -90
-		# if dist_from_plane < 0:
-		# 	deg = 90
-		# avg_normal = avg_normal.rotated(transform.basis.y, deg_to_rad(deg))
-		
-		# Check if we should bounce!
-		# If we are already moving away from the wall, don't bounce!
+		# If we are already moving away from the wall, don't bounce
 		var dp = avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
 		if dp < 0:
 			# Get the component of the linear velocity that is perpendicular to the wall
@@ -282,11 +238,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				bounce_frames = 3
 				wall_contacts = []
 			cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
-
-
-
-
-		
 
 	
 	if not grounded and trick_input and not $TrickTimer.is_stopped():
@@ -315,40 +266,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
 	if grounded:
 		_gravity *= 2
-		#angular_velocity *= 0.5
-		#if contact_point_ahead == Vector3.INF:
-			#Debug.print("A")
-			## Front of the capsule is in the air.
-			## Try to stick to the ground.
-			#var col_point = {}
-			#for i in range(1, stick_ray_count + 1):
-				#var hor_dist = vehicle_length_ahead / stick_ray_count * i
-				#var ray_origin = transform.origin + (transform.basis.y * -vehicle_width_bottom) + (transform.basis.x * (hor_dist))
-				#var ray_end = ray_origin + (transform.basis.y * -stick_distance)
-				#var col_dict = Util.raycast_for_group(self, ray_origin, ray_end, "floor", [])
-				##Debug.print(col_dict)
-				#if not col_dict:
-					#continue
-				#col_dict["hor_dist"] = hor_dist
-				#if not col_point:
-					#col_point = col_dict
-				#if col_dict["distance"] < col_point["distance"]:
-					#col_point = col_dict
-			#Debug.print("B")
-			#if col_point:
-				#var local_contact = to_local(contact_point_behind)
-				#var local_col = to_local(col_point["position"])
-#
-				#var opposite = local_col.y - local_contact.y
-				#var adjacent = local_col.x - local_contact.x
-#
-				#var angle = -atan(opposite / adjacent)
-#
-				#Debug.print([opposite, adjacent, angle])
 
-
-	#if not grounded:
-		#angular_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 
 	if in_water:
@@ -395,10 +313,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	#Debug.print(adjusted_max_turn_speed)
 	
 	var turn_target = adjusted_steering * adjusted_max_turn_speed
-	#if in_drift:
-		#turn_target = steering * max_turn_speed_drift
-	#if !grounded:
-		#turn_target *= air_turn_multiplier
+
 	var cur_turn_accel = turn_accel
 	if !grounded:
 		cur_turn_accel *= air_turn_multiplier * air_turn_multiplier*5
@@ -408,7 +323,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		linear_velocity = linear_velocity.rotated(transform.basis.y, deg_to_rad(cur_turn_speed))
 	#Debug.print(in_drift)
 	
-	
+
 	#TODO: Make this dependent on gravity vector
 	if not sleep:
 		rotation_degrees.x = move_toward(rotation_degrees.x, 0, 6 * delta)
@@ -491,11 +406,6 @@ func get_grounded_vel(delta: float) -> Vector3:
 	
 	# Apply boosts
 	cur_speed += get_boost_speed(delta)
-	
-	#global_hop = Vector3.ZERO
-	#if not grounded and in_trick:
-		#should_hop = true
-		#global_hop = transform.basis.y * hop_force / (in_hop_frames+1)
 	
 	if should_hop:
 		in_hop = true
