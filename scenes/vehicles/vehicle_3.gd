@@ -100,7 +100,9 @@ var extra_fov: float = 0.0
 var in_water = false
 var water_bodies: Dictionary = {}
 
-var bounce_force: float = 5
+var bounce_force: float = 10
+var bounce_frames: int = 0
+var prev_frame_pre_sim_vel: Vector3 = Vector3.ZERO
 
 @export var wheel_max_up: float = 0.2
 @export var wheel_max_down: float = 0.5
@@ -114,6 +116,7 @@ func _ready():
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var delta: float = physics_state.step
+	var prev_prev_vel: Vector3 = prev_vel
 	var prev_vel: Vector3 = linear_velocity
 	var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
 	#Debug.print(prev_gravity_vel)
@@ -222,6 +225,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 
 	# Handle walls
+	if bounce_frames > 0:
+		bounce_frames -= 1
 	if wall_contacts.size() > 0:
 		var avg_normal: Vector3 = Vector3.ZERO
 		var avg_position: Vector3 = Vector3.ZERO
@@ -234,7 +239,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		avg_position /= wall_contacts.size()
 		# var avg_normal = wall_contacts[-1]["normal"]
 
-		var bounce_ratio = 0.1
+		var bounce_ratio = 0.2
 		for wall in wall_contacts:
 			var col_obj = wall["object"]
 			if col_obj.get("physics_material_override") and col_obj.physics_material_override.get("bounce"):
@@ -243,19 +248,29 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 					bounce_ratio = cur_bounce_ratio
 		
 		# Normal is fucky-wucky
-		var dist_from_plane = transform.basis.z.dot(avg_position)
-		var deg = -90
-		if dist_from_plane < 0:
-			deg = 90
+		#var dist_from_plane = transform.basis.z.dot(avg_position)
+		#var deg = 90
+		#if dist_from_plane < 0:
+			#deg = -90
 		#avg_normal = avg_normal.rotated(transform.basis.y, deg_to_rad(deg))
 		
+		print("Avg_normal: ", avg_normal)
+		print("Pos: ", transform.origin)
+		print(prev_frame_pre_sim_vel)
 		print(linear_velocity)
-		linear_velocity = linear_velocity.reflect(-avg_normal.normalized()) * bounce_ratio
-		grounded = false
-		linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
-		prev_vel = linear_velocity
-		print(linear_velocity)
-		print("A")
+		
+		# Check if we should bounce!
+		# If we are already moving away from the wall, don't bounce!
+		var dp = avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
+		if dp < 0:
+			linear_velocity = prev_frame_pre_sim_vel.bounce(avg_normal.normalized()) * bounce_ratio
+			grounded = false
+			linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
+			prev_vel = linear_velocity
+			print(linear_velocity)
+			print("A")
+			bounce_frames = 3
+			wall_contacts = []
 
 
 
@@ -269,7 +284,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	var new_vel = Vector3.ZERO
 	var ground_vel = get_grounded_vel(delta)
-	if grounded:
+	if grounded and bounce_frames == 0:
 		air_frames = 0
 		new_vel = ground_vel
 		#print("grounded ", new_vel)
@@ -334,7 +349,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	# Stick to ground.
 	# Perform raycast in local -y direction
-	if air_frames < 5 and !in_hop:
+	if air_frames < 5 and !in_hop and bounce_frames == 0:
 		var space_state = get_world_3d().direct_space_state
 		var ray_origin = transform.origin + transform.basis.y * -0.5
 		var ray_end = ray_origin + transform.basis.y * -0.9
@@ -408,6 +423,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	grounded = false
 	prev_transform = transform
+	prev_frame_pre_sim_vel = linear_velocity
 
 
 func get_grounded_vel(delta: float) -> Vector3:
