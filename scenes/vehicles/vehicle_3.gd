@@ -104,6 +104,7 @@ var water_bodies: Dictionary = {}
 var bounce_force: float = 10
 var bounce_frames: int = 0
 var prev_frame_pre_sim_vel: Vector3 = Vector3.ZERO
+@onready var min_bounce_speed: float = max_speed * 0.4
 
 @export var wheel_max_up: float = 0.2
 @export var wheel_max_down: float = 0.5
@@ -201,7 +202,17 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				"position": physics_state.get_contact_local_position(i),
 				"object": collider
 			})
-		
+			# Get position of the contact point in local space
+			#var local_contact_position: Vector3 = to_local(physics_state.get_contact_local_position(i))
+			#
+			##If the point is too low, ignore it
+			#if local_contact_position.y > -vehicle_width_bottom * (2./3.):
+				#wall_contacts.append({
+					#"normal": physics_state.get_contact_local_normal(i),
+					#"position": physics_state.get_contact_local_position(i),
+					#"object": collider
+				#})
+			
 		
 
 			# var global_contact_position: Vector3 = physics_state.get_contact_local_position(i)
@@ -248,31 +259,29 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				if cur_bounce_ratio > bounce_ratio:
 					bounce_ratio = cur_bounce_ratio
 		
-		# Normal is fucky-wucky
-		#var dist_from_plane = transform.basis.z.dot(avg_position)
-		#var deg = 90
-		#if dist_from_plane < 0:
-			#deg = -90
-		#avg_normal = avg_normal.rotated(transform.basis.y, deg_to_rad(deg))
-		
-		print("Avg_normal: ", avg_normal)
-		print("Pos: ", transform.origin)
-		print(prev_frame_pre_sim_vel)
-		print(linear_velocity)
+		# var dist_from_plane = transform.basis.z.dot(avg_position)
+		# var deg = -90
+		# if dist_from_plane < 0:
+		# 	deg = 90
+		# avg_normal = avg_normal.rotated(transform.basis.y, deg_to_rad(deg))
 		
 		# Check if we should bounce!
 		# If we are already moving away from the wall, don't bounce!
 		var dp = avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
-		Debug.print(dp)
 		if dp < 0:
-			linear_velocity = prev_frame_pre_sim_vel.bounce(avg_normal.normalized()) * bounce_ratio
-			grounded = false
-			linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
-			prev_vel = linear_velocity
-			print(linear_velocity)
-			print("A")
-			bounce_frames = 3
-			wall_contacts = []
+			# Get the component of the linear velocity that is perpendicular to the wall
+			var perp_vel = prev_frame_pre_sim_vel.project(avg_normal).length()
+			#Debug.print(perp_vel)
+			var new_max_speed = (1 - abs(dp)) * cur_max_speed
+			if perp_vel > min_bounce_speed:
+				linear_velocity = prev_frame_pre_sim_vel.bounce(avg_normal.normalized()) * bounce_ratio
+				if grounded:
+					linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
+				grounded = false
+				prev_vel = linear_velocity
+				bounce_frames = 3
+				wall_contacts = []
+			cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
 
 
 
@@ -426,6 +435,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	grounded = false
 	prev_transform = transform
 	prev_frame_pre_sim_vel = linear_velocity
+	print(cur_speed)
 
 
 func get_grounded_vel(delta: float) -> Vector3:
@@ -465,7 +475,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 				$SmallBoostTimer.start(small_boost_duration)
 				
 			cur_speed += get_accel_speed(delta)
-		elif is_brake:
+		elif is_brake and grounded:
 			in_drift = false
 			cur_speed += get_reverse_speed(delta)
 		else:
@@ -490,8 +500,6 @@ func get_grounded_vel(delta: float) -> Vector3:
 	if should_hop:
 		in_hop = true
 		hop_vel = transform.basis.y * hop_force / (in_hop_frames+1)
-
-	print(cur_speed)
 	
 	var speed_vel = transform.basis.x.normalized() * cur_speed
 	
@@ -623,7 +631,7 @@ func _process(delta):
 	else:
 		extra_fov = 0.0
 	
-	Debug.print([lap, check_idx, check_progress])
+	#Debug.print([lap, check_idx, check_progress])
 
 
 func water_entered(area):
