@@ -100,6 +100,8 @@ var extra_fov: float = 0.0
 var in_water = false
 var water_bodies: Dictionary = {}
 
+var bounce_force: float = 5
+
 @export var wheel_max_up: float = 0.2
 @export var wheel_max_down: float = 0.5
 var wheel_markers: Array = []
@@ -152,6 +154,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		can_hop = true
 		drift_dir = 0
 	
+	var wall_contacts: Array = []
+	
 	#print("Contacts")
 	for i in range(physics_state.get_contact_count()):
 		var collider = physics_state.get_contact_collider_object(i) as Node
@@ -186,6 +190,15 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			$TrickTimer.start(trick_cooldown_time)
 			trick_boost_timer = $SmallBoostTimer
 			trick_boost_duration = small_boost_duration
+		
+		if collider.is_in_group("wall"):
+			wall_contacts.append({
+				"normal": physics_state.get_contact_local_normal(i),
+				"position": physics_state.get_contact_local_position(i),
+				"object": collider
+			})
+		
+		
 
 			# var global_contact_position: Vector3 = physics_state.get_contact_local_position(i)
 			# # Transform to local space
@@ -206,6 +219,49 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	#print("===")
 
 	#print(contact_point_ahead, contact_point_behind)
+
+
+	# Handle walls
+	if wall_contacts.size() > 0:
+		var avg_normal: Vector3 = Vector3.ZERO
+		var avg_position: Vector3 = Vector3.ZERO
+		print("===")
+		for wall in wall_contacts:
+			print(wall["normal"])
+			avg_normal += wall["normal"]
+			avg_position += wall["position"]
+		avg_normal /= wall_contacts.size()
+		avg_position /= wall_contacts.size()
+		# var avg_normal = wall_contacts[-1]["normal"]
+
+		var bounce_ratio = 0.1
+		for wall in wall_contacts:
+			var col_obj = wall["object"]
+			if col_obj.get("physics_material_override") and col_obj.physics_material_override.get("bounce"):
+				var cur_bounce_ratio = col_obj.physics_material_override.bounce
+				if cur_bounce_ratio > bounce_ratio:
+					bounce_ratio = cur_bounce_ratio
+		
+		# Normal is fucky-wucky
+		var dist_from_plane = transform.basis.z.dot(avg_position)
+		var deg = -90
+		if dist_from_plane < 0:
+			deg = 90
+		#avg_normal = avg_normal.rotated(transform.basis.y, deg_to_rad(deg))
+		
+		print(linear_velocity)
+		linear_velocity = linear_velocity.reflect(-avg_normal.normalized()) * bounce_ratio
+		grounded = false
+		linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
+		prev_vel = linear_velocity
+		print(linear_velocity)
+		print("A")
+
+
+
+
+		
+
 	
 	if not grounded and trick_input and not $TrickTimer.is_stopped():
 		Debug.print("Trick input detected")
