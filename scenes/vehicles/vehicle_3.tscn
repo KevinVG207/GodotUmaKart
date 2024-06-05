@@ -127,7 +127,9 @@ mesh = SubResource("CapsuleMesh_h0c43")
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+visible = false
 shape = SubResource("CapsuleShape3D_80jr0")
+disabled = true
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
@@ -423,5 +425,8 @@ disabled = true
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Wheels/Wheel"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 mesh = SubResource("CylinderMesh_w6knp")
+
+[node name="Front" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]

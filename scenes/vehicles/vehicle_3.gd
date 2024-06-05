@@ -31,7 +31,7 @@ var lap = 0
 var cur_turn_speed: float = 0
 var turn_accel: float = 15
 
-@export var trick_cooldown_time: float = 0.3
+var trick_cooldown_time: float = 0.3
 @export var trick_force: float = 1.0
 var in_trick: bool = false
 var trick_frames: int = 0
@@ -132,7 +132,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	var is_accel = Input.is_action_pressed("accelerate")
 	var is_brake = Input.is_action_pressed("brake")
-	var steering: float = Input.get_axis("right", "left")
+	var steering: float = clamp(Input.get_axis("right", "left"), -1.0, 1.0)
 	var trick_input: bool = Input.is_action_pressed("trick")
 	cur_grip = default_grip
 	grounded = false

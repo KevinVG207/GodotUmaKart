@@ -44,7 +44,7 @@ func update_checkpoint(player: Vehicle3):
 
 func dist_to_checkpoint(player: Vehicle3, checkpoint_idx: int) -> float:
 	var checkpoint = checkpoints[checkpoint_idx % len(checkpoints)] as Node3D
-	return checkpoint.transform.basis.z.dot(player.transform.origin - checkpoint.transform.origin)
+	return checkpoint.transform.basis.z.dot(player.get_node("Front").global_position - checkpoint.global_position)
 
 func progress_in_cur_checkpoint(player: Vehicle3) -> float:
 	var dist_behind: float = abs(dist_to_checkpoint(player, player.check_idx))

@@ -5,7 +5,6 @@
 [sub_resource type="Environment" id="Environment_36oa2"]
 ssao_radius = 1.5
 ssil_enabled = true
-adjustment_enabled = true
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_xuuqo"]
 radius = 0.2
