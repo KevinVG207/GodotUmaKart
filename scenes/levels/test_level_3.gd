@@ -76,12 +76,13 @@ func update_checkpoint(player: Vehicle3):
 			
 			# Don't advance to next key checkpoint if the previous key checkpoint wasn't reached
 			if next_checkpoint.is_key:
-				var prev_key_idx = key_checkpoints[next_checkpoint] - 1
+				var cur_key_idx = key_checkpoints[next_checkpoint]
+				var prev_key_idx = cur_key_idx - 1
 				if prev_key_idx < 0:
 					prev_key_idx = key_checkpoints.size()-1
-				if prev_key_idx != player.check_key_idx:
+				if prev_key_idx != player.check_key_idx and player.check_key_idx != cur_key_idx:
 					break
-				player.check_key_idx = key_checkpoints[next_checkpoint]
+				player.check_key_idx = cur_key_idx
 
 			player.check_idx = next_idx
 			if next_idx == 0:
@@ -98,17 +99,22 @@ func update_checkpoint(player: Vehicle3):
 			var prev_checkpoint: Checkpoint = checkpoints[prev_idx]
 			if prev_checkpoint.is_key:
 				var cur_key = player.check_key_idx
-				if cur_key == 0:
-					cur_key += key_checkpoints.size()
 				
-				Debug.print([cur_key, key_checkpoints[prev_checkpoint]])
+				#Debug.print([cur_key, key_checkpoints[prev_checkpoint]])
 				var prev_key = key_checkpoints[prev_checkpoint]
+				var subtract = 0
+				if prev_key == 0:
+					subtract = key_checkpoints.size()
+					prev_key += subtract
+					cur_key += subtract
+				elif cur_key == 0:
+					cur_key += key_checkpoints.size()
 				
 				if prev_key != cur_key-1 and prev_key != cur_key:
 					break
 				
 				if prev_key == cur_key-1:
-					player.check_key_idx = prev_key
+					player.check_key_idx = prev_key - subtract
 			
 			player.check_idx = prev_idx
 			if prev_idx == len(checkpoints)-1:

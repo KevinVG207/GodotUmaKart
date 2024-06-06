@@ -592,7 +592,7 @@ func _process(delta):
 			extra_fov = 0.0
 	
 		print(cur_speed)
-		#Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
+		Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
 
 
 func water_entered(area):
