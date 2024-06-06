@@ -2,10 +2,12 @@ extends RigidBody3D
 
 class_name Vehicle3
 
-@export var is_player = false
-var check_idx = -1
-var check_progress = 0.0
-var lap = 0
+@export var is_player: bool = false
+var check_idx: int = -1
+var check_key_idx: int = 0
+var check_progress: float = 0.0
+var lap: int = 0
+var rank: int = 0
 
 var input_accel: bool = false
 var input_brake: bool = false
@@ -380,7 +382,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	grounded = false
 	prev_transform = transform
 	prev_frame_pre_sim_vel = linear_velocity
-	print(cur_speed)
 
 
 func get_grounded_vel(delta: float) -> Vector3:
@@ -590,7 +591,8 @@ func _process(delta):
 		else:
 			extra_fov = 0.0
 	
-		# Debug.print([lap, check_idx, check_progress])
+		print(cur_speed)
+		#Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
 
 
 func water_entered(area):

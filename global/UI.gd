@@ -17,3 +17,9 @@ func clear_effect():
 	water = false
 	var tween = create_tween()
 	tween.tween_property($RaceUI/ColorRect, "color", transparent, 0.2).set_trans(Tween.TRANS_CUBIC)
+
+func update_ranks(vehicles: Array):
+	var rank_strings = []
+	for vehicle: Vehicle3 in vehicles:
+		rank_strings.append("#" + str(vehicle.rank) + ": " + vehicle.name)
+	$RaceUI/Ranks.text = "\n".join(rank_strings)
