@@ -11,7 +11,7 @@ points = PackedVector3Array(-1, -1.25, 0, -0.924041, -1.25, 0.382537, -1, -1.150
 [node name="Cone" type="RigidBody3D"]
 collision_layer = 8
 collision_mask = 15
-mass = 10.0
+mass = 1000.0
 physics_material_override = SubResource("PhysicsMaterial_jn756")
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, 0.5, 0)
