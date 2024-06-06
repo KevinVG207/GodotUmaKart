@@ -1,6 +1,8 @@
 extends CanvasLayer
 
 func print(input):
+	if is_instance_of(input, TYPE_ARRAY):
+		input = " ".join(input)
 	input = str(input)
 	var lines: PackedStringArray = $MarginContainer/RichTextLabel.text.split("\n")
 	lines.insert(0, input)

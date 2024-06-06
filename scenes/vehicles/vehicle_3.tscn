@@ -7,9 +7,9 @@
 friction = 0.0
 absorbent = true
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_h0c43"]
-
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_80jr0"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_h0c43"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_tyxqj"]
 size = Vector3(0.46, 0.445, 0.265)
@@ -112,7 +112,9 @@ top_radius = 0.2
 bottom_radius = 0.2
 height = 0.1
 
-[node name="Vehicle3" type="RigidBody3D"]
+[node name="Vehicle3" type="RigidBody3D" groups=["vehicle"]]
+collision_layer = 9
+collision_mask = 4
 mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_b3vot")
 gravity_scale = 0.0
@@ -121,15 +123,19 @@ max_contacts_reported = 50
 contact_monitor = true
 script = ExtResource("1_lrmky")
 
+[node name="PlayerCollision" type="Area3D" parent="."]
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="PlayerCollision"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
+shape = SubResource("CapsuleShape3D_80jr0")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="PlayerCollision"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
+shape = SubResource("CapsuleShape3D_80jr0")
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
 mesh = SubResource("CapsuleMesh_h0c43")
-
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-visible = false
-shape = SubResource("CapsuleShape3D_80jr0")
-disabled = true
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
@@ -429,4 +435,6 @@ mesh = SubResource("CylinderMesh_w6knp")
 [node name="Front" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 
+[connection signal="area_entered" from="PlayerCollision" to="." method="_on_player_collision_area_entered"]
+[connection signal="area_exited" from="PlayerCollision" to="." method="_on_player_collision_area_exited"]
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]

@@ -1,7 +1,7 @@
 extends Camera3D
 
 @export var default_fov: float = 75
-var target: Vehicle3 = null
+@export var target: Vehicle3 = null
 var offset: Vector3 = Vector3(-5, 2.5, 0)
 var offset_bw: Vector3 = Vector3(5, 2.5, 0)
 #var offset: Vector3 = Vector3(0, 2, 5)
@@ -33,7 +33,7 @@ func _physics_process(delta):
 	cur_pos_bw.y = lerpf(prev_pos_bw.y, target.global_transform.translated_local(offset_bw).origin.y, lerp_speed * delta * 0.5)
 
 	var mirror = false
-	if Input.is_action_pressed("mirror"):
+	if target.input_mirror:
 		transform.origin = cur_pos_bw
 		mirror = true
 	else:

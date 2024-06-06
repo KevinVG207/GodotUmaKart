@@ -4,8 +4,13 @@ var checkpoints: Array = []
 var players: Array = []
 
 func _ready():
-	players.append($Vehicle3)
-	$PlayerCamera.target = $Vehicle3
+	#players.append($Vehicle3)
+	#$PlayerCamera.target = $Vehicle3
+	for vehicle in $Vehicles.get_children():
+		players.append(vehicle)
+	
+	$PlayerCamera.target = players[0]
+	players[0].is_player = true
 	
 	# Setup checkpoints
 	for checkpoint in $Checkpoints.get_children():

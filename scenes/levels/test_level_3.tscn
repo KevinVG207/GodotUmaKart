@@ -28,9 +28,25 @@ script = ExtResource("1_kxhjh")
 transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, 2, -18, 71.952)
 current = true
 
-[node name="Vehicle3" parent="." instance=ExtResource("1_3cfyl")]
+[node name="Vehicles" type="Node3D" parent="."]
+
+[node name="Player" parent="Vehicles" instance=ExtResource("1_3cfyl")]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2, -21, 65.952)
 axis_lock_angular_y = true
+
+[node name="Player2" parent="Vehicles" instance=ExtResource("1_3cfyl")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -21, 70.952)
+axis_lock_angular_y = true
+
+[node name="Player3" parent="Vehicles" instance=ExtResource("1_3cfyl")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 4, -21, 69.952)
+axis_lock_angular_y = true
+weight_multi = 0.1
+
+[node name="Player4" parent="Vehicles" instance=ExtResource("1_3cfyl")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 4, -21, 76.952)
+axis_lock_angular_y = true
+weight_multi = 2.0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.683013, -0.707107, -0.183013, 0.258819, -4.2222e-08, 0.965926, -0.683013, -0.707107, 0.183013, 0, 166, 0)

@@ -2,9 +2,16 @@ extends RigidBody3D
 
 class_name Vehicle3
 
+@export var is_player = false
 var check_idx = -1
 var check_progress = 0.0
 var lap = 0
+
+var input_accel: bool = false
+var input_brake: bool = false
+var input_steer: float = 0
+var input_trick: bool = false
+var input_mirror: bool = false
 
 @export var max_speed: float = 20
 @onready var cur_max_speed = max_speed
@@ -12,6 +19,9 @@ var lap = 0
 @export var initial_accel: float = 10
 @export var accel_exponent: float = 10
 @export var spd_steering_decrease: float = 1.0
+@export var weight_multi: float = 1.0
+var push_force: float = 100
+var max_push_force: float = 3
 
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
@@ -110,13 +120,31 @@ var prev_frame_pre_sim_vel: Vector3 = Vector3.ZERO
 @export var wheel_max_down: float = 0.5
 var wheel_markers: Array = []
 
+var colliding_vehicles: Dictionary = {}
+
 func _ready():
 	for wheel in $Wheels.get_children():
 		var wheel_marker = Marker3D.new()
 		wheel_marker.transform = wheel.transform
 		wheel_markers.append(wheel_marker)
 
+func handle_input():
+	if is_player:
+		input_accel = Input.is_action_pressed("accelerate")
+		input_brake = Input.is_action_pressed("brake")
+		input_steer = Input.get_axis("right", "left")
+		input_trick = Input.is_action_pressed("trick")
+		input_mirror = Input.is_action_pressed("mirror")
+
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
+	handle_input()
+	if !is_player:
+		set_collision_layer_value(1, false)
+		set_collision_layer_value(2, true)
+	else:
+		set_collision_layer_value(1, true)
+		set_collision_layer_value(2, false)
+		
 	var delta: float = physics_state.step
 	var prev_vel: Vector3 = linear_velocity
 	var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
@@ -130,10 +158,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		transform = prev_transform
 		sleep = true
 	
-	var is_accel = Input.is_action_pressed("accelerate")
-	var is_brake = Input.is_action_pressed("brake")
-	var steering: float = clamp(Input.get_axis("right", "left"), -1.0, 1.0)
-	var trick_input: bool = Input.is_action_pressed("trick")
+	var is_accel = input_accel
+	var is_brake = input_brake
+	var steering: float = clamp(input_steer, -1.0, 1.0)
+	var trick_input: bool = input_trick
 	cur_grip = default_grip
 	grounded = false
 	
@@ -148,7 +176,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			drift_dir = -1
 			if steering > 0:
 				drift_dir = 1
-	if in_drift and !Input.is_action_pressed("brake"):
+	if in_drift and !input_brake:
 		in_drift = false
 	if not is_brake:
 		can_hop = true
@@ -344,6 +372,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			rotation_degrees.z += 180
 			Debug.print("ROTATION PANIC: Could not recover from upside down state")
 
+	handle_vehicle_collisions(delta)
+
 	handle_particles()
 	# handle_wheels()
 
@@ -354,8 +384,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 
 func get_grounded_vel(delta: float) -> Vector3:
-	var is_accel = Input.is_action_pressed("accelerate")
-	var is_brake = Input.is_action_pressed("brake")
+	var is_accel = input_accel
+	var is_brake = input_brake
 	
 	#print(is_accel, is_brake, steering)
 	var hop_vel = Vector3.ZERO
@@ -480,6 +510,21 @@ func _on_still_turbo_timer_timeout():
 	#Debug.print("Miniturbo ready")
 	still_turbo_ready = true
 
+func handle_vehicle_collisions(delta: float):
+	if colliding_vehicles.size() > 0:
+		for col_vehicle: Vehicle3 in colliding_vehicles.keys():
+			var push_dir: Vector3 = -(col_vehicle.global_position - global_position).normalized()
+			
+			var dir_multi: float = 1.0
+			var dp: float = linear_velocity.normalized().dot(col_vehicle.linear_velocity.normalized())
+			dp -= 2
+			dp = -dp / 3
+			
+			var push_force: Vector3 = push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi) * dp * ((linear_velocity.length() + col_vehicle.linear_velocity.length()) / 2) * delta
+			if push_force.length() > max_push_force:
+				push_force = push_force.normalized() * max_push_force
+			#Debug.print(["Push force", push_force.length()])
+			linear_velocity += push_force
 
 func handle_particles():
 	handle_drift_particles()
@@ -530,7 +575,6 @@ func handle_drift_particles():
 		
 # 		wheel.transform = wheel_marker.transform.translated(wheel_marker.transform.basis.y * (distance - wheel_radius))
 
-
 func _process(delta):
 	# UI Stuff
 	var spd = linear_velocity.length()
@@ -553,3 +597,16 @@ func water_exited(area):
 	water_bodies.erase(area)
 	if water_bodies.size() == 0:
 		in_water = false
+
+
+func _on_player_collision_area_entered(area: Area3D):
+	var area_parent = area.get_parent() as Vehicle3
+	#Debug.print([self, "collided with", area_parent])
+	colliding_vehicles[area_parent] = true
+
+
+func _on_player_collision_area_exited(area):
+	var area_parent = area.get_parent() as Vehicle3
+	#Debug.print([self, "uncollided with", area_parent])
+	colliding_vehicles.erase(area_parent)
+	
