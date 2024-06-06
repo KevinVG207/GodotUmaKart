@@ -11,4 +11,3 @@ func print(input):
 
 func _on_erase_timer_timeout():
 	$MarginContainer/RichTextLabel.text = ""
-

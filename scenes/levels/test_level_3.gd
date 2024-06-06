@@ -156,7 +156,7 @@ func progress_in_cur_checkpoint(player: Vehicle3) -> float:
 
 
 func _on_host_button_pressed():
-	Network.send_data("Hello")
+	Network.send_data(Time.get_unix_time_from_system())
 	#Network.peer.create_server(135)
 	#multiplayer.multiplayer_peer = Network.peer
 	#multiplayer.peer_connected.connect(_add_player)
