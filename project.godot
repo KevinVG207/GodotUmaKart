@@ -21,6 +21,7 @@ Util="*res://global/util.gd"
 Debug="*res://global/Debug.tscn"
 UI="*res://global/UI.tscn"
 Global="*res://global/global.gd"
+Network="*res://global/network.gd"
 
 [input]
 

@@ -5,11 +5,20 @@ var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
 var players: Array = []
 
+@export var player_scene: PackedScene
+
 
 func _ready():
-	#players.append($Vehicle3)
-	#$PlayerCamera.target = $Vehicle3
+	$MultiplayerSpawner.spawn_function = _spawn_function
+	setup()
 
+func setup():
+	Debug.print("SETUP")
+	
+	checkpoints = []
+	key_checkpoints = {}
+	players = []
+	
 	# Setup checkpoints
 	for checkpoint: Checkpoint in $Checkpoints.get_children():
 		checkpoints.append(checkpoint)
@@ -23,12 +32,14 @@ func _ready():
 		vehicle.check_idx = len(checkpoints)-1
 		vehicle.check_key_idx = key_checkpoints.size()-1
 		i += 1
-
-	$PlayerCamera.target = players[0]
-	players[0].is_player = true
-
+		if vehicle.is_player:
+			$PlayerCamera.target = vehicle
 
 func _process(_delta):
+	if Network.should_setup:
+		Network.should_setup = false
+		setup()
+	
 	# Player checkpoints
 	for player: Vehicle3 in players:
 		update_checkpoint(player)
@@ -138,3 +149,32 @@ func progress_in_cur_checkpoint(player: Vehicle3) -> float:
 	var dist_behind: float = abs(dist_to_checkpoint(player, player.check_idx))
 	var dist_ahead: float = abs(dist_to_checkpoint(player, player.check_idx+1))
 	return dist_behind / (dist_behind + dist_ahead)
+
+
+#func _on_multiplayer_spawner_spawned(node):
+	#setup()
+
+
+func _on_host_button_pressed():
+	Network.peer.create_server(135)
+	multiplayer.multiplayer_peer = Network.peer
+	multiplayer.peer_connected.connect(_add_player)
+	_add_player()
+
+func _add_player(id=1):
+	$MultiplayerSpawner.spawn({'peer_id': id, 'initial_transform': $SpawnPosition.transform})
+	#var player = player_scene.instantiate() as Vehicle3
+	#player.transform = $SpawnPosition.transform
+	#player.name = str(id)
+	#$Vehicles.call_deferred("add_child", player)
+
+
+func _on_join_button_pressed():
+	Network.peer.create_client("127.0.0.1", 135)
+	multiplayer.multiplayer_peer = Network.peer
+	
+func _spawn_function(data: Variant) -> Node:
+	var scene: Vehicle3 = player_scene.instantiate() as Vehicle3
+	scene.peer_id = data.peer_id
+	scene.initial_transform = data.initial_transform
+	return scene

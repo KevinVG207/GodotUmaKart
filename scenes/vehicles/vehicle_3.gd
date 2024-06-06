@@ -2,7 +2,11 @@ extends RigidBody3D
 
 class_name Vehicle3
 
+var peer_id: int
+var initial_transform: Transform3D
+
 @export var is_player: bool = false
+@export var is_cpu: bool = true
 var check_idx: int = -1
 var check_key_idx: int = 0
 var check_progress: float = 0.0
@@ -16,7 +20,7 @@ var input_trick: bool = false
 var input_mirror: bool = false
 
 @export var max_speed: float = 20
-@onready var cur_max_speed = max_speed
+@onready var cur_max_speed = 20
 @onready var max_reverse_speed: float = max_speed * 0.5
 @export var initial_accel: float = 10
 @export var accel_exponent: float = 10
@@ -40,7 +44,7 @@ var max_push_force: float = 2.75
 @export var drift_turn_min_multiplier: float = 0.5
 @export var air_turn_multiplier: float = 0.15
 
-var cur_turn_speed: float = 0
+@export var cur_turn_speed: float = 0
 var turn_accel: float = 15
 
 var trick_cooldown_time: float = 0.3
@@ -72,28 +76,28 @@ var trick_frames: int = 0
 var stick_speed: float = 100
 var stick_distance: float = 0.5
 var stick_ray_count: int = 4
-var air_frames: int = 0
-var in_hop: bool = false
-var in_hop_frames: int = 0
-var in_drift: bool = false
-var drift_dir: int = 0
+@export var air_frames: int = 0
+@export var in_hop: bool = false
+@export var in_hop_frames: int = 0
+@export var in_drift: bool = false
+@export var drift_dir: int = 0
 @onready var min_hop_speed: float = max_speed * 0.5
 var hop_force: float = 4.0
-var can_hop: bool = true
+@export var can_hop: bool = true
 #var global_hop: Vector3 = Vector3.ZERO
 
-var drift_gauge: float = 0.0
+@export var drift_gauge: float = 0.0
 @export var drift_gauge_max: float = 100.0
 var drift_gauge_multi: float = 55.0
 
 var still_turbo_max_speed: float = 1
 var still_turbo_ready: bool = false
 
-var cur_speed: float = 0
+@export var cur_speed: float = 0
 
-var grounded: bool = false
+@export var grounded: bool = false
 
-var gravity: Vector3 = Vector3.DOWN * 15
+@export var gravity: Vector3 = Vector3.DOWN * 15
 var terminal_velocity = 30
 
 @export var grip_multiplier: float = 1.0
@@ -114,8 +118,8 @@ var in_water = false
 var water_bodies: Dictionary = {}
 
 var bounce_force: float = 10
-var bounce_frames: int = 0
-var prev_frame_pre_sim_vel: Vector3 = Vector3.ZERO
+@export var bounce_frames: int = 0
+@export var prev_frame_pre_sim_vel: Vector3 = Vector3.ZERO
 @onready var min_bounce_speed: float = max_speed * 0.4
 
 @export var wheel_max_up: float = 0.2
@@ -124,14 +128,23 @@ var wheel_markers: Array = []
 
 var colliding_vehicles: Dictionary = {}
 
+func _enter_tree():
+	set_multiplayer_authority(peer_id)
+	if is_multiplayer_authority():
+		is_player = true
+		is_cpu = false
+	
+
 func _ready():
-	for wheel in $Wheels.get_children():
-		var wheel_marker = Marker3D.new()
-		wheel_marker.transform = wheel.transform
-		wheel_markers.append(wheel_marker)
+	Network.should_setup = true
+	transform = initial_transform
+	#for wheel in $Wheels.get_children():
+		#var wheel_marker = Marker3D.new()
+		#wheel_marker.transform = wheel.transform
+		#wheel_markers.append(wheel_marker)
 
 func handle_input():
-	if is_player:
+	if is_player and get_window().has_focus():
 		input_accel = Input.is_action_pressed("accelerate")
 		input_brake = Input.is_action_pressed("brake")
 		input_steer = Input.get_axis("right", "left")
@@ -582,6 +595,9 @@ func handle_drift_particles():
 
 func _process(delta):
 	# UI Stuff
+	if is_multiplayer_authority() and not is_cpu:
+		is_player = true
+	
 	if is_player:
 		var spd = linear_velocity.length()
 		UI.update_speed(spd)

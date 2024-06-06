@@ -23,30 +23,13 @@ size = Vector3(20, 1, 20)
 
 [node name="TestLevel3" type="Node3D"]
 script = ExtResource("1_kxhjh")
+player_scene = ExtResource("1_3cfyl")
 
 [node name="PlayerCamera" parent="." instance=ExtResource("1_ldxvr")]
 transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, 2, -18, 71.952)
 current = true
 
 [node name="Vehicles" type="Node3D" parent="."]
-
-[node name="Player" parent="Vehicles" instance=ExtResource("1_3cfyl")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2, -21, 60.952)
-axis_lock_angular_y = true
-
-[node name="DummyPlayer1" parent="Vehicles" instance=ExtResource("1_3cfyl")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 4, -21, 64.952)
-axis_lock_angular_y = true
-
-[node name="DummyPlayer2" parent="Vehicles" instance=ExtResource("1_3cfyl")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -1, -21, 70.952)
-axis_lock_angular_y = true
-weight_multi = 0.1
-
-[node name="DummyPlayer3" parent="Vehicles" instance=ExtResource("1_3cfyl")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 4, -21, 76.952)
-axis_lock_angular_y = true
-weight_multi = 2.0
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.683013, -0.707107, -0.183013, 0.258819, -4.2222e-08, 0.965926, -0.683013, -0.707107, 0.183013, 0, 166, 0)
@@ -205,3 +188,36 @@ is_key = true
 
 [node name="Checkpoint13" parent="Checkpoints" instance=ExtResource("6_yofaq")]
 transform = Transform3D(-1, 6.18172e-08, -5.96046e-08, 6.18173e-08, 1, 1.06581e-14, 5.96046e-08, 4.60344e-15, -1, 0.815279, -14.6863, 84.6522)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 128
+
+[node name="JoinButton" type="Button" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -52.0
+offset_bottom = 36.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 20
+text = "JOIN"
+
+[node name="HostButton" type="Button" parent="CanvasLayer"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -52.0
+offset_top = 46.0
+offset_bottom = 82.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 20
+text = "HOST"
+
+[node name="SpawnPosition" type="Marker3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -20, 65)
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+spawn_path = NodePath("../Vehicles")
+
+[connection signal="pressed" from="CanvasLayer/JoinButton" to="." method="_on_join_button_pressed"]
+[connection signal="pressed" from="CanvasLayer/HostButton" to="." method="_on_host_button_pressed"]
