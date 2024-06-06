@@ -20,8 +20,8 @@ var input_mirror: bool = false
 @export var accel_exponent: float = 10
 @export var spd_steering_decrease: float = 1.0
 @export var weight_multi: float = 1.0
-var push_force: float = 100
-var max_push_force: float = 3
+var push_force: float = 120
+var max_push_force: float = 2.75
 
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
@@ -233,9 +233,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	if wall_contacts.size() > 0:
 		var avg_normal: Vector3 = Vector3.ZERO
 		var avg_position: Vector3 = Vector3.ZERO
-		print("===")
+		# print("===")
 		for wall in wall_contacts:
-			print(wall["normal"])
+			# print(wall["normal"])
 			avg_normal += wall["normal"]
 			avg_position += wall["position"]
 		avg_normal /= wall_contacts.size()
@@ -520,11 +520,15 @@ func handle_vehicle_collisions(delta: float):
 			dp -= 2
 			dp = -dp / 3
 			
-			var push_force: Vector3 = push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi) * dp * ((linear_velocity.length() + col_vehicle.linear_velocity.length()) / 2) * delta
-			if push_force.length() > max_push_force:
-				push_force = push_force.normalized() * max_push_force
+			var new_push_force: Vector3 = push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi) * dp * ((linear_velocity.length() + col_vehicle.linear_velocity.length()) / 2) * delta
+
+			var push_force_along_gravity = new_push_force.project(transform.basis.y.normalized())
+			new_push_force -= push_force_along_gravity
+
+			if new_push_force.length() > max_push_force:
+				new_push_force = new_push_force.normalized() * max_push_force
 			#Debug.print(["Push force", push_force.length()])
-			linear_velocity += push_force
+			linear_velocity += new_push_force
 
 func handle_particles():
 	handle_drift_particles()
@@ -577,15 +581,16 @@ func handle_drift_particles():
 
 func _process(delta):
 	# UI Stuff
-	var spd = linear_velocity.length()
-	UI.update_speed(spd)
+	if is_player:
+		var spd = linear_velocity.length()
+		UI.update_speed(spd)
+		
+		if cur_speed > max_speed:
+			extra_fov = (cur_speed - max_speed) * 0.25
+		else:
+			extra_fov = 0.0
 	
-	if cur_speed > max_speed:
-		extra_fov = (cur_speed - max_speed) * 0.25
-	else:
-		extra_fov = 0.0
-	
-	#Debug.print([lap, check_idx, check_progress])
+		# Debug.print([lap, check_idx, check_progress])
 
 
 func water_entered(area):
@@ -600,13 +605,17 @@ func water_exited(area):
 
 
 func _on_player_collision_area_entered(area: Area3D):
-	var area_parent = area.get_parent() as Vehicle3
+	var area_parent = area.get_parent()
+	if not area_parent is Vehicle3:
+		return
 	#Debug.print([self, "collided with", area_parent])
 	colliding_vehicles[area_parent] = true
 
 
 func _on_player_collision_area_exited(area):
-	var area_parent = area.get_parent() as Vehicle3
+	var area_parent = area.get_parent()
+	if not area_parent is Vehicle3:
+		return
 	#Debug.print([self, "uncollided with", area_parent])
 	colliding_vehicles.erase(area_parent)
 	

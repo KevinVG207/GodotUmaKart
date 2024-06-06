@@ -68,6 +68,10 @@ trick={
 3d_physics/layer_2="Opponents"
 3d_physics/layer_3="Static"
 
+[physics]
+
+3d/default_gravity=20.0
+
 [rendering]
 
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
