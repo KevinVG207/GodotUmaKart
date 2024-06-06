@@ -2,8 +2,10 @@ extends RigidBody3D
 
 class_name Vehicle3
 
-var peer_id: int
-var initial_transform: Transform3D
+#var peer_id: int
+#var initial_transform: Transform3D
+
+var mutex: Mutex
 
 @export var is_player: bool = false
 @export var is_cpu: bool = true
@@ -128,16 +130,18 @@ var wheel_markers: Array = []
 
 var colliding_vehicles: Dictionary = {}
 
-func _enter_tree():
-	set_multiplayer_authority(peer_id)
-	if is_multiplayer_authority():
-		is_player = true
-		is_cpu = false
+#func _enter_tree():
+	#set_multiplayer_authority(peer_id)
+	#if is_multiplayer_authority():
+		#is_player = true
+		#is_cpu = false
 	
 
 func _ready():
-	Network.should_setup = true
-	transform = initial_transform
+	mutex = Mutex.new()
+	pass
+	#Network.should_setup = true
+	#transform = initial_transform
 	#for wheel in $Wheels.get_children():
 		#var wheel_marker = Marker3D.new()
 		#wheel_marker.transform = wheel.transform
@@ -595,8 +599,8 @@ func handle_drift_particles():
 
 func _process(delta):
 	# UI Stuff
-	if is_multiplayer_authority() and not is_cpu:
-		is_player = true
+	#if is_multiplayer_authority() and not is_cpu:
+		#is_player = true
 	
 	if is_player:
 		var spd = linear_velocity.length()
@@ -607,8 +611,8 @@ func _process(delta):
 		else:
 			extra_fov = 0.0
 	
-		print(cur_speed)
-		Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
+		#print(cur_speed)
+		#Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
 
 
 func water_entered(area):
@@ -637,3 +641,17 @@ func _on_player_collision_area_exited(area):
 	#Debug.print([self, "uncollided with", area_parent])
 	colliding_vehicles.erase(area_parent)
 	
+func upload_data():
+	mutex.lock()
+	Network.vehicle_data = get_state()
+	mutex.unlock()
+
+func get_state() -> Dictionary:
+	return {
+		"pos": Util.to_array(global_position),
+		"rot": Util.to_array(rotation)
+	}
+
+func apply_state(state: Dictionary):
+	global_position = Util.to_vector3(state["pos"])
+	rotation = Util.to_vector3(state["rot"])

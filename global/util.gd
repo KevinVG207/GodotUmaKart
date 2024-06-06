@@ -35,3 +35,9 @@ func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group:
 		ignore_array.append(collider)
 	ignore_array.clear()
 	return out
+
+func to_array(v: Vector3) -> Array:
+	return [v.x, v.y, v.z]
+
+func to_vector3(a: Array) -> Vector3:
+	return Vector3(a[0], a[1], a[2])

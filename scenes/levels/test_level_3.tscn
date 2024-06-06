@@ -31,6 +31,11 @@ current = true
 
 [node name="Vehicles" type="Node3D" parent="."]
 
+[node name="Vehicle3" parent="Vehicles" instance=ExtResource("1_3cfyl")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -21, 64)
+is_player = true
+is_cpu = false
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.683013, -0.707107, -0.183013, 0.258819, -4.2222e-08, 0.965926, -0.683013, -0.707107, 0.183013, 0, 166, 0)
 light_color = Color(1, 0.922912, 0.91767, 1)
@@ -193,6 +198,7 @@ transform = Transform3D(-1, 6.18172e-08, -5.96046e-08, 6.18173e-08, 1, 1.06581e-
 layer = 128
 
 [node name="JoinButton" type="Button" parent="CanvasLayer"]
+visible = false
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -203,6 +209,7 @@ theme_override_font_sizes/font_size = 20
 text = "JOIN"
 
 [node name="HostButton" type="Button" parent="CanvasLayer"]
+visible = false
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -215,6 +222,3 @@ text = "HOST"
 
 [node name="SpawnPosition" type="Marker3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -20, 65)
-
-[connection signal="pressed" from="CanvasLayer/JoinButton" to="." method="_on_join_button_pressed"]
-[connection signal="pressed" from="CanvasLayer/HostButton" to="." method="_on_host_button_pressed"]
