@@ -643,7 +643,10 @@ func _on_player_collision_area_exited(area):
 	
 func upload_data():
 	mutex.lock()
-	Network.vehicle_data = get_state()
+	#Network.vehicle_data
+	var state: Dictionary = get_state()
+	for key in state.keys():
+		Network.vehicle_data[key] = state[key]
 	mutex.unlock()
 
 func get_state() -> Dictionary:

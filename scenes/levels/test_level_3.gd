@@ -77,7 +77,7 @@ func _update_vehicles():
 		players_dict[player_id] = player_vehicle
 	
 	mutex.lock()
-	var cur_vehicle_states = Network.cur_vehicle_states
+	var cur_vehicle_states = Network.cur_vehicle_states.duplicate(true)
 	if cur_vehicle_states:
 		Network.cur_vehicle_states.clear()
 	mutex.unlock()

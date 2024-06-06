@@ -7,7 +7,7 @@ var json := JSON.new()
 var mutex: Mutex
 var thread := Thread.new()
 var should_exit := false
-var vehicle_data: Variant = null
+var vehicle_data: Dictionary = {}
 var sending_vehicle_data := false
 var unique_id: String = ""
 var fetching_id := false
@@ -19,7 +19,9 @@ func _ready():
 	thread.start(poll)
 
 func _connect():
+	mutex.lock()
 	unique_id = ""
+	mutex.unlock()
 	socket = WebSocketPeer.new()
 	socket.connect_to_url("wss://umapyoi.net/ws")
 
@@ -67,13 +69,15 @@ func poll():
 			var res = send_vehicle_data(_vehicle_data)
 			if res:
 				mutex.lock()
-				vehicle_data = null
+				vehicle_data.clear()
 				mutex.unlock()
+			else:
+				sending_vehicle_data = false
 			# Send vehicle data
 			
 			# send_data(_vehicle_data, "vehicle_data")
 		
-		if unique_id.is_empty() and not fetching_id:
+		if get_unique_id().is_empty() and not fetching_id:
 			fetching_id = true
 			var res = fetch_unique_id()
 			if not res:
@@ -100,10 +104,14 @@ func handle_data(_data: Dictionary):
 	if type == "vehicle_data_received":
 		sending_vehicle_data = false
 	elif type == "unique_id_received":
+		mutex.lock()
 		unique_id = str(data)
+		mutex.unlock()
 		fetching_id = false
 	elif type == "unique_id_expired":
+		mutex.lock()
 		unique_id = ""
+		mutex.unlock()
 	elif type == "vehicles":
 		mutex.lock()
 		cur_vehicle_states = data
@@ -130,21 +138,24 @@ func send_data(data: Variant, type: String):
 
 func fetch_unique_id():
 	return send_data(true, "generate_unique_id")
+	
+func get_unique_id():
+	mutex.lock()
+	var id: String = unique_id
+	mutex.unlock()
+	return id
 
 func send_vehicle_data(vehicle_data: Dictionary):
-	print("a")
-	if unique_id.is_empty():
+	if get_unique_id().is_empty():
 		return false
-	print("b")
 	var data = {
-		"id": unique_id,
+		"id": get_unique_id(),
 		"state": vehicle_data
 	}
-	print("c")
 	return send_data(data, "vehicle_data")
 
 func fetch_vehicle_states():
-	if unique_id.is_empty():
+	if get_unique_id().is_empty():
 		return false
 	
 	return send_data(true, "get_vehicles")
