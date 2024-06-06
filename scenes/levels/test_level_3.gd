@@ -9,7 +9,7 @@ var players: Array = []
 
 
 func _ready():
-	$MultiplayerSpawner.spawn_function = _spawn_function
+	#$MultiplayerSpawner.spawn_function = _spawn_function
 	setup()
 
 func setup():
@@ -156,10 +156,11 @@ func progress_in_cur_checkpoint(player: Vehicle3) -> float:
 
 
 func _on_host_button_pressed():
-	Network.peer.create_server(135)
-	multiplayer.multiplayer_peer = Network.peer
-	multiplayer.peer_connected.connect(_add_player)
-	_add_player()
+	Network.send_data("Hello")
+	#Network.peer.create_server(135)
+	#multiplayer.multiplayer_peer = Network.peer
+	#multiplayer.peer_connected.connect(_add_player)
+	#_add_player()
 
 func _add_player(id=1):
 	$MultiplayerSpawner.spawn({'peer_id': id, 'initial_transform': $SpawnPosition.transform})
@@ -169,9 +170,13 @@ func _add_player(id=1):
 	#$Vehicles.call_deferred("add_child", player)
 
 
+#func _on_join_button_pressed():
+	#Network.peer.create_client("127.0.0.1", 135)
+	#multiplayer.multiplayer_peer = Network.peer
+	
 func _on_join_button_pressed():
-	Network.peer.create_client("127.0.0.1", 135)
-	multiplayer.multiplayer_peer = Network.peer
+	Network.websocket_connect()
+	#Network.send_data("Hello")
 	
 func _spawn_function(data: Variant) -> Node:
 	var scene: Vehicle3 = player_scene.instantiate() as Vehicle3

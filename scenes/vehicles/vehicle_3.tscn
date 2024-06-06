@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=20 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="2_b5ade"]
@@ -111,80 +111,6 @@ radius = 0.2
 top_radius = 0.2
 bottom_radius = 0.2
 height = 0.1
-
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_84t0v"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
-properties/1/path = NodePath(".:rotation")
-properties/1/spawn = true
-properties/1/replication_mode = 1
-properties/2/path = NodePath(".:linear_velocity")
-properties/2/spawn = true
-properties/2/replication_mode = 1
-properties/3/path = NodePath(".:angular_velocity")
-properties/3/spawn = true
-properties/3/replication_mode = 1
-properties/4/path = NodePath(".:cur_speed")
-properties/4/spawn = true
-properties/4/replication_mode = 1
-properties/5/path = NodePath(".:cur_turn_speed")
-properties/5/spawn = true
-properties/5/replication_mode = 1
-properties/6/path = NodePath(".:cur_max_speed")
-properties/6/spawn = true
-properties/6/replication_mode = 1
-properties/7/path = NodePath(".:in_hop")
-properties/7/spawn = true
-properties/7/replication_mode = 1
-properties/8/path = NodePath(".:in_hop_frames")
-properties/8/spawn = true
-properties/8/replication_mode = 1
-properties/9/path = NodePath(".:can_hop")
-properties/9/spawn = true
-properties/9/replication_mode = 1
-properties/10/path = NodePath(".:in_drift")
-properties/10/spawn = true
-properties/10/replication_mode = 1
-properties/11/path = NodePath(".:drift_gauge")
-properties/11/spawn = true
-properties/11/replication_mode = 1
-properties/12/path = NodePath(".:drift_gauge_max")
-properties/12/spawn = true
-properties/12/replication_mode = 1
-properties/13/path = NodePath(".:drift_dir")
-properties/13/spawn = true
-properties/13/replication_mode = 1
-properties/14/path = NodePath(".:gravity")
-properties/14/spawn = true
-properties/14/replication_mode = 1
-properties/15/path = NodePath(".:bounce_frames")
-properties/15/spawn = true
-properties/15/replication_mode = 1
-properties/16/path = NodePath(".:prev_frame_pre_sim_vel")
-properties/16/spawn = true
-properties/16/replication_mode = 1
-properties/17/path = NodePath(".:in_water")
-properties/17/spawn = true
-properties/17/replication_mode = 1
-properties/18/path = NodePath(".:grounded")
-properties/18/spawn = true
-properties/18/replication_mode = 1
-properties/19/path = NodePath(".:input_accel")
-properties/19/spawn = true
-properties/19/replication_mode = 1
-properties/20/path = NodePath(".:input_brake")
-properties/20/spawn = true
-properties/20/replication_mode = 1
-properties/21/path = NodePath(".:input_steer")
-properties/21/spawn = true
-properties/21/replication_mode = 1
-properties/22/path = NodePath(".:input_trick")
-properties/22/spawn = true
-properties/22/replication_mode = 1
-properties/23/path = NodePath(".:input_mirror")
-properties/23/spawn = true
-properties/23/replication_mode = 1
 
 [node name="Vehicle3" type="RigidBody3D" groups=["vehicle"]]
 collision_layer = 9
@@ -421,9 +347,6 @@ mesh = SubResource("CylinderMesh_w6knp")
 
 [node name="Front" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_84t0v")
 
 [connection signal="area_entered" from="PlayerCollision" to="." method="_on_player_collision_area_entered"]
 [connection signal="area_exited" from="PlayerCollision" to="." method="_on_player_collision_area_exited"]

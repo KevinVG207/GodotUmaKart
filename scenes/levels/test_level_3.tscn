@@ -216,8 +216,5 @@ text = "HOST"
 [node name="SpawnPosition" type="Marker3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -20, 65)
 
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-spawn_path = NodePath("../Vehicles")
-
 [connection signal="pressed" from="CanvasLayer/JoinButton" to="." method="_on_join_button_pressed"]
 [connection signal="pressed" from="CanvasLayer/HostButton" to="." method="_on_host_button_pressed"]
