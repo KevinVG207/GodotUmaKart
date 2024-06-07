@@ -7,7 +7,7 @@ var players: Array = []
 var players_dict: Dictionary = {}
 var mutex: Mutex
 var update_vehicles_semaphore: Semaphore = null
-var frames_between_update: int = 10
+var frames_between_update: int = 20
 var update_wait_frames: int = 0
 var should_exit: bool = false
 var update_thread: Thread
@@ -239,26 +239,37 @@ func _spawn_function(data: Variant) -> Node:
 
 func update_vehicle_states(cur_vehicle_states: Dictionary, player_id: String):
 	# Get rid of expired vehicles
+	var should_setup = false
+
 	for vehicle_key: String in players_dict.keys():
 		if not vehicle_key in cur_vehicle_states:
 			var idx = players.find(players_dict[vehicle_key])
+			mutex.lock()
 			players.remove_at(idx)
 			players_dict[vehicle_key].queue_free()
 			players_dict.erase(vehicle_key)
+			should_setup = true
+			mutex.unlock()
 	
 	for vehicle_key: String in cur_vehicle_states:
 		if vehicle_key == player_id:
 			continue
 		
-		if not cur_vehicle_states[vehicle_key]['state']:
+		if not cur_vehicle_states[vehicle_key]:
 			continue
 		
 		if not vehicle_key in players_dict:
+			should_setup = true
 			var new_player = player_scene.instantiate() as Vehicle3
 			new_player.is_player = false
 			new_player.is_cpu = false
+			mutex.lock()
 			vehicles_node.add_child(new_player)
 			players_dict[vehicle_key] = new_player
 			players.append(new_player)
+			mutex.unlock()
 		
-		players_dict[vehicle_key].call_deferred("apply_state", cur_vehicle_states[vehicle_key]['state'])
+		players_dict[vehicle_key].call_deferred("apply_state", cur_vehicle_states[vehicle_key].duplicate(true))
+
+	if should_setup:
+		call_deferred("setup")

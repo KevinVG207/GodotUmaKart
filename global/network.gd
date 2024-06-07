@@ -13,6 +13,7 @@ var unique_id: String = ""
 var fetching_id := false
 var fetching_states := false
 var cur_vehicle_states: Dictionary = {}
+var cur_index: int = -1
 
 func _ready():
 	mutex = Mutex.new()
@@ -95,11 +96,29 @@ func poll():
 
 
 func handle_data(_data: Dictionary):
-	if 'type' not in _data or 'data' not in _data:
+	if 'type' not in _data or 'data' not in _data or 'index' not in _data or 'md5' not in _data:
 		return
 	
 	var type: String = _data['type']
-	var data: Variant = _data['data']
+	var str_data: String = _data['data']
+	var index: int = _data['index']
+	var md5: String = _data['md5']
+
+	var new_md5: String = str_data.md5_text()
+	if not new_md5 == md5:
+		return
+	
+	var res = json.parse(str_data)
+	if res != 0:
+		print("ERR: ", error_string(res))
+		return
+	
+	var data: Variant = json.data
+	
+	if index <= cur_index:
+		return
+	
+	cur_index = index
 	
 	if type == "vehicle_data_received":
 		sending_vehicle_data = false
@@ -145,12 +164,12 @@ func get_unique_id():
 	mutex.unlock()
 	return id
 
-func send_vehicle_data(vehicle_data: Dictionary):
+func send_vehicle_data(state: Dictionary):
 	if get_unique_id().is_empty():
 		return false
 	var data = {
 		"id": get_unique_id(),
-		"state": vehicle_data
+		"state": state
 	}
 	return send_data(data, "vehicle_data")
 
