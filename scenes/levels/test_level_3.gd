@@ -1,6 +1,5 @@
 extends Node3D
 
-
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
 var players: Array = []

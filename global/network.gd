@@ -2,6 +2,7 @@ extends Node
 
 var port: int = 8001
 
+var send_index: int = 0
 var socket: WebSocketPeer = null
 var json := JSON.new()
 var mutex: Mutex
@@ -147,7 +148,10 @@ func send_data(data: Variant, type: String):
 	
 	print("Sending type " + type)
 	
+	send_index += 1
+	
 	var packet: Dictionary = {
+		'index': send_index,
 		'type': type,
 		'data': data
 	}
