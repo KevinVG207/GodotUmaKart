@@ -7,7 +7,7 @@ var players: Array = []
 var players_dict: Dictionary = {}
 var mutex: Mutex
 var update_vehicles_semaphore: Semaphore = null
-var frames_between_update: int = 20
+var frames_between_update: int = 15
 var update_wait_frames: int = 0
 var should_exit: bool = false
 var update_thread: Thread
