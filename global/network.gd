@@ -116,10 +116,17 @@ func handle_data(_data: Dictionary):
 	
 	var data: Variant = json.data
 	
+	var ret = false
+	mutex.lock()
+	print(thread.get_id(), " IDX: ", cur_index, " ", index)
 	if index <= cur_index:
-		return
+		ret = true
+	else:
+		cur_index = index
+	mutex.unlock()
 	
-	cur_index = index
+	if ret:
+		return
 	
 	if type == "vehicle_data_received":
 		sending_vehicle_data = false

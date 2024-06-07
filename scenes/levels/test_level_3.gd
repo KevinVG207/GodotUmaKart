@@ -100,6 +100,7 @@ func update_vehicles():
 func update_ranks():
 	var ranks = []
 	var ranks_vehicles = []
+	mutex.lock()
 	for vehicle: Vehicle3 in players:
 		var cur_progress = 10000 * vehicle.lap + vehicle.check_idx + vehicle.check_progress
 		if not ranks:
@@ -120,6 +121,7 @@ func update_ranks():
 
 		ranks.append(cur_progress)
 		ranks_vehicles.append(vehicle)
+	mutex.unlock()
 
 
 	for i in range(ranks.size()):
@@ -240,15 +242,19 @@ func update_vehicle_states(cur_vehicle_states: Dictionary, player_id: String):
 	# Get rid of expired vehicles
 	var should_setup = false
 
+	mutex.lock()
+	var to_remove = []
 	for vehicle_key: String in players_dict.keys():
-		if not vehicle_key in cur_vehicle_states:
-			var idx = players.find(players_dict[vehicle_key])
-			mutex.lock()
-			players.remove_at(idx)
-			players_dict[vehicle_key].queue_free()
-			players_dict.erase(vehicle_key)
+		if not vehicle_key in cur_vehicle_states.keys():
+			var vehicle = players_dict[vehicle_key]
+			players.erase(vehicle)
+			to_remove.append([vehicle_key, vehicle])
 			should_setup = true
-			mutex.unlock()
+	
+	for vehicle_list in to_remove:
+		players_dict.erase(vehicle_list[0])
+		vehicle_list[1].queue_free()
+	mutex.unlock()
 	
 	for vehicle_key: String in cur_vehicle_states:
 		if vehicle_key == player_id:
@@ -257,7 +263,7 @@ func update_vehicle_states(cur_vehicle_states: Dictionary, player_id: String):
 		if not cur_vehicle_states[vehicle_key]:
 			continue
 		
-		if not vehicle_key in players_dict:
+		if not vehicle_key in players_dict.keys():
 			should_setup = true
 			var new_player = player_scene.instantiate() as Vehicle3
 			new_player.is_player = false

@@ -673,13 +673,16 @@ func get_state() -> Dictionary:
 		"gravity": Util.to_array(gravity),
 		"bounce_frames": bounce_frames,
 		"prev_frame_pre_sim_vel": Util.to_array(prev_frame_pre_sim_vel),
-		"in_water": in_water
+		"in_water": in_water,
+		"check_idx": check_idx,
+		"check_key_idx": check_key_idx,
+		"lap": lap
 	}
 
 func apply_state(state: Dictionary):
-	global_position = Util.to_vector3(state.get("pos", global_position))
-	rotation = Util.to_vector3(state.get("rot", rotation))
-	linear_velocity = Util.to_vector3(state.get("lin_vel", linear_velocity))
+	global_position = Util.to_vector3(state.get("pos", Util.to_array(global_position)))
+	rotation = Util.to_vector3(state.get("rot", Util.to_array(rotation)))
+	linear_velocity = Util.to_vector3(state.get("lin_vel", Util.to_array(linear_velocity)))
 	input_accel = state.get("input_accel", input_accel)
 	input_brake = state.get("input_brake", input_brake)
 	input_steer = state.get("input_steer", input_steer)
@@ -696,7 +699,10 @@ func apply_state(state: Dictionary):
 	drift_gauge = state.get("drift_gauge", drift_gauge)
 	drift_gauge_max = state.get("drift_gauge_max", drift_gauge_max)
 	grounded = state.get("grounded", grounded)
-	gravity = Util.to_vector3(state.get("gravity", gravity))
+	gravity = Util.to_vector3(state.get("gravity", Util.to_array(gravity)))
 	bounce_frames = state.get("bounce_frames", bounce_frames)
-	prev_frame_pre_sim_vel = Util.to_vector3(state.get("prev_frame_pre_sim_vel", prev_frame_pre_sim_vel))
+	prev_frame_pre_sim_vel = Util.to_vector3(state.get("prev_frame_pre_sim_vel", Util.to_array(prev_frame_pre_sim_vel)))
 	in_water = state.get("in_water", in_water)
+	check_idx = state.get("check_idx", check_idx)
+	check_key_idx = state.get("check_key_idx", check_key_idx)
+	lap = state.get("lap", lap)
