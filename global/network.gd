@@ -135,7 +135,7 @@ func _on_matchmaker_matched(p_matched: NakamaRTAPI.MatchmakerMatched):
 
 
 func connect_client():
-	client = Nakama.create_client("GodotArcadeRacerTest", "185.252.235.108", 7350, "http") as NakamaClient
+	client = Nakama.create_client("GodotArcadeRacerTest", "185.252.235.108", 7350, "http", 3, NakamaLogger.LOG_LEVEL.INFO) as NakamaClient
 	client.timeout = 10
 	socket = Nakama.create_socket_from(client) as NakamaSocket
 

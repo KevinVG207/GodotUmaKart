@@ -69,6 +69,14 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         switch (opCode) {
             case raceOp.CLIENT_UPDATE_VEHICLE_STATE:
                 const updateVehicleState = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(payload) as any) as string);
+
+                // Ignore old state updates
+                if (message.sender.userId in state.vehicles) {
+                    if (state.vehicles[message.sender.userId].idx >= updateVehicleState.idx) {
+                        break;
+                    }
+                }
+
                 state.vehicles[message.sender.userId] = updateVehicleState;
                 dispatcher.broadcastMessage(raceOp.SERVER_UPDATE_VEHICLE_STATE, payload, null, message.sender);
                 break;
