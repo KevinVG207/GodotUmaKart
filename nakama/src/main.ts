@@ -53,7 +53,7 @@ const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (conte
     }));
 
     try {
-        const matchId = nk.matchCreate("race", { invited: serializedMatches });
+        const matchId = nk.matchCreate("race", {});
         return matchId;
     } catch (err) {
         logger.error(`${err}`);
