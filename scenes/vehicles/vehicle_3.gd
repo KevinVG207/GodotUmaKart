@@ -681,6 +681,9 @@ func get_state() -> Dictionary:
 	}
 
 func apply_state(state: Dictionary):
+	if state.idx <= update_idx:
+		return
+	
 	update_idx = state.get("idx", update_idx)
 	global_position = Util.to_vector3(state.get("pos", Util.to_array(global_position)))
 	rotation = Util.to_vector3(state.get("rot", Util.to_array(rotation)))
