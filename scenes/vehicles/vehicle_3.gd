@@ -5,10 +5,9 @@ class_name Vehicle3
 #var peer_id: int
 #var initial_transform: Transform3D
 
-var mutex: Mutex
-
 @export var is_player: bool = false
 @export var is_cpu: bool = true
+var is_network: bool = false
 var check_idx: int = -1
 var check_key_idx: int = 0
 var check_progress: float = 0.0
@@ -138,7 +137,6 @@ var colliding_vehicles: Dictionary = {}
 	
 
 func _ready():
-	mutex = Mutex.new()
 	pass
 	#Network.should_setup = true
 	#transform = initial_transform
@@ -642,12 +640,11 @@ func _on_player_collision_area_exited(area):
 	colliding_vehicles.erase(area_parent)
 	
 func upload_data():
-	mutex.lock()
+	pass
 	#Network.vehicle_data
-	var state: Dictionary = get_state()
-	for key in state.keys():
-		Network.vehicle_data[key] = state[key]
-	mutex.unlock()
+	#var state: Dictionary = get_state()
+	#for key in state.keys():
+		#Network.vehicle_data[key] = state[key]
 
 func get_state() -> Dictionary:
 	return {
