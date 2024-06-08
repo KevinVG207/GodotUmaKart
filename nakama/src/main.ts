@@ -1,6 +1,8 @@
 function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, initializer: nkruntime.Initializer) {
     initializer.registerRpc("healthcheck", rpcHealthCheck);
 
+    initializer.registerMatchmakerMatched(onMatchmakerMatched);
+
     initializer.registerMatch('race', {
         matchInit: raceMatchInit,
         matchJoinAttempt: raceMatchJoinAttempt,
@@ -10,8 +12,6 @@ function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkrunt
         matchSignal: raceMatchSignal,
         matchTerminate: raceMatchTerminate
     });
-    // initializer.registerRtBefore("MatchmakerAdd", beforeMatchmakerAdd);
-    initializer.registerMatchmakerMatched(onMatchmakerMatched);
 
     logger.info("Hello, World!");
 }
@@ -37,9 +37,15 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
     return envelope;
 }
 
+
 const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, matches: nkruntime.MatchmakerResult[]): string | void {
-    logger.debug("Matchmaker matched %d matches", matches.length);
-    const matchType: string = matches[0].properties.matchType as string;
-    const matchId = nk.matchCreate(matchType, { "invited": matches })
-    return matchId;
+    try{
+        logger.debug("Matchmaker matched %d matches", matches.length);
+        const matchType: string = matches[0].properties.matchType as string;
+        const matchId = nk.matchCreate(matchType, { "invited": matches })
+        return matchId;
+    }catch(e){
+        logger.error("Error: %q", e);
+        return "";
+    }
 };
