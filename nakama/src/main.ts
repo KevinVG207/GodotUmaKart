@@ -31,6 +31,7 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
     // Strip whitespace
     query = query.trim();
     envelope.matchmakerAdd.query = query;
+    logger.debug("Matchmaker add query: %q", query);
 
     return envelope;
 }

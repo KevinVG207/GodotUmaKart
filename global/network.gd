@@ -20,9 +20,13 @@ func _ready():
 	await connect_client()
 
 func is_socket():
-	return socket != null and socket.is_connected_to_host()
+	return (socket and socket.is_connected_to_host())
 
 func _process(_delta):
+	if not is_socket():
+		#print("no")
+		return
+	#print(session.user_id)
 	if not mm_match and not is_matchmaking:
 		is_matchmaking = true
 		_matchmake()
@@ -39,28 +43,23 @@ func matchmake():
 		print("No socket")
 		return false
 	
-	print("a")
 	if mm_tickets.size() > 0:
 		print("Already have a matchmaking ticket")
 		return false
 	
-	print("b")
 	var ticket = await get_matchmake_ticket()
 	if not ticket:
 		print("Failed to get matchmake ticket")
 		return false
 	
-	print("c")
-	
 	mm_tickets.append(ticket.ticket)
-	print("d")
 	return true
 
 
 
 func get_matchmake_ticket():
 	var string_props: Dictionary = {
-		"type": "race"
+		"match_type": "race"
 	}
 	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, 12, string_props, {}, 0)
 
@@ -116,7 +115,7 @@ func connect_client():
 	client.timeout = 10
 	socket = Nakama.create_socket_from(client) as NakamaSocket
 
-	var device_id = OS.get_unique_id()
+	var device_id = OS.get_unique_id() + str(randi_range(1, 99999999))
 
 	session = await client.authenticate_device_async(device_id)
 	if session.is_exception():
