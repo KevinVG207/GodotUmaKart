@@ -61,7 +61,7 @@ func get_matchmake_ticket():
 	var string_props: Dictionary = {
 		"matchType": "race"
 	}
-	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, 4, string_props, {}, 0)
+	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, 12, {}, {}, 0)
 
 	if ticket.is_exception():
 		print("Error adding matchmaker: ", ticket)
