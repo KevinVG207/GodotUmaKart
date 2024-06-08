@@ -1,7 +1,8 @@
 {
   "files": [
     "./src/main.ts",
-    "./src/healthcheck.ts"
+    "./src/healthcheck.ts",
+    "src/racematch.ts"
   ],
   "compilerOptions": {
     "target": "es5",
