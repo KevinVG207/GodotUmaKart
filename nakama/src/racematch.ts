@@ -30,7 +30,7 @@ const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
 const raceMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
-        delete (state.presences[p.sessionId]);
+        delete state.presences[p.sessionId];
         logger.debug("%q left match", p.userId);
     });
 
