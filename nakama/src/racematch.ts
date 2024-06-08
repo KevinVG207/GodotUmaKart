@@ -37,6 +37,7 @@ const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 const raceMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
         delete state.presences[p.sessionId];
+        delete state.vehicles[p.sessionId];
         logger.debug("%q left match", p.userId);
     });
 
@@ -67,7 +68,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         // Handle the operation code
         switch (opCode) {
             case raceOp.CLIENT_UPDATE_VEHICLE_STATE:
-                const updateVehicleState = JSON.parse(new TextDecoder().decode(payload));
+                const updateVehicleState = JSON.parse(payload.toString());
                 state.vehicles[message.sender.userId] = updateVehicleState;
                 dispatcher.broadcastMessage(raceOp.SERVER_UPDATE_VEHICLE_STATE, payload, null, message.sender);
                 break;
