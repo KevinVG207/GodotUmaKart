@@ -17,21 +17,21 @@ function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkrunt
 }
 
 const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatchmakerAdd> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, envelope: nkruntime.EnvelopeMatchmakerAdd): nkruntime.EnvelopeMatchmakerAdd | void {
-    let matchType = envelope.matchmakerAdd.stringProperties["matchtype"];
-    let query = envelope.matchmakerAdd.query;
-    if (!matchType) {
-        matchType = "race";
-    }
+    // let matchType = envelope.matchmakerAdd.stringProperties["matchtype"];
+    // let query = envelope.matchmakerAdd.query;
+    // if (!matchType) {
+    //     matchType = "race";
+    // }
 
-    if (query == "*") {
-        query = "";
-    }
+    // if (query == "*") {
+    //     query = "";
+    // }
 
-    query += " +matchtype:" + matchType;
-    // Strip whitespace
-    query = query.trim();
-    envelope.matchmakerAdd.query = query;
-    logger.debug("Matchmaker add query: %q", query);
+    // query += " +matchtype:" + matchType;
+    // // Strip whitespace
+    // query = query.trim();
+    // envelope.matchmakerAdd.query = query;
+    // logger.debug("Matchmaker add query: %q", query);
 
     return envelope;
 }
