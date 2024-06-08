@@ -59,7 +59,7 @@ func matchmake():
 
 func get_matchmake_ticket():
 	var string_props: Dictionary = {
-		"match_type": "race"
+		"matchtype": "race"
 	}
 	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, 12, string_props, {}, 0)
 
