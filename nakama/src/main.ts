@@ -42,7 +42,7 @@ const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (ctx: 
     try{
         logger.debug("Matchmaker matched %d matches", matches.length);
         const matchType: string = matches[0].properties.matchType as string;
-        const matchId = nk.matchCreate(matchType, { "invited": matches })
+        const matchId = nk.matchCreate("race", { "invited": matches })
         return matchId;
     }catch(e){
         logger.error("Error: %q", e);
