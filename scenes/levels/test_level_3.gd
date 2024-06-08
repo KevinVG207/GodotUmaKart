@@ -4,13 +4,13 @@ class_name LevelBase
 
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
-var players: Array = []
 var players_dict: Dictionary = {}
 var frames_between_update: int = 15
 var update_wait_frames: int = 0
 var should_exit: bool = false
 var update_thread: Thread
 var player_vehicle: Vehicle3 = null
+var player_user_id: String = ""
 @onready var vehicles_node: Node3D = $Vehicles
 
 @export var player_scene: PackedScene
@@ -25,7 +25,6 @@ func setup():
 	
 	checkpoints = []
 	key_checkpoints = {}
-	players = []
 	
 	# Setup checkpoints
 	for checkpoint: Checkpoint in $Checkpoints.get_children():
@@ -33,13 +32,13 @@ func setup():
 		if checkpoint.is_key:
 			key_checkpoints[checkpoint] = key_checkpoints.size()
 
-	var i = 0
+	# var i = 0
 	for vehicle: Vehicle3 in $Vehicles.get_children():
-		vehicle.rank = i
-		players.append(vehicle)
-		vehicle.check_idx = len(checkpoints)-1
-		vehicle.check_key_idx = key_checkpoints.size()-1
-		i += 1
+		# vehicle.rank = i
+		# players.append(vehicle)
+		# vehicle.check_idx = len(checkpoints)-1
+		# vehicle.check_key_idx = key_checkpoints.size()-1
+		# i += 1
 		if vehicle.is_player:
 			player_vehicle = vehicle
 			$PlayerCamera.target = vehicle
@@ -52,15 +51,15 @@ func _physics_process(_delta):
 			player_vehicle.call_deferred("upload_data")
 	
 	# Player checkpoints
-	for player: Vehicle3 in players:
-		update_checkpoint(player)
+	for vehicle: Vehicle3 in $Vehicles.get_children():
+		update_checkpoint(vehicle)
 		update_ranks()
 
 
 func update_ranks():
 	var ranks = []
 	var ranks_vehicles = []
-	for vehicle: Vehicle3 in players:
+	for vehicle: Vehicle3 in $Vehicles.get_children():
 		var cur_progress = 10000 * vehicle.lap + vehicle.check_idx + vehicle.check_progress
 		if not ranks:
 			ranks.append(cur_progress)
@@ -196,39 +195,58 @@ func _spawn_function(data: Variant) -> Node:
 	scene.initial_transform = data.initial_transform
 	return scene
 
-func update_vehicle_states(cur_vehicle_states: Dictionary, player_id: String):
-	# Get rid of expired vehicles
+
+func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
+	if user_id == player_user_id:
+		return
+	
 	var should_setup = false
-
-	var to_remove = []
-	for vehicle_key: String in players_dict.keys():
-		if not vehicle_key in cur_vehicle_states.keys():
-			var vehicle = players_dict[vehicle_key]
-			players.erase(vehicle)
-			to_remove.append([vehicle_key, vehicle])
-			should_setup = true
+	if not user_id in players_dict.keys():
+		var new_player = player_scene.instantiate() as Vehicle3
+		new_player.is_player = false
+		new_player.is_cpu = false
+		vehicles_node.add_child(new_player)
+		players_dict[user_id] = new_player
+		should_setup = true
 	
-	for vehicle_list in to_remove:
-		players_dict.erase(vehicle_list[0])
-		vehicle_list[1].queue_free()
+	players_dict[user_id].call_deferred("apply_state", vehicle_state.duplicate(true))
 	
-	for vehicle_key: String in cur_vehicle_states:
-		if vehicle_key == player_id:
-			continue
-		
-		if not cur_vehicle_states[vehicle_key]:
-			continue
-		
-		if not vehicle_key in players_dict.keys():
-			should_setup = true
-			var new_player = player_scene.instantiate() as Vehicle3
-			new_player.is_player = false
-			new_player.is_cpu = false
-			vehicles_node.add_child(new_player)
-			players_dict[vehicle_key] = new_player
-			players.append(new_player)
-		
-		players_dict[vehicle_key].call_deferred("apply_state", cur_vehicle_states[vehicle_key].duplicate(true))
-
 	if should_setup:
 		call_deferred("setup")
+
+
+# func update_vehicle_states(cur_vehicle_states: Dictionary, player_id: String):
+# 	# Get rid of expired vehicles
+# 	var should_setup = false
+
+# 	var to_remove = []
+# 	for vehicle_key: String in players_dict.keys():
+# 		if not vehicle_key in cur_vehicle_states.keys():
+# 			var vehicle = players_dict[vehicle_key]
+# 			to_remove.append([vehicle_key, vehicle])
+# 			should_setup = true
+	
+# 	for vehicle_list in to_remove:
+# 		players_dict.erase(vehicle_list[0])
+# 		vehicle_list[1].queue_free()
+	
+# 	for vehicle_key: String in cur_vehicle_states:
+# 		if vehicle_key == player_id:
+# 			continue
+		
+# 		if not cur_vehicle_states[vehicle_key]:
+# 			continue
+		
+# 		if not vehicle_key in players_dict.keys():
+# 			should_setup = true
+# 			var new_player = player_scene.instantiate() as Vehicle3
+# 			new_player.is_player = false
+# 			new_player.is_cpu = false
+# 			vehicles_node.add_child(new_player)
+# 			players_dict[vehicle_key] = new_player
+# 			players.append(new_player)
+		
+# 		players_dict[vehicle_key].call_deferred("apply_state", cur_vehicle_states[vehicle_key].duplicate(true))
+
+# 	if should_setup:
+# 		call_deferred("setup")

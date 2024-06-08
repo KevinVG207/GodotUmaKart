@@ -1,9 +1,14 @@
+enum raceOp {
+    SERVER_UPDATE_VEHICLE_STATE = 1,
+    CLIENT_UPDATE_VEHICLE_STATE = 2,
+}
+
 const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
     logger.debug("Matchinit");
 
     return {
-        state: { presences: {}, emptyTicks: 0 },
-        tickRate: 1, // 1 tick per second = 1 MatchLoop func invocations per second
+        state: { presences: {}, emptyTicks: 0, vehicles: {} },
+        tickRate: 10, // 1 tick per second = 1 MatchLoop func invocations per second
         label: ''
     };
 };
@@ -20,6 +25,7 @@ const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime
 const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
         state.presences[p.sessionId] = p;
+        state.vehicles[p.sessionId] = {};
         logger.debug("%q joined match", p.userId);
     });
 
@@ -51,6 +57,25 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     if (state.emptyTicks > 100) {
         return null;
     }
+
+    // Loop over all messages received by the match
+    messages.forEach(function (message) {
+        // Extract the operation code and payload from the message
+        const opCode = message.opCode;
+        const payload = message.data;
+
+        // Handle the operation code
+        switch (opCode) {
+            case raceOp.CLIENT_UPDATE_VEHICLE_STATE:
+                const updateVehicleState = JSON.parse(new TextDecoder().decode(payload));
+                state.vehicles[message.sender.userId] = updateVehicleState;
+                dispatcher.broadcastMessage(raceOp.SERVER_UPDATE_VEHICLE_STATE, payload, null, message.sender);
+                break;
+            default:
+                logger.warn("Unrecognized operation code", opCode);
+                break;
+        }
+    });
 
     return {
         state

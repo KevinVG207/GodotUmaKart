@@ -13,8 +13,12 @@ var mm_tickets: Array = []
 var mm_matched_data: NakamaRTAPI.MatchmakerMatched = null
 var mm_match: NakamaRTAPI.Match = null
 
-class OP:
-	const VEHICLE_STATE = 1
+var frames_per_update: int = 6
+var frame_count: int = 0
+
+class raceOp:
+	const SERVER_UPDATE_VEHICLE_STATE = 1
+	const CLIENT_UPDATE_VEHICLE_STATE = 2
 
 func _ready():
 	await connect_client()
@@ -22,7 +26,7 @@ func _ready():
 func is_socket():
 	return (socket and socket.is_connected_to_host())
 
-func _process(_delta):
+func _physics_process(_delta):
 	if not is_socket():
 		#print("no")
 		return
@@ -30,6 +34,26 @@ func _process(_delta):
 	if not mm_match and not is_matchmaking:
 		is_matchmaking = true
 		_matchmake()
+	
+	if mm_match:
+		if frame_count >= frames_per_update:
+			frame_count = 0
+			_send_vehicle_state()
+		else:
+			frame_count += 1
+
+func _send_vehicle_state():
+	if not is_socket():
+		return
+	
+	if not level:
+		return
+	
+	if not level.player_vehicle:
+		return
+	
+	var state: Dictionary = level.player_vehicle.get_state()
+	await socket.send_match_state_async(mm_match.match_id, raceOp.CLIENT_UPDATE_VEHICLE_STATE, JSON.stringify(state))
 
 func _matchmake():
 	if not await matchmake():
@@ -134,6 +158,8 @@ func connect_client():
 	socket.received_match_state.connect(_on_match_state)
 	socket.received_matchmaker_matched.connect(_on_matchmaker_matched)
 
+	level.player_user_id = session.user_id
+
 	return true
 
 
@@ -145,11 +171,23 @@ func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
 			# level.on_player_join(p)
 		for p in p_presence.leaves:
 			print("Player left: ", p.user_id)
+			if p.user_id in level.players_dict:
+				level.players_dict.erase(p.user_id)
 			# level.on_player_leave(p)
 
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
-	pass
+	match match_state.op_code:
+		raceOp.SERVER_UPDATE_VEHICLE_STATE:
+			_update_vehicle_state(match_state)
+		_:
+			print("Unknown match state op code: ", match_state.op_code)
+
+func _update_vehicle_state(match_state : NakamaRTAPI.MatchData):
+	if not level:
+		return
+	
+	level.update_vehicle_state(JSON.parse_string(match_state.data), match_state.presence.user_id)
 
 
 func on_exit_async():
