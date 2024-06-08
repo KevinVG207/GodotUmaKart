@@ -1,7 +1,7 @@
 function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, initializer: nkruntime.Initializer) {
     initializer.registerRpc("healthcheck", rpcHealthCheck);
 
-    initializer.registerMatchmakerMatched(matchmakerMatched);
+    initializer.registerMatchmakerMatched(onMatchmakerMatched);
 
     initializer.registerMatch('race', {
         matchInit: raceMatchInit,
@@ -38,7 +38,7 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
 }
 
 
-function matchmakerMatched(context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, matches: nkruntime.MatchmakerResult[]): string {
+const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, matches: nkruntime.MatchmakerResult[]): string {
     matches.forEach(function (match) {
         logger.info("Matched user '%s' named '%s'", match.presence.userId, match.presence.username);
 
