@@ -35,7 +35,7 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
     // logger.debug("Matchmaker add query: %q", query);
 
     return envelope;
-}
+};
 
 
 const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, matches: nkruntime.MatchmakerResult[]): string {
@@ -47,11 +47,16 @@ const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (conte
         });
     });
 
+    const serializedMatches = matches.map(match => ({
+        presence: match.presence,
+        properties: JSON.parse(JSON.stringify(match.properties))  // This will throw an error if properties are not serializable
+    }));
+
     try {
-        const matchId = nk.matchCreate("race", { invited: matches });
+        const matchId = nk.matchCreate("race", { invited: serializedMatches });
         return matchId;
     } catch (err) {
         logger.error(`${err}`);
         throw (err);
     }
-}
+};

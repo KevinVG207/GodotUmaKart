@@ -2,7 +2,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     logger.debug("Matchinit");
 
     return {
-        state: { presences: {}, emptyTicks: 0 },
+        state: { presences: params.invited, emptyTicks: 0 },
         tickRate: 1, // 1 tick per second = 1 MatchLoop func invocations per second
         label: ''
     };
