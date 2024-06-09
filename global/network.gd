@@ -6,11 +6,13 @@ var socket: NakamaSocket
 
 var level: LevelBase
 
-var is_matchmaking: bool = false
-var is_in_match: bool = false
+# var is_matchmaking: bool = false
+# var is_in_match: bool = false
 
+var match_type: String = ""
 var mm_tickets: Array = []
-var mm_match: NakamaRTAPI.Match = null
+var cur_match: NakamaRTAPI.Match = null
+var ready_match: String = ""
 
 var frames_per_update: int = 6
 var frame_count: int = 0
@@ -19,28 +21,37 @@ class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
 	const CLIENT_UPDATE_VEHICLE_STATE = 2
 
-func _ready():
-	#await connect_client()
-	pass
+
+func reset():
+	if socket:
+		await socket.close()
+	socket = null
+	if session:
+		await client.session_logout_async(session)
+	session = null
+	client = null
+	cur_match = null
+	ready_match = ""
+	match_type = ""
 
 func is_socket():
 	return (socket and socket.is_connected_to_host())
 
-func _physics_process(_delta):
-	if not is_socket():
-		#print("no")
-		return
-	#print(session.user_id)
-	if not mm_match and not is_matchmaking:
-		is_matchmaking = true
-		_matchmake()
-	
-	if mm_match:
-		if frame_count >= frames_per_update:
-			frame_count = 0
-			_send_vehicle_state()
-		else:
-			frame_count += 1
+#func _physics_process(_delta):
+	#if not is_socket():
+		##print("no")
+		#return
+	##print(session.user_id)
+	#if not mm_match and not is_matchmaking:
+		#is_matchmaking = true
+		#_matchmake()
+	#
+	#if mm_match:
+		#if frame_count >= frames_per_update:
+			#frame_count = 0
+			#_send_vehicle_state()
+		#else:
+			#frame_count += 1
 
 func _send_vehicle_state():
 	if not is_socket():
@@ -53,12 +64,12 @@ func _send_vehicle_state():
 		return
 	
 	var state: Dictionary = level.player_vehicle.get_state()
-	await socket.send_match_state_async(mm_match.match_id, raceOp.CLIENT_UPDATE_VEHICLE_STATE, JSON.stringify(state))
+	await socket.send_match_state_async(cur_match.match_id, raceOp.CLIENT_UPDATE_VEHICLE_STATE, JSON.stringify(state))
 
 func _matchmake():
 	if not await matchmake():
 		print("Failed to matchmake")
-		is_matchmaking = false
+		# is_matchmaking = false
 
 
 func matchmake():
@@ -80,7 +91,7 @@ func matchmake():
 
 	# Try via matchmaker
 	res = await matchmake_matchmaker()
-	return res
+	return true
 	
 
 func matchmake_list():
@@ -103,7 +114,9 @@ func matchmake_list():
 	if res.matches.size() == 0:
 		return false
 	
-	await join_match(res.matches[0].match_id)
+	ready_match = res.matches[0].match_id
+
+	# await join_match(res.matches[0].match_id)
 
 
 func matchmake_matchmaker():
@@ -143,6 +156,11 @@ func remove_matchmake_ticket(ticket: String):
 	print("Matchmaker removed: ", ticket)
 	return true
 
+func clear_mm_tickets():
+	for ticket in mm_tickets:
+		await remove_matchmake_ticket(ticket)
+	
+	mm_tickets.clear()
 
 func _on_matchmaker_matched(p_matched: NakamaRTAPI.MatchmakerMatched):
 	print("Matchmaker matched: ", p_matched)
@@ -156,23 +174,26 @@ func _on_matchmaker_matched(p_matched: NakamaRTAPI.MatchmakerMatched):
 	
 	mm_tickets.clear()
 
-	await join_match(p_matched.match_id)
+	ready_match = p_matched.match_id
+
+	# await join_match(p_matched.match_id)
 
 
 func join_match(match_id: String):
 	if not is_socket():
-		return
+		return false
 	
 	var _match: NakamaRTAPI.Match = await socket.join_match_async(match_id)
 
 	if _match.is_exception():
 		print("Error joining match: ", _match)
-		return
+		return false
 	
 	print("Match joined: ", _match)
 
-	mm_match = _match
-	is_matchmaking = false
+	cur_match = _match
+	return true
+	# is_matchmaking = false
 
 func connect_client():
 	client = Nakama.create_client("GodotArcadeRacerTest", "185.252.235.108", 7350, "http", 10, NakamaLogger.LOG_LEVEL.INFO) as NakamaClient
@@ -198,8 +219,6 @@ func connect_client():
 	socket.received_match_presence.connect(_on_match_presence)
 	socket.received_match_state.connect(_on_match_state)
 	socket.received_matchmaker_matched.connect(_on_matchmaker_matched)
-
-	level.player_user_id = session.user_id
 
 	return true
 
@@ -234,7 +253,5 @@ func _update_vehicle_state(match_state : NakamaRTAPI.MatchData):
 	
 	level.update_vehicle_state(JSON.parse_string(match_state.data), match_state.presence.user_id)
 
-
 func on_exit_async():
-	if session:
-		await client.session_logout_async(session)
+	await reset()

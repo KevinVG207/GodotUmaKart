@@ -1,23 +1,107 @@
-extends Control
+extends CanvasLayer
+
+const STATE_RESET = -2
+const STATE_RESETTING = -1
+const STATE_INITIAL = 0
+const STATE_SETUP = 1
+const STATE_SETUP_COMPLETE = 2
+const STATE_PRE_MATCHMAKING = -3
+const STATE_MATCHMAKING = 3
+const STATE_MATCHMAKING_WAIT = 4
+const STATE_MATCHMAKING_COMLETE = 5
+const STATE_JOINING = 6
+const STATE_START_VOTING = 7
+const STATE_VOTING = 8
+const STATE_READY = 9
+
+var state = STATE_RESETTING
+var wait_frames = 0
+var max_wait = 60 * 60
 
 @export var info_box: PackedScene
 var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
 
-var count = 0
-
-func _ready():
-	add_player("TestUser1", "1")
-	add_player("TestUser2", "2")
-	add_player("TestUser3", "3")
-	add_player("TestUser4", "4")
-	add_player("TestUser5", "5")
 
 func _physics_process(_delta):
-	count += 1
-	if count > 5 * 60:
-		remove_player("2")
+	match state:
+		STATE_RESETTING:
+			reset()
+		STATE_INITIAL:
+			setup()
+		STATE_SETUP_COMPLETE:
+			$Status.text = "Connected to server"
+			$MatchmakeButton.disabled = false
+			$MatchmakeButton.visible = true
+		STATE_PRE_MATCHMAKING:
+			matchmake()
+		STATE_MATCHMAKING_WAIT:
+			if Network.ready_match:
+				$Status.text = "Match found"
+				state = STATE_MATCHMAKING_COMLETE
+		STATE_MATCHMAKING_COMLETE:
+			join()
+		STATE_START_VOTING:
+			setup_voting()
+		STATE_READY:
+			pass
+		_:
+			pass
 
+func reset():
+	state = STATE_RESETTING
+	$Status.text = "Resetting network connection..."
+	await Network.reset()
+	state = STATE_INITIAL
+
+func setup():
+	state = STATE_SETUP
+	$Status.text = "Setting up connection..."
+	
+	var res: bool = await Network.connect_client()
+	
+	if not res:
+		$Status.text = "Connection failed!"
+		state = STATE_INITIAL
+		return
+	
+	state = STATE_SETUP_COMPLETE
+
+func matchmake():
+	state = STATE_MATCHMAKING
+	$Status.text = "Looking for match..."
+	
+	var res: bool = await Network.matchmake()
+	
+	if not res:
+		$Status.text = "Failed to matchmake!"
+		await Network.reset()
+		state = STATE_INITIAL
+		return
+	
+	wait_frames = 0
+	state = STATE_MATCHMAKING_WAIT
+	return
+
+func join():
+	state = STATE_JOINING
+	$Status.text = "Joining match..."
+	
+	var res: bool = await Network.join_match(Network.ready_match)
+
+	if not res or not Network.cur_match:
+		$Status.text = "Failed to join match!"
+		await Network.reset()
+		state = STATE_INITIAL
+		return
+	
+	state = STATE_START_VOTING
+	return
+
+func setup_voting():
+	state = STATE_START_VOTING
+	$Status.text = "Waiting for votes..."
+	return
 
 func add_player(username: String, user_id: String):
 	if user_id in info_boxes:
@@ -36,3 +120,10 @@ func remove_player(user_id: String):
 	box_container.remove_child(cur_box)
 	info_boxes.erase(user_id)
 	cur_box.queue_free()
+
+
+func _on_matchmake_button_pressed():
+	if state == STATE_SETUP_COMPLETE:
+		$MatchmakeButton.disabled = true
+		$MatchmakeButton.visible = false
+		state = STATE_PRE_MATCHMAKING

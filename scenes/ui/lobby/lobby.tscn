@@ -3,18 +3,12 @@
 [ext_resource type="Script" path="res://scenes/ui/lobby/lobby.gd" id="1_5qmws"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/lobby/player_info_box.tscn" id="2_r5fd3"]
 
-[node name="Lobby" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Lobby" type="CanvasLayer"]
+layer = 101
 script = ExtResource("1_5qmws")
 info_box = ExtResource("2_r5fd3")
 
-[node name="Label" type="Label" parent="."]
-layout_mode = 1
+[node name="LobbyName" type="Label" parent="."]
 offset_left = 16.0
 offset_top = 3.0
 offset_right = 104.0
@@ -23,8 +17,20 @@ theme_override_font_sizes/font_size = 30
 text = "Lobby"
 metadata/_edit_lock_ = true
 
+[node name="Status" type="Label" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -46.0
+offset_top = 40.0
+offset_right = 46.0
+offset_bottom = 63.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 1
+metadata/_edit_lock_ = true
+
 [node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -40,3 +46,38 @@ metadata/_edit_lock_ = true
 layout_mode = 2
 columns = 2
 metadata/_edit_lock_ = true
+
+[node name="MatchmakeButton" type="Button" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -102.0
+offset_top = -83.31
+offset_right = 102.0
+offset_bottom = -40.31
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 25
+text = "Search for room"
+metadata/_edit_lock_ = true
+
+[node name="VoteButton" type="Button" parent="."]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -102.0
+offset_top = -83.31
+offset_right = 102.0
+offset_bottom = -40.31
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 25
+text = "Vote"
+metadata/_edit_lock_ = true
+
+[connection signal="pressed" from="MatchmakeButton" to="." method="_on_matchmake_button_pressed"]

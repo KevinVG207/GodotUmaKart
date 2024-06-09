@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://b62d811jwymmd" path="res://scenes/ui/race_ui.tscn" id="2_xaqxf"]
 
 [node name="Ui" type="CanvasLayer"]
+layer = 101
 script = ExtResource("1_4prdq")
 underwater_color = Color(0, 0.619608, 0.745098, 0.188235)
 
