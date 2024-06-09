@@ -20,7 +20,8 @@ class raceOp:
 	const CLIENT_UPDATE_VEHICLE_STATE = 2
 
 func _ready():
-	await connect_client()
+	#await connect_client()
+	pass
 
 func is_socket():
 	return (socket and socket.is_connected_to_host())

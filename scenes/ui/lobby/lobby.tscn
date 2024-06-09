@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://dqhi3idf6syay"]
+
+[ext_resource type="Script" path="res://scenes/ui/lobby/lobby.gd" id="1_5qmws"]
+[ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/lobby/player_info_box.tscn" id="2_r5fd3"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_5qmws")
+info_box = ExtResource("2_r5fd3")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+offset_left = 16.0
+offset_top = 3.0
+offset_right = 104.0
+offset_bottom = 45.0
+theme_override_font_sizes/font_size = 30
+text = "Lobby"
+metadata/_edit_lock_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 100
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+metadata/_edit_lock_ = true
+
+[node name="PlayerInfoContainer" type="GridContainer" parent="MarginContainer"]
+layout_mode = 2
+columns = 2
+metadata/_edit_lock_ = true

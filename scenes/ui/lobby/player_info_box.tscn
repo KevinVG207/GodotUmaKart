@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://cgubbv13lvah8"]
+
+[ext_resource type="Script" path="res://scenes/ui/lobby/player_info_box.gd" id="1_udc87"]
+[ext_resource type="Texture2D" uid="uid://53pqjniwp6x1" path="res://icon.svg" id="2_yk4si"]
+
+[node name="PlayerInfoBox" type="HBoxContainer"]
+theme_override_constants/separation = 5
+script = ExtResource("1_udc87")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("2_yk4si")
+expand_mode = 2
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "PlayerName1"
