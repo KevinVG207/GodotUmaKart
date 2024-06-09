@@ -16,6 +16,9 @@ function updateLabel(state: nkruntime.MatchState, dispatcher: nkruntime.MatchDis
 
 const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
     // logger.debug("Matchinit");
+
+    logger.debug("Inside Matchinit. MatchType: " + params.matchType)
+
     let label: label = {
         matchType: params.matchType,
         players: 0
