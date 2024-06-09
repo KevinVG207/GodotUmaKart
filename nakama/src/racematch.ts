@@ -69,7 +69,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     logger.info("Amount of presences: " + Object.keys(state.presences).length)
 
     // If we have no presences in the match according to the match state, increment the empty ticks count
-    if (state.presences.length === 0) {
+    if (Object.keys(state.presences).length === 0) {
         state.emptyTicks++;
     } else {
         state.emptyTicks = 0;
