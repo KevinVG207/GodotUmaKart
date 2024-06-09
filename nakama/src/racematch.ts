@@ -65,11 +65,13 @@ const raceMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 }
 
 const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, messages: nkruntime.MatchMessage[]): { state: nkruntime.MatchState } | null {
-    logger.info("Match loop");
+    logger.info("Match loop " + state.emptyTicks);
 
     // If we have no presences in the match according to the match state, increment the empty ticks count
     if (state.presences.length === 0) {
         state.emptyTicks++;
+    } else {
+        state.emptyTicks = 0;
     }
 
     // If the match has been empty for more than 100 ticks, end the match by returning null
