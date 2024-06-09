@@ -65,7 +65,7 @@ const raceMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 }
 
 const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, messages: nkruntime.MatchMessage[]): { state: nkruntime.MatchState } | null {
-    // logger.debug("Match loop");
+    logger.info("Match loop");
 
     // If we have no presences in the match according to the match state, increment the empty ticks count
     if (state.presences.length === 0) {
@@ -124,7 +124,7 @@ const raceMatchSignal = function (ctx: nkruntime.Context, logger: nkruntime.Logg
 }
 
 const raceMatchTerminate = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, graceSeconds: number): { state: nkruntime.MatchState } | null {
-    // logger.debug('Lobby match terminated');
+    logger.info('Starting graceful termination');
 
     return {
         state
