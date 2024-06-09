@@ -39,7 +39,7 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
 
 
 const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, matches: nkruntime.MatchmakerResult[]): string {
-    const matchType: string = matches[0].properties["matchType"];
+    let matchType: string = matches[0].properties["matchType"];
 
     try {
         const matchId = nk.matchCreate(matchType, {label: {matchType: matchType}});
