@@ -1,191 +1,239 @@
 extends Node
 
-var port: int = 8001
+var client: NakamaClient
+var session: NakamaSession
+var socket: NakamaSocket
 
-var send_index: int = 0
-var socket: WebSocketPeer = null
-var json := JSON.new()
-var mutex: Mutex
-var thread := Thread.new()
-var should_exit := false
-var vehicle_data: Dictionary = {}
-var sending_vehicle_data := false
-var unique_id: String = ""
-var fetching_id := false
-var fetching_states := false
-var cur_vehicle_states: Dictionary = {}
-var cur_index: int = -1
+var level: LevelBase
+
+var is_matchmaking: bool = false
+var is_in_match: bool = false
+
+var mm_tickets: Array = []
+var mm_match: NakamaRTAPI.Match = null
+
+var frames_per_update: int = 6
+var frame_count: int = 0
+
+class raceOp:
+	const SERVER_UPDATE_VEHICLE_STATE = 1
+	const CLIENT_UPDATE_VEHICLE_STATE = 2
 
 func _ready():
-	mutex = Mutex.new()
-	thread.start(poll)
+	await connect_client()
 
-func _connect():
-	mutex.lock()
-	unique_id = ""
-	mutex.unlock()
-	socket = WebSocketPeer.new()
-	socket.connect_to_url("wss://umapyoi.net/ws")
+func is_socket():
+	return (socket and socket.is_connected_to_host())
 
-func poll():
-	while true:
-		mutex.lock()
-		var _should_exit = should_exit
-		mutex.unlock()
-		
-		if _should_exit:
-			break
-		
-		if not socket:
-			_connect()
-
-		socket.poll()
-		var state = socket.get_ready_state()
-		#print(state)
-		if state == WebSocketPeer.STATE_OPEN:
-			while socket.get_available_packet_count():
-				var packet_data: PackedByteArray = socket.get_packet()
-				var res = json.parse(packet_data.get_string_from_utf8())
-				
-				if res != 0:
-					print("ERR: ", error_string(res))
-					continue
-				
-				var data = json.data
-				handle_data(data)
-
-		elif state == WebSocketPeer.STATE_CLOSING:
-			# Keep polling to achieve proper close.
-			pass
-		elif state == WebSocketPeer.STATE_CONNECTING:
-			pass
+func _physics_process(_delta):
+	if not is_socket():
+		#print("no")
+		return
+	#print(session.user_id)
+	if not mm_match and not is_matchmaking:
+		is_matchmaking = true
+		_matchmake()
+	
+	if mm_match:
+		if frame_count >= frames_per_update:
+			frame_count = 0
+			_send_vehicle_state()
 		else:
-			_connect()
-		
-		mutex.lock()
-		var _vehicle_data = vehicle_data
-		mutex.unlock()
-		
-		if _vehicle_data and not sending_vehicle_data:
-			sending_vehicle_data = true
-			var res = send_vehicle_data(_vehicle_data)
-			if res:
-				mutex.lock()
-				vehicle_data.clear()
-				mutex.unlock()
-			else:
-				sending_vehicle_data = false
-			# Send vehicle data
-			
-			# send_data(_vehicle_data, "vehicle_data")
-		
-		if get_unique_id().is_empty() and not fetching_id:
-			fetching_id = true
-			var res = fetch_unique_id()
-			if not res:
-				fetching_id = false
-		
-		mutex.lock()
-		var _cur_vehicle_states = cur_vehicle_states
-		mutex.unlock()
-		
-		if not fetching_states and not _cur_vehicle_states:
-			fetching_states = true
-			var ret = fetch_vehicle_states()
-			if not ret:
-				fetching_states = false
+			frame_count += 1
 
-
-func handle_data(_data: Dictionary):
-	if 'type' not in _data or 'data' not in _data or 'index' not in _data or 'md5' not in _data:
+func _send_vehicle_state():
+	if not is_socket():
 		return
 	
-	var type: String = _data['type']
-	var str_data: String = _data['data']
-	var index: int = _data['index']
-	var md5: String = _data['md5']
-
-	var new_md5: String = str_data.md5_text()
-	if not new_md5 == md5:
+	if not level:
 		return
 	
-	var res = json.parse(str_data)
-	if res != 0:
-		print("ERR: ", error_string(res))
+	if not level.player_vehicle:
 		return
 	
-	var data: Variant = json.data
-	
-	var ret = false
-	mutex.lock()
-	print(thread.get_id(), " IDX: ", cur_index, " ", index)
-	if index <= cur_index:
-		ret = true
-	else:
-		cur_index = index
-	mutex.unlock()
-	
-	if ret:
-		return
-	
-	if type == "vehicle_data_received":
-		sending_vehicle_data = false
-	elif type == "unique_id_received":
-		mutex.lock()
-		unique_id = str(data)
-		mutex.unlock()
-		fetching_id = false
-	elif type == "unique_id_expired":
-		mutex.lock()
-		unique_id = ""
-		mutex.unlock()
-	elif type == "vehicles":
-		mutex.lock()
-		cur_vehicle_states = data
-		mutex.unlock()
-		fetching_states = false
+	var state: Dictionary = level.player_vehicle.get_state()
+	await socket.send_match_state_async(mm_match.match_id, raceOp.CLIENT_UPDATE_VEHICLE_STATE, JSON.stringify(state))
+
+func _matchmake():
+	if not await matchmake():
+		print("Failed to matchmake")
+		is_matchmaking = false
 
 
-func send_data(data: Variant, type: String):
-	if not socket:
-		return false
-	var state = socket.get_ready_state()
-	if not state == WebSocketPeer.STATE_OPEN:
+func matchmake():
+	print("Matchmaking...")
+	if not is_socket():
+		print("No socket")
 		return false
 	
-	print("Sending type " + type)
+	if mm_tickets.size() > 0:
+		print("Already have a matchmaking ticket")
+		return false
+
 	
-	send_index += 1
+	# Try via list
+	var res = await matchmake_list()
+	if res:
+		return true
+
+
+	# Try via matchmaker
+	res = await matchmake_matchmaker()
+	return res
 	
-	var packet: Dictionary = {
-		'index': send_index,
-		'type': type,
-		'data': data
-	}
-	var json_data = JSON.stringify(packet)
-	socket.send_text(json_data)
+
+func matchmake_list():
+	print("Matchmaking via list...")
+
+	var min_players = 2
+	var max_players = 11
+	var limit = 10
+	var authoritative = true
+	var label = ""
+	var query = "+label.matchType:race"
+
+	var res: NakamaAPI.ApiMatchList = await client.list_matches_async(session, min_players, max_players, limit, authoritative, label, query)
+	if res.is_exception():
+		print("Error adding match: ", res)
+		return false
+	
+	print("Match list received: ", res.matches.size())
+	
+	if res.matches.size() == 0:
+		return false
+	
+	await join_match(res.matches[0].match_id)
+
+
+func matchmake_matchmaker():
+	print("Matchmaking via matchmaker...")
+	var ticket = await get_matchmake_ticket()
+	if not ticket:
+		print("Failed to get matchmake ticket")
+		return false
+	
+	mm_tickets.append(ticket.ticket)
 	return true
 
-func fetch_unique_id():
-	return send_data(true, "generate_unique_id")
-	
-func get_unique_id():
-	mutex.lock()
-	var id: String = unique_id
-	mutex.unlock()
-	return id
 
-func send_vehicle_data(state: Dictionary):
-	if get_unique_id().is_empty():
-		return false
-	var data = {
-		"id": get_unique_id(),
-		"state": state
+func get_matchmake_ticket():
+	var string_props: Dictionary = {
+		"matchType": "race"
 	}
-	return send_data(data, "vehicle_data")
+	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, 12, string_props, {}, 0)
 
-func fetch_vehicle_states():
-	if get_unique_id().is_empty():
+	if ticket.is_exception():
+		print("Error adding matchmaker: ", ticket)
+		return null
+	
+	print("Matchmaker ticket received: ", ticket)
+	return ticket
+
+
+func remove_matchmake_ticket(ticket: String):
+	if not is_socket():
+		return
+	
+	var removed: NakamaAsyncResult = await socket.remove_matchmaker_async(ticket)
+	if removed.is_exception():
+		print("Error removing matchmaker: ", removed)
 		return false
 	
-	return send_data(true, "get_vehicles")
+	print("Matchmaker removed: ", ticket)
+	return true
+
+
+func _on_matchmaker_matched(p_matched: NakamaRTAPI.MatchmakerMatched):
+	print("Matchmaker matched: ", p_matched)
+
+	if not is_socket():
+		return
+
+	for ticket in mm_tickets:
+		if ticket != p_matched.ticket:
+			await remove_matchmake_ticket(ticket)
+	
+	mm_tickets.clear()
+
+	await join_match(p_matched.match_id)
+
+
+func join_match(match_id: String):
+	if not is_socket():
+		return
+	
+	var _match: NakamaRTAPI.Match = await socket.join_match_async(match_id)
+
+	if _match.is_exception():
+		print("Error joining match: ", _match)
+		return
+	
+	print("Match joined: ", _match)
+
+	mm_match = _match
+	is_matchmaking = false
+
+func connect_client():
+	client = Nakama.create_client("GodotArcadeRacerTest", "185.252.235.108", 7350, "http", 10, NakamaLogger.LOG_LEVEL.INFO) as NakamaClient
+	client.timeout = 10
+	socket = Nakama.create_socket_from(client) as NakamaSocket
+
+	var device_id = OS.get_unique_id() + str(randi_range(1, 99999999))
+
+	var _session = await client.authenticate_device_async(device_id)
+	if _session.is_exception():
+		print("Error creating session: ", _session)
+		return false
+	session = _session
+	print("Session authenticated: ", session)
+
+	var connected: NakamaAsyncResult = await socket.connect_async(session)
+	if connected.is_exception():
+		print("Error connecting socket: ", connected)
+		return false
+
+	print("Socket connected")
+
+	socket.received_match_presence.connect(_on_match_presence)
+	socket.received_match_state.connect(_on_match_state)
+	socket.received_matchmaker_matched.connect(_on_matchmaker_matched)
+
+	level.player_user_id = session.user_id
+
+	return true
+
+
+func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
+	print("Match presence: ", p_presence)
+	if level:
+		for p in p_presence.joins:
+			print("Player joined: ", p.user_id)
+			level.removed_player_ids.erase(p.user_id)
+			# level.on_player_join(p)
+		for p in p_presence.leaves:
+			print("Player left: ", p.user_id)
+			if p.user_id in level.players_dict:
+				var player: Vehicle3 = level.players_dict[p.user_id]
+				level.players_dict.erase(p.user_id)
+				level.removed_player_ids.append(p.user_id)
+				player.queue_free()
+			# level.on_player_leave(p)
+
+
+func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	match match_state.op_code:
+		raceOp.SERVER_UPDATE_VEHICLE_STATE:
+			_update_vehicle_state(match_state)
+		_:
+			print("Unknown match state op code: ", match_state.op_code)
+
+func _update_vehicle_state(match_state : NakamaRTAPI.MatchData):
+	if not level:
+		return
+	
+	level.update_vehicle_state(JSON.parse_string(match_state.data), match_state.presence.user_id)
+
+
+func on_exit_async():
+	if session:
+		await client.session_logout_async(session)

@@ -5,10 +5,11 @@ class_name Vehicle3
 #var peer_id: int
 #var initial_transform: Transform3D
 
-var mutex: Mutex
+var update_idx: int = 0
 
 @export var is_player: bool = false
 @export var is_cpu: bool = true
+var is_network: bool = false
 var check_idx: int = -1
 var check_key_idx: int = 0
 var check_progress: float = 0.0
@@ -138,7 +139,6 @@ var colliding_vehicles: Dictionary = {}
 	
 
 func _ready():
-	mutex = Mutex.new()
 	pass
 	#Network.should_setup = true
 	#transform = initial_transform
@@ -642,15 +642,16 @@ func _on_player_collision_area_exited(area):
 	colliding_vehicles.erase(area_parent)
 	
 func upload_data():
-	mutex.lock()
+	pass
 	#Network.vehicle_data
-	var state: Dictionary = get_state()
-	for key in state.keys():
-		Network.vehicle_data[key] = state[key]
-	mutex.unlock()
+	#var state: Dictionary = get_state()
+	#for key in state.keys():
+		#Network.vehicle_data[key] = state[key]
 
 func get_state() -> Dictionary:
+	update_idx += 1
 	return {
+		"idx": update_idx,
 		"pos": Util.to_array(global_position),
 		"rot": Util.to_array(rotation),
 		"lin_vel": Util.to_array(linear_velocity),
@@ -680,6 +681,10 @@ func get_state() -> Dictionary:
 	}
 
 func apply_state(state: Dictionary):
+	if state.idx <= update_idx:
+		return
+	
+	update_idx = state.get("idx", update_idx)
 	global_position = Util.to_vector3(state.get("pos", Util.to_array(global_position)))
 	rotation = Util.to_vector3(state.get("rot", Util.to_array(rotation)))
 	linear_velocity = Util.to_vector3(state.get("lin_vel", Util.to_array(linear_velocity)))
