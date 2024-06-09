@@ -82,6 +82,11 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         // Extract the operation code and payload from the message
         const opCode = message.opCode;
         const payload = message.data;
+        const presence = message.sender;
+
+        if (!(presence.sessionId in state.presences)) {
+            return;
+        }
 
         // Handle the operation code
         switch (opCode) {
