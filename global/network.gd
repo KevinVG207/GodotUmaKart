@@ -10,7 +10,6 @@ var is_matchmaking: bool = false
 var is_in_match: bool = false
 
 var mm_tickets: Array = []
-var mm_matched_data: NakamaRTAPI.MatchmakerMatched = null
 var mm_match: NakamaRTAPI.Match = null
 
 var frames_per_update: int = 6
@@ -70,7 +69,44 @@ func matchmake():
 	if mm_tickets.size() > 0:
 		print("Already have a matchmaking ticket")
 		return false
+
 	
+	# Try via list
+	var res = await matchmake_list()
+	if res:
+		return true
+
+
+	# Try via matchmaker
+	res = await matchmake_matchmaker()
+	return res
+	
+
+func matchmake_list():
+	print("Matchmaking via list...")
+
+	var min_players = 2
+	var max_players = 11
+	var limit = 10
+	var authoritative = true
+	var label = ""
+	var query = "+label.matchType:race"
+
+	var res: NakamaAPI.ApiMatchList = await client.list_matches_async(session, min_players, max_players, limit, authoritative, label, query)
+	if res.is_exception():
+		print("Error adding match: ", res)
+		return false
+	
+	print("Match list received: ", res.matches.size())
+	
+	if res.matches.size() == 0:
+		return false
+	
+	await join_match(res.matches[0].match_id)
+
+
+func matchmake_matchmaker():
+	print("Matchmaking via matchmaker...")
 	var ticket = await get_matchmake_ticket()
 	if not ticket:
 		print("Failed to get matchmake ticket")
@@ -78,7 +114,6 @@ func matchmake():
 	
 	mm_tickets.append(ticket.ticket)
 	return true
-
 
 
 func get_matchmake_ticket():
@@ -120,9 +155,14 @@ func _on_matchmaker_matched(p_matched: NakamaRTAPI.MatchmakerMatched):
 	
 	mm_tickets.clear()
 
-	mm_matched_data = p_matched
+	await join_match(p_matched.match_id)
 
-	var _match: NakamaRTAPI.Match = await socket.join_match_async(p_matched.match_id)
+
+func join_match(match_id: String):
+	if not is_socket():
+		return
+	
+	var _match: NakamaRTAPI.Match = await socket.join_match_async(match_id)
 
 	if _match.is_exception():
 		print("Error joining match: ", _match)
@@ -132,7 +172,6 @@ func _on_matchmaker_matched(p_matched: NakamaRTAPI.MatchmakerMatched):
 
 	mm_match = _match
 	is_matchmaking = false
-
 
 func connect_client():
 	client = Nakama.create_client("GodotArcadeRacerTest", "185.252.235.108", 7350, "http", 10, NakamaLogger.LOG_LEVEL.INFO) as NakamaClient
@@ -169,11 +208,15 @@ func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
 	if level:
 		for p in p_presence.joins:
 			print("Player joined: ", p.user_id)
+			level.removed_player_ids.erase(p.user_id)
 			# level.on_player_join(p)
 		for p in p_presence.leaves:
 			print("Player left: ", p.user_id)
 			if p.user_id in level.players_dict:
+				var player: Vehicle3 = level.players_dict[p.user_id]
 				level.players_dict.erase(p.user_id)
+				level.removed_player_ids.append(p.user_id)
+				player.queue_free()
 			# level.on_player_leave(p)
 
 

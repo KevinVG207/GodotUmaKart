@@ -11,6 +11,7 @@ var should_exit: bool = false
 var update_thread: Thread
 var player_vehicle: Vehicle3 = null
 var player_user_id: String = ""
+var removed_player_ids: Array = []
 @onready var vehicles_node: Node3D = $Vehicles
 
 @export var player_scene: PackedScene
@@ -198,6 +199,9 @@ func _spawn_function(data: Variant) -> Node:
 
 func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 	if user_id == player_user_id:
+		return
+	
+	if user_id in removed_player_ids:
 		return
 	
 	var should_setup = false
