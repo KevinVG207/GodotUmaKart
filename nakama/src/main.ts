@@ -42,7 +42,7 @@ const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (conte
     const matchType: string = matches[0].properties["matchType"];
 
     try {
-        const matchId = nk.matchCreate(matchType, {});
+        const matchId = nk.matchCreate(matchType, {label: {matchType: matchType}});
         return matchId;
     } catch (err) {
         logger.error(`${err}`);

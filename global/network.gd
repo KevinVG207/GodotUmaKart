@@ -85,7 +85,7 @@ func get_matchmake_ticket():
 	var string_props: Dictionary = {
 		"matchType": "race"
 	}
-	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, 4, string_props, {}, 0)
+	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, 12, string_props, {}, 0)
 
 	if ticket.is_exception():
 		print("Error adding matchmaker: ", ticket)
@@ -141,10 +141,11 @@ func connect_client():
 
 	var device_id = OS.get_unique_id() + str(randi_range(1, 99999999))
 
-	session = await client.authenticate_device_async(device_id)
-	if session.is_exception():
-		print("Error creating session: ", session)
+	var _session = await client.authenticate_device_async(device_id)
+	if _session.is_exception():
+		print("Error creating session: ", _session)
 		return false
+	session = _session
 	print("Session authenticated: ", session)
 
 	var connected: NakamaAsyncResult = await socket.connect_async(session)
@@ -191,4 +192,5 @@ func _update_vehicle_state(match_state : NakamaRTAPI.MatchData):
 
 
 func on_exit_async():
-	await client.session_logout_async(session)
+	if session:
+		await client.session_logout_async(session)

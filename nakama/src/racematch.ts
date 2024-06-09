@@ -3,13 +3,28 @@ enum raceOp {
     CLIENT_UPDATE_VEHICLE_STATE = 2,
 }
 
+interface label {
+    matchType: string;
+    players: number;
+}
+
+function updateLabel(state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
+    let label: label = state.label;
+    label.players = Object.keys(state.presences).length;
+    dispatcher.matchLabelUpdate(JSON.stringify(label));
+}
+
 const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
     // logger.debug("Matchinit");
+    let label: label = {
+        matchType: params.matchType,
+        players: 0
+    }
 
     return {
-        state: { presences: {}, emptyTicks: 0, vehicles: {} },
+        state: { presences: {}, emptyTicks: 0, vehicles: {}, label: label },
         tickRate: 10, // 1 tick per second = 1 MatchLoop func invocations per second
-        label: ''
+        label: '{}'
     };
 };
 
@@ -26,7 +41,7 @@ const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     presences.forEach(function (p) {
         state.presences[p.sessionId] = p;
         state.vehicles[p.sessionId] = {};
-        // logger.debug("%q joined match", p.userId);
+        updateLabel(state, dispatcher)
     });
 
     return {
@@ -38,7 +53,7 @@ const raceMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     presences.forEach(function (p) {
         delete state.presences[p.sessionId];
         delete state.vehicles[p.sessionId];
-        // logger.debug("%q left match", p.userId);
+        updateLabel(state, dispatcher)
     });
 
     return {
