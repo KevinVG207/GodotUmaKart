@@ -61,11 +61,11 @@ const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 }
 
 const lobbyMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
-    // presences.forEach(function (p) {
-    //     delete state.presences[p.sessionId];
-    //     delete state.vehicles[p.sessionId];
-    //     updateLabel(state, dispatcher)
-    // });
+    presences.forEach(function (p) {
+        delete state.presences[p.sessionId];
+        delete state.votes[p.sessionId];
+        updateLabel(state, dispatcher)
+    });
 
     return {
         state

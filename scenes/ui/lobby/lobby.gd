@@ -115,22 +115,22 @@ func setup_voting():
 	state = STATE_VOTING
 	return
 
-func add_player(username: String, user_id: String):
-	if user_id in info_boxes:
+func add_player(username: String, session_id: String):
+	if session_id in info_boxes:
 		return
 	
 	var new_box = info_box.instantiate() as LobbyPlayerInfoBox
 	new_box.get_node("Label").text = username
-	info_boxes[user_id] = new_box
+	info_boxes[session_id] = new_box
 	box_container.add_child(new_box)
 
 
-func remove_player(user_id: String):
-	if not user_id in info_boxes:
+func remove_player(session_id: String):
+	if not session_id in info_boxes:
 		return
-	var cur_box = info_boxes[user_id] as LobbyPlayerInfoBox
+	var cur_box = info_boxes[session_id] as LobbyPlayerInfoBox
 	box_container.remove_child(cur_box)
-	info_boxes.erase(user_id)
+	info_boxes.erase(session_id)
 	cur_box.queue_free()
 
 
@@ -161,19 +161,19 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			print("Unknown lobby op code: ", match_state.op_code)
 
 func handle_vote_data(data: Dictionary):
-	var presences = data.presences
-	var votes = data.votes
+	var presences = data.presences as Dictionary
+	var votes = data.votes as Dictionary
 	
-	var cur_user_ids = info_boxes.keys()
-	var server_user_ids = presences.keys()
+	var cur_session_ids = info_boxes.keys()
+	var server_session_ids = presences.keys()
 	
-	for user_id: String in cur_user_ids:
-		if not user_id in server_user_ids:
-			remove_player(user_id)
+	for session_id: String in cur_session_ids:
+		if not session_id in server_session_ids:
+			remove_player(session_id)
 	
-	for p in presences:
-		if p.userId in cur_user_ids:
+	for p in presences.values():
+		if p.sessionId in cur_session_ids:
 			continue
-		add_player(p.userId.substr(0, 10), p.userId)
+		add_player(p.userId.substr(0, 10), p.sessionId)
 	
 	print(data)
