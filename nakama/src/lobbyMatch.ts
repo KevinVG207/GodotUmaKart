@@ -18,8 +18,8 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         players: 0
     }
 
-    let vote_timeout = 60 * tickRate;
-    let join_timeout = 30 * tickRate;
+    let voteTimeout = 60 * tickRate;
+    let joinTimeout = 30 * tickRate;
 
     return {
         state: {
@@ -29,9 +29,9 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             nextMatchType: params.nextMatchType,
             votes: {},
             curTick: 0,
-            vote_timeout: vote_timeout,
-            join_timeout: join_timeout,
-            expire_timeout: vote_timeout*2,
+            voteTimeout: voteTimeout,
+            joinTimeout: joinTimeout,
+            expireTimeout: voteTimeout*2,
             label: label
         },
         tickRate: tickRate,
@@ -75,28 +75,16 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     // logger.info("Match loop " + state.emptyTicks);
     // logger.info("Amount of presences: " + Object.keys(state.presences).length)
 
-    // If we have no presences in the match according to the match state, increment the empty ticks count
-    if (Object.keys(state.presences).length === 0) {
-        state.emptyTicks++;
-    } else {
-        state.emptyTicks = 0;
-    }
-
-    // If the match has been empty for more than 100 ticks, end the match by returning null
-    if (state.emptyTicks > 100) {
-        return null;
-    }
-
     state.curTick++;
 
-    if (state.curTick > state.join_timeout) {
+    if (state.curTick > state.joinTimeout) {
         state.label.joinable = 0;
         updateLabel(state, dispatcher);
     }
 
-    let true_vote_timeout = state.vote_timeout + 5 * state.tickRate; // 5 seconds buffer
+    let trueVoteTimeout = state.voteTimeout + 5 * state.tickRate; // 5 seconds buffer
 
-    if (state.curTick == true_vote_timeout) {
+    if (state.curTick == trueVoteTimeout) {
         // Start the match
         //state.presences.forEach(function (p: nkruntime.Presence) {
             // TODO: Implement randomizer when a system for course selection is implemented
@@ -117,7 +105,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             dispatcher.broadcastMessage(lobbyOp.SERVER_MATCH_DATA, JSON.stringify({ matchId: matchId, course: randomVote, voteUser: randomKey }), null, null);
     }
 
-    if (state.curTick < true_vote_timeout) {
+    if (state.curTick < trueVoteTimeout) {
         // Loop over all messages received by the match
         messages.forEach(function (message) {
             // Extract the operation code and payload from the message
@@ -145,7 +133,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         dispatcher.broadcastMessage(lobbyOp.SERVER_VOTE_DATA, JSON.stringify(state.votes), null, null);
     }
 
-    if (state.curTick > state.expire_timeout) {
+    if (state.curTick > state.expireTimeout) {
         return null;
     }
 
