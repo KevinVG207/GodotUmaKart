@@ -24,18 +24,29 @@ var starting_order: Array = []
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
 	const CLIENT_UPDATE_VEHICLE_STATE = 2
+	const SERVER_PING = 3
+	const CLIENT_VOTE = 4
+	const SERVER_PING_DATA = 5
+	const SERVER_RACE_START = 6
+	const CLIENT_READY = 7
 
 const STATE_DISCONNECT = -1
 const STATE_INITIAL = 0
 const STATE_JOINING = 1
-const STATE_WAIT_FOR_PING = 2
-const STATE_READY_FOR_START = 10
-const STATE_WAIT_FOR_START = 11
-const STATE_RACE = 12
+const STATE_READY_FOR_START = 2
+const STATE_WAIT_FOR_START = 3
+const STATE_RACE = 4
+
+const UPDATE_STATES = [
+	STATE_WAIT_FOR_START,
+	STATE_RACE
+]
 
 var state = STATE_INITIAL
 
 func _ready():
+	UI.show_race_ui()
+
 	checkpoints = []
 	key_checkpoints = {}
 	
@@ -46,6 +57,13 @@ func _ready():
 			key_checkpoints[checkpoint] = key_checkpoints.size()
 
 
+func _process(_delta):
+	if not $StartTimer.is_stopped():
+		UI.update_countdown(str(ceil($StartTimer.time_left)))
+	else:
+		UI.update_countdown("")
+
+
 func change_state(new_state: int, state_func: Callable = Callable()):
 	state = new_state
 	state_func.call()
@@ -54,27 +72,29 @@ func _physics_process(_delta):
 	match state:
 		STATE_INITIAL:
 			change_state(STATE_JOINING, join)
-		STATE_READY_FOR_START:
-			pass
 		_:
 			pass
 	
-	#update_wait_frames += 1
-	#if update_wait_frames > frames_between_update:
-		#update_wait_frames = 0
-		#if player_vehicle:
-			#player_vehicle.call_deferred("upload_data")
-	#
-	## Player checkpoints
-	#for vehicle: Vehicle3 in $Vehicles.get_children():
-		#update_checkpoint(vehicle)
-		#update_ranks()
+	if state in UPDATE_STATES:
+		update_wait_frames += 1
+		if update_wait_frames > frames_between_update:
+			update_wait_frames = 0
+			if player_vehicle:
+				var vehicle_data: Dictionary = player_vehicle.get_state()
+				Network.send_match_state(raceOp.CLIENT_UPDATE_VEHICLE_STATE, vehicle_data)
+				#player_vehicle.call_deferred("upload_data")
+		
+		# Player checkpoints
+		for vehicle: Vehicle3 in $Vehicles.get_children():
+			update_checkpoint(vehicle)
+			update_ranks()
 
 func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3):
 	var new_vehicle = player_scene.instantiate() as Vehicle3
 	players_dict[user_id] = new_vehicle
 	vehicles_node.add_child(new_vehicle)
 	new_vehicle.teleport(new_position, look_dir, up_dir)
+	new_vehicle.axis_lock()
 	new_vehicle.is_player = false
 	new_vehicle.is_cpu = false
 	new_vehicle.is_network = true
@@ -120,7 +140,7 @@ func join():
 		state = STATE_DISCONNECT
 		return
 	
-	state = STATE_WAIT_FOR_PING
+	state = STATE_WAIT_FOR_START
 	return
 
 
@@ -240,8 +260,17 @@ func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 	if not user_id in players_dict.keys():
 		return
 	
-	players_dict[user_id].call_deferred("apply_state", vehicle_state)
+	players_dict[user_id].apply_state(vehicle_state)
+	#players_dict[user_id].call_deferred("apply_state", vehicle_state)
 
+
+func handle_race_start(data: Dictionary):
+	var pings: Dictionary = data.pings as Dictionary
+	var ticks_to_start: int = data.ticksToStart as int
+	var tick_rate: int = data.tickRate as int
+
+	var seconds_left: float = Util.ticks_to_time_with_ping(ticks_to_start, tick_rate, pings[Network.session.user_id])
+	$StartTimer.start(seconds_left)
 
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
@@ -249,5 +278,16 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	match match_state.op_code:
 		raceOp.SERVER_UPDATE_VEHICLE_STATE:
 			update_vehicle_state(data, match_state.presence.user_id)
+		raceOp.SERVER_PING:
+			Network.send_match_state(raceOp.SERVER_PING, data)
+			pass
+		raceOp.SERVER_RACE_START:
+			handle_race_start(data)
 		_:
 			print("Unknown match state op code: ", match_state.op_code)
+
+
+func _on_start_timer_timeout():
+	state = STATE_RACE
+	for vehicle: Vehicle3 in $Vehicles.get_children():
+		vehicle.axis_unlock()

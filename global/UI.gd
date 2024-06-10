@@ -4,8 +4,14 @@ var water = false
 @export var underwater_color: Color
 var transparent: Color = Color(0, 0, 0, 0)
 
+func show_race_ui():
+	$RaceUI.visible = true
+
 func update_speed(speed):
 	$RaceUI.update_speed(speed)
+
+func update_countdown(countdown):
+	$RaceUI.update_countdown(countdown)
 
 func apply_water():
 	if not water:

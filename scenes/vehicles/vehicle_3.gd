@@ -147,6 +147,14 @@ func _ready():
 		#wheel_marker.transform = wheel.transform
 		#wheel_markers.append(wheel_marker)
 
+func axis_lock():
+	axis_lock_linear_x = true
+	axis_lock_linear_z = true
+
+func axis_unlock():
+	axis_lock_linear_x = false
+	axis_lock_linear_z = false
+
 func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3):
 	global_position = new_pos
 	look_at_from_position(new_pos, new_pos + (look_dir.rotated(up_dir, deg_to_rad(-90))), up_dir, true)
@@ -650,12 +658,9 @@ func _on_player_collision_area_exited(area):
 	#Debug.print([self, "uncollided with", area_parent])
 	colliding_vehicles.erase(area_parent)
 	
-func upload_data():
-	pass
-	#Network.vehicle_data
+#func upload_data():
 	#var state: Dictionary = get_state()
-	#for key in state.keys():
-		#Network.vehicle_data[key] = state[key]
+	#Network.
 
 func get_state() -> Dictionary:
 	update_idx += 1

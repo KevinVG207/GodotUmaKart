@@ -177,7 +177,6 @@ func _on_matchmake_button_pressed():
 		#remove_player(p.user_id)
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
-	await get_tree().create_timer(0.4).timeout
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:
 		lobbyOp.SERVER_PING:
@@ -193,6 +192,7 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			pass
 		_:
 			print("Unknown lobby op code: ", match_state.op_code)
+			pass
 
 func handle_vote_data(data: Dictionary):
 	var presences = data.presences as Dictionary
@@ -204,7 +204,7 @@ func handle_vote_data(data: Dictionary):
 	
 	# Setup vote timeout:
 	var ticks_left = max(vote_timeout - tick, 0)
-	var seconds_left = (ticks_left / tick_rate) - (ping_data[Network.session.user_id] / 1000)
+	var seconds_left = Util.ticks_to_time_with_ping(ticks_left, tick_rate, ping_data[Network.session.user_id])
 	if not vote_timeout_started:
 		vote_timeout_started = true
 		$VoteTimeout.start(seconds_left)
