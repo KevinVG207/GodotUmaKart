@@ -13,7 +13,7 @@ const STATE_JOINING = 6
 const STATE_START_VOTING = 7
 const STATE_VOTING = 8
 const STATE_VOTED = 9
-const STATE_READY = 10
+const STATE_MATCH_RECEIVED = 10
 
 class lobbyOp:
 	const CLIENT_VOTE = 1
@@ -64,8 +64,6 @@ func _physics_process(_delta):
 			change_state(STATE_JOINING, join)
 		STATE_START_VOTING:
 			change_state(STATE_START_VOTING, setup_voting)
-		STATE_READY:
-			pass
 		_:
 			pass
 
@@ -136,7 +134,8 @@ func add_player(username: String, user_id: String):
 	
 	var new_box = info_box.instantiate() as LobbyPlayerInfoBox
 	new_box.set_username(username)
-	# if Network.session.user_id
+	if Network.session.user_id == user_id:
+		new_box.set_cur_user()
 	info_boxes[user_id] = new_box
 	box_container.add_child(new_box)
 
@@ -181,6 +180,7 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			pass
 		lobbyOp.SERVER_MATCH_DATA:
 			print("Received match data")
+			handle_match_data(data)
 			pass
 		_:
 			print("Unknown lobby op code: ", match_state.op_code)
@@ -212,7 +212,6 @@ func handle_vote_data(data: Dictionary):
 		add_player(p.userId.substr(0, 10), p.userId)
 	
 	cur_votes = votes
-	print("Cur Votes: ", cur_votes)
 	for user_id in votes:
 		var vote_data: Dictionary = votes[user_id]
 		update_player_pick(user_id, vote_data['course'])
@@ -251,3 +250,16 @@ func _on_vote_timeout_timeout():
 	
 	var res = await vote()
 	return res
+
+func handle_match_data(data: Dictionary):
+	var match_id = data.matchId as String
+	var winning_vote = data.winningVote as Dictionary
+	var vote_user = data.voteUser as String
+	
+	info_boxes[vote_user].set_picked()
+	print("Match ID: ", match_id)
+	print("Winning vote: ", winning_vote)
+	print("Vote user: ", vote_user)
+
+	$Status.text = "Course selected: " + winning_vote['course']
+	state = STATE_MATCH_RECEIVED
