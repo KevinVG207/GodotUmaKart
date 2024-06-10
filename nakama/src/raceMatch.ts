@@ -18,6 +18,8 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         maxPlayers: 12,
     }
 
+    logger.info("Starting IDs: " + params.startingIds)
+
     return {
         state: {
             presences: {},
