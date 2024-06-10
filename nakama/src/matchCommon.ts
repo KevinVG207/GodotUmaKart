@@ -5,6 +5,10 @@ interface label {
     maxPlayers: number;
 }
 
+const config = {
+    maxPing: 1500
+}
+
 function updateLabel(state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
     let label: label = state.label;
     label.players = Object.keys(state.presences).length;

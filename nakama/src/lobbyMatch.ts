@@ -33,7 +33,8 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             joinTimeout: joinTimeout,
             expireTimeout: voteTimeout*2,
             label: label,
-            pingData: {}
+            pingData: {},
+            skipVote: false
         },
         tickRate: tickRate,
         label: '{}'
@@ -86,9 +87,9 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
     pingUsers(tick, ctx, state, dispatcher);
 
-    let trueVoteTimeout = state.voteTimeout + 5 * ctx.matchTickRate; // 5 seconds buffer
+    let trueVoteTimeout = state.voteTimeout + 3 * ctx.matchTickRate; // 3 seconds buffer
 
-    if (tick == trueVoteTimeout) {
+    if (tick == trueVoteTimeout || state.skipVote) {
         startNextMatch(state, dispatcher, nk);
     }
 
@@ -138,31 +139,10 @@ function processMessages(messages: nkruntime.MatchMessage[], nk: nkruntime.Nakam
         // Handle the operation code
         switch (opCode) {
             case lobbyOp.SERVER_PING:
-                let pingId = data.pingId;
-                if (!(pingId in state.pingData[presence.userId].ongoingPings)) {
-                    break;
-                }
-                let receiveTimeMs = message.receiveTimeMs;
-                let sendTimeMs = state.pingData[presence.userId].ongoingPings[pingId];
-                delete state.pingData[presence.userId].ongoingPings[pingId];
-                let ping = (receiveTimeMs - sendTimeMs) / 2;
-                state.pingData[presence.userId].lastPings.push(ping);
-
-                // Remove oldest ping if we have more than 5
-                if (state.pingData[presence.userId].lastPings.length > 5) {
-                    state.pingData[presence.userId].lastPings.shift();
-                }
-
-                var sum = 0;
-                for (var i = 0; i < state.pingData[presence.userId].lastPings.length; i++) {
-                    sum += state.pingData[presence.userId].lastPings[i];
-                }
-
-                state.pingData[presence.userId].ping = sum / state.pingData[presence.userId].lastPings.length;
+                handle_ping_message(message, data, presence, state, dispatcher);
                 break;
             case lobbyOp.CLIENT_VOTE:
-                logger.info(`Receive time: ${message.receiveTimeMs}`);
-                state.votes[presence.userId] = data;
+                handle_vote_message(message, data, presence, state);
                 break;
             default:
                 logger.warn("Unrecognized operation code", opCode);
@@ -186,6 +166,55 @@ function processMessages(messages: nkruntime.MatchMessage[], nk: nkruntime.Nakam
 
     // Broadcast all votes to all presences
     dispatcher.broadcastMessage(lobbyOp.SERVER_VOTE_DATA, JSON.stringify(vote_data), null, null);
+}
+
+function handle_vote_message(message: nkruntime.MatchMessage, data: any, presence: nkruntime.Presence, state: nkruntime.MatchState) {
+    state.votes[presence.userId] = data;
+
+    // Check if all presences have voted
+    let presences = Object.keys(state.presences).map((key) => state.presences[key]);
+    let votes = Object.keys(state.votes);
+    
+    var allVoted = true;
+    presences.forEach(function (p) {
+        if (!(p.userId in state.votes)) {
+            allVoted = false;
+        }
+    });
+
+    if (allVoted) {
+        state.skipVote = true;
+    }
+}
+
+function handle_ping_message(message: nkruntime.MatchMessage, data: any, presence: nkruntime.Presence, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
+    let pingId = data.pingId;
+    if (!(pingId in state.pingData[presence.userId].ongoingPings)) {
+        return;
+    }
+    let receiveTimeMs = message.receiveTimeMs;
+    let sendTimeMs = state.pingData[presence.userId].ongoingPings[pingId];
+    delete state.pingData[presence.userId].ongoingPings[pingId];
+    let ping = (receiveTimeMs - sendTimeMs) / 2;
+    state.pingData[presence.userId].lastPings.push(ping);
+
+    // Remove oldest ping if we have more than 5
+    if (state.pingData[presence.userId].lastPings.length > 5) {
+        state.pingData[presence.userId].lastPings.shift();
+    }
+
+    let sum = 0;
+    for (var i = 0; i < state.pingData[presence.userId].lastPings.length; i++) {
+        sum += state.pingData[presence.userId].lastPings[i];
+    }
+
+    let avgPing = sum / state.pingData[presence.userId].lastPings.length;
+    state.pingData[presence.userId].ping = avgPing;
+
+    // Kick user if ping is too high
+    if (state.pingData[presence.userId].length > 3 && avgPing > config.maxPing) {
+        dispatcher.matchKick([presence]);
+    }
 }
 
 function startNextMatch(state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher, nk: nkruntime.Nakama) {
