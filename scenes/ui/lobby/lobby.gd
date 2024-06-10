@@ -24,7 +24,6 @@ class lobbyOp:
 
 var state = STATE_RESETTING
 
-var vote_timeout_set = false
 var cur_vote = ""
 var cur_votes = {}
 
@@ -33,8 +32,8 @@ var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
 
 func _ready():
-	# print(Util.get_race_courses())
-	# get_tree().quit()
+	#print($VoteTimeout.time_left)
+	#get_tree().quit()
 	pass
 
 func _process(_delta):
@@ -195,12 +194,12 @@ func handle_vote_data(data: Dictionary):
 	var tick = data.tick as int
 	var vote_timeout = data.voteTimeout as int
 	var tick_rate = data.tickRate as int
+	var ping_data = data.pingData as Dictionary
 	
 	# Setup vote timeout:
-	if not vote_timeout_set:
-		vote_timeout_set = true
-		var ticks_left = max(vote_timeout - tick, 0)
-		var seconds_left = ticks_left / tick_rate
+	var ticks_left = max(vote_timeout - tick, 0)
+	var seconds_left = (ticks_left / tick_rate) - (ping_data[Network.session.user_id] / 1000)
+	if seconds_left < $VoteTimeout.time_left:
 		$VoteTimeout.start(seconds_left)
 	
 	var cur_user_ids = info_boxes.keys()
@@ -248,6 +247,9 @@ func vote():
 func _on_vote_timeout_timeout():
 	$VoteButton.disabled = true
 	$VoteButton.visible = false
+	
+	if state != STATE_VOTING:
+		return false
 	
 	if not cur_vote:
 		cur_vote = Util.get_race_courses()[0]

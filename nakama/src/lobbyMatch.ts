@@ -55,7 +55,7 @@ const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         state.pingData[p.userId] = {
             lastPings: [],
             ongoingPings: {},
-            ping: 500
+            ping: 0
         };
     });
 
