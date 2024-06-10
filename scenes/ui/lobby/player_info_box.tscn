@@ -6,6 +6,8 @@
 [node name="PlayerInfoBox" type="HBoxContainer"]
 theme_override_constants/separation = 5
 script = ExtResource("1_udc87")
+current_user_color = Color(1, 1, 0.576471, 1)
+picked_color = Color(1, 1, 0, 1)
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 2
@@ -13,7 +15,15 @@ texture = ExtResource("2_yk4si")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="."]
+[node name="Name" type="Label" parent="."]
 layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 25
 text = "PlayerName1"
+
+[node name="Pick" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 2

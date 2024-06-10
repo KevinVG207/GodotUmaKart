@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://crersi2gg0o1o"]
 
 [ext_resource type="PackedScene" uid="uid://nomey8ht6xwd" path="res://scenes/vehicles/vehicle_3.tscn" id="1_3cfyl"]
-[ext_resource type="Script" path="res://scenes/levels/test_level_3.gd" id="1_kxhjh"]
+[ext_resource type="Script" path="res://scenes/levels/race/test_level_3/test_level_3.gd" id="1_kxhjh"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="1_ldxvr"]
 [ext_resource type="PackedScene" uid="uid://bcppq1ypicwdx" path="res://assets/course/wicked-woods/WickedWoods.tscn" id="4_w4b6d"]
 [ext_resource type="PackedScene" uid="uid://742psss2cgvv" path="res://scenes/objects/cone.tscn" id="5_w3l6l"]
@@ -25,16 +25,21 @@ size = Vector3(20, 1, 20)
 script = ExtResource("1_kxhjh")
 player_scene = ExtResource("1_3cfyl")
 
+[node name="StartTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
+[node name="CountdownTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
 [node name="PlayerCamera" parent="." instance=ExtResource("1_ldxvr")]
 transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, 2, -18, 71.952)
 current = true
 
 [node name="Vehicles" type="Node3D" parent="."]
-
-[node name="Vehicle3" parent="Vehicles" instance=ExtResource("1_3cfyl")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -21, 64)
-is_player = true
-is_cpu = false
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.683013, -0.707107, -0.183013, 0.258819, -4.2222e-08, 0.965926, -0.683013, -0.707107, 0.183013, 0, 166, 0)
@@ -43,6 +48,62 @@ shadow_enabled = true
 shadow_opacity = 0.75
 directional_shadow_blend_splits = true
 directional_shadow_max_distance = 500.0
+
+[node name="Checkpoints" type="Node3D" parent="."]
+
+[node name="Checkpoint" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, -20, 57)
+is_key = true
+
+[node name="Checkpoint2" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-1, 0, 8.74228e-08, 6.18172e-08, 0.707107, 0.707107, -6.18172e-08, 0.707107, -0.707107, 0, -9, 32)
+
+[node name="Checkpoint3" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-1, 6.18172e-08, 6.18172e-08, 6.18172e-08, 1, 0, -6.18172e-08, 0, -1, 1.83149e-06, 2.31371, 13.6863)
+
+[node name="Checkpoint14" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(1.05529e-07, -2.70212e-15, 1, 6.18172e-08, 1, 0, -1, 6.18172e-08, 1.05529e-07, 30, 2.31371, -0.3137)
+is_key = true
+
+[node name="Checkpoint15" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-1, 6.18172e-08, 6.18172e-08, 6.18172e-08, 1, 0, -6.18172e-08, -2.11758e-22, -1, 49, 2.31371, -28.3137)
+
+[node name="Checkpoint16" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-1.81058e-08, -2.70212e-15, -1, 6.18172e-08, 1, 0, 1, -6.18172e-08, -1.81058e-08, 30, 2.31371, -42.3137)
+
+[node name="Checkpoint4" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-0.707107, 4.37114e-08, -0.707107, 6.18172e-08, 1, 0, 0.707107, -4.37114e-08, -0.707107, 4.05691e-06, -0.686291, -58.3137)
+is_key = true
+
+[node name="Checkpoint5" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-0.707107, 4.37114e-08, -0.707107, 6.18172e-08, 1, 0, 0.707107, -4.37114e-08, -0.707107, -16, -0.68629, -73.3137)
+
+[node name="Checkpoint6" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-1.81059e-08, 6.18172e-08, -1, -3.28406e-15, 1, 6.18172e-08, 1, 0, -1.81059e-08, -32, -5.68629, -90.3137)
+is_key = true
+
+[node name="Checkpoint7" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(0.707107, 6.18172e-08, -0.707107, -4.37114e-08, 1, 4.37114e-08, 0.707107, 0, 0.707107, -97, -5.68629, -56.3137)
+
+[node name="Checkpoint8" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(0.965926, 6.18172e-08, 0.258819, -5.97109e-08, 1, -1.59995e-08, -0.258819, 3.55271e-15, 0.965926, -79.9787, -5.68629, -29.4944)
+
+[node name="Checkpoint9" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(1, 6.18172e-08, -5.96046e-08, -6.18172e-08, 1, 1.24345e-14, 5.96046e-08, 0, 1, -83, -5.68629, 48.3081)
+is_key = true
+
+[node name="Checkpoint10" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(0.707107, 6.18172e-08, 0.707107, -4.37114e-08, 1, -4.37114e-08, -0.707107, 3.43166e-15, 0.707107, -61.6436, -14.6863, 89.3177)
+
+[node name="Checkpoint11" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-2.98023e-08, 6.18172e-08, 1, 3.55271e-15, 1, -6.18172e-08, -1, 2.42655e-15, 0, -38.3091, -14.6863, 112.652)
+
+[node name="Checkpoint12" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-0.5, 6.18172e-08, 0.866025, 3.09086e-08, 1, -5.35353e-08, -0.866025, 2.10145e-15, -0.5, -6.18472, -14.6863, 105.652)
+is_key = true
+
+[node name="Checkpoint13" parent="Checkpoints" instance=ExtResource("6_yofaq")]
+transform = Transform3D(-1, 6.18172e-08, -5.96046e-08, 6.18173e-08, 1, 1.06581e-14, 5.96046e-08, 4.60344e-15, -1, 0.815279, -14.6863, 84.6522)
 
 [node name="Floor" type="StaticBody3D" parent="." groups=["floor"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -252.356, 0)
@@ -138,62 +199,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3167, -16)
 [node name="Cone10" parent="." instance=ExtResource("5_w3l6l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.52039, -18)
 
-[node name="Checkpoints" type="Node3D" parent="."]
-
-[node name="Checkpoint" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, -20, 57)
-is_key = true
-
-[node name="Checkpoint2" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-1, 0, 8.74228e-08, 6.18172e-08, 0.707107, 0.707107, -6.18172e-08, 0.707107, -0.707107, 0, -9, 32)
-
-[node name="Checkpoint3" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-1, 6.18172e-08, 6.18172e-08, 6.18172e-08, 1, 0, -6.18172e-08, 0, -1, 1.83149e-06, 2.31371, 13.6863)
-
-[node name="Checkpoint14" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(1.05529e-07, -2.70212e-15, 1, 6.18172e-08, 1, 0, -1, 6.18172e-08, 1.05529e-07, 30, 2.31371, -0.3137)
-is_key = true
-
-[node name="Checkpoint15" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-1, 6.18172e-08, 6.18172e-08, 6.18172e-08, 1, 0, -6.18172e-08, -2.11758e-22, -1, 49, 2.31371, -28.3137)
-
-[node name="Checkpoint16" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-1.81058e-08, -2.70212e-15, -1, 6.18172e-08, 1, 0, 1, -6.18172e-08, -1.81058e-08, 30, 2.31371, -42.3137)
-
-[node name="Checkpoint4" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-0.707107, 4.37114e-08, -0.707107, 6.18172e-08, 1, 0, 0.707107, -4.37114e-08, -0.707107, 4.05691e-06, -0.686291, -58.3137)
-is_key = true
-
-[node name="Checkpoint5" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-0.707107, 4.37114e-08, -0.707107, 6.18172e-08, 1, 0, 0.707107, -4.37114e-08, -0.707107, -16, -0.68629, -73.3137)
-
-[node name="Checkpoint6" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-1.81059e-08, 6.18172e-08, -1, -3.28406e-15, 1, 6.18172e-08, 1, 0, -1.81059e-08, -32, -5.68629, -90.3137)
-is_key = true
-
-[node name="Checkpoint7" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(0.707107, 6.18172e-08, -0.707107, -4.37114e-08, 1, 4.37114e-08, 0.707107, 0, 0.707107, -97, -5.68629, -56.3137)
-
-[node name="Checkpoint8" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(0.965926, 6.18172e-08, 0.258819, -5.97109e-08, 1, -1.59995e-08, -0.258819, 3.55271e-15, 0.965926, -79.9787, -5.68629, -29.4944)
-
-[node name="Checkpoint9" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(1, 6.18172e-08, -5.96046e-08, -6.18172e-08, 1, 1.24345e-14, 5.96046e-08, 0, 1, -83, -5.68629, 48.3081)
-is_key = true
-
-[node name="Checkpoint10" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(0.707107, 6.18172e-08, 0.707107, -4.37114e-08, 1, -4.37114e-08, -0.707107, 3.43166e-15, 0.707107, -61.6436, -14.6863, 89.3177)
-
-[node name="Checkpoint11" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-2.98023e-08, 6.18172e-08, 1, 3.55271e-15, 1, -6.18172e-08, -1, 2.42655e-15, 0, -38.3091, -14.6863, 112.652)
-
-[node name="Checkpoint12" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-0.5, 6.18172e-08, 0.866025, 3.09086e-08, 1, -5.35353e-08, -0.866025, 2.10145e-15, -0.5, -6.18472, -14.6863, 105.652)
-is_key = true
-
-[node name="Checkpoint13" parent="Checkpoints" instance=ExtResource("6_yofaq")]
-transform = Transform3D(-1, 6.18172e-08, -5.96046e-08, 6.18173e-08, 1, 1.06581e-14, 5.96046e-08, 4.60344e-15, -1, 0.815279, -14.6863, 84.6522)
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 128
 
@@ -222,3 +227,6 @@ text = "HOST"
 
 [node name="SpawnPosition" type="Marker3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -20, 65)
+
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="timeout" from="CountdownTimer" to="." method="_on_countdown_timer_timeout"]

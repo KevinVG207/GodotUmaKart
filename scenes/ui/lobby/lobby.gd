@@ -13,15 +13,38 @@ const STATE_JOINING = 6
 const STATE_START_VOTING = 7
 const STATE_VOTING = 8
 const STATE_VOTED = 9
-const STATE_READY = 10
+const STATE_MATCH_RECEIVED = 10
+const STATE_SWITCHING_SCENE = 11
+
+class lobbyOp:
+	const SERVER_PING = 0
+	const CLIENT_VOTE = 1
+	const SERVER_VOTE_DATA = 2
+	const SERVER_MATCH_DATA = 3
+
 
 var state = STATE_RESETTING
-var wait_frames = 0
-var max_wait = 60 * 60
+var vote_timeout_started = false
+
+var cur_vote = ""
+var cur_votes = {}
+var next_course = ""
 
 @export var info_box: PackedScene
 var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
+
+func _ready():
+	#print($VoteTimeout.time_left)
+	#get_tree().quit()
+	pass
+
+func _process(_delta):
+	# Deal with displaying things
+	$TimeLeft.text = "0:00"
+
+	if not $VoteTimeout.is_stopped():
+		$TimeLeft.text = Util.format_time_minutes($VoteTimeout.time_left)
 
 
 func _physics_process(_delta):
@@ -44,8 +67,8 @@ func _physics_process(_delta):
 			change_state(STATE_JOINING, join)
 		STATE_START_VOTING:
 			change_state(STATE_START_VOTING, setup_voting)
-		STATE_READY:
-			pass
+		STATE_MATCH_RECEIVED:
+			change_state(STATE_SWITCHING_SCENE, switch_scene)
 		_:
 			pass
 
@@ -80,7 +103,6 @@ func matchmake():
 		state = STATE_RESET
 		return
 	
-	wait_frames = 0
 	state = STATE_MATCHMAKING_WAIT
 	return
 
@@ -88,8 +110,15 @@ func join():
 	$Status.text = "Joining match..."
 	
 	var res: bool = await Network.join_match(Network.ready_match)
+	
+	#Network.socket.received_match_presence.connect(_on_match_presence)
+	Network.socket.received_match_state.connect(_on_match_state)
 
 	if not res or not Network.cur_match:
+		# Disconnect functions
+		#Network.socket.received_match_presence.disconnect(_on_match_presence)
+		Network.socket.received_match_state.disconnect(_on_match_state)
+
 		$Status.text = "Failed to join match!"
 		state = STATE_RESET
 		return
@@ -100,6 +129,8 @@ func join():
 func setup_voting():
 	$Status.text = "Waiting for votes..."
 	state = STATE_VOTING
+	$VoteButton.disabled = false
+	$VoteButton.visible = true
 	return
 
 func add_player(username: String, user_id: String):
@@ -107,7 +138,9 @@ func add_player(username: String, user_id: String):
 		return
 	
 	var new_box = info_box.instantiate() as LobbyPlayerInfoBox
-	new_box.get_node("Label").text = username
+	new_box.set_username(username)
+	if Network.session.user_id == user_id:
+		new_box.set_cur_user()
 	info_boxes[user_id] = new_box
 	box_container.add_child(new_box)
 
@@ -120,9 +153,131 @@ func remove_player(user_id: String):
 	info_boxes.erase(user_id)
 	cur_box.queue_free()
 
+func update_player_name(user_id: String, new_name: String):
+	if not user_id in info_boxes:
+		return
+	info_boxes[user_id].set_username(new_name)
+
+func update_player_pick(user_id: String, pick_text: String):
+	if not user_id in info_boxes:
+		return
+	info_boxes[user_id].set_pick(pick_text)
 
 func _on_matchmake_button_pressed():
 	if state == STATE_SETUP_COMPLETE:
 		$MatchmakeButton.disabled = true
 		$MatchmakeButton.visible = false
 		state = STATE_PRE_MATCHMAKING
+
+
+#func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
+	#for p in p_presence.joins:
+		#add_player(p.user_id.substr(0, 10), p.user_id)
+	#for p in p_presence.leaves:
+		#remove_player(p.user_id)
+
+func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	var data: Dictionary = JSON.parse_string(match_state.data)
+	match match_state.op_code:
+		lobbyOp.SERVER_PING:
+			Network.send_match_state(lobbyOp.SERVER_PING, data)
+		lobbyOp.SERVER_VOTE_DATA:
+			print("Received vote data")
+			handle_vote_data(data)
+		lobbyOp.SERVER_MATCH_DATA:
+			print("Received match data")
+			handle_match_data(data)
+		_:
+			print("Unknown lobby op code: ", match_state.op_code)
+
+func handle_vote_data(data: Dictionary):
+	var presences = data.presences as Dictionary
+	var votes = data.votes as Dictionary
+	var tick = data.tick as int
+	var vote_timeout = data.voteTimeout as int
+	var tick_rate = data.tickRate as int
+	var ping_data = data.pingData as Dictionary
+	
+	# Setup vote timeout:
+	var ticks_left = max(vote_timeout - tick, 0)
+	var seconds_left = Util.ticks_to_time_with_ping(ticks_left, tick_rate, ping_data[Network.session.user_id])
+	if not vote_timeout_started:
+		vote_timeout_started = true
+		$VoteTimeout.start(seconds_left)
+	elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
+		$VoteTimeout.start(seconds_left)
+	
+	# Update player states
+	var cur_user_ids = info_boxes.keys()
+	var server_user_ids = presences.keys()
+	
+	for user_id: String in cur_user_ids:
+		if not user_id in server_user_ids:
+			remove_player(user_id)
+	
+	for p in presences.values():
+		if p.userId in cur_user_ids:
+			continue
+		add_player(p.userId.substr(0, 10), p.userId)
+	
+	cur_votes = votes
+	for user_id in votes:
+		var vote_data: Dictionary = votes[user_id]
+		update_player_pick(user_id, vote_data['course'])
+
+
+func _on_vote_button_pressed():
+	$VoteButton.disabled = true
+	$VoteButton.visible = false
+
+	cur_vote = Util.get_race_courses()[0]
+
+	var res = await vote()
+	return res
+
+func vote():
+	var payload = {
+		"course": cur_vote
+	}
+
+	var res = await Network.send_match_state(lobbyOp.CLIENT_VOTE, payload)
+
+	if not res:
+		$Status.text = "Failed to send vote!"
+		state = STATE_RESET
+		return false
+	
+	state = STATE_VOTED
+	return true
+
+func _on_vote_timeout_timeout():
+	$VoteButton.disabled = true
+	$VoteButton.visible = false
+	
+	if not cur_vote:
+		cur_vote = Util.get_race_courses()[0]
+	
+	var res = await vote()
+	return res
+
+func handle_match_data(data: Dictionary):
+	var match_id = data.matchId as String
+	var winning_vote = data.winningVote as Dictionary
+	var vote_user = data.voteUser as String
+	
+	info_boxes[vote_user].set_picked()
+	print("Match ID: ", match_id)
+	print("Winning vote: ", winning_vote)
+	print("Vote user: ", vote_user)
+
+	next_course = winning_vote['course']
+	
+	Network.ready_match = match_id
+	Network.next_match_data = data
+
+	$Status.text = "Course selected: " + winning_vote['course']
+	state = STATE_MATCH_RECEIVED
+
+func switch_scene():
+	Network.socket.received_match_state.disconnect(_on_match_state)
+	get_tree().change_scene_to_file(Util.get_race_course_path(next_course))

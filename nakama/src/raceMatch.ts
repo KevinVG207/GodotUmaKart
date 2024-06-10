@@ -1,6 +1,11 @@
 enum raceOp {
     SERVER_UPDATE_VEHICLE_STATE = 1,
     CLIENT_UPDATE_VEHICLE_STATE = 2,
+    SERVER_PING = 3,
+    CLIENT_VOTE = 4,
+    SERVER_PING_DATA = 5,
+	SERVER_RACE_START = 6,
+    CLIENT_READY = 7,
 }
 
 const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
@@ -8,24 +13,33 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
     logger.debug("Inside Matchinit. MatchType: " + params.matchType)
 
-    var tickRate = 10;
+    var tickRate = 20;
     var emptyTimeout = 60 * tickRate;
 
     let label: label = {
         matchType: params.matchType,
         joinable: 0,
-        players: 0
+        players: 0,
+        maxPlayers: 12,
     }
+
+    logger.info("Starting IDs: " + params.startingIds)
 
     return {
         state: {
             presences: {},
             emptyTicks: 0,
             tickRate: tickRate,
-            empty_timeout: emptyTimeout,
+            emptyTimeout: emptyTimeout,
             vehicles: {},
             started: false,
-            label: label
+            label: label,
+            startingIds: JSON.parse(params.startingIds) as string[],
+            pingData: {},
+            startTick: -1,
+            pingAtStart: {},
+            readyUsers: [],
+            ready: false,
         },
         tickRate: tickRate,
         label: '{}'
@@ -34,6 +48,22 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
 const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presence: nkruntime.Presence, metadata: { [key: string]: any }): { state: nkruntime.MatchState, accept: boolean, rejectMessage?: string | undefined } | null {
     // logger.debug("MatchJoinAttempt", presence.userId);
+
+    if (state.players >= state.maxPlayers) {
+        return {
+            state,
+            accept: false,
+            rejectMessage: "Match is full"
+        };
+    }
+
+    if (!state.startingIds.includes(presence.userId)) {
+        return {
+            state,
+            accept: false,
+            rejectMessage: "User not in starting list"
+        };
+    }
 
     return {
         state,
@@ -45,6 +75,11 @@ const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     presences.forEach(function (p) {
         state.presences[p.sessionId] = p;
         state.vehicles[p.sessionId] = {};
+        state.pingData[p.userId] = {
+            lastPings: [],
+            ongoingPings: {},
+            ping: 0
+        };
         updateLabel(state, dispatcher)
     });
 
@@ -81,6 +116,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         return null;
     }
 
+    pingUsers(raceOp.SERVER_PING, tick, ctx, state, dispatcher);
+
     // Loop over all messages received by the match
     messages.forEach(function (message) {
         // Extract the operation code and payload from the message
@@ -106,11 +143,56 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
                 state.vehicles[message.sender.userId] = data;
                 dispatcher.broadcastMessage(raceOp.SERVER_UPDATE_VEHICLE_STATE, payload, null, message.sender);
                 break;
+            case raceOp.SERVER_PING:
+                    handle_ping_message(message, data, presence, state, dispatcher);
+                    break;
+            case raceOp.CLIENT_READY:
+                if (!state.readyUsers.includes(presence.userId)) {
+                    state.readyUsers.push(presence.userId);
+                }
+
+                if (state.readyUsers.length === Object.keys(state.presences).length) {
+                    state.ready = true;
+                }
+                break;
             default:
                 logger.warn("Unrecognized operation code", opCode);
                 break;
         }
     });
+
+    // Every half
+    if (tick % Math.floor(ctx.matchTickRate / 2) === 0) {
+        var pingDict: { [key: string]: number; } = {};
+
+        var ready = true;
+
+        for (let userId in state.pingData) {
+            pingDict[userId] = state.pingData[userId].ping;
+            if (state.pingData[userId].lastPings.length < 5) {
+                ready = false;
+            }
+        }
+
+        if (!state.started && ready && state.ready) {
+            // Start the race!
+            state.started = true;
+
+            var highest_ping = 0;
+            for (let userId in state.pingData) {
+                if (state.pingData[userId].ping > highest_ping) {
+                    highest_ping = state.pingData[userId].ping;
+                }
+            }
+
+            var ticksToStart = Math.ceil(((highest_ping / 1000.0) + 1) * ctx.matchTickRate);
+            state.pingAtStart = pingDict;
+
+            dispatcher.broadcastMessage(raceOp.SERVER_RACE_START, JSON.stringify({ pings: pingDict, ticksToStart: ticksToStart, tickRate: ctx.matchTickRate }), null, null);
+        }
+
+        dispatcher.broadcastMessage(raceOp.SERVER_PING, JSON.stringify({ pings: pingDict }), null, null);
+    }
 
     return {
         state
