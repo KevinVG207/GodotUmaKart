@@ -15,7 +15,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         matchType: params.matchType,
         joinable: 0,
         players: 0,
-        maxPlayers: 3
+        maxPlayers: 12
     }
 
     return {

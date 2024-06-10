@@ -16,7 +16,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         matchType: params.matchType,
         joinable: 1,
         players: 0,
-        maxPlayers: 12
+        maxPlayers: 3
     }
 
     let voteTimeout = 60 * tickRate;
