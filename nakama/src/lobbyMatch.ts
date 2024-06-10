@@ -51,7 +51,7 @@ const lobbyMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntim
 
 const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
-        state.presences[p.sessionId] = p;
+        state.presences[p.userId] = p;
         updateLabel(state, dispatcher)
     });
 
@@ -62,8 +62,8 @@ const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
 const lobbyMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
-        delete state.presences[p.sessionId];
-        delete state.votes[p.sessionId];
+        delete state.presences[p.userId];
+        delete state.votes[p.userId];
         updateLabel(state, dispatcher)
     });
 
@@ -91,7 +91,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         // Kick users who haven't voted evern after grace period
         let presences = Object.keys(state.presences).map((key) => state.presences[key]);
         presences.forEach(function (p: nkruntime.Presence) {
-            if (!(p.sessionId in state.votes)) {
+            if (!(p.userId in state.votes)) {
                 dispatcher.matchKick([p])
             }
         });
@@ -118,14 +118,14 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             const data = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(payload) as any) as string);
             const presence = message.sender;
 
-            if (!(presence.sessionId in state.presences)) {
+            if (!(presence.userId in state.presences)) {
                 return;
             }
 
             // Handle the operation code
             switch (opCode) {
                 case lobbyOp.CLIENT_VOTE:
-                    state.votes[presence.sessionId] = data;
+                    state.votes[presence.userId] = data;
                     break;
                 default:
                     logger.warn("Unrecognized operation code", opCode);

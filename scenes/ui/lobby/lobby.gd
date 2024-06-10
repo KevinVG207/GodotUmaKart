@@ -130,34 +130,34 @@ func setup_voting():
 	$VoteButton.visible = true
 	return
 
-func add_player(username: String, session_id: String):
-	if session_id in info_boxes:
+func add_player(username: String, user_id: String):
+	if user_id in info_boxes:
 		return
 	
 	var new_box = info_box.instantiate() as LobbyPlayerInfoBox
 	new_box.set_username(username)
-	if Network.session.user_id
-	info_boxes[session_id] = new_box
+	# if Network.session.user_id
+	info_boxes[user_id] = new_box
 	box_container.add_child(new_box)
 
 
-func remove_player(session_id: String):
-	if not session_id in info_boxes:
+func remove_player(user_id: String):
+	if not user_id in info_boxes:
 		return
-	var cur_box = info_boxes[session_id] as LobbyPlayerInfoBox
+	var cur_box = info_boxes[user_id] as LobbyPlayerInfoBox
 	box_container.remove_child(cur_box)
-	info_boxes.erase(session_id)
+	info_boxes.erase(user_id)
 	cur_box.queue_free()
 
-func update_player_name(session_id: String, new_name: String):
-	if not session_id in info_boxes:
+func update_player_name(user_id: String, new_name: String):
+	if not user_id in info_boxes:
 		return
-	info_boxes[session_id].set_username(new_name)
+	info_boxes[user_id].set_username(new_name)
 
-func update_player_pick(session_id: String, pick_text: String):
-	if not session_id in info_boxes:
+func update_player_pick(user_id: String, pick_text: String):
+	if not user_id in info_boxes:
 		return
-	info_boxes[session_id].set_pick(pick_text)
+	info_boxes[user_id].set_pick(pick_text)
 
 func _on_matchmake_button_pressed():
 	if state == STATE_SETUP_COMPLETE:
@@ -199,23 +199,23 @@ func handle_vote_data(data: Dictionary):
 		var seconds_left = ticks_left / tick_rate
 		$VoteTimeout.start(seconds_left)
 	
-	var cur_session_ids = info_boxes.keys()
-	var server_session_ids = presences.keys()
+	var cur_user_ids = info_boxes.keys()
+	var server_user_ids = presences.keys()
 	
-	for session_id: String in cur_session_ids:
-		if not session_id in server_session_ids:
-			remove_player(session_id)
+	for user_id: String in cur_user_ids:
+		if not user_id in server_user_ids:
+			remove_player(user_id)
 	
 	for p in presences.values():
-		if p.sessionId in cur_session_ids:
+		if p.userId in cur_user_ids:
 			continue
-		add_player(p.userId.substr(0, 10), p.sessionId)
+		add_player(p.userId.substr(0, 10), p.userId)
 	
 	cur_votes = votes
 	print("Cur Votes: ", cur_votes)
-	for session_id in votes:
-		var vote_data: Dictionary = votes[session_id]
-		update_player_pick(session_id, vote_data['course'])
+	for user_id in votes:
+		var vote_data: Dictionary = votes[user_id]
+		update_player_pick(user_id, vote_data['course'])
 
 
 func _on_vote_button_pressed():
