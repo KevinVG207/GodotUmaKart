@@ -177,6 +177,7 @@ func _on_matchmake_button_pressed():
 		#remove_player(p.user_id)
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	await get_tree().create_timer(0.4).timeout
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:
 		lobbyOp.SERVER_PING:

@@ -67,6 +67,8 @@ func send_match_state(op_code: int, state: Dictionary):
 	
 	if not cur_match:
 		return false
+		
+	await get_tree().create_timer(0.4).timeout
 	
 	var res = await socket.send_match_state_async(cur_match.match_id, op_code, JSON.stringify(state))
 	if res.is_exception():
