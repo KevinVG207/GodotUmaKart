@@ -161,8 +161,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         }
     });
 
-    // Every second
-    if (tick % ctx.matchTickRate === 0) {
+    // Every half
+    if (tick % Math.floor(ctx.matchTickRate / 2) === 0) {
         var pingDict: { [key: string]: number; } = {};
 
         var ready = true;

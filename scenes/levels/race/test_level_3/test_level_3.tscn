@@ -30,6 +30,11 @@ process_callback = 0
 wait_time = 3.0
 one_shot = true
 
+[node name="CountdownTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
 [node name="PlayerCamera" parent="." instance=ExtResource("1_ldxvr")]
 transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, 2, -18, 71.952)
 current = true
@@ -224,3 +229,4 @@ text = "HOST"
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -20, 65)
 
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="timeout" from="CountdownTimer" to="." method="_on_countdown_timer_timeout"]

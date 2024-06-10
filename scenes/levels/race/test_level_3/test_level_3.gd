@@ -36,10 +36,11 @@ const STATE_JOINING = 1
 const STATE_CAN_READY = 2
 const STATE_READY_FOR_START = 3
 const STATE_WAIT_FOR_START = 4
-const STATE_RACE = 5
+const STATE_COUNTDOWN = 5
+const STATE_RACE = 6
 
 const UPDATE_STATES = [
-	STATE_WAIT_FOR_START,
+	STATE_COUNTDOWN,
 	STATE_RACE
 ]
 
@@ -59,8 +60,8 @@ func _ready():
 
 
 func _process(_delta):
-	if not $StartTimer.is_stopped():
-		UI.update_countdown(str(ceil($StartTimer.time_left)))
+	if not $CountdownTimer.is_stopped():
+		UI.update_countdown(str(ceil($CountdownTimer.time_left)))
 	else:
 		UI.update_countdown("")
 
@@ -299,6 +300,11 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 
 
 func _on_start_timer_timeout():
+	state = STATE_COUNTDOWN
+	$CountdownTimer.start(3.0)
+
+
+func _on_countdown_timer_timeout():
 	state = STATE_RACE
 	for vehicle: Vehicle3 in $Vehicles.get_children():
 		vehicle.axis_unlock()
