@@ -20,8 +20,10 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         maxPlayers: 12,
     }
 
-    let voteTimeout = 30 * tickRate;
-    let joinTimeout = 20 * tickRate;
+    // let voteTimeout = 30 * tickRate;
+    // let joinTimeout = 20 * tickRate;
+    let voteTimeout = 5 * tickRate;
+    let joinTimeout = 2 * tickRate;
 
     return {
         state: {
@@ -238,12 +240,20 @@ function startNextMatch(state: nkruntime.MatchState, dispatcher: nkruntime.Match
     let randomIndex = Math.floor(Math.random() * keys.length);
     let randomKey = keys[randomIndex];
     let randomVote = state.votes[randomKey];
+    let playerIds = Object.keys(state.presences);  // This will indicate the starting order.
 
     // Create a race match using this course
-    let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, winningVote: randomVote });
+    let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, winningVote: randomVote, playerIds: JSON.stringify(playerIds) });
+
+    let payload = {
+        matchId: matchId,
+        winningVote: randomVote,
+        voteUser: randomKey,
+        playerIds: playerIds
+    }
 
     // Broadcast the new match to all presences
-    dispatcher.broadcastMessage(lobbyOp.SERVER_MATCH_DATA, JSON.stringify({ matchId: matchId, winningVote: randomVote, voteUser: randomKey }), null, null);
+    dispatcher.broadcastMessage(lobbyOp.SERVER_MATCH_DATA, JSON.stringify(payload), null, null);
 }
 
 function pingUsers(tick: number, ctx: nkruntime.Context, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {

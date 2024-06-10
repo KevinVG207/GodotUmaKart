@@ -4,8 +4,6 @@ var client: NakamaClient
 var session: NakamaSession
 var socket: NakamaSocket
 
-var level: LevelBase
-
 # var is_matchmaking: bool = false
 # var is_in_match: bool = false
 
@@ -13,13 +11,10 @@ var match_type: String = ""
 var mm_tickets: Array = []
 var cur_match: NakamaRTAPI.Match = null
 var ready_match: String = ""
+var next_match_data: Dictionary = {}
 
 var frames_per_update: int = 6
 var frame_count: int = 0
-
-class raceOp:
-	const SERVER_UPDATE_VEHICLE_STATE = 1
-	const CLIENT_UPDATE_VEHICLE_STATE = 2
 
 
 func reset():
@@ -53,18 +48,18 @@ func is_socket():
 		#else:
 			#frame_count += 1
 
-func _send_vehicle_state():
-	if not is_socket():
-		return
-	
-	if not level:
-		return
-	
-	if not level.player_vehicle:
-		return
-	
-	var state: Dictionary = level.player_vehicle.get_state()
-	await socket.send_match_state_async(cur_match.match_id, raceOp.CLIENT_UPDATE_VEHICLE_STATE, JSON.stringify(state))
+#func _send_vehicle_state():
+	#if not is_socket():
+		#return
+	#
+	#if not level:
+		#return
+	#
+	#if not level.player_vehicle:
+		#return
+	#
+	#var state: Dictionary = level.player_vehicle.get_state()
+	#await socket.send_match_state_async(cur_match.match_id, raceOp.CLIENT_UPDATE_VEHICLE_STATE, JSON.stringify(state))
 
 func send_match_state(op_code: int, state: Dictionary):
 	if not is_socket():
@@ -203,6 +198,10 @@ func join_match(match_id: String):
 	if not is_socket():
 		return false
 	
+	if cur_match:
+		socket.leave_match_async(cur_match.match_id)
+		cur_match = null
+	
 	var _match: NakamaRTAPI.Match = await socket.join_match_async(match_id)
 
 	if _match.is_exception():
@@ -243,35 +242,35 @@ func connect_client():
 	return true
 
 
-func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
-	print("Match presence: ", p_presence)
-	if level:
-		for p in p_presence.joins:
-			print("Player joined: ", p.user_id)
-			level.removed_player_ids.erase(p.user_id)
-			# level.on_player_join(p)
-		for p in p_presence.leaves:
-			print("Player left: ", p.user_id)
-			if p.user_id in level.players_dict:
-				var player: Vehicle3 = level.players_dict[p.user_id]
-				level.players_dict.erase(p.user_id)
-				level.removed_player_ids.append(p.user_id)
-				player.queue_free()
-			# level.on_player_leave(p)
+#func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
+	#print("Match presence: ", p_presence)
+	#if level:
+		#for p in p_presence.joins:
+			#print("Player joined: ", p.user_id)
+			#level.removed_player_ids.erase(p.user_id)
+			## level.on_player_join(p)
+		#for p in p_presence.leaves:
+			#print("Player left: ", p.user_id)
+			#if p.user_id in level.players_dict:
+				#var player: Vehicle3 = level.players_dict[p.user_id]
+				#level.players_dict.erase(p.user_id)
+				#level.removed_player_ids.append(p.user_id)
+				#player.queue_free()
+			## level.on_player_leave(p)
 
 
-func _on_match_state(match_state : NakamaRTAPI.MatchData):
-	match match_state.op_code:
-		raceOp.SERVER_UPDATE_VEHICLE_STATE:
-			_update_vehicle_state(match_state)
-		_:
-			print("Unknown match state op code: ", match_state.op_code)
+#func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	#match match_state.op_code:
+		#raceOp.SERVER_UPDATE_VEHICLE_STATE:
+			#_update_vehicle_state(match_state)
+		#_:
+			#print("Unknown match state op code: ", match_state.op_code)
 
-func _update_vehicle_state(match_state : NakamaRTAPI.MatchData):
-	if not level:
-		return
-	
-	level.update_vehicle_state(JSON.parse_string(match_state.data), match_state.presence.user_id)
+#func _update_vehicle_state(match_state : NakamaRTAPI.MatchData):
+	#if not level:
+		#return
+	#
+	#level.update_vehicle_state(JSON.parse_string(match_state.data), match_state.presence.user_id)
 
 func on_exit_async():
 	await reset()

@@ -12,18 +12,30 @@ var update_thread: Thread
 var player_vehicle: Vehicle3 = null
 var player_user_id: String = ""
 var removed_player_ids: Array = []
+var starting_order: Array = []
+
+@export var start_offset_z: float = 4.0
+@export var start_offset_x: float = 2.0
+
 @onready var vehicles_node: Node3D = $Vehicles
 
 @export var player_scene: PackedScene
 
+class raceOp:
+	const SERVER_UPDATE_VEHICLE_STATE = 1
+	const CLIENT_UPDATE_VEHICLE_STATE = 2
+
+const STATE_DISCONNECT = -1
+const STATE_INITIAL = 0
+const STATE_JOINING = 1
+const STATE_WAIT_FOR_PING = 2
+const STATE_READY_FOR_START = 10
+const STATE_WAIT_FOR_START = 11
+const STATE_RACE = 12
+
+var state = STATE_INITIAL
 
 func _ready():
-	Network.level = self
-	setup()
-
-func setup():
-	Debug.print("SETUP")
-	
 	checkpoints = []
 	key_checkpoints = {}
 	
@@ -33,28 +45,85 @@ func setup():
 		if checkpoint.is_key:
 			key_checkpoints[checkpoint] = key_checkpoints.size()
 
-	# var i = 0
-	for vehicle: Vehicle3 in $Vehicles.get_children():
-		# vehicle.rank = i
-		# players.append(vehicle)
-		# vehicle.check_idx = len(checkpoints)-1
-		# vehicle.check_key_idx = key_checkpoints.size()-1
-		# i += 1
-		if vehicle.is_player:
-			player_vehicle = vehicle
-			$PlayerCamera.target = vehicle
+
+func change_state(new_state: int, state_func: Callable = Callable()):
+	state = new_state
+	state_func.call()
 
 func _physics_process(_delta):
-	update_wait_frames += 1
-	if update_wait_frames > frames_between_update:
-		update_wait_frames = 0
-		if player_vehicle:
-			player_vehicle.call_deferred("upload_data")
+	match state:
+		STATE_INITIAL:
+			change_state(STATE_JOINING, join)
+		STATE_READY_FOR_START:
+			pass
+		_:
+			pass
 	
-	# Player checkpoints
-	for vehicle: Vehicle3 in $Vehicles.get_children():
-		update_checkpoint(vehicle)
-		update_ranks()
+	#update_wait_frames += 1
+	#if update_wait_frames > frames_between_update:
+		#update_wait_frames = 0
+		#if player_vehicle:
+			#player_vehicle.call_deferred("upload_data")
+	#
+	## Player checkpoints
+	#for vehicle: Vehicle3 in $Vehicles.get_children():
+		#update_checkpoint(vehicle)
+		#update_ranks()
+
+func _add_vehicle(user_id: String, new_position: Vector3, new_rotation: Vector3):
+	var new_vehicle = player_scene.instantiate() as Vehicle3
+	new_vehicle.global_position = new_position
+	new_vehicle.global_rotation = new_rotation
+	new_vehicle.is_player = false
+	new_vehicle.is_cpu = false
+	new_vehicle.is_network = true
+	vehicles_node.add_child(new_vehicle)
+	players_dict[user_id] = new_vehicle
+	if user_id == Network.session.user_id:
+		new_vehicle.is_player = true
+		player_user_id = user_id
+		player_vehicle = new_vehicle
+		$PlayerCamera.target = new_vehicle
+
+
+func setup_vehicles():
+	var start_checkpoint = checkpoints[0] as Checkpoint
+	var start_position = start_checkpoint.global_position
+	var start_direction = -start_checkpoint.transform.basis.z
+	var side_direction = start_checkpoint.transform.basis.x
+	var start_rotation = start_checkpoint.global_rotation
+
+	# Rotate start rotation 90 degrees along checkpoint's y axis
+	start_rotation = start_rotation.rotated(start_checkpoint.transform.basis.y, PI/2)
+
+	for i in range(starting_order.size()):
+		var user_id = starting_order[i]
+		
+		var side_multi = 1
+		if i % 2 == 1:
+			side_multi = -1
+
+		var cur_pos = start_position + start_offset_z * i * start_direction + side_multi * start_offset_x * side_direction
+
+		_add_vehicle(user_id, cur_pos, start_rotation)
+
+func join():
+	starting_order = Network.next_match_data.playerIds
+	setup_vehicles()
+
+	var res: bool = await Network.join_match(Network.ready_match)
+	
+	Network.socket.received_match_state.connect(_on_match_state)
+
+	if not res or not Network.cur_match:
+		# Disconnect functions
+		Network.socket.received_match_state.disconnect(_on_match_state)
+
+		state = STATE_DISCONNECT
+		return
+	
+	state = STATE_WAIT_FOR_PING
+	return
 
 
 func update_ranks():
@@ -162,40 +231,6 @@ func progress_in_cur_checkpoint(player: Vehicle3) -> float:
 	return dist_behind / (dist_behind + dist_ahead)
 
 
-#func _on_multiplayer_spawner_spawned(node):
-	#setup()
-
-
-#func _on_host_button_pressed():
-	#pass
-	#Network.send_data(Time.get_unix_time_from_system())
-	#Network.peer.create_server(135)
-	#multiplayer.multiplayer_peer = Network.peer
-	#multiplayer.peer_connected.connect(_add_player)
-	#_add_player()
-
-func _add_player(id=1):
-	$MultiplayerSpawner.spawn({'peer_id': id, 'initial_transform': $SpawnPosition.transform})
-	#var player = player_scene.instantiate() as Vehicle3
-	#player.transform = $SpawnPosition.transform
-	#player.name = str(id)
-	#$Vehicles.call_deferred("add_child", player)
-
-
-#func _on_join_button_pressed():
-	#Network.peer.create_client("127.0.0.1", 135)
-	#multiplayer.multiplayer_peer = Network.peer
-	
-#func _on_join_button_pressed():
-	#Network.websocket_connect()
-	#Network.send_data("Hello")
-	
-func _spawn_function(data: Variant) -> Node:
-	var scene: Vehicle3 = player_scene.instantiate() as Vehicle3
-	scene.peer_id = data.peer_id
-	scene.initial_transform = data.initial_transform
-	return scene
-
 
 func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 	if user_id == player_user_id:
@@ -204,53 +239,17 @@ func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 	if user_id in removed_player_ids:
 		return
 	
-	var should_setup = false
 	if not user_id in players_dict.keys():
-		var new_player = player_scene.instantiate() as Vehicle3
-		new_player.is_player = false
-		new_player.is_cpu = false
-		vehicles_node.add_child(new_player)
-		players_dict[user_id] = new_player
-		should_setup = true
+		return
 	
-	players_dict[user_id].call_deferred("apply_state", vehicle_state.duplicate(true))
-	
-	if should_setup:
-		call_deferred("setup")
+	players_dict[user_id].call_deferred("apply_state", vehicle_state)
 
 
-# func update_vehicle_states(cur_vehicle_states: Dictionary, player_id: String):
-# 	# Get rid of expired vehicles
-# 	var should_setup = false
 
-# 	var to_remove = []
-# 	for vehicle_key: String in players_dict.keys():
-# 		if not vehicle_key in cur_vehicle_states.keys():
-# 			var vehicle = players_dict[vehicle_key]
-# 			to_remove.append([vehicle_key, vehicle])
-# 			should_setup = true
-	
-# 	for vehicle_list in to_remove:
-# 		players_dict.erase(vehicle_list[0])
-# 		vehicle_list[1].queue_free()
-	
-# 	for vehicle_key: String in cur_vehicle_states:
-# 		if vehicle_key == player_id:
-# 			continue
-		
-# 		if not cur_vehicle_states[vehicle_key]:
-# 			continue
-		
-# 		if not vehicle_key in players_dict.keys():
-# 			should_setup = true
-# 			var new_player = player_scene.instantiate() as Vehicle3
-# 			new_player.is_player = false
-# 			new_player.is_cpu = false
-# 			vehicles_node.add_child(new_player)
-# 			players_dict[vehicle_key] = new_player
-# 			players.append(new_player)
-		
-# 		players_dict[vehicle_key].call_deferred("apply_state", cur_vehicle_states[vehicle_key].duplicate(true))
-
-# 	if should_setup:
-# 		call_deferred("setup")
+func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	var data: Dictionary = JSON.parse_string(match_state.data)
+	match match_state.op_code:
+		raceOp.SERVER_UPDATE_VEHICLE_STATE:
+			update_vehicle_state(data, match_state.presence.user_id)
+		_:
+			print("Unknown match state op code: ", match_state.op_code)

@@ -65,3 +65,6 @@ func get_race_courses() -> Array:
 	for dir in dirs:
 		courses.append(dir.split("/")[-1])
 	return courses
+
+func get_race_course_path(course_name: String):
+	return "res://scenes/levels/race/" + course_name + "/" + course_name + ".tscn"

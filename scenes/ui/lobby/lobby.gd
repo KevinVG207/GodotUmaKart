@@ -14,6 +14,7 @@ const STATE_START_VOTING = 7
 const STATE_VOTING = 8
 const STATE_VOTED = 9
 const STATE_MATCH_RECEIVED = 10
+const STATE_SWITCHING_SCENE = 11
 
 class lobbyOp:
 	const SERVER_PING = 0
@@ -27,6 +28,7 @@ var vote_timeout_started = false
 
 var cur_vote = ""
 var cur_votes = {}
+var next_course = ""
 
 @export var info_box: PackedScene
 var info_boxes: Dictionary = {}
@@ -65,6 +67,8 @@ func _physics_process(_delta):
 			change_state(STATE_JOINING, join)
 		STATE_START_VOTING:
 			change_state(STATE_START_VOTING, setup_voting)
+		STATE_MATCH_RECEIVED:
+			change_state(STATE_SWITCHING_SCENE, switch_scene)
 		_:
 			pass
 
@@ -269,5 +273,14 @@ func handle_match_data(data: Dictionary):
 	print("Winning vote: ", winning_vote)
 	print("Vote user: ", vote_user)
 
+	next_course = winning_vote['course']
+	
+	Network.ready_match = match_id
+	Network.next_match_data = data
+
 	$Status.text = "Course selected: " + winning_vote['course']
 	state = STATE_MATCH_RECEIVED
+
+func switch_scene():
+	Network.socket.received_match_state.disconnect(_on_match_state)
+	get_tree().change_scene_to_file(Util.get_race_course_path(next_course))

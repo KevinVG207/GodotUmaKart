@@ -15,7 +15,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         matchType: params.matchType,
         joinable: 0,
         players: 0,
-        maxPlayers: 12
+        maxPlayers: 12,
     }
 
     return {
@@ -26,7 +26,8 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             emptyTimeout: emptyTimeout,
             vehicles: {},
             started: false,
-            label: label
+            label: label,
+            startingIds: JSON.parse(params.startingIds)
         },
         tickRate: tickRate,
         label: '{}'
@@ -41,6 +42,14 @@ const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime
             state,
             accept: false,
             rejectMessage: "Match is full"
+        };
+    }
+
+    if (!(presence.userId in state.startingIds)) {
+        return {
+            state,
+            accept: false,
+            rejectMessage: "User not in starting list"
         };
     }
 
