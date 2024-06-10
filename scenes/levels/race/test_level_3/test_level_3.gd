@@ -108,7 +108,7 @@ func setup_vehicles():
 		_add_vehicle(user_id, cur_pos, start_rotation)
 
 func join():
-	starting_order = Network.next_match_data.playerIds
+	starting_order = Network.next_match_data.startingIds
 	setup_vehicles()
 
 	var res: bool = await Network.join_match(Network.ready_match)

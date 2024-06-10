@@ -240,16 +240,16 @@ function startNextMatch(state: nkruntime.MatchState, dispatcher: nkruntime.Match
     let randomIndex = Math.floor(Math.random() * keys.length);
     let randomKey = keys[randomIndex];
     let randomVote = state.votes[randomKey];
-    let playerIds = Object.keys(state.presences);  // This will indicate the starting order.
+    let startingIds = Object.keys(state.presences);  // This will indicate the starting order.
 
     // Create a race match using this course
-    let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, winningVote: randomVote, playerIds: JSON.stringify(playerIds) });
+    let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, winningVote: randomVote, startingIds: JSON.stringify(startingIds) });
 
     let payload = {
         matchId: matchId,
         winningVote: randomVote,
         voteUser: randomKey,
-        playerIds: playerIds
+        startingIds: startingIds
     }
 
     // Broadcast the new match to all presences
