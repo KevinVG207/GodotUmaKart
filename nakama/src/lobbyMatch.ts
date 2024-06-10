@@ -83,19 +83,22 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         updateLabel(state, dispatcher);
     }
 
-    state.presences.entries().forEach(function (p: nkruntime.Presence) {
+    for (let p_key in state.presences) {
+        let p = state.presences[p_key];
         logger.info("Presence: " + p.sessionId);
-    });
+    }
 
     let trueVoteTimeout = state.voteTimeout + 5 * state.tickRate; // 5 seconds buffer
 
     if (state.curTick == trueVoteTimeout) {
         // Start the match
-        state.presences.entries().forEach(function (p: nkruntime.Presence) {
+        
+        for (let p_key in state.presences) {
+            let p = state.presences[p_key];
             if (!(p.sessionId in state.votes)) {
                 dispatcher.matchKick([p]);
             }
-        });
+        }
 
         // Pick a random user's vote.
         let keys = Object.keys(state.votes);
