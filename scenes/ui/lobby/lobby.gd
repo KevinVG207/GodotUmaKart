@@ -95,12 +95,12 @@ func join():
 	
 	var res: bool = await Network.join_match(Network.ready_match)
 	
-	Network.socket.received_match_presence.connect(_on_match_presence)
+	#Network.socket.received_match_presence.connect(_on_match_presence)
 	Network.socket.received_match_state.connect(_on_match_state)
 
 	if not res or not Network.cur_match:
 		# Disconnect functions
-		Network.socket.received_match_presence.disconnect(_on_match_presence)
+		#Network.socket.received_match_presence.disconnect(_on_match_presence)
 		Network.socket.received_match_state.disconnect(_on_match_state)
 
 		$Status.text = "Failed to join match!"
@@ -141,19 +141,39 @@ func _on_matchmake_button_pressed():
 		state = STATE_PRE_MATCHMAKING
 
 
-func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
-	for p in p_presence.joins:
-		add_player(p.user_id.slice(0, 10), p.user_id)
-	for p in p_presence.leaves:
-		remove_player(p.user_id)
+#func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
+	#for p in p_presence.joins:
+		#add_player(p.user_id.substr(0, 10), p.user_id)
+	#for p in p_presence.leaves:
+		#remove_player(p.user_id)
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:
 		lobbyOp.SERVER_VOTE_DATA:
 			print("Received vote data")
+			handle_vote_data(data)
 			pass
 		lobbyOp.SERVER_MATCH_DATA:
 			print("Received match data")
 			pass
 		_:
 			print("Unknown lobby op code: ", match_state.op_code)
+
+func handle_vote_data(data: Dictionary):
+	var presences = data.presences
+	var votes = data.votes
+	
+	var cur_user_ids = info_boxes.keys()
+	var server_user_ids = presences.keys()
+	
+	for user_id: String in cur_user_ids:
+		if not user_id in server_user_ids:
+			remove_player(user_id)
+	
+	for p in presences:
+		if p.userId in cur_user_ids:
+			continue
+		add_player(p.userId.substr(0, 10), p.userId)
+	
+	print(data)

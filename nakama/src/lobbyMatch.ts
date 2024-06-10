@@ -130,8 +130,13 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             }
         });
 
+        var vote_data = {
+            votes: state.votes,
+            presences: state.presences
+        }
+
         // Broadcast all votes to all presences
-        dispatcher.broadcastMessage(lobbyOp.SERVER_VOTE_DATA, JSON.stringify(state.votes), null, null);
+        dispatcher.broadcastMessage(lobbyOp.SERVER_VOTE_DATA, JSON.stringify(vote_data), null, null);
     }
 
     if (state.curTick > state.expireTimeout) {
