@@ -105,7 +105,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     }
 
 
-    if (state.curTick > state.expireTimeout) {
+    if (tick > state.expireTimeout) {
         return null;
     }
 
