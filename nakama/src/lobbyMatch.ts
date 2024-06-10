@@ -98,7 +98,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         let now = Date.now();
         let pingId = tick;
         state.pingData[p.userId].ongoingPings[pingId] = now;
-        dispatcher.broadcastMessage(lobbyOp.SERVER_PING, JSON.stringify(pingId), [p], null);
+        dispatcher.broadcastMessage(lobbyOp.SERVER_PING, JSON.stringify({pingId: pingId}), [p], null);
     }
 
     let trueVoteTimeout = state.voteTimeout + 5 * ctx.matchTickRate; // 5 seconds buffer
