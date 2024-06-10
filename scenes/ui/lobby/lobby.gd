@@ -23,6 +23,7 @@ class lobbyOp:
 
 
 var state = STATE_RESETTING
+var vote_timeout_started = false
 
 var cur_vote = ""
 var cur_votes = {}
@@ -199,9 +200,13 @@ func handle_vote_data(data: Dictionary):
 	# Setup vote timeout:
 	var ticks_left = max(vote_timeout - tick, 0)
 	var seconds_left = (ticks_left / tick_rate) - (ping_data[Network.session.user_id] / 1000)
-	if seconds_left < $VoteTimeout.time_left:
+	if not vote_timeout_started:
+		vote_timeout_started = true
+		$VoteTimeout.start(seconds_left)
+	elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
 		$VoteTimeout.start(seconds_left)
 	
+	# Update player states
 	var cur_user_ids = info_boxes.keys()
 	var server_user_ids = presences.keys()
 	
@@ -247,9 +252,6 @@ func vote():
 func _on_vote_timeout_timeout():
 	$VoteButton.disabled = true
 	$VoteButton.visible = false
-	
-	if state != STATE_VOTING:
-		return false
 	
 	if not cur_vote:
 		cur_vote = Util.get_race_courses()[0]
