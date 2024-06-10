@@ -22,7 +22,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             presences: {},
             emptyTicks: 0,
             tickRate: tickRate,
-            empty_timeout: emptyTimeout,
+            emptyTimeout: emptyTimeout,
             vehicles: {},
             started: false,
             label: label
