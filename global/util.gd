@@ -42,8 +42,26 @@ func to_array(v: Vector3) -> Array:
 func to_vector3(a: Array) -> Vector3:
 	return Vector3(a[0], a[1], a[2])
 
+func sec_to_ticks(sec: float) -> int:
+	# Turns seconds into physics ticks
+	return int(sec * Engine.physics_ticks_per_second)
+
+func ticks_to_sec(ticks: int) -> float:
+	# Turns physics ticks into seconds
+	return float(ticks) / Engine.physics_ticks_per_second
+
 func format_time_minutes(seconds: float) -> String:
 	var _seconds = ceil(seconds)
 	var minutes = floor(_seconds / 60)
 	_seconds -= minutes * 60
 	return str(minutes).pad_zeros(1) + ":" + str(_seconds).pad_zeros(2)
+
+func get_race_courses() -> Array:
+	# All race courses are stored in scenes/race/COURSE_NAME/COURSE_NAME.tscn
+	# I want to index the course names.
+	var race_dir = DirAccess.open("res://scenes/levels/race")
+	var dirs = race_dir.get_directories()
+	var courses = []
+	for dir in dirs:
+		courses.append(dir.split("/")[-1])
+	return courses

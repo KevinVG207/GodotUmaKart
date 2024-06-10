@@ -66,6 +66,22 @@ func _send_vehicle_state():
 	var state: Dictionary = level.player_vehicle.get_state()
 	await socket.send_match_state_async(cur_match.match_id, raceOp.CLIENT_UPDATE_VEHICLE_STATE, JSON.stringify(state))
 
+func send_match_state(op_code: int, state: Dictionary):
+	if not is_socket():
+		return false
+	
+	if not cur_match:
+		return false
+	
+	var res = await socket.send_match_state_async(cur_match.match_id, op_code, JSON.stringify(state))
+	if res.is_exception():
+		print("Error sending match state: ", res)
+		return false
+	
+	return true
+	
+
+
 func _matchmake():
 	if not await matchmake():
 		print("Failed to matchmake")

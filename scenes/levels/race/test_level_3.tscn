@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://crersi2gg0o1o"]
 
 [ext_resource type="PackedScene" uid="uid://nomey8ht6xwd" path="res://scenes/vehicles/vehicle_3.tscn" id="1_3cfyl"]
-[ext_resource type="Script" path="res://scenes/levels/test_level_3.gd" id="1_kxhjh"]
+[ext_resource type="Script" path="res://scenes/levels/race/test_level_3.gd" id="1_kxhjh"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="1_ldxvr"]
 [ext_resource type="PackedScene" uid="uid://bcppq1ypicwdx" path="res://assets/course/wicked-woods/WickedWoods.tscn" id="4_w4b6d"]
 [ext_resource type="PackedScene" uid="uid://742psss2cgvv" path="res://scenes/objects/cone.tscn" id="5_w3l6l"]

@@ -22,14 +22,19 @@ class lobbyOp:
 
 
 var state = STATE_RESETTING
-var wait_frames = 0
-var max_wait = 60 * 60
 
 var vote_timeout_set = false
+var cur_vote = ""
+var cur_votes = {}
 
 @export var info_box: PackedScene
 var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
+
+func _ready():
+	# print(Util.get_race_courses())
+	# get_tree().quit()
+	pass
 
 func _process(_delta):
 	# Deal with displaying things
@@ -95,7 +100,6 @@ func matchmake():
 		state = STATE_RESET
 		return
 	
-	wait_frames = 0
 	state = STATE_MATCHMAKING_WAIT
 	return
 
@@ -122,6 +126,8 @@ func join():
 func setup_voting():
 	$Status.text = "Waiting for votes..."
 	state = STATE_VOTING
+	$VoteButton.disabled = false
+	$VoteButton.visible = true
 	return
 
 func add_player(username: String, session_id: String):
@@ -175,6 +181,8 @@ func handle_vote_data(data: Dictionary):
 	var cur_tick = data.curTick as int
 	var vote_timeout = data.voteTimeout as int
 	var tick_rate = data.tickRate as int
+
+	cur_votes = votes
 	
 	# Setup vote timeout:
 	if not vote_timeout_set:
@@ -194,5 +202,35 @@ func handle_vote_data(data: Dictionary):
 		if p.sessionId in cur_session_ids:
 			continue
 		add_player(p.userId.substr(0, 10), p.sessionId)
+
+
+func _on_vote_button_pressed():
+	$VoteButton.disabled = true
+	$VoteButton.visible = false
+
+	cur_vote = Util.get_race_courses()[0]
+
+	var res = await vote()
+	return res
+
+func vote():
+	var payload = {
+		"course": cur_vote
+	}
+
+	var res = await Network.send_match_state(lobbyOp.CLIENT_VOTE, payload)
+
+	if not res:
+		$Status.text = "Failed to send vote!"
+		state = STATE_RESET
+		return false
 	
-	print(data)
+	state = STATE_VOTED
+	return true
+
+func _on_vote_timeout_timeout():
+	if not cur_vote:
+		cur_vote = Util.get_race_courses()[0]
+	
+	var res = await vote()
+	return res

@@ -10,7 +10,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
     logger.debug("Inside Matchinit. MatchType: " + params.matchType)
 
-    var tickRate = 10;
+    var tickRate = 3;
 
     let label: label = {
         matchType: params.matchType,
@@ -19,8 +19,8 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         maxPlayers: 12
     }
 
-    let voteTimeout = 60 * tickRate;
-    let joinTimeout = 30 * tickRate;
+    let voteTimeout = 30 * tickRate;
+    let joinTimeout = 20 * tickRate;
 
     return {
         state: {
@@ -87,23 +87,23 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
     if (state.curTick == trueVoteTimeout) {
         // Start the match
-        //state.presences.forEach(function (p: nkruntime.Presence) {
-            // TODO: Implement randomizer when a system for course selection is implemented
-            // if (!(p.sessionId in state.votes)) {
-            //     state.votes[p.sessionId] = 0;
-            // }
+        state.presences.forEach(function (p: nkruntime.Presence) {
+            if (!(p.sessionId in state.votes)) {
+                dispatcher.matchKick([p]);
+            }
+        });
 
-            // Pick a random user's vote.
-            let keys = Object.keys(state.votes);
-            let randomIndex = Math.floor(Math.random() * keys.length);
-            let randomKey = keys[randomIndex];
-            let randomVote = state.votes[randomKey];
+        // Pick a random user's vote.
+        let keys = Object.keys(state.votes);
+        let randomIndex = Math.floor(Math.random() * keys.length);
+        let randomKey = keys[randomIndex];
+        let randomVote = state.votes[randomKey];
 
-            // Create a race match using this course
-            let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, course: randomVote });
+        // Create a race match using this course
+        let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, winningVote: randomVote });
 
-            // Broadcast the new match to all presences
-            dispatcher.broadcastMessage(lobbyOp.SERVER_MATCH_DATA, JSON.stringify({ matchId: matchId, course: randomVote, voteUser: randomKey }), null, null);
+        // Broadcast the new match to all presences
+        dispatcher.broadcastMessage(lobbyOp.SERVER_MATCH_DATA, JSON.stringify({ matchId: matchId, winningVote: randomVote, voteUser: randomKey }), null, null);
     }
 
     if (state.curTick < trueVoteTimeout) {

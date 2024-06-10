@@ -90,11 +90,15 @@ offset_bottom = -40.31
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 25
+disabled = true
 text = "Vote"
 metadata/_edit_lock_ = true
 
 [node name="VoteTimeout" type="Timer" parent="."]
+process_callback = 0
 wait_time = 60.0
 one_shot = true
 
 [connection signal="pressed" from="MatchmakeButton" to="." method="_on_matchmake_button_pressed"]
+[connection signal="pressed" from="VoteButton" to="." method="_on_vote_button_pressed"]
+[connection signal="timeout" from="VoteTimeout" to="." method="_on_vote_timeout_timeout"]

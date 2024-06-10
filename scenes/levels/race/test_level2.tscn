@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://ddrlnbpf7ruuf"]
 
-[ext_resource type="Script" path="res://scenes/levels/test_level.gd" id="1_pngdp"]
+[ext_resource type="Script" path="res://scenes/levels/race/test_level.gd" id="1_pngdp"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="2_vor4x"]
 [ext_resource type="PackedScene" uid="uid://cu2lapnist235" path="res://scenes/vehicles/vehicle_2.tscn" id="3_vb2pf"]
 
