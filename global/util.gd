@@ -41,3 +41,9 @@ func to_array(v: Vector3) -> Array:
 
 func to_vector3(a: Array) -> Vector3:
 	return Vector3(a[0], a[1], a[2])
+
+func format_time_minutes(seconds: float) -> String:
+	var _seconds = ceil(seconds)
+	var minutes = floor(_seconds / 60)
+	_seconds -= minutes * 60
+	return str(minutes).pad_zeros(1) + ":" + str(_seconds).pad_zeros(2)

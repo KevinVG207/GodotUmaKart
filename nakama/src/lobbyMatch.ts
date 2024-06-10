@@ -132,7 +132,10 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
         var vote_data = {
             votes: state.votes,
-            presences: state.presences
+            presences: state.presences,
+            curTick: state.curTick,
+            voteTimeout: state.voteTimeout,
+            tickRate: state.tickRate
         }
 
         // Broadcast all votes to all presences

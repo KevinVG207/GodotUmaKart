@@ -25,9 +25,18 @@ var state = STATE_RESETTING
 var wait_frames = 0
 var max_wait = 60 * 60
 
+var vote_timeout_set = false
+
 @export var info_box: PackedScene
 var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
+
+func _process(_delta):
+	# Deal with displaying things
+	$TimeLeft.text = "0:00"
+
+	if not $VoteTimeout.is_stopped():
+		$TimeLeft.text = Util.format_time_minutes($VoteTimeout.time_left)
 
 
 func _physics_process(_delta):
@@ -163,6 +172,16 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 func handle_vote_data(data: Dictionary):
 	var presences = data.presences as Dictionary
 	var votes = data.votes as Dictionary
+	var cur_tick = data.curTick as int
+	var vote_timeout = data.voteTimeout as int
+	var tick_rate = data.tickRate as int
+	
+	# Setup vote timeout:
+	if not vote_timeout_set:
+		vote_timeout_set = true
+		var ticks_left = max(vote_timeout - cur_tick, 0)
+		var seconds_left = ticks_left / tick_rate
+		$VoteTimeout.start(seconds_left)
 	
 	var cur_session_ids = info_boxes.keys()
 	var server_session_ids = presences.keys()
