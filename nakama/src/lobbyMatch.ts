@@ -83,23 +83,23 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         updateLabel(state, dispatcher);
     }
 
-    for (let p_key in state.presences) {
-        let p = state.presences[p_key];
-        logger.info("Presence: " + p.sessionId);
-    }
+    let presencesa = Object.keys(state.presences).map((key) => state.presences[key]);
+    presencesa.forEach(function (p: nkruntime.Presence) {
+        logger.info(p.sessionId);
+    });
 
     let trueVoteTimeout = state.voteTimeout + 5 * state.tickRate; // 5 seconds buffer
 
     if (state.curTick == trueVoteTimeout) {
         // Start the match
         
-        for (let p_key in state.presences) {
-            let p = state.presences[p_key];
+        // Turn all the presences into an array
+        let presences = Object.keys(state.presences).map((key) => state.presences[key]);
+        presences.forEach(function (p: nkruntime.Presence) {
             if (!(p.sessionId in state.votes)) {
-                dispatcher.matchKick([p]);
+                dispatcher.matchKick([p])
             }
-        }
-
+        });
         // Pick a random user's vote.
         let keys = Object.keys(state.votes);
         let randomIndex = Math.floor(Math.random() * keys.length);
