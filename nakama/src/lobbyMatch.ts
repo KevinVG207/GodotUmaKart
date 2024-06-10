@@ -1,4 +1,5 @@
 enum lobbyOp {
+    SERVER_PING = 0,
     CLIENT_VOTE = 1,
     SERVER_VOTE_DATA = 2,
     SERVER_MATCH_DATA = 3,
@@ -16,7 +17,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         matchType: params.matchType,
         joinable: 1,
         players: 0,
-        maxPlayers: 12
+        maxPlayers: 12,
     }
 
     let voteTimeout = 30 * tickRate;
@@ -28,11 +29,11 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             emptyTicks: 0,
             nextMatchType: params.nextMatchType,
             votes: {},
-            curTick: 0,
             voteTimeout: voteTimeout,
             joinTimeout: joinTimeout,
             expireTimeout: voteTimeout*2,
-            label: label
+            label: label,
+            pingData: {}
         },
         tickRate: tickRate,
         label: '{}'
@@ -51,8 +52,14 @@ const lobbyMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntim
 const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
         state.presences[p.userId] = p;
-        updateLabel(state, dispatcher)
+        state.pingData[p.userId] = {
+            lastPings: [],
+            ongoingPings: {},
+            ping: 500
+        };
     });
+
+    updateLabel(state, dispatcher)
 
     return {
         state
@@ -75,16 +82,28 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     // logger.info("Match loop " + state.emptyTicks);
     // logger.info("Amount of presences: " + Object.keys(state.presences).length)
 
-    state.curTick++;
-
-    if (state.curTick > state.joinTimeout) {
+    if (tick > state.joinTimeout) {
         state.label.joinable = 0;
         updateLabel(state, dispatcher);
     }
 
+    if (tick % ctx.matchTickRate == 0) {
+        // Ping presences to get their latency
+    }
+
+    for (let userId in state.presences) {
+        let p = state.presences[userId];
+
+        // Ping user
+        let now = Date.now();
+        let pingId = tick;
+        state.pingData[p.userId].ongoingPings[pingId] = now;
+        dispatcher.broadcastMessage(lobbyOp.SERVER_PING, JSON.stringify(pingId), [p], null);
+    }
+
     let trueVoteTimeout = state.voteTimeout + 5 * ctx.matchTickRate; // 5 seconds buffer
 
-    if (state.curTick == trueVoteTimeout) {
+    if (tick == trueVoteTimeout) {
         // Start the match
         
         // Kick users who haven't voted evern after grace period
@@ -108,7 +127,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         dispatcher.broadcastMessage(lobbyOp.SERVER_MATCH_DATA, JSON.stringify({ matchId: matchId, winningVote: randomVote, voteUser: randomKey }), null, null);
     }
 
-    if (state.curTick < trueVoteTimeout) {
+    if (tick < trueVoteTimeout) {
         // Loop over all messages received by the match
         messages.forEach(function (message) {
             // Extract the operation code and payload from the message
@@ -123,6 +142,29 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
             // Handle the operation code
             switch (opCode) {
+                case lobbyOp.SERVER_PING:
+                    let pingId = data.pingId;
+                    if (!(pingId in state.pingData[presence.userId].ongoingPings)) {
+                        break;
+                    }
+                    let receiveTimeMs = message.receiveTimeMs;
+                    let sendTimeMs = state.pingData[presence.userId].ongoingPings[pingId];
+                    delete state.pingData[presence.userId].ongoingPings[pingId];
+                    let ping = (receiveTimeMs - sendTimeMs) / 2;
+                    state.pingData[presence.userId].lastPings.push(ping);
+
+                    // Remove oldest ping if we have more than 5
+                    if (state.pingData[presence.userId].lastPings.length > 5) {
+                        state.pingData[presence.userId].lastPings.shift();
+                    }
+
+                    var sum = 0;
+                    for (var i = 0; i < state.pingData[presence.userId].lastPings.length; i++) {
+                        sum += state.pingData[presence.userId].lastPings[i]
+                    }
+
+                    state.pingData[presence.userId].ping = sum / state.pingData[presence.userId].lastPings.length;
+                    break;
                 case lobbyOp.CLIENT_VOTE:
                     logger.info(`Receive time: ${message.receiveTimeMs}`);
                     state.votes[presence.userId] = data;
@@ -133,12 +175,18 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             }
         });
 
+        var pingDict: {[key: string]: number} = {};
+        for (let userId in state.pingData) {
+            pingDict[userId] = state.pingData[userId].ping;
+        }
+
         var vote_data = {
             votes: state.votes,
             presences: state.presences,
-            curTick: state.curTick,
+            tick: tick,
             voteTimeout: state.voteTimeout,
-            tickRate: ctx.matchTickRate
+            tickRate: ctx.matchTickRate,
+            pingData: pingDict
         }
 
         // Broadcast all votes to all presences

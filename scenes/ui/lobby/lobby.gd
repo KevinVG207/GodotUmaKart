@@ -16,6 +16,7 @@ const STATE_VOTED = 9
 const STATE_MATCH_RECEIVED = 10
 
 class lobbyOp:
+	const SERVER_PING = 0
 	const CLIENT_VOTE = 1
 	const SERVER_VOTE_DATA = 2
 	const SERVER_MATCH_DATA = 3
@@ -174,6 +175,9 @@ func _on_matchmake_button_pressed():
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:
+		lobbyOp.SERVER_PING:
+			Network.send_match_state(lobbyOp.SERVER_PING, data)
+			pass
 		lobbyOp.SERVER_VOTE_DATA:
 			print("Received vote data")
 			handle_vote_data(data)
@@ -188,14 +192,14 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 func handle_vote_data(data: Dictionary):
 	var presences = data.presences as Dictionary
 	var votes = data.votes as Dictionary
-	var cur_tick = data.curTick as int
+	var tick = data.tick as int
 	var vote_timeout = data.voteTimeout as int
 	var tick_rate = data.tickRate as int
 	
 	# Setup vote timeout:
 	if not vote_timeout_set:
 		vote_timeout_set = true
-		var ticks_left = max(vote_timeout - cur_tick, 0)
+		var ticks_left = max(vote_timeout - tick, 0)
 		var seconds_left = ticks_left / tick_rate
 		$VoteTimeout.start(seconds_left)
 	
