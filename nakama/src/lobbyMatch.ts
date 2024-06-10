@@ -22,7 +22,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
     // let voteTimeout = 30 * tickRate;
     // let joinTimeout = 20 * tickRate;
-    let voteTimeout = 30 * tickRate;
+    let voteTimeout = 5 * tickRate;
     let joinTimeout = Math.floor(voteTimeout / 4 * 3);
 
     return {
@@ -89,7 +89,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     if (!state.voteComplete) {
         updateJoinableStatus(tick, state, dispatcher);
 
-        pingUsers(tick, ctx, state, dispatcher);
+        pingUsers(lobbyOp.SERVER_PING, tick, ctx, state, dispatcher);
     
         let trueVoteTimeout = state.voteTimeout + 3 * ctx.matchTickRate; // 3 seconds buffer
     
@@ -256,7 +256,7 @@ function startNextMatch(state: nkruntime.MatchState, dispatcher: nkruntime.Match
     dispatcher.broadcastMessage(lobbyOp.SERVER_MATCH_DATA, JSON.stringify(payload), null, null);
 }
 
-function pingUsers(tick: number, ctx: nkruntime.Context, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
+function pingUsers(opCode: number, tick: number, ctx: nkruntime.Context, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
     if (tick % Math.floor(ctx.matchTickRate / 2) == 0) {
         for (let userId in state.presences) {
             let p = state.presences[userId];
@@ -265,7 +265,7 @@ function pingUsers(tick: number, ctx: nkruntime.Context, state: nkruntime.MatchS
             let now = Date.now();
             let pingId = tick;
             state.pingData[p.userId].ongoingPings[pingId] = now;
-            dispatcher.broadcastMessage(lobbyOp.SERVER_PING, JSON.stringify({ pingId: pingId }), [p], null);
+            dispatcher.broadcastMessage(opCode, JSON.stringify({ pingId: pingId }), [p], null);
         }
     }
 }

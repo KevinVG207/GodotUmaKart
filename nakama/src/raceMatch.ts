@@ -116,7 +116,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         return null;
     }
 
-    pingUsers(tick, ctx, state, dispatcher);
+    pingUsers(raceOp.SERVER_PING, tick, ctx, state, dispatcher);
 
     // Loop over all messages received by the match
     messages.forEach(function (message) {
