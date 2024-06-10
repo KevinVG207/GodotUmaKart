@@ -26,7 +26,6 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         state: {
             presences: {},
             emptyTicks: 0,
-            tickRate: tickRate,
             nextMatchType: params.nextMatchType,
             votes: {},
             curTick: 0,
@@ -83,7 +82,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         updateLabel(state, dispatcher);
     }
 
-    let trueVoteTimeout = state.voteTimeout + 5 * state.tickRate; // 5 seconds buffer
+    let trueVoteTimeout = state.voteTimeout + 5 * ctx.matchTickRate; // 5 seconds buffer
 
     if (state.curTick == trueVoteTimeout) {
         // Start the match
@@ -115,7 +114,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             // Extract the operation code and payload from the message
             const opCode = message.opCode;
             const payload = message.data;
-            const data = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(payload) as any) as string);
+            const data = JSON.parse(nk.binaryToString(payload));
             const presence = message.sender;
 
             if (!(presence.userId in state.presences)) {
@@ -125,6 +124,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             // Handle the operation code
             switch (opCode) {
                 case lobbyOp.CLIENT_VOTE:
+                    logger.info(`Receive time: ${message.receiveTimeMs}`);
                     state.votes[presence.userId] = data;
                     break;
                 default:
@@ -138,7 +138,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             presences: state.presences,
             curTick: state.curTick,
             voteTimeout: state.voteTimeout,
-            tickRate: state.tickRate
+            tickRate: ctx.matchTickRate
         }
 
         // Broadcast all votes to all presences
