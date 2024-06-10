@@ -89,7 +89,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
     let trueVoteTimeout = state.voteTimeout + 3 * ctx.matchTickRate; // 3 seconds buffer
 
-    if (tick == trueVoteTimeout || state.skipVote) {
+    if (tick == trueVoteTimeout || (state.skipVote && tick >= state.joinTimeout)) {
         startNextMatch(state, dispatcher, nk);
     }
 
