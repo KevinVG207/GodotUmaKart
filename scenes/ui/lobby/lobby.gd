@@ -135,7 +135,8 @@ func add_player(username: String, session_id: String):
 		return
 	
 	var new_box = info_box.instantiate() as LobbyPlayerInfoBox
-	new_box.get_node("Name").text = username
+	new_box.set_username(username)
+	if Network.session.user_id
 	info_boxes[session_id] = new_box
 	box_container.add_child(new_box)
 
@@ -151,12 +152,12 @@ func remove_player(session_id: String):
 func update_player_name(session_id: String, new_name: String):
 	if not session_id in info_boxes:
 		return
-	info_boxes[session_id].get_node("Name").text = new_name
+	info_boxes[session_id].set_username(new_name)
 
 func update_player_pick(session_id: String, pick_text: String):
 	if not session_id in info_boxes:
 		return
-	info_boxes[session_id].get_node("Pick").text = pick_text
+	info_boxes[session_id].set_pick(pick_text)
 
 func _on_matchmake_button_pressed():
 	if state == STATE_SETUP_COMPLETE:
