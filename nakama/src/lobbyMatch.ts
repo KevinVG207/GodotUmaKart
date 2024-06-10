@@ -84,21 +84,24 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     // logger.info("Match loop " + state.emptyTicks);
     // logger.info("Amount of presences: " + Object.keys(state.presences).length)
 
-    updateJoinableStatus(tick, state, dispatcher);
+    if (!state.voteComplete) {
+        updateJoinableStatus(tick, state, dispatcher);
 
-    pingUsers(tick, ctx, state, dispatcher);
-
-    let trueVoteTimeout = state.voteTimeout + 3 * ctx.matchTickRate; // 3 seconds buffer
-
-    if (!state.voteComplete && (tick == trueVoteTimeout || (state.skipVote && tick >= state.joinTimeout))) {
-        state.voteComplete = true;
-        startNextMatch(state, dispatcher, nk);
+        pingUsers(tick, ctx, state, dispatcher);
+    
+        let trueVoteTimeout = state.voteTimeout + 3 * ctx.matchTickRate; // 3 seconds buffer
+    
+        if (tick == trueVoteTimeout || (state.skipVote && tick >= state.joinTimeout)) {
+            state.voteComplete = true;
+            startNextMatch(state, dispatcher, nk);
+        }
+    
+        if (tick < trueVoteTimeout) {
+            // Loop over all messages received by the match
+            processMessages(messages, nk, state, logger, tick, ctx, dispatcher);
+        }
     }
 
-    if (tick < trueVoteTimeout) {
-        // Loop over all messages received by the match
-        processMessages(messages, nk, state, logger, tick, ctx, dispatcher);
-    }
 
     if (state.curTick > state.expireTimeout) {
         return null;
