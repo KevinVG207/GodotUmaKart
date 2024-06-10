@@ -15,6 +15,12 @@ const STATE_VOTING = 8
 const STATE_VOTED = 9
 const STATE_READY = 10
 
+class lobbyOp:
+	const CLIENT_VOTE = 1
+	const SERVER_VOTE_DATA = 2
+	const SERVER_MATCH_DATA = 3
+
+
 var state = STATE_RESETTING
 var wait_frames = 0
 var max_wait = 60 * 60
@@ -88,8 +94,15 @@ func join():
 	$Status.text = "Joining match..."
 	
 	var res: bool = await Network.join_match(Network.ready_match)
+	
+	Network.socket.received_match_presence.connect(_on_match_presence)
+	Network.socket.received_match_state.connect(_on_match_state)
 
 	if not res or not Network.cur_match:
+		# Disconnect functions
+		Network.socket.received_match_presence.disconnect(_on_match_presence)
+		Network.socket.received_match_state.disconnect(_on_match_state)
+
 		$Status.text = "Failed to join match!"
 		state = STATE_RESET
 		return
@@ -126,3 +139,21 @@ func _on_matchmake_button_pressed():
 		$MatchmakeButton.disabled = true
 		$MatchmakeButton.visible = false
 		state = STATE_PRE_MATCHMAKING
+
+
+func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
+	for p in p_presence.joins:
+		add_player(p.user_id.slice(0, 10), p.user_id)
+	for p in p_presence.leaves:
+		remove_player(p.user_id)
+
+func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	match match_state.op_code:
+		lobbyOp.SERVER_VOTE_DATA:
+			print("Received vote data")
+			pass
+		lobbyOp.SERVER_MATCH_DATA:
+			print("Received match data")
+			pass
+		_:
+			print("Unknown lobby op code: ", match_state.op_code)

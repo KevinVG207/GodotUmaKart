@@ -220,8 +220,8 @@ func connect_client():
 
 	print("Socket connected")
 
-	socket.received_match_presence.connect(_on_match_presence)
-	socket.received_match_state.connect(_on_match_state)
+	#socket.received_match_presence.connect(_on_match_presence)
+	#socket.received_match_state.connect(_on_match_state)
 	socket.received_matchmaker_matched.connect(_on_matchmaker_matched)
 
 	return true
