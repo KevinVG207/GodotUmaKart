@@ -135,7 +135,7 @@ func add_player(username: String, session_id: String):
 		return
 	
 	var new_box = info_box.instantiate() as LobbyPlayerInfoBox
-	new_box.get_node("Label").text = username
+	new_box.get_node("Name").text = username
 	info_boxes[session_id] = new_box
 	box_container.add_child(new_box)
 
@@ -148,6 +148,15 @@ func remove_player(session_id: String):
 	info_boxes.erase(session_id)
 	cur_box.queue_free()
 
+func update_player_name(session_id: String, new_name: String):
+	if not session_id in info_boxes:
+		return
+	info_boxes[session_id].get_node("Name").text = new_name
+
+func update_player_pick(session_id: String, pick_text: String):
+	if not session_id in info_boxes:
+		return
+	info_boxes[session_id].get_node("Pick").text = pick_text
 
 func _on_matchmake_button_pressed():
 	if state == STATE_SETUP_COMPLETE:
@@ -181,8 +190,6 @@ func handle_vote_data(data: Dictionary):
 	var cur_tick = data.curTick as int
 	var vote_timeout = data.voteTimeout as int
 	var tick_rate = data.tickRate as int
-
-	cur_votes = votes
 	
 	# Setup vote timeout:
 	if not vote_timeout_set:
@@ -202,6 +209,12 @@ func handle_vote_data(data: Dictionary):
 		if p.sessionId in cur_session_ids:
 			continue
 		add_player(p.userId.substr(0, 10), p.sessionId)
+	
+	cur_votes = votes
+	print("Cur Votes: ", cur_votes)
+	for session_id in votes:
+		var vote_data: Dictionary = votes[session_id]
+		update_player_pick(session_id, vote_data['course'])
 
 
 func _on_vote_button_pressed():
@@ -229,6 +242,9 @@ func vote():
 	return true
 
 func _on_vote_timeout_timeout():
+	$VoteButton.disabled = true
+	$VoteButton.visible = false
+	
 	if not cur_vote:
 		cur_vote = Util.get_race_courses()[0]
 	

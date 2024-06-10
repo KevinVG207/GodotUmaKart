@@ -13,7 +13,13 @@ texture = ExtResource("2_yk4si")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Label" type="Label" parent="."]
+[node name="Name" type="Label" parent="."]
 layout_mode = 2
 theme_override_font_sizes/font_size = 25
 text = "PlayerName1"
+
+[node name="Pick" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_font_sizes/font_size = 25
+horizontal_alignment = 2

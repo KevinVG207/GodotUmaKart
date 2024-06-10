@@ -83,11 +83,15 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         updateLabel(state, dispatcher);
     }
 
+    state.presences.entries().forEach(function (p: nkruntime.Presence) {
+        logger.info("Presence: " + p.sessionId);
+    });
+
     let trueVoteTimeout = state.voteTimeout + 5 * state.tickRate; // 5 seconds buffer
 
     if (state.curTick == trueVoteTimeout) {
         // Start the match
-        state.presences.forEach(function (p: nkruntime.Presence) {
+        state.presences.entries().forEach(function (p: nkruntime.Presence) {
             if (!(p.sessionId in state.votes)) {
                 dispatcher.matchKick([p]);
             }
