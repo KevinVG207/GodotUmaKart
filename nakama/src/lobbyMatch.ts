@@ -21,8 +21,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     }
 
     // let voteTimeout = 30 * tickRate;
-    // let joinTimeout = 20 * tickRate;
-    let voteTimeout = 5 * tickRate;
+    let voteTimeout = 30 * tickRate;
     let joinTimeout = Math.floor(voteTimeout / 4 * 3);
 
     return {
