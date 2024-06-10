@@ -34,7 +34,8 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             expireTimeout: voteTimeout*2,
             label: label,
             pingData: {},
-            skipVote: false
+            skipVote: false,
+            voteComplete: false,
         },
         tickRate: tickRate,
         label: '{}'
@@ -89,7 +90,8 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
     let trueVoteTimeout = state.voteTimeout + 3 * ctx.matchTickRate; // 3 seconds buffer
 
-    if (tick == trueVoteTimeout || (state.skipVote && tick >= state.joinTimeout)) {
+    if (!state.voteComplete && (tick == trueVoteTimeout || (state.skipVote && tick >= state.joinTimeout))) {
+        state.voteComplete = true;
         startNextMatch(state, dispatcher, nk);
     }
 
