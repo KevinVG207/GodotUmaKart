@@ -140,6 +140,7 @@ func matchmake_matchmaker():
 		return false
 	
 	mm_tickets.append(ticket.ticket)
+
 	return true
 
 

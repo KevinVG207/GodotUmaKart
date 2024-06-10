@@ -165,7 +165,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     if (tick % ctx.matchTickRate === 0) {
         var pingDict: { [key: string]: number; } = {};
 
-        var ready = false;
+        var ready = true;
 
         for (let userId in state.pingData) {
             pingDict[userId] = state.pingData[userId].ping;

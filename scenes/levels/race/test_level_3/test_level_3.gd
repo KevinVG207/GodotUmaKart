@@ -33,9 +33,10 @@ class raceOp:
 const STATE_DISCONNECT = -1
 const STATE_INITIAL = 0
 const STATE_JOINING = 1
-const STATE_READY_FOR_START = 2
-const STATE_WAIT_FOR_START = 3
-const STATE_RACE = 4
+const STATE_CAN_READY = 2
+const STATE_READY_FOR_START = 3
+const STATE_WAIT_FOR_START = 4
+const STATE_RACE = 5
 
 const UPDATE_STATES = [
 	STATE_WAIT_FOR_START,
@@ -72,6 +73,8 @@ func _physics_process(_delta):
 	match state:
 		STATE_INITIAL:
 			change_state(STATE_JOINING, join)
+		STATE_CAN_READY:
+			change_state(STATE_READY_FOR_START, send_ready)
 		_:
 			pass
 	
@@ -140,9 +143,18 @@ func join():
 		state = STATE_DISCONNECT
 		return
 	
-	state = STATE_WAIT_FOR_START
+	state = STATE_CAN_READY
 	return
 
+func send_ready():
+	var res: bool = await Network.send_match_state(raceOp.CLIENT_READY, {})
+	
+	if not res:
+		state = STATE_DISCONNECT
+		return
+	
+	state = STATE_WAIT_FOR_START
+	return
 
 func update_ranks():
 	var ranks = []
@@ -280,7 +292,6 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			update_vehicle_state(data, match_state.presence.user_id)
 		raceOp.SERVER_PING:
 			Network.send_match_state(raceOp.SERVER_PING, data)
-			pass
 		raceOp.SERVER_RACE_START:
 			handle_race_start(data)
 		_:

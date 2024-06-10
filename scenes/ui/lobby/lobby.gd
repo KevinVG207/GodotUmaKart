@@ -181,18 +181,14 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	match match_state.op_code:
 		lobbyOp.SERVER_PING:
 			Network.send_match_state(lobbyOp.SERVER_PING, data)
-			pass
 		lobbyOp.SERVER_VOTE_DATA:
 			print("Received vote data")
 			handle_vote_data(data)
-			pass
 		lobbyOp.SERVER_MATCH_DATA:
 			print("Received match data")
 			handle_match_data(data)
-			pass
 		_:
 			print("Unknown lobby op code: ", match_state.op_code)
-			pass
 
 func handle_vote_data(data: Dictionary):
 	var presences = data.presences as Dictionary
