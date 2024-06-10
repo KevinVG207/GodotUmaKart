@@ -102,7 +102,7 @@ func matchmake_list():
 	var limit = 10
 	var authoritative = true
 	var label = ""
-	var query = "+label.matchType:race"
+	var query = "+label.joinable:1"
 
 	var res: NakamaAPI.ApiMatchList = await client.list_matches_async(session, min_players, max_players, limit, authoritative, label, query)
 	if res.is_exception():
@@ -115,6 +115,8 @@ func matchmake_list():
 		return false
 	
 	ready_match = res.matches[0].match_id
+	
+	print(ready_match)
 
 	# await join_match(res.matches[0].match_id)
 
@@ -132,7 +134,7 @@ func matchmake_matchmaker():
 
 func get_matchmake_ticket():
 	var string_props: Dictionary = {
-		"matchType": "race"
+		"matchType": "lobby"
 	}
 	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, 12, string_props, {}, 0)
 
@@ -175,6 +177,8 @@ func _on_matchmaker_matched(p_matched: NakamaRTAPI.MatchmakerMatched):
 	mm_tickets.clear()
 
 	ready_match = p_matched.match_id
+	
+	print(ready_match)
 
 	# await join_match(p_matched.match_id)
 

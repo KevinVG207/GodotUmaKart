@@ -2,7 +2,9 @@
   "files": [
     "./src/main.ts",
     "./src/healthcheck.ts",
-    "src/racematch.ts"
+    "./src/matchCommon.ts",
+    "./src/raceMatch.ts",
+    "./src/lobbyMatch.ts",
   ],
   "compilerOptions": {
     "target": "es5",

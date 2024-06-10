@@ -12,7 +12,8 @@ const STATE_MATCHMAKING_COMLETE = 5
 const STATE_JOINING = 6
 const STATE_START_VOTING = 7
 const STATE_VOTING = 8
-const STATE_READY = 9
+const STATE_VOTED = 9
+const STATE_READY = 10
 
 var state = STATE_RESETTING
 var wait_frames = 0
@@ -26,36 +27,38 @@ var info_boxes: Dictionary = {}
 func _physics_process(_delta):
 	match state:
 		STATE_RESETTING:
-			reset()
+			change_state(STATE_RESET, reset)
 		STATE_INITIAL:
-			setup()
+			change_state(STATE_SETUP, setup)
 		STATE_SETUP_COMPLETE:
 			$Status.text = "Connected to server"
 			$MatchmakeButton.disabled = false
 			$MatchmakeButton.visible = true
 		STATE_PRE_MATCHMAKING:
-			matchmake()
+			change_state(STATE_MATCHMAKING, matchmake)
 		STATE_MATCHMAKING_WAIT:
 			if Network.ready_match:
 				$Status.text = "Match found"
 				state = STATE_MATCHMAKING_COMLETE
 		STATE_MATCHMAKING_COMLETE:
-			join()
+			change_state(STATE_JOINING, join)
 		STATE_START_VOTING:
-			setup_voting()
+			change_state(STATE_START_VOTING, setup_voting)
 		STATE_READY:
 			pass
 		_:
 			pass
 
+func change_state(new_state: int, state_func: Callable = Callable()):
+	state = new_state
+	state_func.call()
+
 func reset():
-	state = STATE_RESETTING
 	$Status.text = "Resetting network connection..."
 	await Network.reset()
 	state = STATE_INITIAL
 
 func setup():
-	state = STATE_SETUP
 	$Status.text = "Setting up connection..."
 	
 	var res: bool = await Network.connect_client()
@@ -68,15 +71,13 @@ func setup():
 	state = STATE_SETUP_COMPLETE
 
 func matchmake():
-	state = STATE_MATCHMAKING
 	$Status.text = "Looking for match..."
 	
 	var res: bool = await Network.matchmake()
 	
 	if not res:
 		$Status.text = "Failed to matchmake!"
-		await Network.reset()
-		state = STATE_INITIAL
+		state = STATE_RESET
 		return
 	
 	wait_frames = 0
@@ -84,23 +85,21 @@ func matchmake():
 	return
 
 func join():
-	state = STATE_JOINING
 	$Status.text = "Joining match..."
 	
 	var res: bool = await Network.join_match(Network.ready_match)
 
 	if not res or not Network.cur_match:
 		$Status.text = "Failed to join match!"
-		await Network.reset()
-		state = STATE_INITIAL
+		state = STATE_RESET
 		return
 	
 	state = STATE_START_VOTING
 	return
 
 func setup_voting():
-	state = STATE_START_VOTING
 	$Status.text = "Waiting for votes..."
+	state = STATE_VOTING
 	return
 
 func add_player(username: String, user_id: String):

@@ -3,7 +3,17 @@ function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkrunt
 
     initializer.registerMatchmakerMatched(onMatchmakerMatched);
 
-    initializer.registerMatch('race', {
+    initializer.registerMatch("lobby", {
+        matchInit: lobbyMatchInit,
+        matchJoinAttempt: lobbyMatchJoinAttempt,
+        matchJoin: lobbyMatchJoin,
+        matchLeave: lobbyMatchLeave,
+        matchLoop: lobbyMatchLoop,
+        matchSignal: lobbyMatchSignal,
+        matchTerminate: lobbyMatchTerminate
+    });
+
+    initializer.registerMatch("race", {
         matchInit: raceMatchInit,
         matchJoinAttempt: raceMatchJoinAttempt,
         matchJoin: raceMatchJoin,
@@ -20,7 +30,7 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
     let matchType = envelope.matchmakerAdd.stringProperties["matchType"];
     let query = envelope.matchmakerAdd.query;
     if (!matchType) {
-        matchType = "race";
+        matchType = "lobby";
         envelope.matchmakerAdd.stringProperties["matchType"] = matchType;
     }
 
@@ -40,12 +50,8 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
 
 const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, matches: nkruntime.MatchmakerResult[]): string {
     let matchType: string = matches[0].properties["matchType"];
+    let nextMatchType: string = matches[0].properties["nextMatchType"] || "race";
 
-    try {
-        const matchId = nk.matchCreate(matchType, {matchType: matchType});
-        return matchId;
-    } catch (err) {
-        logger.error(`${err}`);
-        throw (err);
-    }
+    const matchId = nk.matchCreate(matchType, {matchType: matchType, nextMatchType: nextMatchType});
+    return matchId;
 };

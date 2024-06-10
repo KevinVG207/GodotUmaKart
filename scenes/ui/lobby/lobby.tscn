@@ -48,6 +48,7 @@ columns = 2
 metadata/_edit_lock_ = true
 
 [node name="MatchmakeButton" type="Button" parent="."]
+visible = false
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0

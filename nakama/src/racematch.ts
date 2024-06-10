@@ -3,30 +3,31 @@ enum raceOp {
     CLIENT_UPDATE_VEHICLE_STATE = 2,
 }
 
-interface label {
-    matchType: string;
-    players: number;
-}
-
-function updateLabel(state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
-    let label: label = state.label;
-    label.players = Object.keys(state.presences).length;
-    dispatcher.matchLabelUpdate(JSON.stringify(label));
-}
-
 const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
     // logger.debug("Matchinit");
 
     logger.debug("Inside Matchinit. MatchType: " + params.matchType)
 
+    var tickRate = 10;
+    var emptyTimeout = 60 * tickRate;
+
     let label: label = {
         matchType: params.matchType,
+        joinable: 0,
         players: 0
     }
 
     return {
-        state: { presences: {}, emptyTicks: 0, vehicles: {}, label: label },
-        tickRate: 10, // 1 tick per second = 1 MatchLoop func invocations per second
+        state: {
+            presences: {},
+            emptyTicks: 0,
+            tickRate: tickRate,
+            empty_timeout: emptyTimeout,
+            vehicles: {},
+            started: false,
+            label: label
+        },
+        tickRate: tickRate,
         label: '{}'
     };
 };
@@ -76,7 +77,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     }
 
     // If the match has been empty for more than 100 ticks, end the match by returning null
-    if (state.emptyTicks > 100) {
+    if (state.emptyTicks > state.emptyTimeout) {
         return null;
     }
 
@@ -85,6 +86,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         // Extract the operation code and payload from the message
         const opCode = message.opCode;
         const payload = message.data;
+        const data = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(payload) as any) as string);
         const presence = message.sender;
 
         if (!(presence.sessionId in state.presences)) {
@@ -94,16 +96,14 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         // Handle the operation code
         switch (opCode) {
             case raceOp.CLIENT_UPDATE_VEHICLE_STATE:
-                const updateVehicleState = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(payload) as any) as string);
-
                 // Ignore old state updates
                 if (message.sender.userId in state.vehicles) {
-                    if (state.vehicles[message.sender.userId].idx >= updateVehicleState.idx) {
+                    if (state.vehicles[message.sender.userId].idx >= data.idx) {
                         break;
                     }
                 }
 
-                state.vehicles[message.sender.userId] = updateVehicleState;
+                state.vehicles[message.sender.userId] = data;
                 dispatcher.broadcastMessage(raceOp.SERVER_UPDATE_VEHICLE_STATE, payload, null, message.sender);
                 break;
             default:
