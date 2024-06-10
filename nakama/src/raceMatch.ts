@@ -47,12 +47,7 @@ const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime
         };
     }
 
-    logger.info("Presence: " + presence.userId)
-    for (let i = 0; i < state.startingIds.length; i++) {
-        logger.info("Starting ID: " + state.startingIds[i])
-    }
-
-    if (!(presence.userId in state.startingIds)) {
+    if (!state.startingIds.includes(presence.userId)) {
         return {
             state,
             accept: false,
