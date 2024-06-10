@@ -29,7 +29,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             vehicles: {},
             started: false,
             label: label,
-            startingIds: JSON.parse(params.startingIds)
+            startingIds: JSON.parse(params.startingIds) as string[]
         },
         tickRate: tickRate,
         label: '{}'
@@ -45,6 +45,11 @@ const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime
             accept: false,
             rejectMessage: "Match is full"
         };
+    }
+
+    logger.info("Presence: " + presence.userId)
+    for (let i = 0; i < state.startingIds.length; i++) {
+        logger.info("Starting ID: " + state.startingIds[i])
     }
 
     if (!(presence.userId in state.startingIds)) {
