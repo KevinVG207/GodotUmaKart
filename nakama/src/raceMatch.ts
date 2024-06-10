@@ -174,6 +174,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             }
         }
 
+        logger.info("started: " + state.started + " ready: " + ready + " state.ready: " + state.ready)
+
         if (!state.started && ready && state.ready) {
             // Start the race!
             state.started = true;

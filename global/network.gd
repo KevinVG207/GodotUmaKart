@@ -143,11 +143,11 @@ func matchmake_matchmaker():
 	return true
 
 
-func get_matchmake_ticket():
+func get_matchmake_ticket(max_players: int = 12):
 	var string_props: Dictionary = {
 		"matchType": "lobby"
 	}
-	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, 12, string_props, {}, 0)
+	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, max_players, string_props, {}, 0)
 
 	if ticket.is_exception():
 		print("Error adding matchmaker: ", ticket)

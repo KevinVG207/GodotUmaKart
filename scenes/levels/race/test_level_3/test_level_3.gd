@@ -274,7 +274,6 @@ func handle_race_start(data: Dictionary):
 
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
-	print(match_state)
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:
 		raceOp.SERVER_UPDATE_VEHICLE_STATE:
