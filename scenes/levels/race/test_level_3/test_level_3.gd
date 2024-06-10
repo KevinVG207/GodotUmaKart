@@ -14,8 +14,8 @@ var player_user_id: String = ""
 var removed_player_ids: Array = []
 var starting_order: Array = []
 
-@export var start_offset_z: float = 4.0
-@export var start_offset_x: float = 2.0
+@export var start_offset_z: float = 2
+@export var start_offset_x: float = 3
 
 @onready var vehicles_node: Node3D = $Vehicles
 
@@ -70,17 +70,17 @@ func _physics_process(_delta):
 		#update_checkpoint(vehicle)
 		#update_ranks()
 
-func _add_vehicle(user_id: String, new_position: Vector3, new_rotation: Vector3):
+func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3):
 	var new_vehicle = player_scene.instantiate() as Vehicle3
-	new_vehicle.global_position = new_position
-	new_vehicle.global_rotation = new_rotation
+	players_dict[user_id] = new_vehicle
+	vehicles_node.add_child(new_vehicle)
+	new_vehicle.teleport(new_position, look_dir, up_dir)
 	new_vehicle.is_player = false
 	new_vehicle.is_cpu = false
 	new_vehicle.is_network = true
-	vehicles_node.add_child(new_vehicle)
-	players_dict[user_id] = new_vehicle
 	if user_id == Network.session.user_id:
 		new_vehicle.is_player = true
+		new_vehicle.is_network = false
 		player_user_id = user_id
 		player_vehicle = new_vehicle
 		$PlayerCamera.target = new_vehicle
@@ -91,10 +91,8 @@ func setup_vehicles():
 	var start_position = start_checkpoint.global_position
 	var start_direction = -start_checkpoint.transform.basis.z
 	var side_direction = start_checkpoint.transform.basis.x
-	var start_rotation = start_checkpoint.global_rotation
-
-	# Rotate start rotation 90 degrees along checkpoint's y axis
-	start_rotation = start_rotation.rotated(start_checkpoint.transform.basis.y, PI/2)
+	var up_dir = start_checkpoint.transform.basis.y
+	start_position += up_dir * 1.0
 
 	for i in range(starting_order.size()):
 		var user_id = starting_order[i]
@@ -103,9 +101,9 @@ func setup_vehicles():
 		if i % 2 == 1:
 			side_multi = -1
 
-		var cur_pos = start_position + start_offset_z * i * start_direction + side_multi * start_offset_x * side_direction
+		var cur_pos = start_position + start_offset_z * (i + 3) * start_direction + side_multi * start_offset_x * side_direction
 
-		_add_vehicle(user_id, cur_pos, start_rotation)
+		_add_vehicle(user_id, cur_pos, -start_direction, up_dir)
 
 func join():
 	starting_order = Network.next_match_data.startingIds

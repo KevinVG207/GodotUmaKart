@@ -31,11 +31,6 @@ current = true
 
 [node name="Vehicles" type="Node3D" parent="."]
 
-[node name="Vehicle3" parent="Vehicles" instance=ExtResource("1_3cfyl")]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, -21, 64)
-is_player = true
-is_cpu = false
-
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.683013, -0.707107, -0.183013, 0.258819, -4.2222e-08, 0.965926, -0.683013, -0.707107, 0.183013, 0, 166, 0)
 light_color = Color(1, 0.922912, 0.91767, 1)

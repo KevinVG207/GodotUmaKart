@@ -147,6 +147,15 @@ func _ready():
 		#wheel_marker.transform = wheel.transform
 		#wheel_markers.append(wheel_marker)
 
+func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3):
+	global_position = new_pos
+	look_at_from_position(new_pos, new_pos + (look_dir.rotated(up_dir, deg_to_rad(-90))), up_dir, true)
+	prev_transform = transform
+	prev_frame_pre_sim_vel = Vector3.ZERO
+	prev_vel = Vector3.ZERO
+	cur_speed = 0
+	cur_turn_speed = 0
+
 func handle_input():
 	if is_player and get_window().has_focus():
 		input_accel = Input.is_action_pressed("accelerate")
