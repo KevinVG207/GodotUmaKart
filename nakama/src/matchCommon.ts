@@ -2,6 +2,7 @@ interface label {
     matchType: string;
     joinable: number;
     players: number;
+    maxPlayers: number;
 }
 
 function updateLabel(state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
