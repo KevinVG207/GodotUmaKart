@@ -62,12 +62,15 @@ func is_socket():
 	#await socket.send_match_state_async(cur_match.match_id, raceOp.CLIENT_UPDATE_VEHICLE_STATE, JSON.stringify(state))
 
 func send_match_state(op_code: int, state: Dictionary):
+	if Global.randPing:
+		await get_tree().create_timer(Global.randPing / 1000.0).timeout
+	
 	if not is_socket():
 		return false
 	
 	if not cur_match:
 		return false
-	
+
 	var res = await socket.send_match_state_async(cur_match.match_id, op_code, JSON.stringify(state))
 	if res.is_exception():
 		print("Error sending match state: ", res)
@@ -204,7 +207,7 @@ func join_match(match_id: String):
 		return false
 	
 	if cur_match:
-		socket.leave_match_async(cur_match.match_id)
+		await socket.leave_match_async(cur_match.match_id)
 		cur_match = null
 	
 	var _match: NakamaRTAPI.Match = await socket.join_match_async(match_id)

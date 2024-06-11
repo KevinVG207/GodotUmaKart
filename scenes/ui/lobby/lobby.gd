@@ -165,6 +165,7 @@ func update_player_pick(user_id: String, pick_text: String):
 
 func _on_matchmake_button_pressed():
 	if state == STATE_SETUP_COMPLETE:
+		Global.randPing = $PingBox.value
 		$MatchmakeButton.disabled = true
 		$MatchmakeButton.visible = false
 		state = STATE_PRE_MATCHMAKING
@@ -177,6 +178,9 @@ func _on_matchmake_button_pressed():
 		#remove_player(p.user_id)
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	if Global.randPing:
+		await get_tree().create_timer(Global.randPing / 1000.0).timeout
+	
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:
 		lobbyOp.SERVER_PING:

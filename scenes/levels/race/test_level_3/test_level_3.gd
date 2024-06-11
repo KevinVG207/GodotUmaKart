@@ -73,7 +73,8 @@ func change_state(new_state: int, state_func: Callable = Callable()):
 func _physics_process(_delta):
 	match state:
 		STATE_INITIAL:
-			change_state(STATE_JOINING, join)
+			state = STATE_JOINING
+			await join()
 		STATE_CAN_READY:
 			change_state(STATE_READY_FOR_START, send_ready)
 		_:
@@ -287,6 +288,9 @@ func handle_race_start(data: Dictionary):
 
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	if Global.randPing:
+		await get_tree().create_timer(Global.randPing / 1000.0).timeout
+	
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:
 		raceOp.SERVER_UPDATE_VEHICLE_STATE:

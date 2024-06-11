@@ -1,5 +1,7 @@
 extends Node
 
+var randPing = 0
+
 var trick_col_to_node = {
 	"trick": "NormalBoostTimer",
 	"small_trick": "SmallBoostTimer"

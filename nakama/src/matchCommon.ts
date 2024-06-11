@@ -59,7 +59,7 @@ function handle_ping_message(message: nkruntime.MatchMessage, data: any, presenc
     state.pingData[presence.userId].ping = avgPing;
 
     // Kick user if ping is too high
-    if (state.pingData[presence.userId].length > 3 && avgPing > config.maxPing) {
+    if (state.pingData[presence.userId].length > Math.max(0, noPings-2) && avgPing > config.maxPing) {
         dispatcher.matchKick([presence]);
     }
 }
