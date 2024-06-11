@@ -92,6 +92,10 @@ func matchmake():
 	if mm_tickets.size() > 0:
 		print("Already have a matchmaking ticket")
 		return false
+	
+	if ready_match:
+		print("Already have a ready match")
+		return false
 
 	
 	# Try via list
@@ -204,6 +208,9 @@ func join_match(match_id: String):
 		cur_match = null
 	
 	var _match: NakamaRTAPI.Match = await socket.join_match_async(match_id)
+
+	if ready_match == match_id:
+		ready_match = ""
 
 	if _match.is_exception():
 		print("Error joining match: ", _match)
