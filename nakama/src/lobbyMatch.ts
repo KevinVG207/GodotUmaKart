@@ -205,7 +205,7 @@ function handle_ping_message(message: nkruntime.MatchMessage, data: any, presenc
     state.pingData[presence.userId].lastPings.push(ping);
 
     // Remove oldest ping if we have more than 5
-    if (state.pingData[presence.userId].lastPings.length > 5) {
+    if (state.pingData[presence.userId].lastPings.length > 10) {
         state.pingData[presence.userId].lastPings.shift();
     }
 

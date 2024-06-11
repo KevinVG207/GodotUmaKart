@@ -169,7 +169,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
         for (let userId in state.pingData) {
             pingDict[userId] = state.pingData[userId].ping;
-            if (state.pingData[userId].lastPings.length < 5) {
+            if (state.pingData[userId].lastPings.length < 8) {
                 ready = false;
             }
         }
