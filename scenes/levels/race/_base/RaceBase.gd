@@ -1,6 +1,6 @@
 extends Node3D
 
-class_name LevelBase
+class_name RaceBase
 
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
@@ -37,10 +37,11 @@ const STATE_CAN_READY = 2
 const STATE_READY_FOR_START = 3
 const STATE_WAIT_FOR_START = 4
 const STATE_COUNTDOWN = 5
-const STATE_RACE = 6
+const STATE_COUNTING_DOWN = 6
+const STATE_RACE = 7
 
 const UPDATE_STATES = [
-	STATE_COUNTDOWN,
+	STATE_COUNTING_DOWN,
 	STATE_RACE
 ]
 
@@ -77,22 +78,26 @@ func _physics_process(_delta):
 			await join()
 		STATE_CAN_READY:
 			change_state(STATE_READY_FOR_START, send_ready)
+		STATE_COUNTDOWN:
+			$CountdownTimer.start(3.0)
+			state = STATE_COUNTING_DOWN
 		_:
 			pass
 	
 	if state in UPDATE_STATES:
-		update_wait_frames += 1
-		if update_wait_frames > frames_between_update:
-			update_wait_frames = 0
-			if player_vehicle:
-				var vehicle_data: Dictionary = player_vehicle.get_state()
-				Network.send_match_state(raceOp.CLIENT_UPDATE_VEHICLE_STATE, vehicle_data)
-				#player_vehicle.call_deferred("upload_data")
-		
 		# Player checkpoints
 		for vehicle: Vehicle3 in $Vehicles.get_children():
 			update_checkpoint(vehicle)
 			update_ranks()
+		
+		if Global.MODE1 == Global.MODE1_ONLINE:
+			update_wait_frames += 1
+			if update_wait_frames > frames_between_update:
+				update_wait_frames = 0
+				if player_vehicle:
+					var vehicle_data: Dictionary = player_vehicle.get_state()
+					Network.send_match_state(raceOp.CLIENT_UPDATE_VEHICLE_STATE, vehicle_data)
+					#player_vehicle.call_deferred("upload_data")
 
 func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3):
 	var new_vehicle = player_scene.instantiate() as Vehicle3
@@ -103,10 +108,9 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 	new_vehicle.is_player = false
 	new_vehicle.is_cpu = false
 	new_vehicle.is_network = true
-	if user_id == Network.session.user_id:
+	if user_id == player_user_id:
 		new_vehicle.is_player = true
 		new_vehicle.is_network = false
-		player_user_id = user_id
 		player_vehicle = new_vehicle
 		$PlayerCamera.target = new_vehicle
 
@@ -130,9 +134,27 @@ func setup_vehicles():
 
 		_add_vehicle(user_id, cur_pos, -start_direction, up_dir)
 
+func get_starting_order():
+	match Global.MODE1:
+		Global.MODE1_ONLINE:
+			player_user_id = Network.session.user_id
+			return Network.next_match_data.startingIds
+		Global.MODE1_OFFLINE:
+			player_user_id = "Player"
+			var player_array = []
+			for i in range(11):
+				player_array.append("CPU" + str(i))
+			player_array.insert(randi_range(0, 12), player_user_id)
+			return player_array
+	return []
+
 func join():
-	starting_order = Network.next_match_data.startingIds
+	starting_order = get_starting_order()
 	setup_vehicles()
+	
+	if Global.MODE1 == Global.MODE1_OFFLINE:
+		state = STATE_COUNTDOWN
+		return
 
 	var res: bool = await Network.join_match(Network.ready_match)
 	
@@ -162,7 +184,10 @@ func update_ranks():
 	var ranks = []
 	var ranks_vehicles = []
 	for vehicle: Vehicle3 in $Vehicles.get_children():
-		var cur_progress = 10000 * vehicle.lap + vehicle.check_idx + vehicle.check_progress
+		var check_idx = vehicle.check_idx
+		if check_idx < 0:
+			check_idx = checkpoints.size() - check_idx - 2
+		var cur_progress = 10000 * vehicle.lap + check_idx + vehicle.check_progress
 		if not ranks:
 			ranks.append(cur_progress)
 			ranks_vehicles.append(vehicle)
@@ -244,10 +269,6 @@ func update_checkpoint(player: Vehicle3):
 				player.lap -= 1
 		else:
 			break
-	
-	#var cur_checkpoint = checkpoints[player.check_idx]
-	#if cur_checkpoint in key_checkpoints:
-		#player.check_key_idx = key_checkpoints[cur_checkpoint]
 
 	player.check_progress = progress_in_cur_checkpoint(player)
 
@@ -305,7 +326,6 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 
 func _on_start_timer_timeout():
 	state = STATE_COUNTDOWN
-	$CountdownTimer.start(3.0)
 
 
 func _on_countdown_timer_timeout():

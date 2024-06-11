@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Godot Arcade Racer Test"
 config/version="0.0.1"
-run/main_scene="res://scenes/ui/lobby/lobby.tscn"
+run/main_scene="res://scenes/levels/race/Wicked_Woods/Wicked_Woods.tscn"
 config/auto_accept_quit=false
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
@@ -25,6 +25,14 @@ UI="*res://global/UI.tscn"
 Global="*res://global/global.gd"
 Network="*res://global/network.gd"
 Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
+
+[display]
+
+window/vsync/vsync_mode=2
+
+[editor]
+
+movie_writer/movie_file="E:/Dev/GodotArcadeRacerTest/_movie/movie.avi"
 
 [input]
 

@@ -63,7 +63,11 @@ func get_race_courses() -> Array:
 	var dirs = race_dir.get_directories()
 	var courses = []
 	for dir in dirs:
-		courses.append(dir.split("/")[-1])
+		var course_name: String = dir.split("/")[-1]
+		# Ignore test courses
+		if course_name[0] == "_":
+			continue
+		courses.append(course_name)
 	return courses
 
 func get_race_course_path(course_name: String):

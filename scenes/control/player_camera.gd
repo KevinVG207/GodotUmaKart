@@ -17,6 +17,7 @@ var cur_target: Vector3 = Vector3.INF
 var prev_mirror: bool = false
 
 var forwards = true
+var instant = true
 
 var in_water = false
 var water_areas = {}
@@ -32,6 +33,10 @@ func _physics_process(delta):
 	cur_pos_bw = cur_pos_bw.lerp(target.global_transform.translated_local(offset_bw).origin, lerp_speed * delta)
 	cur_pos_bw.y = lerpf(prev_pos_bw.y, target.global_transform.translated_local(offset_bw).origin.y, lerp_speed * delta * 0.5)
 
+	if instant:
+		cur_pos = target.global_transform.translated_local(offset).origin
+		cur_pos_bw = target.global_transform.translated_local(offset_bw).origin
+
 	var mirror = false
 	if target.input_mirror:
 		transform.origin = cur_pos_bw
@@ -41,7 +46,7 @@ func _physics_process(delta):
 	
 	var true_target: Vector3 = target.global_transform.origin + look_offset + target.global_transform.basis.z * -target.cur_turn_speed * 0.1
 
-	if mirror != prev_mirror:
+	if mirror != prev_mirror or instant:
 		look_at(true_target, -target.gravity.normalized())
 	else:
 		var old_basis = transform.basis
@@ -49,6 +54,8 @@ func _physics_process(delta):
 		var new_basis = transform.basis
 		transform.basis = Basis(Quaternion(old_basis).slerp(Quaternion(new_basis), lerp_speed_look * delta))
 
+	if instant:
+		instant = false
 
 	prev_mirror = mirror
 

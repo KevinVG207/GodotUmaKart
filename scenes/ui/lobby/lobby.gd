@@ -283,5 +283,6 @@ func handle_match_data(data: Dictionary):
 	state = STATE_MATCH_RECEIVED
 
 func switch_scene():
+	Global.MODE1 = Global.MODE1_ONLINE
 	Network.socket.received_match_state.disconnect(_on_match_state)
 	get_tree().change_scene_to_file(Util.get_race_course_path(next_course))

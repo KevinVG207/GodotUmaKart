@@ -2,6 +2,14 @@ extends Node
 
 var randPing = 0
 
+const MODE1_OFFLINE = 0
+const MODE1_ONLINE = 1
+
+const MODE2_RACE = 0
+
+var MODE1: int = MODE1_OFFLINE
+var MODE2: int = MODE2_RACE
+
 var trick_col_to_node = {
 	"trick": "NormalBoostTimer",
 	"small_trick": "SmallBoostTimer"
