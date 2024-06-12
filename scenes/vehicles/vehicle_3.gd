@@ -175,11 +175,11 @@ func handle_input():
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	handle_input()
 	if !is_player:
-		set_collision_layer_value(1, false)
-		set_collision_layer_value(2, true)
-	else:
-		set_collision_layer_value(1, true)
 		set_collision_layer_value(2, false)
+		set_collision_layer_value(3, true)
+	else:
+		set_collision_layer_value(2, true)
+		set_collision_layer_value(3, false)
 		
 	var delta: float = physics_state.step
 	var prev_vel: Vector3 = linear_velocity
@@ -629,7 +629,8 @@ func _process(delta):
 			extra_fov = 0.0
 	
 		#print(cur_speed)
-		Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
+		if Engine.get_frames_drawn() % 60 == 0:
+			Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
 
 
 func water_entered(area):
