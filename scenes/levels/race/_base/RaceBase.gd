@@ -44,7 +44,8 @@ const STATE_COUNTDOWN = 5
 const STATE_COUNTING_DOWN = 6
 const STATE_RACE = 7
 const STATE_RACE_OVER = 8
-const STATE_JOINING_NEXT = 9
+const STATE_RECEIVED_NEXT_MATCH = 9
+const STATE_JOINING_NEXT = 10
 
 const UPDATE_STATES = [
 	STATE_COUNTING_DOWN,
@@ -91,6 +92,8 @@ func _physics_process(_delta):
 			$CountdownTimer.start(3.0)
 			state = STATE_COUNTING_DOWN
 		STATE_RACE_OVER:
+			UI.race_ui.race_over()
+		STATE_RECEIVED_NEXT_MATCH:
 			UI.race_ui.race_over()
 			if Global.MODE1 == Global.MODE1_ONLINE:
 				change_state(STATE_JOINING_NEXT, join_next)
@@ -364,7 +367,7 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 		raceOp.SERVER_RACE_OVER:
 			finished = true
 			Network.ready_match = data.matchId
-			state = STATE_RACE_OVER
+			state = STATE_RECEIVED_NEXT_MATCH
 		_:
 			print("Unknown match state op code: ", match_state.op_code)
 

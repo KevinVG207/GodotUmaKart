@@ -41,9 +41,9 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             pingAtStart: {},
             readyUsers: [],
             ready: false,
-            one_finished: false,
+            oneFinished: false,
             finished: false,
-            finish_timeout: tickRate * 60 * 6
+            finishTimeout: tickRate * 60 * 6
         },
         tickRate: tickRate,
         label: '{}'
@@ -120,7 +120,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         return null;
     }
 
-    if (state.finished || tick >= state.finish_timeout) {
+    if (state.finished || tick >= state.finishTimeout) {
         // Start a new lobby.
         // Signal finish to all presences, with the next lobby match ID.
 
@@ -207,24 +207,25 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
 
         // Finishing
-        let one_finished = false;
-        let finished = true;
-        for (let vehicle of state.vehicles) {
-            if (vehicle.finished) {
-                one_finished = true;
-            } else {
-                finished = false;
+        if (state.started){
+            let oneFinished = false;
+            let finished = true;
+            for (let vehicle of state.vehicles) {
+                if (vehicle.finished) {
+                    oneFinished = true;
+                } else {
+                    finished = false;
+                }
             }
+
+            if (oneFinished && !state.oneFinished) {
+                // This is the first time a vehicle finishes.
+                state.finishTimeout = tick + ctx.matchTickRate * 30;
+            }
+    
+            state.oneFinished = oneFinished;
+            state.finished = finished;
         }
-
-        if (one_finished && !state.one_finished) {
-            // This is the first time a vehicle finishes.
-            state.finish_timeout = tick + ctx.matchTickRate * 30;
-        }
-
-        state.one_finished = one_finished;
-        state.finished = finished;
-
 
         dispatcher.broadcastMessage(raceOp.SERVER_PING, JSON.stringify({ pings: pingDict }), null, null);
     }
