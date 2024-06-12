@@ -32,6 +32,7 @@ class raceOp:
 	const SERVER_PING_DATA = 5
 	const SERVER_RACE_START = 6
 	const CLIENT_READY = 7
+	const SERVER_RACE_OVER = 8
 
 const STATE_DISCONNECT = -1
 const STATE_INITIAL = 0
@@ -43,6 +44,7 @@ const STATE_COUNTDOWN = 5
 const STATE_COUNTING_DOWN = 6
 const STATE_RACE = 7
 const STATE_RACE_OVER = 8
+const STATE_JOINING_NEXT = 9
 
 const UPDATE_STATES = [
 	STATE_COUNTING_DOWN,
@@ -90,6 +92,8 @@ func _physics_process(_delta):
 			state = STATE_COUNTING_DOWN
 		STATE_RACE_OVER:
 			UI.race_ui.race_over()
+			if Global.MODE1 == Global.MODE1_ONLINE:
+				change_state(STATE_JOINING_NEXT, join_next)
 		_:
 			pass
 	
@@ -357,6 +361,10 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			Network.send_match_state(raceOp.SERVER_PING, data)
 		raceOp.SERVER_RACE_START:
 			handle_race_start(data)
+		raceOp.SERVER_RACE_OVER:
+			finished = true
+			Network.ready_match = data.matchId
+			state = STATE_RACE_OVER
 		_:
 			print("Unknown match state op code: ", match_state.op_code)
 
@@ -369,3 +377,7 @@ func _on_countdown_timer_timeout():
 	state = STATE_RACE
 	for vehicle: Vehicle3 in $Vehicles.get_children():
 		vehicle.axis_unlock()
+
+func join_next():
+	Network.socket.received_match_state.disconnect(_on_match_state)
+	get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")

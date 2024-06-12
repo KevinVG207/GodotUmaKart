@@ -35,9 +35,8 @@ var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
 
 func _ready():
-	#print($VoteTimeout.time_left)
-	#get_tree().quit()
-	pass
+	if Network.ready_match:
+		state = STATE_MATCHMAKING_COMLETE
 
 func _process(_delta):
 	# Deal with displaying things

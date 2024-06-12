@@ -6,6 +6,7 @@ enum raceOp {
     SERVER_PING_DATA = 5,
 	SERVER_RACE_START = 6,
     CLIENT_READY = 7,
+    SERVER_RACE_OVER = 8
 }
 
 const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
@@ -40,6 +41,9 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             pingAtStart: {},
             readyUsers: [],
             ready: false,
+            one_finished: false,
+            finished: false,
+            finish_timeout: tickRate * 60 * 6
         },
         tickRate: tickRate,
         label: '{}'
@@ -113,6 +117,16 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
     // If the match has been empty for more than 100 ticks, end the match by returning null
     if (state.emptyTicks > state.emptyTimeout) {
+        return null;
+    }
+
+    if (state.finished || tick >= state.finish_timeout) {
+        // Start a new lobby.
+        // Signal finish to all presences, with the next lobby match ID.
+
+        var matchId = nk.matchCreate('lobby', {matchType: 'lobby', nextMatchType: state.label.matchType})
+        dispatcher.broadcastMessage(raceOp.SERVER_RACE_OVER, JSON.stringify({ matchId: matchId, playerCount: Object.keys(state.presences).length }), null, null);
+
         return null;
     }
 
@@ -190,6 +204,27 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
             dispatcher.broadcastMessage(raceOp.SERVER_RACE_START, JSON.stringify({ pings: pingDict, ticksToStart: ticksToStart, tickRate: ctx.matchTickRate }), null, null);
         }
+
+
+        // Finishing
+        let one_finished = false;
+        let finished = true;
+        for (let vehicle of state.vehicles) {
+            if (vehicle.finished) {
+                one_finished = true;
+            } else {
+                finished = false;
+            }
+        }
+
+        if (one_finished && !state.one_finished) {
+            // This is the first time a vehicle finishes.
+            state.finish_timeout = tick + ctx.matchTickRate * 30;
+        }
+
+        state.one_finished = one_finished;
+        state.finished = finished;
+
 
         dispatcher.broadcastMessage(raceOp.SERVER_PING, JSON.stringify({ pings: pingDict }), null, null);
     }
