@@ -121,8 +121,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     }
 
     if (state.finished || tick >= state.finishTimeout) {
-        logger.info(state.finished)
-        logger.info(state.finishTimeout)
+        logger.info(`${state.finished}`)
+        logger.info(`${state.finishTimeout}`)
         // Start a new lobby.
         // Signal finish to all presences, with the next lobby match ID.
 
@@ -212,7 +212,9 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     if (state.started){
         let oneFinished = false;
         let finished = true;
+        logger.info("Finish check");
         for (let vehicle of state.vehicles) {
+            logger.info(`${vehicle.finished}`);
             if (vehicle.finished == true) {
                 oneFinished = true;
             } else {
