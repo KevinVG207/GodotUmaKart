@@ -1,8 +1,11 @@
 extends CanvasLayer
 
-@onready var rtl: RichTextLabel = $MarginContainer/VBoxContainer/RichTextLabel
+@onready var rtl: RichTextLabel = $MarginContainer/RichTextLabel
 
 func print(input):
+	if not rtl:
+		return
+	
 	if is_instance_of(input, TYPE_ARRAY):
 		input = " ".join(input)
 	input = str(input)

@@ -9,6 +9,7 @@
 size = Vector3(300, 33.77, 141.27)
 
 [node name="RaceBase" instance=ExtResource("1_ecs37")]
+lap_count = 1
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Course" index="0"]
 transform = Transform3D(-0.851271, 0.474445, 0.224143, 0.129409, -0.224144, 0.965926, 0.508519, 0.851271, 0.12941, -15.5561, 248.104, 15.5561)

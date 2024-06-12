@@ -21,6 +21,9 @@ var starting_order: Array = []
 
 @export var player_scene: PackedScene
 
+@export var lap_count: int = 3
+var finished = false
+
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
 	const CLIENT_UPDATE_VEHICLE_STATE = 2
@@ -39,6 +42,7 @@ const STATE_WAIT_FOR_START = 4
 const STATE_COUNTDOWN = 5
 const STATE_COUNTING_DOWN = 6
 const STATE_RACE = 7
+const STATE_RACE_OVER = 8
 
 const UPDATE_STATES = [
 	STATE_COUNTING_DOWN,
@@ -48,6 +52,9 @@ const UPDATE_STATES = [
 var state = STATE_INITIAL
 
 func _ready():
+	UI.race_ui.set_max_laps(lap_count)
+	UI.race_ui.set_cur_lap(0)
+	
 	UI.show_race_ui()
 
 	checkpoints = []
@@ -62,9 +69,9 @@ func _ready():
 
 func _process(_delta):
 	if not $CountdownTimer.is_stopped():
-		UI.update_countdown(str(ceil($CountdownTimer.time_left)))
+		UI.race_ui.update_countdown(str(ceil($CountdownTimer.time_left)))
 	else:
-		UI.update_countdown("")
+		UI.race_ui.update_countdown("")
 
 
 func change_state(new_state: int, state_func: Callable = Callable()):
@@ -81,6 +88,8 @@ func _physics_process(_delta):
 		STATE_COUNTDOWN:
 			$CountdownTimer.start(3.0)
 			state = STATE_COUNTING_DOWN
+		STATE_RACE_OVER:
+			UI.race_ui.race_over()
 		_:
 			pass
 	
@@ -89,6 +98,8 @@ func _physics_process(_delta):
 		for vehicle: Vehicle3 in $Vehicles.get_children():
 			update_checkpoint(vehicle)
 			update_ranks()
+			if vehicle == player_vehicle:
+				UI.race_ui.set_cur_lap(vehicle.lap)
 		
 		if Global.MODE1 == Global.MODE1_ONLINE:
 			update_wait_frames += 1
@@ -98,6 +109,30 @@ func _physics_process(_delta):
 					var vehicle_data: Dictionary = player_vehicle.get_state()
 					Network.send_match_state(raceOp.CLIENT_UPDATE_VEHICLE_STATE, vehicle_data)
 					#player_vehicle.call_deferred("upload_data")
+		
+		check_finished()
+
+func check_finished():
+	# Offline mode: All players have finished.
+	# Online mode: All vehicles have finished (or timeout)
+	if finished:
+		return
+	var is_finished: bool = true
+	match Global.MODE1:
+		Global.MODE1_OFFLINE:
+			for vehicle: Vehicle3 in players_dict.values():
+				if vehicle.is_player and not vehicle.finished:
+					is_finished = false
+					break
+		Global.MODE1_ONLINE:
+			for vehicle: Vehicle3 in players_dict.values():
+				if !vehicle.finished:
+					is_finished = false
+					break
+	finished = is_finished
+	if finished:
+		state = STATE_RACE_OVER
+
 
 func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3):
 	var new_vehicle = player_scene.instantiate() as Vehicle3
@@ -236,6 +271,8 @@ func update_checkpoint(player: Vehicle3):
 			if next_idx == 0:
 				# Crossed the finish line
 				player.lap += 1
+				if player.lap > lap_count:
+					player.set_finished()
 		else:
 			break
 	

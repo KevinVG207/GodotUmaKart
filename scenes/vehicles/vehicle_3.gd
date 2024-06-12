@@ -15,6 +15,7 @@ var check_key_idx: int = 0
 var check_progress: float = 0.0
 var lap: int = 0
 var rank: int = 0
+var finished: bool = false
 
 var input_accel: bool = false
 var input_brake: bool = false
@@ -147,6 +148,11 @@ func _ready():
 		#wheel_marker.transform = wheel.transform
 		#wheel_markers.append(wheel_marker)
 
+func set_finished():
+	finished = true
+	if is_player:
+		UI.race_ui.finished()
+
 func axis_lock():
 	axis_lock_linear_x = true
 	axis_lock_linear_z = true
@@ -165,7 +171,7 @@ func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3):
 	cur_turn_speed = 0
 
 func handle_input():
-	if is_player and get_window().has_focus():
+	if is_player and get_window().has_focus() and not finished:
 		input_accel = Input.is_action_pressed("accelerate")
 		input_brake = Input.is_action_pressed("brake")
 		input_steer = Input.get_axis("right", "left")
@@ -621,7 +627,7 @@ func _process(delta):
 	
 	if is_player:
 		var spd = linear_velocity.length()
-		UI.update_speed(spd)
+		UI.race_ui.update_speed(spd)
 		
 		if cur_speed > max_speed:
 			extra_fov = (cur_speed - max_speed) * 0.25
@@ -692,7 +698,8 @@ func get_state() -> Dictionary:
 		"in_water": in_water,
 		"check_idx": check_idx,
 		"check_key_idx": check_key_idx,
-		"lap": lap
+		"lap": lap,
+		"finished": finished
 	}
 
 func apply_state(state: Dictionary):
@@ -726,3 +733,4 @@ func apply_state(state: Dictionary):
 	check_idx = state.get("check_idx", check_idx)
 	check_key_idx = state.get("check_key_idx", check_key_idx)
 	lap = state.get("lap", lap)
+	finished = state.get("finished", finished)
