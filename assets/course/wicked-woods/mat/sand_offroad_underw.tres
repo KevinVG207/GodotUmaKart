@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://ccfra1pwmnc56"]
+
+[ext_resource type="Texture2D" uid="uid://bqrh2jg8l48w4" path="res://assets/course/wicked-woods/tex/soil_offroad_underwater.png" id="1_oahaw"]
+
+[resource]
+resource_name = "sand_offroad_underw"
+cull_mode = 2
+albedo_texture = ExtResource("1_oahaw")
+roughness = 0.5

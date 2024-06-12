@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bv2ovgr7yg5ut"]
+
+[ext_resource type="Texture2D" uid="uid://bmdgcksu5mgsk" path="res://assets/course/wicked-woods/tex/rockwall.png" id="1_4u4pq"]
+
+[resource]
+resource_name = "wall_rock"
+cull_mode = 2
+albedo_texture = ExtResource("1_4u4pq")
+roughness = 0.5

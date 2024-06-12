@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://nomey8ht6xwd" path="res://scenes/vehicles/vehicle_3.tscn" id="2_6kmkx"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_le0ow"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="4_2p2d1"]
-[ext_resource type="PackedScene" uid="uid://bcppq1ypicwdx" path="res://assets/course/wicked-woods/WickedWoods.tscn" id="5_dnj24"]
+[ext_resource type="PackedScene" uid="uid://bcppq1ypicwdx" path="res://assets/course/wicked-woods-old/WickedWoodsOld.tscn" id="5_dnj24"]
 [ext_resource type="PackedScene" uid="uid://742psss2cgvv" path="res://scenes/objects/cone.tscn" id="6_3lamw"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_iv18g"]

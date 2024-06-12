@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://mmp2qqpgucjc"]
+
+[ext_resource type="Texture2D" uid="uid://bmckq8p3eq7h7" path="res://assets/course/wicked-woods/tex/dirt_road.png" id="1_kib0t"]
+
+[resource]
+resource_name = "dirt_road"
+cull_mode = 2
+albedo_texture = ExtResource("1_kib0t")
+roughness = 0.5

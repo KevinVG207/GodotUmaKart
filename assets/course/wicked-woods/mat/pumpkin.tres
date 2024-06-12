@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://1bu2icnmtrb0"]
+
+[ext_resource type="Texture2D" uid="uid://cnpvs0jlgg3p2" path="res://assets/course/wicked-woods/tex/pumpkin.png" id="1_0j888"]
+
+[resource]
+resource_name = "pumpkin"
+cull_mode = 2
+albedo_texture = ExtResource("1_0j888")
+roughness = 0.5

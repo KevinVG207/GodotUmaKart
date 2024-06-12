@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://76ipwg3wrtmb"]
+
+[ext_resource type="Texture2D" uid="uid://jcdum1nmjhmw" path="res://assets/course/wicked-woods/tex/wood-v2.png" id="1_1d3l0"]
+
+[resource]
+resource_name = "wall_wood"
+cull_mode = 2
+albedo_texture = ExtResource("1_1d3l0")
+roughness = 0.5
