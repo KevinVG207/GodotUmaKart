@@ -121,6 +121,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     }
 
     if (state.finished || tick >= state.finishTimeout) {
+        logger.info(state.finished)
+        logger.info(state.finishTimeout)
         // Start a new lobby.
         // Signal finish to all presences, with the next lobby match ID.
 
@@ -206,26 +208,26 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         }
 
 
-        // Finishing
-        if (state.started){
-            let oneFinished = false;
-            let finished = true;
-            for (let vehicle of state.vehicles) {
-                if (vehicle.finished) {
-                    oneFinished = true;
-                } else {
-                    finished = false;
-                }
+    // Finishing
+    if (state.started){
+        let oneFinished = false;
+        let finished = true;
+        for (let vehicle of state.vehicles) {
+            if (vehicle.finished == true) {
+                oneFinished = true;
+            } else {
+                finished = false;
             }
-
-            if (oneFinished && !state.oneFinished) {
-                // This is the first time a vehicle finishes.
-                state.finishTimeout = tick + ctx.matchTickRate * 30;
-            }
-    
-            state.oneFinished = oneFinished;
-            state.finished = finished;
         }
+
+        if (oneFinished && !state.oneFinished) {
+            // This is the first time a vehicle finishes.
+            state.finishTimeout = tick + ctx.matchTickRate * 30;
+        }
+
+        state.oneFinished = oneFinished;
+        state.finished = finished;
+    }
 
         dispatcher.broadcastMessage(raceOp.SERVER_PING, JSON.stringify({ pings: pingDict }), null, null);
     }
