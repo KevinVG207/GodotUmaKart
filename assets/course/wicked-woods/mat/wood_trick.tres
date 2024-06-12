@@ -1,9 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dq6odlxq2vxls"]
-
-[ext_resource type="Texture2D" uid="uid://5c223kkh5wtr" path="res://assets/course/wicked-woods/tex/wood2.png" id="1_gxu34"]
-
-[resource]
-resource_name = "wood_trick"
-cull_mode = 2
-albedo_texture = ExtResource("1_gxu34")
-roughness = 0.5

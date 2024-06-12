@@ -18,153 +18,149 @@ nodes/root_name=""
 nodes/apply_root_scale=true
 nodes/root_scale=1.0
 meshes/ensure_tangents=true
-meshes/generate_lods=true
+meshes/generate_lods=false
 meshes/create_shadow_meshes=true
-meshes/light_baking=1
+meshes/light_baking=0
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=false
+meshes/force_disable_compression=true
 skins/use_named_skins=true
-animation/import=true
+animation/import=false
 animation/fps=30
 animation/trimming=false
 animation/remove_immutable_tracks=true
 import_script/path=""
 _subresources={
 "materials": {
-"Default OBJ.001": {
-"use_external/enabled": true,
-"use_external/path": "res://assets/course/wicked-woods/mat/Default OBJ.001.tres"
-},
 "boost_ramp": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/boost_ramp.tres"
 },
 "bridge_road": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/bridge_road.tres"
 },
 "bridge_trick": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/bridge_trick.tres"
 },
 "bridge_wall": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/bridge_wall.tres"
 },
 "chain": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/chain.tres"
 },
 "clock": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/clock.tres"
 },
 "dirt_road": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/dirt_road.tres"
 },
 "grass": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/grass.tres"
 },
 "pumpkin": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/pumpkin.tres"
 },
 "road_arrows": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/road_arrows.tres"
 },
 "road_carpet": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/road_carpet.tres"
 },
 "road_carpet2": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/road_carpet2.tres"
 },
 "road_startline": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/road_startline.tres"
 },
 "road_trick_carpet": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/road_trick_carpet.tres"
 },
 "ruins_ceiling": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/ruins_ceiling.tres"
 },
 "ruins_road": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/ruins_road.tres"
 },
 "ruins_wall": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/ruins_wall.tres"
 },
 "sand": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/sand.tres"
 },
 "sand_offroad_underw": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/sand_offroad_underw.tres"
 },
 "sand_underw": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/sand_underw.tres"
 },
 "small_trick": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/small_trick.tres"
 },
 "tower_roof": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/tower_roof.tres"
 },
 "treetops": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/treetops.tres"
 },
 "treewall": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/treewall.tres"
 },
 "trickable_road": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/trickable_road.tres"
 },
 "wall_fence": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/wall_fence.tres"
 },
 "wall_fence_outside": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/wall_fence_outside.tres"
 },
 "wall_rock": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/wall_rock.tres"
 },
 "wall_wood": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/wall_wood.tres"
 },
 "water": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/water.tres"
 },
 "wood_road": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/wood_road.tres"
 },
 "wood_trick": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/wood_trick.tres"
 },
 "wood_wall": {
-"use_external/enabled": true,
+"use_external/enabled": false,
 "use_external/path": "res://assets/course/wicked-woods/mat/wood_wall.tres"
 }
 },

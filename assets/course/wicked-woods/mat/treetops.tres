@@ -1,9 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c027yok88lav6"]
-
-[ext_resource type="Texture2D" uid="uid://dukhxjy3u58l2" path="res://assets/course/wicked-woods/tex/bgr_trees.png" id="1_o55p2"]
-
-[resource]
-resource_name = "treetops"
-cull_mode = 2
-albedo_texture = ExtResource("1_o55p2")
-roughness = 0.5

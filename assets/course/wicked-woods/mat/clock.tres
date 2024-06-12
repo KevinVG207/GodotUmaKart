@@ -1,9 +1,9 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dqrt00no4tygg"]
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bht4yqryfulji"]
 
-[ext_resource type="Texture2D" uid="uid://b75cfeorsvpfc" path="res://assets/course/wicked-woods/tex/clockface.png" id="1_45gha"]
+[ext_resource type="Texture2D" uid="uid://b75cfeorsvpfc" path="res://assets/course/wicked-woods/tex/clockface.png" id="1_duitv"]
 
 [resource]
 resource_name = "clock"
 cull_mode = 2
-albedo_texture = ExtResource("1_45gha")
-roughness = 0.5
+shading_mode = 0
+albedo_texture = ExtResource("1_duitv")

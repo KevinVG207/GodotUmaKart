@@ -1,9 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://ctsxo002eck28"]
-
-[ext_resource type="Texture2D" uid="uid://kmoi0h6xq8f6" path="res://assets/course/wicked-woods/tex/octagons-better.png" id="1_qdqyk"]
-
-[resource]
-resource_name = "trickable_road"
-cull_mode = 2
-albedo_texture = ExtResource("1_qdqyk")
-roughness = 0.5

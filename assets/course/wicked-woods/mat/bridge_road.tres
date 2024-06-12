@@ -1,9 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bwvr3nuyqwuqm"]
-
-[ext_resource type="Texture2D" uid="uid://5c223kkh5wtr" path="res://assets/course/wicked-woods/tex/wood2.png" id="1_s85p7"]
-
-[resource]
-resource_name = "bridge_road"
-cull_mode = 2
-albedo_texture = ExtResource("1_s85p7")
-roughness = 0.5
