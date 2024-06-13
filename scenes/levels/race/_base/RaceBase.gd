@@ -121,24 +121,19 @@ func _physics_process(_delta):
 
 func check_finished():
 	# Offline mode: All players have finished.
-	# Online mode: All vehicles have finished (or timeout)
+	# Online mode: Wait for server
 	if finished:
 		return
-	var is_finished: bool = true
-	match Global.MODE1:
-		Global.MODE1_OFFLINE:
-			for vehicle: Vehicle3 in players_dict.values():
-				if vehicle.is_player and not vehicle.finished:
-					is_finished = false
-					break
-		Global.MODE1_ONLINE:
-			for vehicle: Vehicle3 in players_dict.values():
-				if !vehicle.finished:
-					is_finished = false
-					break
-	finished = is_finished
-	if finished:
-		state = STATE_RACE_OVER
+	
+	if Global.MODE1 == Global.MODE1_OFFLINE:
+		var is_finished: bool = true
+		for vehicle: Vehicle3 in players_dict.values():
+			if vehicle.is_player and not vehicle.finished:
+				is_finished = false
+				break
+		finished = is_finished
+		if finished:
+			state = STATE_RACE_OVER
 
 
 func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3):
