@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://crersi2gg0o1o"]
+
+[ext_resource type="Script" path="res://scenes/levels/race/_base/RaceBase.gd" id="1_2b6un"]
+[ext_resource type="PackedScene" uid="uid://nomey8ht6xwd" path="res://scenes/vehicles/vehicle_3.tscn" id="2_yop1j"]
+[ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_70vu5"]
+
+[node name="RaceBase" type="Node3D"]
+script = ExtResource("1_2b6un")
+player_scene = ExtResource("2_yop1j")
+
+[node name="Course" type="Node3D" parent="."]
+metadata/_edit_lock_ = true
+
+[node name="Checkpoints" type="Node3D" parent="."]
+metadata/_edit_lock_ = true
+
+[node name="Vehicles" type="Node3D" parent="."]
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="PlayerCamera" parent="." instance=ExtResource("3_70vu5")]
+transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, 0, 0, 0)
+current = true
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="StartTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
+[node name="CountdownTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="timeout" from="CountdownTimer" to="." method="_on_countdown_timer_timeout"]

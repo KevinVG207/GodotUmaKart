@@ -6,7 +6,17 @@ enum raceOp {
     SERVER_PING_DATA = 5,
 	SERVER_RACE_START = 6,
     CLIENT_READY = 7,
+    SERVER_RACE_OVER = 8,
+    SERVER_CLIENT_DISCONNECT = 9,
+    SERVER_ABORT = 10
 }
+
+
+enum finishType {
+    NORMAL = 0,
+    TIMEOUT = 1
+}
+
 
 const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
     // logger.debug("Matchinit");
@@ -15,18 +25,22 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
     var tickRate = 20;
     var emptyTimeout = 60 * tickRate;
+    
+    var course: string = JSON.parse(params.winningVote).course;
 
     let label: label = {
         matchType: params.matchType,
         joinable: 0,
         players: 0,
         maxPlayers: 12,
+        course: course
     }
 
     logger.info("Starting IDs: " + params.startingIds)
 
     return {
         state: {
+            course: course,
             presences: {},
             emptyTicks: 0,
             tickRate: tickRate,
@@ -40,6 +54,9 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             pingAtStart: {},
             readyUsers: [],
             ready: false,
+            oneFinished: false,
+            finished: false,
+            finishTimeout: tickRate * 60 * 6
         },
         tickRate: tickRate,
         label: '{}'
@@ -57,7 +74,7 @@ const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime
         };
     }
 
-    if (!state.startingIds.includes(presence.userId)) {
+    if (!state.started && !state.startingIds.includes(presence.userId)) {
         return {
             state,
             accept: false,
@@ -73,8 +90,11 @@ const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime
 
 const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
-        state.presences[p.sessionId] = p;
-        state.vehicles[p.sessionId] = {};
+        state.presences[p.userId] = p;
+
+        if (!state.started){
+            state.vehicles[p.userId] = {};
+        }
         state.pingData[p.userId] = {
             lastPings: [],
             ongoingPings: {},
@@ -90,9 +110,10 @@ const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
 const raceMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
-        delete state.presences[p.sessionId];
-        delete state.vehicles[p.sessionId];
+        delete state.presences[p.userId];
+        delete state.vehicles[p.userId];
         updateLabel(state, dispatcher)
+        dispatcher.broadcastMessage(raceOp.SERVER_CLIENT_DISCONNECT, JSON.stringify({ userId: p.userId }), null, null);
     });
 
     return {
@@ -116,6 +137,27 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         return null;
     }
 
+    if (state.started && Object.keys(state.vehicles).length <= 1) {
+        // Race can't continue with less than 2 players
+        dispatcher.broadcastMessage(raceOp.SERVER_ABORT, JSON.stringify({}), null, null);
+        return null;
+    }
+
+    if (state.finished || tick >= state.finishTimeout) {
+        var finType = finishType.NORMAL;
+
+        if (tick >= state.finishTimeout) {
+            finType = finishType.TIMEOUT;
+        }
+        // Start a new lobby.
+        // Signal finish to all presences, with the next lobby match ID.
+
+        var matchId = nk.matchCreate('lobby', {matchType: 'lobby', nextMatchType: state.label.matchType, fromMatch: JSON.stringify(state.presences)});
+        dispatcher.broadcastMessage(raceOp.SERVER_RACE_OVER, JSON.stringify({ matchId: matchId, playerCount: Object.keys(state.presences).length, finishType: finType }), null, null);
+
+        return null;
+    }
+
     pingUsers(raceOp.SERVER_PING, tick, ctx, state, dispatcher);
 
     // Loop over all messages received by the match
@@ -126,7 +168,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         const data = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(payload) as any) as string);
         const presence = message.sender;
 
-        if (!(presence.sessionId in state.presences)) {
+        if (!(presence.userId in state.presences)) {
             return;
         }
 
@@ -138,6 +180,11 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
                     if (state.vehicles[message.sender.userId].idx >= data.idx) {
                         break;
                     }
+                }
+
+                if (!state.startingIds.includes(message.sender.userId)) {
+                    // Ignore updates from users not in the starting list
+                    break;
                 }
 
                 state.vehicles[message.sender.userId] = data;
@@ -189,7 +236,34 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             state.pingAtStart = pingDict;
 
             dispatcher.broadcastMessage(raceOp.SERVER_RACE_START, JSON.stringify({ pings: pingDict, ticksToStart: ticksToStart, tickRate: ctx.matchTickRate }), null, null);
+            state.label.joinable = 1;
+            updateLabel(state, dispatcher);
         }
+
+
+    // Finishing
+    if (state.started){
+        let oneFinished = false;
+        let finished = true;
+        for (let userId in state.vehicles){
+            let vehicle = state.vehicles[userId];
+            if (vehicle.finished == true){
+                oneFinished = true;
+            } else {
+                finished = false;
+            }
+        }
+
+        if (oneFinished && !state.oneFinished) {
+            // This is the first time a vehicle finishes.
+            state.joinable = 0;
+            updateLabel(state, dispatcher);
+            state.finishTimeout = tick + ctx.matchTickRate * 30;
+        }
+
+        state.oneFinished = oneFinished;
+        state.finished = finished;
+    }
 
         dispatcher.broadcastMessage(raceOp.SERVER_PING, JSON.stringify({ pings: pingDict }), null, null);
     }

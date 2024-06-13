@@ -21,6 +21,7 @@ class lobbyOp:
 	const CLIENT_VOTE = 1
 	const SERVER_VOTE_DATA = 2
 	const SERVER_MATCH_DATA = 3
+	const SERVER_ABORT = 4
 
 
 var state = STATE_RESETTING
@@ -35,16 +36,19 @@ var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
 
 func _ready():
-	#print($VoteTimeout.time_left)
-	#get_tree().quit()
-	pass
+	if Network.ready_match:
+		state = STATE_MATCHMAKING_COMLETE
 
 func _process(_delta):
 	# Deal with displaying things
 	$TimeLeft.text = "0:00"
 
-	if not $VoteTimeout.is_stopped():
+	if vote_timeout_started and info_boxes.size() <= 1:
+		$TimeLeft.text = "Waiting for players..."
+	elif vote_timeout_started and not $VoteTimeout.is_stopped():
 		$TimeLeft.text = Util.format_time_minutes($VoteTimeout.time_left)
+	else:
+		$TimeLeft.text = ""
 
 
 func _physics_process(_delta):
@@ -61,7 +65,7 @@ func _physics_process(_delta):
 			change_state(STATE_MATCHMAKING, matchmake)
 		STATE_MATCHMAKING_WAIT:
 			if Network.ready_match:
-				$Status.text = "Match found"
+				$Status.text = "Room found"
 				state = STATE_MATCHMAKING_COMLETE
 		STATE_MATCHMAKING_COMLETE:
 			change_state(STATE_JOINING, join)
@@ -94,12 +98,12 @@ func setup():
 	state = STATE_SETUP_COMPLETE
 
 func matchmake():
-	$Status.text = "Looking for match..."
+	$Status.text = "Looking for room..."
 	
 	var res: bool = await Network.matchmake()
 	
 	if not res:
-		$Status.text = "Failed to matchmake!"
+		$Status.text = "Failed to find room!"
 		state = STATE_RESET
 		return
 	
@@ -107,19 +111,25 @@ func matchmake():
 	return
 
 func join():
-	$Status.text = "Joining match..."
+	$Status.text = "Joining room..."
+
+	if Network.ready_match_type == "race":
+		next_course = Network.ready_match_label['course']
+		switch_scene()
 	
 	var res: bool = await Network.join_match(Network.ready_match)
 	
 	#Network.socket.received_match_presence.connect(_on_match_presence)
 	Network.socket.received_match_state.connect(_on_match_state)
+	Network.socket.closed.connect(_on_socket_closed)
 
 	if not res or not Network.cur_match:
 		# Disconnect functions
 		#Network.socket.received_match_presence.disconnect(_on_match_presence)
 		Network.socket.received_match_state.disconnect(_on_match_state)
+		Network.socket.closed.disconnect(_on_socket_closed)
 
-		$Status.text = "Failed to join match!"
+		$Status.text = "Failed to join room!"
 		state = STATE_RESET
 		return
 	
@@ -128,9 +138,12 @@ func join():
 
 func setup_voting():
 	$Status.text = "Waiting for votes..."
+	$LeaveButton.text = "Leave Room"
 	state = STATE_VOTING
 	$VoteButton.disabled = false
 	$VoteButton.visible = true
+	$LeaveButton.disabled = false
+	$LeaveButton.visible = true
 	return
 
 func add_player(username: String, user_id: String):
@@ -165,8 +178,11 @@ func update_player_pick(user_id: String, pick_text: String):
 
 func _on_matchmake_button_pressed():
 	if state == STATE_SETUP_COMPLETE:
+		Global.randPing = $PingBox.value
 		$MatchmakeButton.disabled = true
 		$MatchmakeButton.visible = false
+		$LeaveButton.disabled = false
+		$LeaveButton.visible = true
 		state = STATE_PRE_MATCHMAKING
 
 
@@ -177,6 +193,9 @@ func _on_matchmake_button_pressed():
 		#remove_player(p.user_id)
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
+	if Global.randPing:
+		await get_tree().create_timer(Global.randPing / 1000.0).timeout
+	
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:
 		lobbyOp.SERVER_PING:
@@ -187,6 +206,8 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 		lobbyOp.SERVER_MATCH_DATA:
 			print("Received match data")
 			handle_match_data(data)
+		lobbyOp.SERVER_ABORT:
+			await reload()
 		_:
 			print("Unknown lobby op code: ", match_state.op_code)
 
@@ -201,7 +222,7 @@ func handle_vote_data(data: Dictionary):
 	# Setup vote timeout:
 	var ticks_left = max(vote_timeout - tick, 0)
 	var seconds_left = Util.ticks_to_time_with_ping(ticks_left, tick_rate, ping_data[Network.session.user_id])
-	if not vote_timeout_started:
+	if not vote_timeout_started or info_boxes.size() <= 1:
 		vote_timeout_started = true
 		$VoteTimeout.start(seconds_left)
 	elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
@@ -253,6 +274,8 @@ func vote():
 func _on_vote_timeout_timeout():
 	$VoteButton.disabled = true
 	$VoteButton.visible = false
+	$LeaveButton.disabled = true
+	$LeaveButton.visible = false
 	
 	if not cur_vote:
 		cur_vote = Util.get_race_courses()[0]
@@ -264,6 +287,9 @@ func handle_match_data(data: Dictionary):
 	var match_id = data.matchId as String
 	var winning_vote = data.winningVote as Dictionary
 	var vote_user = data.voteUser as String
+	
+	$LeaveButton.disabled = true
+	$LeaveButton.visible = false
 	
 	info_boxes[vote_user].set_picked()
 	print("Match ID: ", match_id)
@@ -279,5 +305,18 @@ func handle_match_data(data: Dictionary):
 	state = STATE_MATCH_RECEIVED
 
 func switch_scene():
+	Global.MODE1 = Global.MODE1_ONLINE
 	Network.socket.received_match_state.disconnect(_on_match_state)
+	Network.socket.closed.disconnect(_on_socket_closed)
 	get_tree().change_scene_to_file(Util.get_race_course_path(next_course))
+
+func reload():
+	await Network.leave_match()
+	get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
+
+func _on_leave_button_pressed():
+	await reload()
+
+func _on_socket_closed():
+	$Status.text = "Connection lost."
+	reset()

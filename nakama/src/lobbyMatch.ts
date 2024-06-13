@@ -3,6 +3,7 @@ enum lobbyOp {
     CLIENT_VOTE = 1,
     SERVER_VOTE_DATA = 2,
     SERVER_MATCH_DATA = 3,
+    SERVER_ABORT = 4,
 }
 
 
@@ -11,27 +12,50 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
     logger.debug("Inside Matchinit. MatchType: " + params.matchType)
 
-    var tickRate = 4;
+    let tickRate = 4;
+
+    let joinable = 1;
+    let players = 0;
+    let presences = {};
+    let prevUserIds: string[] = [];
+
+    if ('fromMatch' in params){
+        presences = JSON.parse(params.fromMatch);
+        prevUserIds = Object.keys(presences);
+        players = prevUserIds.length;
+    }
 
     let label: label = {
         matchType: params.matchType,
-        joinable: 1,
-        players: 0,
+        joinable: joinable,
+        players: players,
         maxPlayers: 12,
     }
 
     // let voteTimeout = 30 * tickRate;
-    let voteTimeout = 30 * tickRate;
-    let joinTimeout = Math.floor(voteTimeout / 4 * 3);
+    let voteTimeout = 60 * tickRate;
+    let joinTimeout = 45 * tickRate;
+    let openTimeout = 30 * tickRate;
+
+    if (!prevUserIds.length) {
+        voteTimeout -= openTimeout;
+        joinTimeout -= openTimeout;
+        openTimeout = 0;
+    }
+
+    let joinedIds: String[] = [];
 
     return {
         state: {
-            presences: {},
+            presences: presences,
+            prevUserIds: prevUserIds,
+            joinedIds: joinedIds,
             emptyTicks: 0,
             nextMatchType: params.nextMatchType,
             votes: {},
             voteTimeout: voteTimeout,
             joinTimeout: joinTimeout,
+            openTimeout: openTimeout,
             expireTimeout: voteTimeout*2,
             label: label,
             pingData: {},
@@ -46,6 +70,14 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 const lobbyMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presence: nkruntime.Presence, metadata: { [key: string]: any }): { state: nkruntime.MatchState, accept: boolean, rejectMessage?: string | undefined } | null {
     // logger.debug("MatchJoinAttempt", presence.userId);
 
+    if (state.label.players >= state.label.maxPlayers) {
+        return {
+            state,
+            accept: false,
+            rejectMessage: "Match is full"
+        };
+    }
+
     return {
         state,
         accept: true
@@ -54,6 +86,12 @@ const lobbyMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntim
 
 const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
+        state.joinedIds.push(p.userId);
+
+        if (p.userId in state.presences) {
+            state.presences
+        }
+
         state.presences[p.userId] = p;
         state.pingData[p.userId] = {
             lastPings: [],
@@ -71,6 +109,15 @@ const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
 const lobbyMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
+        let idx = state.joinedIds.indexOf(p.userId);
+        if (idx > -1) {
+            state.joinedIds.splice(idx, 1);
+        }
+        idx = state.prevUserIds.indexOf(p.userId);
+        if (idx > -1) {
+            state.prevUserIds.splice(idx, 1);
+        }
+        
         delete state.presences[p.userId];
         delete state.votes[p.userId];
         updateLabel(state, dispatcher)
@@ -84,6 +131,14 @@ const lobbyMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logg
 const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, messages: nkruntime.MatchMessage[]): { state: nkruntime.MatchState } | null {
     // logger.info("Match loop " + state.emptyTicks);
     // logger.info("Amount of presences: " + Object.keys(state.presences).length)
+
+    // If there are less than 2 players, don't start the match
+    if (tick >= state.joinTimeout && Object.keys(state.presences).length == 1) {
+        // Extend the timeouts.
+        state.voteTimeout += 30 * ctx.matchTickRate;
+        state.joinTimeout += 30 * ctx.matchTickRate;
+        state.expireTimeout += 30 * ctx.matchTickRate;
+    }
 
     if (!state.voteComplete) {
         updateJoinableStatus(tick, state, dispatcher);
@@ -100,6 +155,17 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         if (tick < trueVoteTimeout) {
             // Loop over all messages received by the match
             processMessages(messages, nk, state, logger, tick, ctx, dispatcher);
+        }
+
+        if (tick == state.openTimeout) {
+            // Remove slots reserved for users from previous match who didn't join
+            for (let userId of state.prevUserIds) {
+                if (!(userId in state.presences)) {
+                    delete state.presences[userId];
+                }
+            }
+            state.prevUserIds = [];
+            updateLabel(state, dispatcher);
         }
     }
 
@@ -193,35 +259,6 @@ function handle_vote_message(message: nkruntime.MatchMessage, data: any, presenc
     }
 }
 
-function handle_ping_message(message: nkruntime.MatchMessage, data: any, presence: nkruntime.Presence, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
-    let pingId = data.pingId;
-    if (!(pingId in state.pingData[presence.userId].ongoingPings)) {
-        return;
-    }
-    let receiveTimeMs = message.receiveTimeMs;
-    let sendTimeMs = state.pingData[presence.userId].ongoingPings[pingId];
-    delete state.pingData[presence.userId].ongoingPings[pingId];
-    let ping = (receiveTimeMs - sendTimeMs) / 2;
-    state.pingData[presence.userId].lastPings.push(ping);
-
-    // Remove oldest ping if we have more than 5
-    if (state.pingData[presence.userId].lastPings.length > 5) {
-        state.pingData[presence.userId].lastPings.shift();
-    }
-
-    let sum = 0;
-    for (var i = 0; i < state.pingData[presence.userId].lastPings.length; i++) {
-        sum += state.pingData[presence.userId].lastPings[i];
-    }
-
-    let avgPing = sum / state.pingData[presence.userId].lastPings.length;
-    state.pingData[presence.userId].ping = avgPing;
-
-    // Kick user if ping is too high
-    if (state.pingData[presence.userId].length > 3 && avgPing > config.maxPing) {
-        dispatcher.matchKick([presence]);
-    }
-}
 
 function startNextMatch(state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher, nk: nkruntime.Nakama) {
     // Start the match
@@ -242,7 +279,7 @@ function startNextMatch(state: nkruntime.MatchState, dispatcher: nkruntime.Match
     let startingIds = Object.keys(state.presences);  // This will indicate the starting order.
 
     // Create a race match using this course
-    let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, winningVote: randomVote, startingIds: JSON.stringify(startingIds) });
+    let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, winningVote: JSON.stringify(randomVote), startingIds: JSON.stringify(startingIds) });
 
     let payload = {
         matchId: matchId,
@@ -255,19 +292,6 @@ function startNextMatch(state: nkruntime.MatchState, dispatcher: nkruntime.Match
     dispatcher.broadcastMessage(lobbyOp.SERVER_MATCH_DATA, JSON.stringify(payload), null, null);
 }
 
-function pingUsers(opCode: number, tick: number, ctx: nkruntime.Context, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
-    if (tick % Math.floor(ctx.matchTickRate / 2) == 0) {
-        for (let userId in state.presences) {
-            let p = state.presences[userId];
-
-            // Ping user
-            let now = Date.now();
-            let pingId = tick;
-            state.pingData[p.userId].ongoingPings[pingId] = now;
-            dispatcher.broadcastMessage(opCode, JSON.stringify({ pingId: pingId }), [p], null);
-        }
-    }
-}
 
 function updateJoinableStatus(tick: number, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
     if (tick > state.joinTimeout) {

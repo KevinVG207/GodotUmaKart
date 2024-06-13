@@ -63,11 +63,16 @@ func get_race_courses() -> Array:
 	var dirs = race_dir.get_directories()
 	var courses = []
 	for dir in dirs:
-		courses.append(dir.split("/")[-1])
+		var course_name: String = dir.split("/")[-1]
+		# Ignore test courses
+		if course_name[0] == "_":
+			continue
+		courses.append(course_name)
 	return courses
 
 func get_race_course_path(course_name: String):
 	return "res://scenes/levels/race/" + course_name + "/" + course_name + ".tscn"
 
 func ticks_to_time_with_ping(ticks_left: int, tick_rate: int, ping_ms: int) -> float:
+	# Debug.print(["Ping: ", ping_ms])
 	return (float(ticks_left) / tick_rate) - (ping_ms / 1000.0)

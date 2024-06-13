@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://xsnx2ivfgbbr"]
+
+[ext_resource type="PackedScene" uid="uid://bh0j3hp34cn23" path="res://assets/course/1test/1test.blend" id="1_or65s"]
+
+[node name="1test" instance=ExtResource("1_or65s")]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+
+[node name="StaticBody3D" parent="grass" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="road" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="startline" index="0" groups=["floor"]]

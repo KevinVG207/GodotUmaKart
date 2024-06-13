@@ -9,9 +9,9 @@ script = ExtResource("1_5qmws")
 info_box = ExtResource("2_r5fd3")
 
 [node name="LobbyName" type="Label" parent="."]
-offset_left = 16.0
+offset_left = 111.0
 offset_top = 3.0
-offset_right = 104.0
+offset_right = 199.0
 offset_bottom = 45.0
 theme_override_font_sizes/font_size = 30
 text = "Lobby"
@@ -96,11 +96,41 @@ disabled = true
 text = "Vote"
 metadata/_edit_lock_ = true
 
+[node name="LeaveButton" type="Button" parent="."]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 346.0
+offset_top = -83.31
+offset_right = 550.0
+offset_bottom = -40.31
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 25
+disabled = true
+text = "Cancel Search"
+
 [node name="VoteTimeout" type="Timer" parent="."]
 process_callback = 0
 wait_time = 60.0
 one_shot = true
 
+[node name="PingBox" type="SpinBox" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -105.0
+offset_top = 52.0
+offset_right = -21.9375
+offset_bottom = 83.0
+grow_horizontal = 0
+max_value = 1000.0
+step = 100.0
+
 [connection signal="pressed" from="MatchmakeButton" to="." method="_on_matchmake_button_pressed"]
 [connection signal="pressed" from="VoteButton" to="." method="_on_vote_button_pressed"]
+[connection signal="pressed" from="LeaveButton" to="." method="_on_leave_button_pressed"]
 [connection signal="timeout" from="VoteTimeout" to="." method="_on_vote_timeout_timeout"]

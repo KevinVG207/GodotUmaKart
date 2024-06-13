@@ -1,0 +1,92 @@
+[gd_scene load_steps=4 format=3 uid="uid://dp430o1purg1h"]
+
+[ext_resource type="PackedScene" uid="uid://cjye7hx3jcwd5" path="res://assets/course/wicked-woods/WickedWoods.blend" id="1_6dn3j"]
+[ext_resource type="Material" uid="uid://byw0trjuog32i" path="res://assets/course/wicked-woods/mat/new_standard_material_3d.tres" id="2_alxyx"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_vexeb"]
+bounce = 0.5
+
+[node name="WickedWoods" instance=ExtResource("1_6dn3j")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+
+[node name="StaticBody3D" parent="Course_tower" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_castle-road" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_wood-road" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_wood-wall" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_boost-border" index="0" groups=["boost", "floor", "trick"]]
+
+[node name="StaticBody3D" parent="Course_wood-fence" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_ruins-road" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_ruins-wall" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_pumpkin" index="0" groups=["wall"]]
+physics_material_override = SubResource("PhysicsMaterial_vexeb")
+
+[node name="StaticBody3D" parent="Course_trick-branch" index="0" groups=["floor", "small_trick"]]
+
+[node name="StaticBody3D" parent="Course_treetops" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_castle-road-side" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_castle-under-road" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_dirt-road" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_bridge" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_bridge-trick" index="0" groups=["floor", "small_trick"]]
+
+[node name="StaticBody3D" parent="Course_bridge-wall" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_castle-road-trick" index="0" groups=["floor", "small_trick"]]
+
+[node name="Course_cannon" parent="." index="22"]
+visible = false
+
+[node name="CollisionShape3D" parent="Course_cannon/StaticBody3D" index="0"]
+disabled = true
+
+[node name="StaticBody3D" parent="Course_ruins-rim" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_ruins-road-trick" index="0" groups=["floor", "small_trick"]]
+
+[node name="StaticBody3D" parent="Course_dirt-road2" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_dirt-road-nograss" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_sand-road" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_sand-offroad" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_dirt-road-trick" index="0" groups=["floor", "small_trick"]]
+
+[node name="StaticBody3D" parent="Course_grass-offroad" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_forest-wall" index="0" groups=["wall"]]
+
+[node name="Course_tree-wall" parent="." index="32"]
+surface_material_override/0 = ExtResource("2_alxyx")
+
+[node name="StaticBody3D" parent="Course_tree-wall" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_rug-red" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_fence-barrier" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_startline" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_tower-roof" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_kingboo" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_tree_001" index="0" groups=["wall"]]
+
+[node name="StaticBody3D" parent="Course_tower-roof_001" index="0" groups=["floor"]]
+
+[node name="StaticBody3D" parent="Course_floor-deco_001" index="0" groups=["boost", "floor", "small_trick"]]

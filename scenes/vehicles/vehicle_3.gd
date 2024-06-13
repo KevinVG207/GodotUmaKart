@@ -15,6 +15,7 @@ var check_key_idx: int = 0
 var check_progress: float = 0.0
 var lap: int = 0
 var rank: int = 0
+var finished: bool = false
 
 var input_accel: bool = false
 var input_brake: bool = false
@@ -147,6 +148,11 @@ func _ready():
 		#wheel_marker.transform = wheel.transform
 		#wheel_markers.append(wheel_marker)
 
+func set_finished():
+	finished = true
+	if is_player:
+		UI.race_ui.finished()
+
 func axis_lock():
 	axis_lock_linear_x = true
 	axis_lock_linear_z = true
@@ -165,6 +171,14 @@ func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3):
 	cur_turn_speed = 0
 
 func handle_input():
+	if finished:
+		input_accel = false
+		input_brake = false
+		input_steer = 0.0
+		input_trick = false
+		input_mirror = false
+		return
+	
 	if is_player and get_window().has_focus():
 		input_accel = Input.is_action_pressed("accelerate")
 		input_brake = Input.is_action_pressed("brake")
@@ -175,11 +189,11 @@ func handle_input():
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	handle_input()
 	if !is_player:
-		set_collision_layer_value(1, false)
-		set_collision_layer_value(2, true)
-	else:
-		set_collision_layer_value(1, true)
 		set_collision_layer_value(2, false)
+		set_collision_layer_value(3, true)
+	else:
+		set_collision_layer_value(2, true)
+		set_collision_layer_value(3, false)
 		
 	var delta: float = physics_state.step
 	var prev_vel: Vector3 = linear_velocity
@@ -621,7 +635,7 @@ func _process(delta):
 	
 	if is_player:
 		var spd = linear_velocity.length()
-		UI.update_speed(spd)
+		UI.race_ui.update_speed(spd)
 		
 		if cur_speed > max_speed:
 			extra_fov = (cur_speed - max_speed) * 0.25
@@ -629,7 +643,8 @@ func _process(delta):
 			extra_fov = 0.0
 	
 		#print(cur_speed)
-		#Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
+		if Engine.get_frames_drawn() % 60 == 0:
+			Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
 
 
 func water_entered(area):
@@ -664,6 +679,7 @@ func _on_player_collision_area_exited(area):
 
 func get_state() -> Dictionary:
 	update_idx += 1
+	print(finished)
 	return {
 		"idx": update_idx,
 		"pos": Util.to_array(global_position),
@@ -691,37 +707,39 @@ func get_state() -> Dictionary:
 		"in_water": in_water,
 		"check_idx": check_idx,
 		"check_key_idx": check_key_idx,
-		"lap": lap
+		"lap": lap,
+		"finished": finished
 	}
 
 func apply_state(state: Dictionary):
 	if state.idx <= update_idx:
 		return
 	
-	update_idx = state.get("idx", update_idx)
-	global_position = Util.to_vector3(state.get("pos", Util.to_array(global_position)))
-	rotation = Util.to_vector3(state.get("rot", Util.to_array(rotation)))
-	linear_velocity = Util.to_vector3(state.get("lin_vel", Util.to_array(linear_velocity)))
-	input_accel = state.get("input_accel", input_accel)
-	input_brake = state.get("input_brake", input_brake)
-	input_steer = state.get("input_steer", input_steer)
-	input_trick = state.get("input_trick", input_trick)
-	input_mirror = state.get("input_mirror", input_mirror)
-	cur_speed = state.get("cur_speed", cur_speed)
-	cur_turn_speed = state.get("cur_turn_speed", cur_turn_speed)
-	in_trick = state.get("in_trick", in_trick)
-	trick_frames = state.get("trick_frames", trick_frames)
-	in_hop = state.get("in_hop", in_hop)
-	in_hop_frames = state.get("in_hop_frames", in_hop_frames)
-	in_drift = state.get("in_drift", in_drift)
-	drift_dir = state.get("drift_dir", drift_dir)
-	drift_gauge = state.get("drift_gauge", drift_gauge)
-	drift_gauge_max = state.get("drift_gauge_max", drift_gauge_max)
-	grounded = state.get("grounded", grounded)
-	gravity = Util.to_vector3(state.get("gravity", Util.to_array(gravity)))
-	bounce_frames = state.get("bounce_frames", bounce_frames)
-	prev_frame_pre_sim_vel = Util.to_vector3(state.get("prev_frame_pre_sim_vel", Util.to_array(prev_frame_pre_sim_vel)))
-	in_water = state.get("in_water", in_water)
-	check_idx = state.get("check_idx", check_idx)
-	check_key_idx = state.get("check_key_idx", check_key_idx)
-	lap = state.get("lap", lap)
+	update_idx = state.idx
+	global_position = Util.to_vector3(state.pos)
+	rotation = Util.to_vector3(state.rot)
+	linear_velocity = Util.to_vector3(state.lin_vel)
+	input_accel = state.input_accel
+	input_brake = state.input_brake
+	input_steer = state.input_steer
+	input_trick = state.input_trick
+	input_mirror = state.input_mirror
+	cur_speed = state.cur_speed
+	cur_turn_speed = state.cur_turn_speed
+	in_trick = state.in_trick
+	trick_frames = state.trick_frames
+	in_hop = state.in_hop
+	in_hop_frames = state.in_hop_frames
+	in_drift = state.in_drift
+	drift_dir = state.drift_dir
+	drift_gauge = state.drift_gauge
+	drift_gauge_max = state.drift_gauge_max
+	grounded = state.grounded
+	gravity = Util.to_vector3(state.gravity)
+	bounce_frames = state.bounce_frames
+	prev_frame_pre_sim_vel = Util.to_vector3(state.prev_frame_pre_sim_vel)
+	in_water = state.in_water
+	check_idx = state.check_idx
+	check_key_idx = state.check_key_idx
+	lap = state.lap
+	finished = state.finished

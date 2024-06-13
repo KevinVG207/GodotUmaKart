@@ -7,10 +7,11 @@ var socket: NakamaSocket
 # var is_matchmaking: bool = false
 # var is_in_match: bool = false
 
-var match_type: String = ""
 var mm_tickets: Array = []
 var cur_match: NakamaRTAPI.Match = null
 var ready_match: String = ""
+var ready_match_type: String = ""
+var ready_match_label: Dictionary = {}
 var next_match_data: Dictionary = {}
 
 var frames_per_update: int = 6
@@ -18,6 +19,8 @@ var frame_count: int = 0
 
 
 func reset():
+	if mm_tickets:
+		clear_mm_tickets()
 	if socket:
 		await socket.close()
 	socket = null
@@ -27,7 +30,9 @@ func reset():
 	client = null
 	cur_match = null
 	ready_match = ""
-	match_type = ""
+	ready_match_type = ""
+	ready_match_label = {}
+	next_match_data = {}
 
 func is_socket():
 	return (socket and socket.is_connected_to_host())
@@ -62,12 +67,15 @@ func is_socket():
 	#await socket.send_match_state_async(cur_match.match_id, raceOp.CLIENT_UPDATE_VEHICLE_STATE, JSON.stringify(state))
 
 func send_match_state(op_code: int, state: Dictionary):
+	if Global.randPing:
+		await get_tree().create_timer(Global.randPing / 1000.0).timeout
+	
 	if not is_socket():
 		return false
 	
 	if not cur_match:
 		return false
-	
+
 	var res = await socket.send_match_state_async(cur_match.match_id, op_code, JSON.stringify(state))
 	if res.is_exception():
 		print("Error sending match state: ", res)
@@ -92,6 +100,10 @@ func matchmake():
 	if mm_tickets.size() > 0:
 		print("Already have a matchmaking ticket")
 		return false
+	
+	if ready_match:
+		print("Already have a ready match")
+		return false
 
 	
 	# Try via list
@@ -108,12 +120,13 @@ func matchmake():
 func matchmake_list():
 	print("Matchmaking via list...")
 
-	var min_players = 2
+	var min_players = 1
 	var max_players = 11
 	var limit = 10
 	var authoritative = true
 	var label = ""
-	var query = "+label.joinable:1"
+	var query = "+label.joinable:1 +label.matchType:lobby"
+	var match_type = "lobby"
 
 	var res: NakamaAPI.ApiMatchList = await client.list_matches_async(session, min_players, max_players, limit, authoritative, label, query)
 	if res.is_exception():
@@ -123,11 +136,20 @@ func matchmake_list():
 	print("Match list received: ", res.matches.size())
 	
 	if res.matches.size() == 0:
-		return false
+		query = "+label.joinable:1 +label.matchType:race"
+		match_type = "race"
+		res = await client.list_matches_async(session, min_players, max_players, limit, authoritative, label, query)
+		if res.is_exception():
+			print("Error adding match: ", res)
+			return false
+		
+		if res.matches.size() == 0:
+			print("No matches found")
+			return false
 	
 	ready_match = res.matches[0].match_id
-	
-	print(ready_match)
+	ready_match_type = match_type
+	ready_match_label = JSON.parse_string(res.matches[0].label)
 
 	# await join_match(res.matches[0].match_id)
 
@@ -189,8 +211,8 @@ func _on_matchmaker_matched(p_matched: NakamaRTAPI.MatchmakerMatched):
 	mm_tickets.clear()
 
 	ready_match = p_matched.match_id
-	
-	print(ready_match)
+	ready_match_type = "lobby"
+	ready_match_label = {}
 
 	# await join_match(p_matched.match_id)
 
@@ -199,11 +221,14 @@ func join_match(match_id: String):
 	if not is_socket():
 		return false
 	
-	if cur_match:
-		socket.leave_match_async(cur_match.match_id)
-		cur_match = null
+	await leave_match()
 	
 	var _match: NakamaRTAPI.Match = await socket.join_match_async(match_id)
+
+	if ready_match == match_id:
+		ready_match = ""
+		ready_match_type = ""
+		ready_match_label = {}
 
 	if _match.is_exception():
 		print("Error joining match: ", _match)
@@ -214,6 +239,16 @@ func join_match(match_id: String):
 	cur_match = _match
 	return true
 	# is_matchmaking = false
+
+func leave_match():
+	if not cur_match:
+		return true
+	
+	var res: NakamaAsyncResult = await socket.leave_match_async(cur_match.match_id)
+	if res.is_exception():
+		reset()
+		return true
+	return true
 
 func connect_client():
 	client = Nakama.create_client("GodotArcadeRacerTest", "185.252.235.108", 7350, "http", 10, NakamaLogger.LOG_LEVEL.INFO) as NakamaClient
