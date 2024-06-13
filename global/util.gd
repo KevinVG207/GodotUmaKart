@@ -56,6 +56,12 @@ func format_time_minutes(seconds: float) -> String:
 	_seconds -= minutes * 60
 	return str(minutes).pad_zeros(1) + ":" + str(_seconds).pad_zeros(2)
 
+func format_time_ms(seconds: float) -> String:
+	var minutes = floor(seconds / 60)
+	var _seconds = floor(seconds - minutes * 60)
+	var ms = floor((seconds - minutes * 60 - _seconds) * 1000)
+	return str(minutes).pad_zeros(1) + ":" + str(_seconds).pad_zeros(2) + "." + str(ms).pad_zeros(3)
+
 func get_race_courses() -> Array:
 	# All race courses are stored in scenes/race/COURSE_NAME/COURSE_NAME.tscn
 	# I want to index the course names.

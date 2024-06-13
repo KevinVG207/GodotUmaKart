@@ -16,6 +16,7 @@ var check_progress: float = 0.0
 var lap: int = 0
 var rank: int = 0
 var finished: bool = false
+var finish_time: float = 0
 
 var input_accel: bool = false
 var input_brake: bool = false
@@ -148,8 +149,9 @@ func _ready():
 		#wheel_marker.transform = wheel.transform
 		#wheel_markers.append(wheel_marker)
 
-func set_finished():
+func set_finished(_finish_time: float):
 	finished = true
+	finish_time = _finish_time
 	if is_player:
 		UI.race_ui.finished()
 
@@ -708,7 +710,8 @@ func get_state() -> Dictionary:
 		"check_idx": check_idx,
 		"check_key_idx": check_key_idx,
 		"lap": lap,
-		"finished": finished
+		"finished": finished,
+		"finish_time": finish_time
 	}
 
 func apply_state(state: Dictionary):
@@ -743,3 +746,4 @@ func apply_state(state: Dictionary):
 	check_key_idx = state.check_key_idx
 	lap = state.lap
 	finished = state.finished
+	finish_time = state.finish_time

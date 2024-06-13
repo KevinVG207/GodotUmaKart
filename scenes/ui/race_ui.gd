@@ -26,3 +26,6 @@ func enable_spectating():
 
 func set_username(usr: String):
 	$Username.text = usr
+
+func update_time(time: float):
+	$Time.text = Util.format_time_ms(time)

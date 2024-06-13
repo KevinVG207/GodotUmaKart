@@ -165,3 +165,16 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 30
 horizontal_alignment = 1
 vertical_alignment = 2
+
+[node name="Time" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -116.0
+offset_top = -4.0
+offset_right = -13.0
+offset_bottom = 51.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 2

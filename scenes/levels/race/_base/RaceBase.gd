@@ -14,6 +14,7 @@ var player_user_id: String = ""
 var removed_player_ids: Array = []
 var starting_order: Array = []
 var spectate: bool = false
+var timer_tick: int = 0
 
 @export var start_offset_z: float = 2
 @export var start_offset_x: float = 3
@@ -84,6 +85,9 @@ func _process(_delta):
 	else:
 		UI.race_ui.update_countdown("")
 	
+	if state == STATE_RACE:
+		UI.race_ui.update_time(timer_tick * (1.0/Engine.physics_ticks_per_second))
+	
 	if spectate:
 		if !$PlayerCamera.target and players_dict:
 			$PlayerCamera.target = players_dict.values()[0]
@@ -121,6 +125,8 @@ func _physics_process(_delta):
 		STATE_COUNTDOWN:
 			$CountdownTimer.start(3.0)
 			state = STATE_COUNTING_DOWN
+		STATE_RACE:
+			timer_tick += 1
 		STATE_RACE_OVER:
 			UI.race_ui.race_over()
 		STATE_RECEIVED_NEXT_MATCH:
@@ -231,7 +237,7 @@ func get_starting_order():
 			var player_array = []
 			for i in range(11):
 				player_array.append("CPU" + str(i))
-			player_array.insert(randi_range(0, 12), player_user_id)
+			player_array.insert(randi_range(0, 11), player_user_id)
 			return player_array
 	return []
 
@@ -329,7 +335,16 @@ func update_checkpoint(player: Vehicle3):
 				# Crossed the finish line
 				player.lap += 1
 				if player.lap > lap_count:
-					player.set_finished()
+					var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
+					
+					var finish_plane_normal: Vector3 = checkpoints[0].transform.basis.z
+					var vehicle_vel: Vector3 = player.prev_frame_pre_sim_vel
+					var seconds_per_tick = 1.0/Engine.physics_ticks_per_second
+
+					# Determine the ratio of the vehicle_vel to the finish_plane_normal, and determine how much time it had taken to cross the finish line since the last frame
+					var final_time = time_after_finish - clamp(dist_to_checkpoint(player, 0) / vehicle_vel.project(finish_plane_normal).length(), 0, seconds_per_tick)
+					
+					player.set_finished(final_time)
 		else:
 			break
 	
@@ -439,6 +454,7 @@ func _on_start_timer_timeout():
 
 func _on_countdown_timer_timeout():
 	state = STATE_RACE
+	timer_tick = 0
 	for vehicle: Vehicle3 in $Vehicles.get_children():
 		vehicle.axis_unlock()
 
