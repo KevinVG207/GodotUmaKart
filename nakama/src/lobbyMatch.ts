@@ -133,7 +133,6 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     // logger.info("Amount of presences: " + Object.keys(state.presences).length)
 
     // If there are less than 2 players, don't start the match
-    logger.info("Amount of presences: " + Object.keys(state.presences).length);
     if (tick >= state.joinTimeout && Object.keys(state.presences).length == 1) {
         // Extend the timeouts.
         state.voteTimeout += 30 * ctx.matchTickRate;
