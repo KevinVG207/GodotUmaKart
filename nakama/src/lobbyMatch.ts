@@ -16,7 +16,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     let joinable = 1;
     let players = 0;
     let presences = {};
-    let prevUserIds: String[] = [];
+    let prevUserIds: string[] = [];
 
     if ('fromMatch' in params){
         presences = JSON.parse(params.fromMatch);
