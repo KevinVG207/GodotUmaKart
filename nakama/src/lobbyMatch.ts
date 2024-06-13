@@ -3,6 +3,7 @@ enum lobbyOp {
     CLIENT_VOTE = 1,
     SERVER_VOTE_DATA = 2,
     SERVER_MATCH_DATA = 3,
+    SERVER_ABORT = 4,
 }
 
 
@@ -135,7 +136,8 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     logger.info("Amount of presences: " + Object.keys(state.presences).length);
     if (tick >= state.joinTimeout && Object.keys(state.presences).length < 2) {
         let presences = Object.keys(state.presences).map((key) => state.presences[key]);
-        dispatcher.matchKick(presences);
+        dispatcher.broadcastMessage(lobbyOp.SERVER_ABORT, JSON.stringify({}), presences, null);
+        return null;
     }
 
     if (!state.voteComplete) {
