@@ -117,11 +117,13 @@ func join():
 	
 	#Network.socket.received_match_presence.connect(_on_match_presence)
 	Network.socket.received_match_state.connect(_on_match_state)
+	Network.socket.closed.connect(_on_socket_closed)
 
 	if not res or not Network.cur_match:
 		# Disconnect functions
 		#Network.socket.received_match_presence.disconnect(_on_match_presence)
 		Network.socket.received_match_state.disconnect(_on_match_state)
+		Network.socket.closed.disconnect(_on_socket_closed)
 
 		$Status.text = "Failed to join room!"
 		state = STATE_RESET
@@ -301,6 +303,7 @@ func handle_match_data(data: Dictionary):
 func switch_scene():
 	Global.MODE1 = Global.MODE1_ONLINE
 	Network.socket.received_match_state.disconnect(_on_match_state)
+	Network.socket.closed.disconnect(_on_socket_closed)
 	get_tree().change_scene_to_file(Util.get_race_course_path(next_course))
 
 func reload():
@@ -309,3 +312,7 @@ func reload():
 
 func _on_leave_button_pressed():
 	await reload()
+
+func _on_socket_closed():
+	$Status.text = "Connection lost."
+	reset()

@@ -74,5 +74,5 @@ func get_race_course_path(course_name: String):
 	return "res://scenes/levels/race/" + course_name + "/" + course_name + ".tscn"
 
 func ticks_to_time_with_ping(ticks_left: int, tick_rate: int, ping_ms: int) -> float:
-	Debug.print(["Ping: ", ping_ms])
+	# Debug.print(["Ping: ", ping_ms])
 	return (float(ticks_left) / tick_rate) - (ping_ms / 1000.0)
