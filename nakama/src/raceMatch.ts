@@ -40,6 +40,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
     return {
         state: {
+            stop: 0,
             course: course,
             presences: {},
             emptyTicks: 0,
@@ -126,6 +127,13 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     // logger.info("Amount of presences: " + Object.keys(state.presences).length)
 
     // If we have no presences in the match according to the match state, increment the empty ticks count
+    if (state.stop) {
+        if (tick >= state.stop) {
+            return null;
+        }
+        return {state};
+    }
+
     if (Object.keys(state.presences).length === 0) {
         state.emptyTicks++;
     } else {
@@ -140,7 +148,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     if (state.started && Object.keys(state.vehicles).length <= 1) {
         // Race can't continue with less than 2 players
         dispatcher.broadcastMessage(raceOp.SERVER_ABORT, JSON.stringify({}), null, null);
-        return null;
+        state.stop = tick + ctx.matchTickRate * 5;
+        return {state};
     }
 
     if (state.finished || tick >= state.finishTimeout) {
@@ -155,7 +164,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         var matchId = nk.matchCreate('lobby', {matchType: 'lobby', nextMatchType: state.label.matchType, fromMatch: JSON.stringify(state.presences)});
         dispatcher.broadcastMessage(raceOp.SERVER_RACE_OVER, JSON.stringify({ matchId: matchId, playerCount: Object.keys(state.presences).length, finishType: finType }), null, null);
 
-        return null;
+        state.stop = tick + ctx.matchTickRate * 5;
+        return {state};
     }
 
     pingUsers(raceOp.SERVER_PING, tick, ctx, state, dispatcher);
