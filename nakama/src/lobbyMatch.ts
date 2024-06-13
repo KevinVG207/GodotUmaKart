@@ -85,7 +85,7 @@ const lobbyMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntim
 
 const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
-        state.joinedIds.add(p.userId);
+        state.joinedIds.push(p.userId);
         state.presences[p.userId] = p;
         state.pingData[p.userId] = {
             lastPings: [],
