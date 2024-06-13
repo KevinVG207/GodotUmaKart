@@ -11,27 +11,50 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
     logger.debug("Inside Matchinit. MatchType: " + params.matchType)
 
-    var tickRate = 4;
+    let tickRate = 4;
+
+    let joinable = 1;
+    let players = 0;
+    let presences = {};
+    let prevUserIds: String[] = [];
+
+    if ('fromMatch' in params){
+        presences = JSON.parse(params.fromMatch);
+        prevUserIds = Object.keys(presences);
+        players = prevUserIds.length;
+    }
 
     let label: label = {
         matchType: params.matchType,
-        joinable: 1,
-        players: 0,
+        joinable: joinable,
+        players: players,
         maxPlayers: 12,
     }
 
     // let voteTimeout = 30 * tickRate;
-    let voteTimeout = 10 * tickRate;
-    let joinTimeout = Math.floor(voteTimeout / 5 * 3);
+    let voteTimeout = 60 * tickRate;
+    let joinTimeout = 45 * tickRate;
+    let openTimeout = 30 * tickRate;
+
+    if (!prevUserIds.length) {
+        voteTimeout -= openTimeout;
+        joinTimeout -= openTimeout;
+        openTimeout = 0;
+    }
+
+    let joinedIds: String[] = [];
 
     return {
         state: {
-            presences: {},
+            presences: presences,
+            prevUserIds: prevUserIds,
+            joinedIds: joinedIds,
             emptyTicks: 0,
             nextMatchType: params.nextMatchType,
             votes: {},
             voteTimeout: voteTimeout,
             joinTimeout: joinTimeout,
+            openTimeout: openTimeout,
             expireTimeout: voteTimeout*2,
             label: label,
             pingData: {},
@@ -46,6 +69,14 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 const lobbyMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presence: nkruntime.Presence, metadata: { [key: string]: any }): { state: nkruntime.MatchState, accept: boolean, rejectMessage?: string | undefined } | null {
     // logger.debug("MatchJoinAttempt", presence.userId);
 
+    if (state.label.players >= state.label.maxPlayers) {
+        return {
+            state,
+            accept: false,
+            rejectMessage: "Match is full"
+        };
+    }
+
     return {
         state,
         accept: true
@@ -54,6 +85,7 @@ const lobbyMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntim
 
 const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
+        state.joinedIds.add(p.userId);
         state.presences[p.userId] = p;
         state.pingData[p.userId] = {
             lastPings: [],
@@ -71,6 +103,15 @@ const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
 const lobbyMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
+        let idx = state.joinedIds.indexOf(p.userId);
+        if (idx > -1) {
+            state.joinedIds.splice(idx, 1);
+        }
+        idx = state.prevUserIds.indexOf(p.userId);
+        if (idx > -1) {
+            state.prevUserIds.splice(idx, 1);
+        }
+        
         delete state.presences[p.userId];
         delete state.votes[p.userId];
         updateLabel(state, dispatcher)
@@ -100,6 +141,17 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         if (tick < trueVoteTimeout) {
             // Loop over all messages received by the match
             processMessages(messages, nk, state, logger, tick, ctx, dispatcher);
+        }
+
+        if (tick == state.openTimeout) {
+            // Remove slots reserved for users from previous match who didn't join
+            for (let userId of state.prevUserIds) {
+                if (!(userId in state.presences)) {
+                    delete state.presences[userId];
+                }
+            }
+            state.prevUserIds = [];
+            updateLabel(state, dispatcher);
         }
     }
 
