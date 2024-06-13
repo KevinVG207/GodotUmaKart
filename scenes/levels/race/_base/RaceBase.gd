@@ -87,6 +87,24 @@ func _process(_delta):
 	if spectate:
 		if !$PlayerCamera.target and players_dict:
 			$PlayerCamera.target = players_dict.values()[0]
+		
+		var spectator_index = players_dict.values().find($PlayerCamera.target)
+		if spectator_index > -1:
+			UI.race_ui.enable_spectating()
+			UI.race_ui.set_username(players_dict.keys()[spectator_index])
+			
+			if get_window().has_focus() and Input.is_action_just_pressed("accelerate"):
+				$PlayerCamera.instant = true
+				spectator_index += 1
+				if spectator_index >= players_dict.size():
+					spectator_index = 0
+			elif get_window().has_focus() and Input.is_action_just_pressed("brake"):
+				$PlayerCamera.instant = true
+				spectator_index -= 1
+				if spectator_index < 0:
+					spectator_index = players_dict.size()-1
+			
+			$PlayerCamera.target = players_dict.values()[spectator_index]
 
 
 func change_state(new_state: int, state_func: Callable = Callable()):
@@ -117,7 +135,7 @@ func _physics_process(_delta):
 		for vehicle: Vehicle3 in $Vehicles.get_children():
 			update_checkpoint(vehicle)
 			update_ranks()
-			if vehicle == player_vehicle:
+			if vehicle == $PlayerCamera.target:
 				UI.race_ui.set_cur_lap(vehicle.lap)
 		
 		if Global.MODE1 == Global.MODE1_ONLINE:

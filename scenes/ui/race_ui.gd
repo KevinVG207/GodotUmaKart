@@ -19,3 +19,10 @@ func finished():
 
 func race_over():
 	$RaceOver.visible = true
+
+func enable_spectating():
+	$Spectating.visible = true
+	$Username.visible = true
+
+func set_username(usr: String):
+	$Username.text = usr
