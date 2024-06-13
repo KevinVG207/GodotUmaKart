@@ -21,6 +21,7 @@ class lobbyOp:
 	const CLIENT_VOTE = 1
 	const SERVER_VOTE_DATA = 2
 	const SERVER_MATCH_DATA = 3
+	const SERVER_ABORT = 4
 
 
 var state = STATE_RESETTING
@@ -127,9 +128,12 @@ func join():
 
 func setup_voting():
 	$Status.text = "Waiting for votes..."
+	$LeaveButton.text = "Leave Room"
 	state = STATE_VOTING
 	$VoteButton.disabled = false
 	$VoteButton.visible = true
+	$LeaveButton.disabled = false
+	$LeaveButton.visible = true
 	return
 
 func add_player(username: String, user_id: String):
@@ -167,6 +171,8 @@ func _on_matchmake_button_pressed():
 		Global.randPing = $PingBox.value
 		$MatchmakeButton.disabled = true
 		$MatchmakeButton.visible = false
+		$LeaveButton.disabled = false
+		$LeaveButton.visible = true
 		state = STATE_PRE_MATCHMAKING
 
 
@@ -190,6 +196,8 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 		lobbyOp.SERVER_MATCH_DATA:
 			print("Received match data")
 			handle_match_data(data)
+		lobbyOp.SERVER_ABORT:
+			await reload()
 		_:
 			print("Unknown lobby op code: ", match_state.op_code)
 
@@ -256,6 +264,8 @@ func vote():
 func _on_vote_timeout_timeout():
 	$VoteButton.disabled = true
 	$VoteButton.visible = false
+	$LeaveButton.disabled = true
+	$LeaveButton.visible = false
 	
 	if not cur_vote:
 		cur_vote = Util.get_race_courses()[0]
@@ -267,6 +277,9 @@ func handle_match_data(data: Dictionary):
 	var match_id = data.matchId as String
 	var winning_vote = data.winningVote as Dictionary
 	var vote_user = data.voteUser as String
+	
+	$LeaveButton.disabled = true
+	$LeaveButton.visible = false
 	
 	info_boxes[vote_user].set_picked()
 	print("Match ID: ", match_id)
@@ -285,3 +298,10 @@ func switch_scene():
 	Global.MODE1 = Global.MODE1_ONLINE
 	Network.socket.received_match_state.disconnect(_on_match_state)
 	get_tree().change_scene_to_file(Util.get_race_course_path(next_course))
+
+func reload():
+	await Network.leave_match()
+	get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
+
+func _on_leave_button_pressed():
+	await reload()

@@ -3,6 +3,7 @@ interface label {
     joinable: number;
     players: number;
     maxPlayers: number;
+    course?: string;
 }
 
 const config = {

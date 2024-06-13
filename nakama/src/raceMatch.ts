@@ -23,18 +23,22 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
     var tickRate = 20;
     var emptyTimeout = 60 * tickRate;
+    
+    var course: string = JSON.parse(params.winningVote).course;
 
     let label: label = {
         matchType: params.matchType,
         joinable: 0,
         players: 0,
         maxPlayers: 12,
+        course: course
     }
 
     logger.info("Starting IDs: " + params.startingIds)
 
     return {
         state: {
+            course: course,
             presences: {},
             emptyTicks: 0,
             tickRate: tickRate,

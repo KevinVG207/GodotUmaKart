@@ -18,6 +18,8 @@ var frame_count: int = 0
 
 
 func reset():
+	if mm_tickets:
+		clear_mm_tickets()
 	if socket:
 		await socket.close()
 	socket = null
@@ -115,7 +117,7 @@ func matchmake():
 func matchmake_list():
 	print("Matchmaking via list...")
 
-	var min_players = 2
+	var min_players = 1
 	var max_players = 11
 	var limit = 10
 	var authoritative = true
@@ -206,9 +208,7 @@ func join_match(match_id: String):
 	if not is_socket():
 		return false
 	
-	if cur_match:
-		await socket.leave_match_async(cur_match.match_id)
-		cur_match = null
+	await leave_match()
 	
 	var _match: NakamaRTAPI.Match = await socket.join_match_async(match_id)
 
@@ -224,6 +224,16 @@ func join_match(match_id: String):
 	cur_match = _match
 	return true
 	# is_matchmaking = false
+
+func leave_match():
+	if not cur_match:
+		return true
+	
+	var res: NakamaAsyncResult = await socket.leave_match_async(cur_match.match_id)
+	if res.is_exception():
+		reset()
+		return true
+	return true
 
 func connect_client():
 	client = Nakama.create_client("GodotArcadeRacerTest", "185.252.235.108", 7350, "http", 10, NakamaLogger.LOG_LEVEL.INFO) as NakamaClient
