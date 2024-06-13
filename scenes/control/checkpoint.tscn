@@ -1,6 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://bdqjcdostqotu"]
 
 [ext_resource type="Script" path="res://scenes/control/checkpoint.gd" id="1_wtfq1"]
+[ext_resource type="Material" uid="uid://dcx57dy3bd4vy" path="res://scenes/control/checkpoint_mat.tres" id="2_4cqlq"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bvlq5"]
 albedo_color = Color(1, 0, 0, 1)
@@ -9,15 +10,9 @@ albedo_color = Color(1, 0, 0, 1)
 material = SubResource("StandardMaterial3D_bvlq5")
 top_radius = 0.0
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4sbop"]
-transparency = 1
-cull_mode = 2
-albedo_color = Color(0, 0, 1, 0.611765)
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_kvtjk"]
-material = SubResource("StandardMaterial3D_4sbop")
-flip_faces = true
-size = Vector2(10, 10)
+[sub_resource type="BoxMesh" id="BoxMesh_3fhyg"]
+material = ExtResource("2_4cqlq")
+size = Vector3(10, 0.5, 10)
 
 [node name="Checkpoint" type="Node3D"]
 script = ExtResource("1_wtfq1")
@@ -31,5 +26,5 @@ metadata/_edit_lock_ = true
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 cast_shadow = 0
-mesh = SubResource("PlaneMesh_kvtjk")
+mesh = SubResource("BoxMesh_3fhyg")
 metadata/_edit_lock_ = true

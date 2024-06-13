@@ -171,7 +171,15 @@ func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3):
 	cur_turn_speed = 0
 
 func handle_input():
-	if is_player and get_window().has_focus() and not finished:
+	if finished:
+		input_accel = false
+		input_brake = false
+		input_steer = 0.0
+		input_trick = false
+		input_mirror = false
+		return
+	
+	if is_player and get_window().has_focus():
 		input_accel = Input.is_action_pressed("accelerate")
 		input_brake = Input.is_action_pressed("brake")
 		input_steer = Input.get_axis("right", "left")
@@ -671,6 +679,7 @@ func _on_player_collision_area_exited(area):
 
 func get_state() -> Dictionary:
 	update_idx += 1
+	print(finished)
 	return {
 		"idx": update_idx,
 		"pos": Util.to_array(global_position),

@@ -217,7 +217,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         for (let userId in state.vehicles){
             let vehicle = state.vehicles[userId];
             logger.info(`${userId}`);
-            logger.info(`${vehicle}`);
+            logger.info(`${vehicle.finished}`);
             if (vehicle.finished == true){
                 oneFinished = true;
             } else {

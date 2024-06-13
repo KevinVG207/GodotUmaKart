@@ -19,7 +19,7 @@ var starting_order: Array = []
 
 @onready var vehicles_node: Node3D = $Vehicles
 
-@export var player_scene: PackedScene
+var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_3.tscn")
 
 @export var lap_count: int = 3
 var finished = false
