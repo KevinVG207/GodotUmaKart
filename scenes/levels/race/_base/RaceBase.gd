@@ -81,6 +81,10 @@ func _process(_delta):
 		UI.race_ui.update_countdown(str(ceil($CountdownTimer.time_left)))
 	else:
 		UI.race_ui.update_countdown("")
+	
+	if spectate:
+		if players_dict and !$PlayerCamera.target:
+			$PlayerCamera.target = players_dict.values()[0]
 
 
 func change_state(new_state: int, state_func: Callable = Callable()):
@@ -149,8 +153,15 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 	new_vehicle.teleport(new_position, look_dir, up_dir)
 	new_vehicle.axis_lock()
 	new_vehicle.is_player = false
-	new_vehicle.is_cpu = false
-	new_vehicle.is_network = true
+	
+	match Global.MODE1:
+		Global.MODE1_OFFLINE:
+			new_vehicle.is_cpu = true
+			new_vehicle.is_network = false
+		Global.MODE1_ONLINE:
+			new_vehicle.is_cpu = false
+			new_vehicle.is_network = true
+	
 	if user_id == player_user_id:
 		new_vehicle.is_player = true
 		new_vehicle.is_network = false
@@ -216,7 +227,6 @@ func join():
 		return
 	
 	if spectate:
-		$PlayerCamera.target = players_dict.values()[0]
 		state = STATE_SPECTATING
 		return
 
@@ -355,7 +365,7 @@ func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 		var up_dir: Vector3 = Vector3(0, 1, 0)
 
 		_add_vehicle(user_id, cur_position, look_dir, up_dir)
-		pass
+		players_dict[user_id].axis_unlock()
 	
 	players_dict[user_id].apply_state(vehicle_state)
 	#players_dict[user_id].call_deferred("apply_state", vehicle_state)

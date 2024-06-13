@@ -89,7 +89,10 @@ const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime
 const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
         state.presences[p.userId] = p;
-        state.vehicles[p.userId] = {};
+
+        if (!state.started){
+            state.vehicles[p.userId] = {};
+        }
         state.pingData[p.userId] = {
             lastPings: [],
             ongoingPings: {},
@@ -168,6 +171,11 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
                     if (state.vehicles[message.sender.userId].idx >= data.idx) {
                         break;
                     }
+                }
+
+                if (!state.startingIds.includes(message.sender.userId)) {
+                    // Ignore updates from users not in the starting list
+                    break;
                 }
 
                 state.vehicles[message.sender.userId] = data;
