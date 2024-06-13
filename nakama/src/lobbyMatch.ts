@@ -131,6 +131,13 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     // logger.info("Match loop " + state.emptyTicks);
     // logger.info("Amount of presences: " + Object.keys(state.presences).length)
 
+    // If there are less than 2 players, don't start the match
+    if (tick > state.joinTimeout && Object.keys(state.presences).length < 2) {
+        let presences = Object.keys(state.presences).map((key) => state.presences[key]);
+        dispatcher.matchKick(presences);
+        return null;
+    }
+
     if (!state.voteComplete) {
         updateJoinableStatus(tick, state, dispatcher);
 
@@ -158,13 +165,6 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             state.prevUserIds = [];
             updateLabel(state, dispatcher);
         }
-    }
-
-    // If there are less than 2 players, don't start the match
-    if (tick > state.joinTimeout && Object.keys(state.presences).length < 2) {
-        let presences = Object.keys(state.presences).map((key) => state.presences[key]);
-        dispatcher.matchKick(presences);
-        return null;
     }
 
 
