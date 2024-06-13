@@ -108,6 +108,10 @@ func matchmake():
 
 func join():
 	$Status.text = "Joining room..."
+
+	if Network.ready_match_type == "race":
+		next_course = Network.ready_match_label['course']
+		switch_scene()
 	
 	var res: bool = await Network.join_match(Network.ready_match)
 	

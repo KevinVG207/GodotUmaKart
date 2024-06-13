@@ -13,6 +13,7 @@ var player_vehicle: Vehicle3 = null
 var player_user_id: String = ""
 var removed_player_ids: Array = []
 var starting_order: Array = []
+var spectate: bool = false
 
 @export var start_offset_z: float = 2
 @export var start_offset_x: float = 3
@@ -50,6 +51,7 @@ const STATE_RACE = 7
 const STATE_RACE_OVER = 8
 const STATE_RECEIVED_NEXT_MATCH = 9
 const STATE_JOINING_NEXT = 10
+const STATE_SPECTATING = 11
 
 const UPDATE_STATES = [
 	STATE_COUNTING_DOWN,
@@ -172,13 +174,19 @@ func setup_vehicles():
 			side_multi = -1
 
 		var cur_pos = start_position + start_offset_z * (i + 3) * start_direction + side_multi * start_offset_x * side_direction
-
 		_add_vehicle(user_id, cur_pos, -start_direction, up_dir)
 
 func get_starting_order():
 	match Global.MODE1:
 		Global.MODE1_ONLINE:
 			player_user_id = Network.session.user_id
+			var startingIds = Network.next_match_data.startingIds
+			Network.next_match_data.startingIds = []
+
+			if !startingIds:
+				spectate = true
+				return []
+
 			return Network.next_match_data.startingIds
 		Global.MODE1_OFFLINE:
 			player_user_id = "Player"
@@ -208,6 +216,11 @@ func join():
 		state = STATE_DISCONNECT
 		return
 	
+	if spectate:
+		$PlayerCamera.target = players_dict.values()[0]
+		state = STATE_SPECTATING
+		return
+
 	state = STATE_CAN_READY
 	return
 
@@ -336,7 +349,14 @@ func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 		return
 	
 	if not user_id in players_dict.keys():
-		return
+		var cur_position: Vector3 = Util.to_vector3(vehicle_state["pos"])
+		var cur_rotation: Vector3 = Util.to_vector3(vehicle_state["rot"])
+
+		var look_dir: Vector3 = cur_rotation.normalized()
+		var up_dir: Vector3 = Vector3(0, 1, 0)
+
+		_add_vehicle(user_id, cur_position, look_dir, up_dir)
+		pass
 	
 	players_dict[user_id].apply_state(vehicle_state)
 	#players_dict[user_id].call_deferred("apply_state", vehicle_state)
