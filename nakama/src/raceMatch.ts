@@ -6,7 +6,8 @@ enum raceOp {
     SERVER_PING_DATA = 5,
 	SERVER_RACE_START = 6,
     CLIENT_READY = 7,
-    SERVER_RACE_OVER = 8
+    SERVER_RACE_OVER = 8,
+    SERVER_CLIENT_DISCONNECT = 9
 }
 
 
@@ -111,6 +112,7 @@ const raceMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         delete state.presences[p.userId];
         delete state.vehicles[p.userId];
         updateLabel(state, dispatcher)
+        dispatcher.broadcastMessage(raceOp.SERVER_CLIENT_DISCONNECT, JSON.stringify({ userId: p.userId }), null, null);
     });
 
     return {

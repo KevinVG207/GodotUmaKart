@@ -34,6 +34,7 @@ class raceOp:
 	const SERVER_RACE_START = 6
 	const CLIENT_READY = 7
 	const SERVER_RACE_OVER = 8
+	const SERVER_CLIENT_DISCONNECT = 9
 
 class finishType:
 	const NORMAL = 0
@@ -83,7 +84,7 @@ func _process(_delta):
 		UI.race_ui.update_countdown("")
 	
 	if spectate:
-		if players_dict and !$PlayerCamera.target:
+		if !$PlayerCamera.target and players_dict:
 			$PlayerCamera.target = players_dict.values()[0]
 
 
@@ -167,6 +168,15 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 		new_vehicle.is_network = false
 		player_vehicle = new_vehicle
 		$PlayerCamera.target = new_vehicle
+
+func _remove_vehicle(user_id: String):
+	if user_id in players_dict.keys():
+		var vehicle = players_dict[user_id]
+		if $PlayerCamera.target == vehicle:
+			$PlayerCamera.target = null
+		vehicle.queue_free()
+		players_dict.erase(user_id)
+		removed_player_ids.append(user_id)
 
 
 func setup_vehicles():
@@ -392,6 +402,8 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			Network.send_match_state(raceOp.SERVER_PING, data)
 		raceOp.SERVER_RACE_START:
 			handle_race_start(data)
+		raceOp.SERVER_CLIENT_DISCONNECT:
+			_remove_vehicle(data.userId)
 		raceOp.SERVER_RACE_OVER:
 			finished = true
 			Network.ready_match = data.matchId
