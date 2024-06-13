@@ -180,10 +180,8 @@ func get_starting_order():
 	match Global.MODE1:
 		Global.MODE1_ONLINE:
 			player_user_id = Network.session.user_id
-			var startingIds = Network.next_match_data.startingIds
-			Network.next_match_data.startingIds = []
 
-			if !startingIds:
+			if !Network.next_match_data.get('startingIds'):
 				spectate = true
 				return []
 
@@ -200,6 +198,7 @@ func get_starting_order():
 func join():
 	starting_order = get_starting_order()
 	setup_vehicles()
+	Network.next_match_data = {}
 	
 	if Global.MODE1 == Global.MODE1_OFFLINE:
 		state = STATE_COUNTDOWN

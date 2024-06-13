@@ -72,7 +72,7 @@ const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime
         };
     }
 
-    if (!state.startingIds.includes(presence.userId)) {
+    if (!state.started && !state.startingIds.includes(presence.userId)) {
         return {
             state,
             accept: false,

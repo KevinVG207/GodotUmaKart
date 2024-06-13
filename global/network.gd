@@ -149,7 +149,7 @@ func matchmake_list():
 	
 	ready_match = res.matches[0].match_id
 	ready_match_type = match_type
-	ready_match_label = res.matches[0].label
+	ready_match_label = JSON.parse_string(res.matches[0].label)
 
 	# await join_match(res.matches[0].match_id)
 
