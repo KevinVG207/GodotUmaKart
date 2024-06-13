@@ -77,8 +77,8 @@ const raceMatchJoinAttempt = function (ctx: nkruntime.Context, logger: nkruntime
 
 const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
-        state.presences[p.sessionId] = p;
-        state.vehicles[p.sessionId] = {};
+        state.presences[p.userId] = p;
+        state.vehicles[p.userId] = {};
         state.pingData[p.userId] = {
             lastPings: [],
             ongoingPings: {},
@@ -94,8 +94,8 @@ const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
 const raceMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, dispatcher: nkruntime.MatchDispatcher, tick: number, state: nkruntime.MatchState, presences: nkruntime.Presence[]): { state: nkruntime.MatchState } | null {
     presences.forEach(function (p) {
-        delete state.presences[p.sessionId];
-        delete state.vehicles[p.sessionId];
+        delete state.presences[p.userId];
+        delete state.vehicles[p.userId];
         updateLabel(state, dispatcher)
     });
 
@@ -142,7 +142,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         const data = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(payload) as any) as string);
         const presence = message.sender;
 
-        if (!(presence.sessionId in state.presences)) {
+        if (!(presence.userId in state.presences)) {
             return;
         }
 
