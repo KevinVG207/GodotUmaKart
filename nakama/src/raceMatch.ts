@@ -219,6 +219,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             state.pingAtStart = pingDict;
 
             dispatcher.broadcastMessage(raceOp.SERVER_RACE_START, JSON.stringify({ pings: pingDict, ticksToStart: ticksToStart, tickRate: ctx.matchTickRate }), null, null);
+            state.label.joinable = 1;
+            updateLabel(state, dispatcher);
         }
 
 
@@ -237,6 +239,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
         if (oneFinished && !state.oneFinished) {
             // This is the first time a vehicle finishes.
+            state.joinable = 0;
+            updateLabel(state, dispatcher);
             state.finishTimeout = tick + ctx.matchTickRate * 30;
         }
 
