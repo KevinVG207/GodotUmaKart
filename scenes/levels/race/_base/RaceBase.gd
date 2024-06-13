@@ -34,6 +34,10 @@ class raceOp:
 	const CLIENT_READY = 7
 	const SERVER_RACE_OVER = 8
 
+class finishType:
+	const NORMAL = 0
+	const TIMEOUT = 1
+
 const STATE_DISCONNECT = -1
 const STATE_INITIAL = 0
 const STATE_JOINING = 1
@@ -377,5 +381,7 @@ func _on_countdown_timer_timeout():
 		vehicle.axis_unlock()
 
 func join_next():
+	UI.reset_race_ui()
+	UI.race_ui.visible = false
 	Network.socket.received_match_state.disconnect(_on_match_state)
 	get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")

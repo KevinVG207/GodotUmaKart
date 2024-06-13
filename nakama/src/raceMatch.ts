@@ -9,6 +9,13 @@ enum raceOp {
     SERVER_RACE_OVER = 8
 }
 
+
+enum finishType {
+    NORMAL = 0,
+    TIMEOUT = 1
+}
+
+
 const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, params: { [key: string]: string }): { state: nkruntime.MatchState, tickRate: number, label: string } {
     // logger.debug("Matchinit");
 
@@ -121,13 +128,16 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     }
 
     if (state.finished || tick >= state.finishTimeout) {
-        logger.info(`${state.finished}`)
-        logger.info(`${state.finishTimeout}`)
+        var finType = finishType.NORMAL;
+
+        if (tick >= state.finishTimeout) {
+            finType = finishType.TIMEOUT;
+        }
         // Start a new lobby.
         // Signal finish to all presences, with the next lobby match ID.
 
         var matchId = nk.matchCreate('lobby', {matchType: 'lobby', nextMatchType: state.label.matchType})
-        dispatcher.broadcastMessage(raceOp.SERVER_RACE_OVER, JSON.stringify({ matchId: matchId, playerCount: Object.keys(state.presences).length }), null, null);
+        dispatcher.broadcastMessage(raceOp.SERVER_RACE_OVER, JSON.stringify({ matchId: matchId, playerCount: Object.keys(state.presences).length, finishType: finType }), null, null);
 
         return null;
     }

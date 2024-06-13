@@ -6,7 +6,7 @@ interface label {
 }
 
 const config = {
-    maxPing: 1500
+    maxPing: 1000
 }
 
 function updateLabel(state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {
