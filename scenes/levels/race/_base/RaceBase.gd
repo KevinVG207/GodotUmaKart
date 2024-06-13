@@ -35,6 +35,7 @@ class raceOp:
 	const CLIENT_READY = 7
 	const SERVER_RACE_OVER = 8
 	const SERVER_CLIENT_DISCONNECT = 9
+	const SERVER_ABORT = 10
 
 class finishType:
 	const NORMAL = 0
@@ -408,6 +409,8 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			finished = true
 			Network.ready_match = data.matchId
 			state = STATE_RECEIVED_NEXT_MATCH
+		raceOp.SERVER_ABORT:
+			get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
 		_:
 			print("Unknown match state op code: ", match_state.op_code)
 

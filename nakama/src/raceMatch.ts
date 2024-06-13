@@ -7,7 +7,8 @@ enum raceOp {
 	SERVER_RACE_START = 6,
     CLIENT_READY = 7,
     SERVER_RACE_OVER = 8,
-    SERVER_CLIENT_DISCONNECT = 9
+    SERVER_CLIENT_DISCONNECT = 9,
+    SERVER_ABORT = 10
 }
 
 
@@ -138,6 +139,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
     if (state.started && Object.keys(state.vehicles).length <= 1) {
         // Race can't continue with less than 2 players
+        dispatcher.broadcastMessage(raceOp.SERVER_ABORT, JSON.stringify({}), null, null);
         return null;
     }
 
