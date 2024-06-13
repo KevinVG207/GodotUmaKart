@@ -43,10 +43,12 @@ func _process(_delta):
 	# Deal with displaying things
 	$TimeLeft.text = "0:00"
 
-	if info_boxes.size() <= 1:
-		$timeLeft.text = "Waiting for players..."
-	elif not $VoteTimeout.is_stopped():
+	if vote_timeout_started and info_boxes.size() <= 1:
+		$TimeLeft.text = "Waiting for players..."
+	elif vote_timeout_started and not $VoteTimeout.is_stopped():
 		$TimeLeft.text = Util.format_time_minutes($VoteTimeout.time_left)
+	else:
+		$TimeLeft.text = ""
 
 
 func _physics_process(_delta):

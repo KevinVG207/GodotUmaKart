@@ -136,7 +136,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         return null;
     }
 
-    if (Object.keys(state.vehicles).length <= 1) {
+    if (state.started && Object.keys(state.vehicles).length <= 1) {
         // Race can't continue with less than 2 players
         return null;
     }
