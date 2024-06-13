@@ -43,7 +43,9 @@ func _process(_delta):
 	# Deal with displaying things
 	$TimeLeft.text = "0:00"
 
-	if not $VoteTimeout.is_stopped():
+	if info_boxes.size() <= 1:
+		$timeLeft.text = "Waiting for players..."
+	elif not $VoteTimeout.is_stopped():
 		$TimeLeft.text = Util.format_time_minutes($VoteTimeout.time_left)
 
 
@@ -218,7 +220,7 @@ func handle_vote_data(data: Dictionary):
 	# Setup vote timeout:
 	var ticks_left = max(vote_timeout - tick, 0)
 	var seconds_left = Util.ticks_to_time_with_ping(ticks_left, tick_rate, ping_data[Network.session.user_id])
-	if not vote_timeout_started:
+	if not vote_timeout_started or info_boxes.size() <= 1:
 		vote_timeout_started = true
 		$VoteTimeout.start(seconds_left)
 	elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
