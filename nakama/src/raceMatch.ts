@@ -136,7 +136,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         // Start a new lobby.
         // Signal finish to all presences, with the next lobby match ID.
 
-        var matchId = nk.matchCreate('lobby', {matchType: 'lobby', nextMatchType: state.label.matchType})
+        var matchId = nk.matchCreate('lobby', {matchType: 'lobby', nextMatchType: state.label.matchType, fromMatch: JSON.stringify(Object.keys(state.presences))});
         dispatcher.broadcastMessage(raceOp.SERVER_RACE_OVER, JSON.stringify({ matchId: matchId, playerCount: Object.keys(state.presences).length, finishType: finType }), null, null);
 
         return null;

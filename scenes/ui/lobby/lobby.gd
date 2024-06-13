@@ -60,7 +60,7 @@ func _physics_process(_delta):
 			change_state(STATE_MATCHMAKING, matchmake)
 		STATE_MATCHMAKING_WAIT:
 			if Network.ready_match:
-				$Status.text = "Match found"
+				$Status.text = "Room found"
 				state = STATE_MATCHMAKING_COMLETE
 		STATE_MATCHMAKING_COMLETE:
 			change_state(STATE_JOINING, join)
@@ -93,12 +93,12 @@ func setup():
 	state = STATE_SETUP_COMPLETE
 
 func matchmake():
-	$Status.text = "Looking for match..."
+	$Status.text = "Looking for room..."
 	
 	var res: bool = await Network.matchmake()
 	
 	if not res:
-		$Status.text = "Failed to matchmake!"
+		$Status.text = "Failed to find room!"
 		state = STATE_RESET
 		return
 	
@@ -106,7 +106,7 @@ func matchmake():
 	return
 
 func join():
-	$Status.text = "Joining match..."
+	$Status.text = "Joining room..."
 	
 	var res: bool = await Network.join_match(Network.ready_match)
 	
@@ -118,7 +118,7 @@ func join():
 		#Network.socket.received_match_presence.disconnect(_on_match_presence)
 		Network.socket.received_match_state.disconnect(_on_match_state)
 
-		$Status.text = "Failed to join match!"
+		$Status.text = "Failed to join room!"
 		state = STATE_RESET
 		return
 	
