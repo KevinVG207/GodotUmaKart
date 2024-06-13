@@ -160,6 +160,12 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         }
     }
 
+    // If there are less than 2 players, don't start the match
+    if (tick > state.joinTimeout && Object.keys(state.presences).length < 2) {
+        dispatcher.matchKick(state.presences);
+        return null;
+    }
+
 
     if (tick > state.expireTimeout) {
         return null;
