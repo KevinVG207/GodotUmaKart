@@ -93,11 +93,6 @@ const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         }
 
         state.presences[p.userId] = p;
-        state.pingData[p.userId] = {
-            lastPings: [],
-            ongoingPings: {},
-            ping: 0
-        };
     });
 
     updateLabel(state, dispatcher)
@@ -119,6 +114,7 @@ const lobbyMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logg
         }
         
         delete state.presences[p.userId];
+        delete state.pingData[p.userId];
         delete state.votes[p.userId];
         updateLabel(state, dispatcher)
     });

@@ -96,11 +96,6 @@ const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         if (!state.started){
             state.vehicles[p.userId] = {};
         }
-        state.pingData[p.userId] = {
-            lastPings: [],
-            ongoingPings: {},
-            ping: 0
-        };
         updateLabel(state, dispatcher)
     });
 
@@ -113,6 +108,7 @@ const raceMatchLeave = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     presences.forEach(function (p) {
         delete state.presences[p.userId];
         delete state.vehicles[p.userId];
+        delete state.pingData[p.userId];
         updateLabel(state, dispatcher)
         dispatcher.broadcastMessage(raceOp.SERVER_CLIENT_DISCONNECT, JSON.stringify({ userId: p.userId }), null, null);
     });

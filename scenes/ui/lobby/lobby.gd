@@ -312,6 +312,7 @@ func switch_scene():
 
 func reload():
 	await Network.leave_match()
+	await Network.reset()
 	get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
 
 func _on_leave_button_pressed():
@@ -319,4 +320,4 @@ func _on_leave_button_pressed():
 
 func _on_socket_closed():
 	$Status.text = "Connection lost."
-	reset()
+	reload()

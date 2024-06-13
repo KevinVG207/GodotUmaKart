@@ -29,6 +29,15 @@ function pingUsers(opCode: number, tick: number, ctx: nkruntime.Context, state: 
             // Ping user
             let now = Date.now();
             let pingId = tick;
+
+            if (!(p.userId in state.pingData)) {
+                state.pingData[p.userId] = {
+                    lastPings: [],
+                    ongoingPings: {},
+                    ping: 0
+                };
+            }
+
             state.pingData[p.userId].ongoingPings[pingId] = now;
             dispatcher.broadcastMessage(opCode, JSON.stringify({ pingId: pingId }), [p], null);
         }
