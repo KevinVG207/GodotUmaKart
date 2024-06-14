@@ -201,7 +201,6 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 		lobbyOp.SERVER_PING:
 			Network.send_match_state(lobbyOp.SERVER_PING, data)
 		lobbyOp.SERVER_VOTE_DATA:
-			print("Received vote data")
 			handle_vote_data(data)
 		lobbyOp.SERVER_MATCH_DATA:
 			print("Received match data")

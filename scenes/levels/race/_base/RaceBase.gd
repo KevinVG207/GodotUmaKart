@@ -459,7 +459,7 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			finished = true
 			var finish_position: int = data.finishOrder.find(player_user_id)
 
-			Debug.print(["Finish position: ", finish_position])
+			Debug.print(["Rank: ", finish_position])
 
 			Network.ready_match = data.matchId
 			state = STATE_RECEIVED_NEXT_MATCH

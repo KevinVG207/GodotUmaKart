@@ -335,7 +335,7 @@ function determineFinishOrder(state: nkruntime.MatchState) {
     });
 
     unfinishedVehicles.sort(function (a, b) {
-        return checkpointToProgress(b) - checkpointToProgress(a);
+        return checkpointToProgress(a) - checkpointToProgress(b);
     });
 
     finishedVehicles = finishedVehicles.concat(unfinishedVehicles);
