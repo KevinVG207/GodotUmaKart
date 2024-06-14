@@ -95,7 +95,10 @@ func setup():
 		state = STATE_INITIAL
 		return
 		
-	$UsernameContainer/UsernameEdit.text = await Network.get_display_name()
+	var display_name: String = await Network.get_display_name()
+	if not display_name:
+		display_name = "Player" + str(randi_range(100000,999999))
+	$UsernameContainer/UsernameEdit.text = display_name
 	
 	state = STATE_SETUP_COMPLETE
 
