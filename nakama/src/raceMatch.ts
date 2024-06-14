@@ -344,6 +344,11 @@ function determineFinishOrder(state: nkruntime.MatchState, logger: nkruntime.Log
         return checkpointToProgress(b) - checkpointToProgress(a);
     });
 
+    // Print unfinished vehicles
+    for (let vehicle_data of unfinishedVehicles) {
+        logger.info("Unfinished vehicle: " + state.presences[vehicle_data.userId].username + " with progress: " + checkpointToProgress(vehicle_data));
+    }
+
     finishedVehicles = finishedVehicles.concat(unfinishedVehicles);
 
     let userIds = [];
