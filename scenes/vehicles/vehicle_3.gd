@@ -17,6 +17,7 @@ var lap: int = 0
 var rank: int = 0
 var finished: bool = false
 var finish_time: float = 0
+var username: String = "Player"
 
 var input_accel: bool = false
 var input_brake: bool = false
@@ -710,7 +711,8 @@ func get_state() -> Dictionary:
 		"check_key_idx": check_key_idx,
 		"lap": lap,
 		"finished": finished,
-		"finish_time": finish_time
+		"finish_time": finish_time,
+		"username": username
 	}
 
 func apply_state(state: Dictionary):
@@ -746,3 +748,4 @@ func apply_state(state: Dictionary):
 	lap = state.lap
 	finished = state.finished
 	finish_time = state.finish_time
+	username = state.username

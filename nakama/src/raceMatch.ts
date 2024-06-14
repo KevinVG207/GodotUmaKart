@@ -143,9 +143,10 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
     if (state.started && Object.keys(state.vehicles).length <= 1) {
         // Race can't continue with less than 2 players
-        dispatcher.broadcastMessage(raceOp.SERVER_ABORT, JSON.stringify({}), null, null);
-        state.stop = tick + ctx.matchTickRate * 5;
-        return {state};
+        // dispatcher.broadcastMessage(raceOp.SERVER_ABORT, JSON.stringify({}), null, null);
+        // state.stop = tick + ctx.matchTickRate * 5;
+        // return {state};
+        state.finished = true;
     }
 
     if (state.finished || tick >= state.finishTimeout) {

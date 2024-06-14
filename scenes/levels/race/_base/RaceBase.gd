@@ -95,7 +95,7 @@ func _process(_delta):
 		var spectator_index = players_dict.values().find($PlayerCamera.target)
 		if spectator_index > -1:
 			UI.race_ui.enable_spectating()
-			UI.race_ui.set_username(players_dict.keys()[spectator_index])
+			UI.race_ui.set_username(players_dict[players_dict.keys()[spectator_index]].username)
 			
 			if get_window().has_focus() and Input.is_action_just_pressed("accelerate"):
 				$PlayerCamera.instant = true
@@ -124,7 +124,10 @@ func _physics_process(_delta):
 			change_state(STATE_READY_FOR_START, send_ready)
 		STATE_COUNTDOWN:
 			$CountdownTimer.start(3.0)
+			timer_tick = -Engine.physics_ticks_per_second * 3
 			state = STATE_COUNTING_DOWN
+		STATE_COUNTING_DOWN:
+			timer_tick += 1
 		STATE_RACE:
 			timer_tick += 1
 		STATE_RACE_OVER:
@@ -184,15 +187,20 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 		Global.MODE1_OFFLINE:
 			new_vehicle.is_cpu = true
 			new_vehicle.is_network = false
+			new_vehicle.username = "CPU"
 		Global.MODE1_ONLINE:
 			new_vehicle.is_cpu = false
 			new_vehicle.is_network = true
+			new_vehicle.username = "Network Player"
 	
 	if user_id == player_user_id:
 		new_vehicle.is_player = true
 		new_vehicle.is_network = false
 		player_vehicle = new_vehicle
 		$PlayerCamera.target = new_vehicle
+		new_vehicle.username = "Player"
+		if Global.MODE1 == Global.MODE1_ONLINE:
+			new_vehicle.username = Network.session.username
 
 func _remove_vehicle(user_id: String):
 	if user_id in players_dict.keys():
@@ -475,7 +483,6 @@ func _on_start_timer_timeout():
 
 func _on_countdown_timer_timeout():
 	state = STATE_RACE
-	timer_tick = 0
 	for vehicle: Vehicle3 in $Vehicles.get_children():
 		vehicle.axis_unlock()
 

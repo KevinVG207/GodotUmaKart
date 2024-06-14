@@ -94,13 +94,17 @@ func setup():
 		$Status.text = "Connection failed!"
 		state = STATE_INITIAL
 		return
+		
+	$UsernameContainer/UsernameEdit.text = Network.session.username
 	
 	state = STATE_SETUP_COMPLETE
 
 func matchmake():
 	$Status.text = "Looking for room..."
+	$PingBox.visible = false
+	$UsernameContainer.visible = false
 	
-	var res: bool = await Network.matchmake()
+	var res: bool = await Network.matchmake($UsernameContainer/UsernameEdit.text)
 	
 	if not res:
 		$Status.text = "Failed to find room!"
@@ -112,6 +116,8 @@ func matchmake():
 
 func join():
 	$Status.text = "Joining room..."
+	$PingBox.visible = false
+	$UsernameContainer.visible = false
 
 	if Network.ready_match_type == "race":
 		next_course = Network.ready_match_label['course']
@@ -219,13 +225,14 @@ func handle_vote_data(data: Dictionary):
 	var ping_data = data.pingData as Dictionary
 	
 	# Setup vote timeout:
-	var ticks_left = max(vote_timeout - tick, 0)
-	var seconds_left = Util.ticks_to_time_with_ping(ticks_left, tick_rate, ping_data[Network.session.user_id])
-	if not vote_timeout_started or info_boxes.size() <= 1:
-		vote_timeout_started = true
-		$VoteTimeout.start(seconds_left)
-	elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
-		$VoteTimeout.start(seconds_left)
+	if Network.session.user_id in ping_data:
+		var ticks_left = max(vote_timeout - tick, 0)
+		var seconds_left = Util.ticks_to_time_with_ping(ticks_left, tick_rate, ping_data[Network.session.user_id])
+		if not vote_timeout_started or info_boxes.size() <= 1:
+			vote_timeout_started = true
+			$VoteTimeout.start(seconds_left)
+		elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
+			$VoteTimeout.start(seconds_left)
 	
 	# Update player states
 	var cur_user_ids = info_boxes.keys()
@@ -238,7 +245,7 @@ func handle_vote_data(data: Dictionary):
 	for p in presences.values():
 		if p.userId in cur_user_ids:
 			continue
-		add_player(p.userId.substr(0, 10), p.userId)
+		add_player(p.username, p.userId)
 	
 	cur_votes = votes
 	for user_id in votes:

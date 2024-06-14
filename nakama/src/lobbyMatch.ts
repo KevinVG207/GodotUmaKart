@@ -134,6 +134,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         state.voteTimeout += 30 * ctx.matchTickRate;
         state.joinTimeout += 30 * ctx.matchTickRate;
         state.expireTimeout += 30 * ctx.matchTickRate;
+        updateJoinableStatus(tick, state, dispatcher);
     }
 
     if (!state.voteComplete) {
