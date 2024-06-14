@@ -332,12 +332,12 @@ function determineFinishOrder(state: nkruntime.MatchState, logger: nkruntime.Log
     }
 
     finishedVehicles.sort(function (a, b) {
-        return a.finishTime - b.finishTime;
+        return a.finish_time - b.finish_time;
     });
 
     // Print finish order
     for (let vehicle_data of finishedVehicles) {
-        logger.info("Finished vehicle: " + state.presences[vehicle_data.userId].username + " with time: " + vehicle_data.finishTime);
+        logger.info("Finished vehicle: " + state.presences[vehicle_data.userId].username + " with time: " + vehicle_data.finish_time);
     }
 
     unfinishedVehicles.sort(function (a, b) {
