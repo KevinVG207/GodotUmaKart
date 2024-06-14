@@ -207,7 +207,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
                 }
 
                 state.vehicles[message.sender.userId] = data;
-                state.vehicles.userId = message.sender.userId;
+                state.vehicles[message.sender.userId].userId = message.sender.userId;
                 dispatcher.broadcastMessage(raceOp.SERVER_UPDATE_VEHICLE_STATE, payload, null, message.sender);
                 break;
             case raceOp.SERVER_PING:
