@@ -25,9 +25,9 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         prevUserIds = Object.keys(presences);
         players = prevUserIds.length;
 
-        for (let userId in presences) {
+        prevUserIds.forEach(function (userId) {
             userData[userId] = nk.accountGetId(userId).user.metadata;
-        }
+        });
     }
 
     let label: label = {

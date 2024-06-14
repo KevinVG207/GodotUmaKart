@@ -247,7 +247,7 @@ func handle_vote_data(data: Dictionary):
 			remove_player(user_id)
 	
 	for p in presences.values():
-		if p.userId in cur_user_ids:
+		if p.userId in cur_user_ids or !(p.userId in user_data):
 			continue
 		add_player(user_data[p.userId].displayName, p.userId)
 	
