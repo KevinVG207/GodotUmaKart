@@ -174,7 +174,7 @@ func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3):
 	cur_turn_speed = 0
 
 func handle_input():
-	if finished:
+	if finished or not get_window().has_focus():
 		input_accel = false
 		input_brake = false
 		input_steer = 0.0
@@ -709,6 +709,7 @@ func get_state() -> Dictionary:
 		"in_water": in_water,
 		"check_idx": check_idx,
 		"check_key_idx": check_key_idx,
+		"check_progress": check_progress,
 		"lap": lap,
 		"finished": finished,
 		"finish_time": finish_time,
@@ -745,6 +746,7 @@ func apply_state(state: Dictionary):
 	in_water = state.in_water
 	check_idx = state.check_idx
 	check_key_idx = state.check_key_idx
+	check_progress = state.check_progress
 	lap = state.lap
 	finished = state.finished
 	finish_time = state.finish_time

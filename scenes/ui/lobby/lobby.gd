@@ -95,7 +95,7 @@ func setup():
 		state = STATE_INITIAL
 		return
 		
-	$UsernameContainer/UsernameEdit.text = Network.session.username
+	$UsernameContainer/UsernameEdit.text = await Network.get_display_name()
 	
 	state = STATE_SETUP_COMPLETE
 
@@ -223,6 +223,7 @@ func handle_vote_data(data: Dictionary):
 	var vote_timeout = data.voteTimeout as int
 	var tick_rate = data.tickRate as int
 	var ping_data = data.pingData as Dictionary
+	var user_data = data.userData as Dictionary
 	
 	# Setup vote timeout:
 	if Network.session.user_id in ping_data:
@@ -245,7 +246,7 @@ func handle_vote_data(data: Dictionary):
 	for p in presences.values():
 		if p.userId in cur_user_ids:
 			continue
-		add_player(p.username, p.userId)
+		add_player(user_data[p.userId].displayName, p.userId)
 	
 	cur_votes = votes
 	for user_id in votes:

@@ -249,7 +249,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 		$PlayerCamera.target = new_vehicle
 		new_vehicle.username = "Player"
 		if Global.MODE1 == Global.MODE1_ONLINE:
-			new_vehicle.username = Network.session.username
+			new_vehicle.username = await Network.get_display_name()
 
 func _remove_vehicle(user_id: String):
 	if user_id in players_dict.keys():

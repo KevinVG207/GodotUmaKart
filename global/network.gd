@@ -93,15 +93,12 @@ func _matchmake():
 		# is_matchmaking = false
 
 func update_username(new_username: String):
-	if new_username == session.username:
-		return true
-	
-	var resa = await client.update_account_async(session, new_username)
-	if resa.is_exception():
+	var res: NakamaAPI.ApiRpc = await socket.rpc_async("updateDisplayName", new_username)
+	if res.is_exception():
 		print("Error setting username")
 		return false
-	await reset()
-	await connect_client()
+	#await reset()
+	#await connect_client()
 	return true
 
 func matchmake(username: String = ""):
@@ -294,6 +291,17 @@ func connect_client():
 
 	return true
 
+
+func get_display_name():
+	if not session:
+		return ""
+	
+	var res: NakamaAPI.ApiRpc = await Network.socket.rpc_async("getDisplayName")
+	if res.is_exception():
+		print("Error getting display name")
+		return ""
+	
+	return res.payload
 
 #func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
 	#print("Match presence: ", p_presence)

@@ -6,6 +6,11 @@ interface label {
     course?: string;
 }
 
+interface userData {
+    displayName: string;
+    rating: number;
+}
+
 const config = {
     maxPing: 1000
 }

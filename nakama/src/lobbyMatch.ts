@@ -48,6 +48,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     return {
         state: {
             presences: presences,
+            userData: {},
             prevUserIds: prevUserIds,
             joinedIds: joinedIds,
             emptyTicks: 0,
@@ -93,6 +94,7 @@ const lobbyMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         }
 
         state.presences[p.userId] = p;
+        state.userData[p.userId] = nk.accountGetId(p.userId).user.metadata;
     });
 
     updateLabel(state, dispatcher)
@@ -230,7 +232,8 @@ function processMessages(messages: nkruntime.MatchMessage[], nk: nkruntime.Nakam
         tick: tick,
         voteTimeout: state.voteTimeout,
         tickRate: ctx.matchTickRate,
-        pingData: pingDict
+        pingData: pingDict,
+        userData: state.userData
     };
 
     // Broadcast all votes to all presences

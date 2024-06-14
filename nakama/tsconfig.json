@@ -5,6 +5,7 @@
     "./src/matchCommon.ts",
     "./src/raceMatch.ts",
     "./src/lobbyMatch.ts",
+    "./src/rpc.ts"
   ],
   "compilerOptions": {
     "target": "es5",

@@ -1,5 +1,7 @@
 function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, initializer: nkruntime.Initializer) {
     initializer.registerRpc("healthcheck", rpcHealthCheck);
+    initializer.registerRpc("updateDisplayName", rpcUpdateDisplayName);
+    initializer.registerRpc("getDisplayName", rpcGetDisplayName);
 
     initializer.registerMatchmakerMatched(onMatchmakerMatched);
 
