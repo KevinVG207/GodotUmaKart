@@ -156,6 +156,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         }
 
         var finishOrder = determineFinishOrder(state);
+        logger.info("Finish order: " + finishOrder)
         // Start a new lobby.
         // Signal finish to all presences, with the next lobby match ID.
 
