@@ -1,13 +1,13 @@
 [gd_scene load_steps=4 format=3 uid="uid://tgm0tkbghr0c"]
 
-[ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_oeigi"]
-[ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_ppadp"]
-[ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_qwj12"]
+[ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_1pd62"]
+[ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_52k0g"]
+[ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_p8osu"]
 
-[node name="RaceBase" instance=ExtResource("1_oeigi")]
+[node name="RaceBase" instance=ExtResource("1_1pd62")]
 lap_count = 1
 
-[node name="1test" parent="Course" index="0" instance=ExtResource("2_ppadp")]
+[node name="1test" parent="Course" index="0" instance=ExtResource("2_52k0g")]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Course" index="1"]
 transform = Transform3D(-0.482963, -0.866025, 0.12941, 0.258819, -4.37114e-08, 0.965926, -0.836516, 0.5, 0.224144, -15.5561, 50.104, 15.5561)
@@ -17,30 +17,30 @@ shadow_opacity = 0.75
 directional_shadow_blend_splits = true
 directional_shadow_max_distance = 500.0
 
-[node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_qwj12")]
+[node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_p8osu")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 26, 0, 0)
 is_key = true
 
-[node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("3_qwj12")]
+[node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("3_p8osu")]
 transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 19, 0, -17)
 
-[node name="Checkpoint3" parent="Checkpoints" index="2" instance=ExtResource("3_qwj12")]
+[node name="Checkpoint3" parent="Checkpoints" index="2" instance=ExtResource("3_p8osu")]
 transform = Transform3D(-5.96046e-08, 0, -1, 0, 1, 0, 1, 0, -5.96046e-08, 0, 0, -25)
 is_key = true
 
-[node name="Checkpoint4" parent="Checkpoints" index="3" instance=ExtResource("3_qwj12")]
+[node name="Checkpoint4" parent="Checkpoints" index="3" instance=ExtResource("3_p8osu")]
 transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -17, 0, -19)
 
-[node name="Checkpoint5" parent="Checkpoints" index="4" instance=ExtResource("3_qwj12")]
+[node name="Checkpoint5" parent="Checkpoints" index="4" instance=ExtResource("3_p8osu")]
 transform = Transform3D(1, 0, -8.9407e-08, 0, 1, 0, 8.9407e-08, 0, 1, -25, 0, 0)
 is_key = true
 
-[node name="Checkpoint6" parent="Checkpoints" index="5" instance=ExtResource("3_qwj12")]
+[node name="Checkpoint6" parent="Checkpoints" index="5" instance=ExtResource("3_p8osu")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -20, 0, 16)
 
-[node name="Checkpoint7" parent="Checkpoints" index="6" instance=ExtResource("3_qwj12")]
+[node name="Checkpoint7" parent="Checkpoints" index="6" instance=ExtResource("3_p8osu")]
 transform = Transform3D(8.9407e-08, 0, 1, 0, 1, 0, -1, 0, 8.9407e-08, 0, 0, 26)
 is_key = true
 
-[node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_qwj12")]
+[node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_p8osu")]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)

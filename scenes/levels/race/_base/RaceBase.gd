@@ -313,7 +313,7 @@ func update_ranks():
 		ranks_vehicles.append(vehicle)
 	
 
-	finished_vehicles.sort_custom(func(a, b): return a.finished_time < b.finished_time)
+	finished_vehicles.sort_custom(func(a, b): return a.finish_time < b.finish_time)
 
 	finished_vehicles.append_array(ranks_vehicles)
 

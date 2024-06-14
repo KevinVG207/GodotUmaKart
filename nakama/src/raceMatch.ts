@@ -265,14 +265,17 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     if (state.started){
         let oneFinished = false;
         let finished = true;
+        logger.info("Checking if all vehicles are finished")
         for (let userId in state.vehicles){
             let vehicle = state.vehicles[userId];
+            logger.info("Checking vehicle: " + userId + " finished: " + vehicle.finished)
             if (vehicle.finished == true){
                 oneFinished = true;
             } else {
                 finished = false;
             }
         }
+        logger.info("Finished: " + finished + " OneFinished: " + oneFinished)
 
         if (oneFinished && !state.oneFinished) {
             // This is the first time a vehicle finishes.
