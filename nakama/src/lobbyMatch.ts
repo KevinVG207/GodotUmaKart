@@ -17,12 +17,17 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     let joinable = 1;
     let players = 0;
     let presences = {};
+    let userData = {} as { [key: string]: any };
     let prevUserIds: string[] = [];
 
     if ('fromMatch' in params){
         presences = JSON.parse(params.fromMatch);
         prevUserIds = Object.keys(presences);
         players = prevUserIds.length;
+
+        for (let userId in presences) {
+            userData[userId] = nk.accountGetId(userId).user.metadata;
+        }
     }
 
     let label: label = {
