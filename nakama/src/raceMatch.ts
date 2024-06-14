@@ -154,11 +154,24 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         if (tick >= state.finishTimeout) {
             finType = finishType.TIMEOUT;
         }
+
+        var finishOrder = determineFinishOrder(state);
         // Start a new lobby.
         // Signal finish to all presences, with the next lobby match ID.
 
-        var matchId = nk.matchCreate('lobby', {matchType: 'lobby', nextMatchType: state.label.matchType, fromMatch: JSON.stringify(state.presences)});
-        dispatcher.broadcastMessage(raceOp.SERVER_RACE_OVER, JSON.stringify({ matchId: matchId, playerCount: Object.keys(state.presences).length, finishType: finType }), null, null);
+        var matchId = nk.matchCreate('lobby', {
+            matchType: 'lobby',
+            nextMatchType: state.label.matchType,
+            fromMatch: JSON.stringify(state.presences),
+            finishOrder: JSON.stringify(finishOrder)
+        });
+
+        dispatcher.broadcastMessage(raceOp.SERVER_RACE_OVER, JSON.stringify({
+            matchId: matchId,
+            playerCount: Object.keys(state.presences).length,
+            finishType: finType,
+            finishOrder: finishOrder
+        }), null, null);
 
         state.stop = tick + ctx.matchTickRate * 5;
         return {state};
@@ -194,6 +207,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
                 }
 
                 state.vehicles[message.sender.userId] = data;
+                state.vehicles.userId = message.sender.userId;
                 dispatcher.broadcastMessage(raceOp.SERVER_UPDATE_VEHICLE_STATE, payload, null, message.sender);
                 break;
             case raceOp.SERVER_PING:
@@ -294,4 +308,38 @@ const raceMatchTerminate = function (ctx: nkruntime.Context, logger: nkruntime.L
     return {
         state
     };
+}
+
+function checkpointToProgress(vehicle: any){
+    return 10000 * vehicle.lap + vehicle.check_idx + vehicle.check_progress;
+}
+
+function determineFinishOrder(state: nkruntime.MatchState) {
+    let finishedVehicles = [];
+    let unfinishedVehicles = [];
+
+    for (let userId in state.vehicles) {
+        if (state.vehicles[userId].finished) {
+            finishedVehicles.push(state.vehicles[userId]);
+        } else {
+            unfinishedVehicles.push(state.vehicles[userId]);
+        }
+    }
+
+    finishedVehicles.sort(function (a, b) {
+        return state.vehicles[a].finishTime - state.vehicles[b].finishTime;
+    });
+
+    unfinishedVehicles.sort(function (a, b) {
+        return checkpointToProgress(state.vehicles[b]) - checkpointToProgress(state.vehicles[a]);
+    });
+
+    finishedVehicles = finishedVehicles.concat(unfinishedVehicles);
+
+    let userIds = [];
+    for (let vehicle_data of finishedVehicles) {
+        userIds.push(vehicle_data.userId);
+    }
+
+    return userIds;
 }

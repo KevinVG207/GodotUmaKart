@@ -281,7 +281,14 @@ func send_ready():
 func update_ranks():
 	var ranks = []
 	var ranks_vehicles = []
+
+	var finished_vehicles = []
+
 	for vehicle: Vehicle3 in $Vehicles.get_children():
+		if vehicle.finished:
+			finished_vehicles.append(vehicle)
+			continue
+
 		var check_idx = vehicle.check_idx
 		if check_idx < 0:
 			check_idx = checkpoints.size() - check_idx - 2
@@ -304,12 +311,22 @@ func update_ranks():
 
 		ranks.append(cur_progress)
 		ranks_vehicles.append(vehicle)
-
-
-	for i in range(ranks.size()):
-		ranks_vehicles[i].rank = i
 	
-	UI.update_ranks(ranks_vehicles)
+
+	finished_vehicles.sort_custom(func(a, b): return a.finished_time < b.finished_time)
+
+	finished_vehicles.append_array(ranks_vehicles)
+
+
+	for i in range(finished_vehicles.size()):
+		finished_vehicles[i].rank = i
+	
+	UI.update_ranks(finished_vehicles)
+
+	# print("Ranks:")
+	# for vehicle: Vehicle3 in finished_vehicles.slice(0, 5):
+	# 	print(vehicle.rank, " ", vehicle.finish_time)
+	# print("===")
 
 
 func update_checkpoint(player: Vehicle3):
@@ -440,6 +457,10 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			_remove_vehicle(data.userId)
 		raceOp.SERVER_RACE_OVER:
 			finished = true
+			var finish_position: int = data.finishOrder.find(player_user_id)
+
+			Debug.print(["Finish position: ", finish_position])
+
 			Network.ready_match = data.matchId
 			state = STATE_RECEIVED_NEXT_MATCH
 		raceOp.SERVER_ABORT:

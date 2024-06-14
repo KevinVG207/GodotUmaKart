@@ -681,7 +681,6 @@ func _on_player_collision_area_exited(area):
 
 func get_state() -> Dictionary:
 	update_idx += 1
-	print(finished)
 	return {
 		"idx": update_idx,
 		"pos": Util.to_array(global_position),
