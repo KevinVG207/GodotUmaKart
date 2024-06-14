@@ -29,7 +29,7 @@ var finished = false
 
 var finish_order: Array = []
 var rankings_timer: int = 0
-var rankings_delay: int = 5
+var rankings_delay: int = 10
 var stop_rankings: bool = false
 
 class raceOp:
