@@ -257,7 +257,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			if in_trick and trick_frames > 2:
 				in_trick = false
 				trick_frames = 0
-				Debug.print(["Starting trick boost", trick_boost_timer])
+				#Debug.print(["Starting trick boost", trick_boost_timer])
 				trick_boost_timer.start(trick_boost_duration)
 		
 		if collider.is_in_group("boost"):
@@ -322,7 +322,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	
 	if not grounded and trick_input and not $TrickTimer.is_stopped():
-		Debug.print("Trick input detected")
+		#Debug.print("Trick input detected")
 		in_trick = true
 	
 	var new_vel = Vector3.ZERO
@@ -646,8 +646,8 @@ func _process(delta):
 			extra_fov = 0.0
 	
 		#print(cur_speed)
-		if Engine.get_frames_drawn() % 60 == 0:
-			Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
+		#if Engine.get_frames_drawn() % 60 == 0:
+			#Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
 
 
 func water_entered(area):

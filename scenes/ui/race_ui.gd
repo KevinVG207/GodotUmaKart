@@ -15,7 +15,7 @@ func set_max_laps(laps):
 	$LapCountContainer/MarginContainer/MaxLaps.text = "/%d" % int(max(laps, 0))
 
 func set_cur_lap(lap):
-	$LapCountContainer/CurLap.text = "Lap %d" % int(max(lap, 0))
+	$LapCountContainer/CurLap.text = tr("RACE_LAP") % int(max(lap, 0))
 
 func finished():
 	$Finished.visible = true

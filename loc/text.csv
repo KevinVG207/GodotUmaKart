@@ -1,0 +1,38 @@
+keys,en,ja
+LOBBY_WAIT_PLAYERS,Waiting for players...,他のプレイヤーをお待ちください
+LOBBY_SERVER_CONNECT,Connected to server,サーバーに接続しました
+LOBBY_ROOM_FOUND,Room found,ルームが見つかりました
+LOBBY_RESET,Resetting network connection...,ネットワーク接続をリセットしています
+LOBBY_SETUP,Setting up connection...,接続を設定しています
+LOBBY_CONNECTION_FAIL,Connection failed!,接続に失敗しました
+LOBBY_SEARCHING,Looking for room...,ルームを探しています
+LOBBY_SEARCH_FAIL,Failed to find room!,ルームが見つかりませんでした
+LOBBY_JOINING,Joining room...,ルームに参加しています
+LOBBY_JOIN_FAIL,Failed to join room!,ルームに参加できませんでした
+LOBBY_VOTING,Waiting for votes...,投票を待っています
+LOBBY_BTN_LEAVE,Leave Room,戻る
+LOBBY_VOTE_FAIL,Failed to send vote!,投票に失敗しました
+LOBBY_COURSE_SELECT,Course selected: %s,選択したコースは%s
+LOBBY_CONNECTION_LOST,Connection lost,接続が切れました
+LOBBY_LOBBY,Lobby,ロビー
+LOBBY_USERNAME,Username:,ユーザー名
+LOBBY_BTN_SEARCH,Search for room,ルームを探す
+LOBBY_BTN_VOTE,Vote,投票
+LOBBY_BTN_CANCEL,Cancel search,キャンセル
+ORD_1,1st,1位
+ORD_2,2nd,2位
+ORD_3,3rd,3位
+ORD_4,4th,4位
+ORD_5,5th,5位
+ORD_6,6th,6位
+ORD_7,7th,7位
+ORD_8,8th,8位
+ORD_9,9th,9位
+ORD_10,10th,10位
+ORD_11,11th,11位
+ORD_12,12th,12位
+RACE_FINISHED,Finished!,Finish!
+RACE_OVER,Race Over!,レース完了
+RACE_SPECTATING,Spectating,待機中
+RACE_BTN_BACK,Back to Lobby,ロビーへ戻る
+RACE_LAP,Lap %d,Lap %d

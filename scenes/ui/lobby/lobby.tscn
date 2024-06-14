@@ -14,7 +14,7 @@ offset_top = 3.0
 offset_right = 199.0
 offset_bottom = 45.0
 theme_override_font_sizes/font_size = 30
-text = "Lobby"
+text = "LOBBY_LOBBY"
 metadata/_edit_lock_ = true
 
 [node name="Status" type="Label" parent="."]
@@ -77,7 +77,7 @@ offset_bottom = -40.31
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 25
-text = "Search for room"
+text = "LOBBY_BTN_SEARCH"
 metadata/_edit_lock_ = true
 
 [node name="VoteButton" type="Button" parent="."]
@@ -95,7 +95,7 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 25
 disabled = true
-text = "Vote"
+text = "LOBBY_BTN_VOTE"
 metadata/_edit_lock_ = true
 
 [node name="LeaveButton" type="Button" parent="."]
@@ -113,7 +113,7 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 25
 disabled = true
-text = "Cancel Search"
+text = "LOBBY_BTN_CANCEL"
 
 [node name="VoteTimeout" type="Timer" parent="."]
 process_callback = 0
@@ -145,7 +145,7 @@ alignment = 2
 
 [node name="Username" type="Label" parent="UsernameContainer"]
 layout_mode = 2
-text = "Username:"
+text = "LOBBY_USERNAME"
 
 [node name="UsernameEdit" type="LineEdit" parent="UsernameContainer"]
 custom_minimum_size = Vector2(100, 0)

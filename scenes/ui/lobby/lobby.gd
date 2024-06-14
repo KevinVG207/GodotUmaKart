@@ -44,7 +44,7 @@ func _process(_delta):
 	$TimeLeft.text = "0:00"
 
 	if vote_timeout_started and info_boxes.size() <= 1:
-		$TimeLeft.text = "Waiting for players..."
+		$TimeLeft.text = tr("LOBBY_WAIT_PLAYERS")
 	elif vote_timeout_started and not $VoteTimeout.is_stopped():
 		$TimeLeft.text = Util.format_time_minutes($VoteTimeout.time_left)
 	else:
@@ -58,14 +58,14 @@ func _physics_process(_delta):
 		STATE_INITIAL:
 			change_state(STATE_SETUP, setup)
 		STATE_SETUP_COMPLETE:
-			$Status.text = "Connected to server"
+			$Status.text = tr("LOBBY_SERVER_CONNECT")
 			$MatchmakeButton.disabled = false
 			$MatchmakeButton.visible = true
 		STATE_PRE_MATCHMAKING:
 			change_state(STATE_MATCHMAKING, matchmake)
 		STATE_MATCHMAKING_WAIT:
 			if Network.ready_match:
-				$Status.text = "Room found"
+				$Status.text = tr("LOBBY_ROOM_FOUND")
 				state = STATE_MATCHMAKING_COMLETE
 		STATE_MATCHMAKING_COMLETE:
 			change_state(STATE_JOINING, join)
@@ -81,17 +81,17 @@ func change_state(new_state: int, state_func: Callable = Callable()):
 	state_func.call()
 
 func reset():
-	$Status.text = "Resetting network connection..."
+	$Status.text = tr("LOBBY_RESET")
 	await Network.reset()
 	state = STATE_INITIAL
 
 func setup():
-	$Status.text = "Setting up connection..."
+	$Status.text = tr("LOBBY_SETUP")
 	
 	var res: bool = await Network.connect_client()
 	
 	if not res:
-		$Status.text = "Connection failed!"
+		$Status.text = tr("LOBBY_CONNECTION_FAIL")
 		state = STATE_INITIAL
 		return
 		
@@ -100,14 +100,14 @@ func setup():
 	state = STATE_SETUP_COMPLETE
 
 func matchmake():
-	$Status.text = "Looking for room..."
+	$Status.text = tr("LOBBY_SEARCHING")
 	$PingBox.visible = false
 	$UsernameContainer.visible = false
 	
 	var res: bool = await Network.matchmake($UsernameContainer/UsernameEdit.text)
 	
 	if not res:
-		$Status.text = "Failed to find room!"
+		$Status.text = tr("LOBBY_SEARCH_FAIL")
 		state = STATE_RESET
 		return
 	
@@ -115,7 +115,7 @@ func matchmake():
 	return
 
 func join():
-	$Status.text = "Joining room..."
+	$Status.text = tr("LOBBY_JOINING")
 	$PingBox.visible = false
 	$UsernameContainer.visible = false
 
@@ -135,7 +135,7 @@ func join():
 		Network.socket.received_match_state.disconnect(_on_match_state)
 		Network.socket.closed.disconnect(_on_socket_closed)
 
-		$Status.text = "Failed to join room!"
+		$Status.text = tr("LOBBY_JOIN_FAIL")
 		state = STATE_RESET
 		return
 	
@@ -143,8 +143,8 @@ func join():
 	return
 
 func setup_voting():
-	$Status.text = "Waiting for votes..."
-	$LeaveButton.text = "Leave Room"
+	$Status.text = tr("LOBBY_VOTING")
+	$LeaveButton.text = tr("LOBBY_BTN_LEAVE")
 	state = STATE_VOTING
 	$VoteButton.disabled = false
 	$VoteButton.visible = true
@@ -209,7 +209,7 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 		lobbyOp.SERVER_VOTE_DATA:
 			handle_vote_data(data)
 		lobbyOp.SERVER_MATCH_DATA:
-			print("Received match data")
+			#print("Received match data")
 			handle_match_data(data)
 		lobbyOp.SERVER_ABORT:
 			await reload()
@@ -270,7 +270,7 @@ func vote():
 	var res = await Network.send_match_state(lobbyOp.CLIENT_VOTE, payload)
 
 	if not res:
-		$Status.text = "Failed to send vote!"
+		$Status.text = tr("LOBBY_VOTE_FAIL")
 		state = STATE_RESET
 		return false
 	
@@ -307,7 +307,7 @@ func handle_match_data(data: Dictionary):
 	Network.ready_match = match_id
 	Network.next_match_data = data
 
-	$Status.text = "Course selected: " + winning_vote['course']
+	$Status.text = tr("LOBBY_COURSE_SELECT") % winning_vote['course']
 	state = STATE_MATCH_RECEIVED
 
 func switch_scene():
@@ -325,5 +325,5 @@ func _on_leave_button_pressed():
 	await reload()
 
 func _on_socket_closed():
-	$Status.text = "Connection lost."
+	$Status.text = tr("LOBBY_CONNECTION_LOST")
 	reload()

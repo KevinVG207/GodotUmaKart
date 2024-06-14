@@ -315,7 +315,7 @@ const raceMatchTerminate = function (ctx: nkruntime.Context, logger: nkruntime.L
     };
 }
 
-function checkpointToProgress(vehicle: any, ){
+function checkpointToProgress(vehicle: any){
     return 10000 * vehicle.lap + vehicle.check_idx + vehicle.check_progress;
 }
 
@@ -341,7 +341,7 @@ function determineFinishOrder(state: nkruntime.MatchState, logger: nkruntime.Log
     }
 
     unfinishedVehicles.sort(function (a, b) {
-        return checkpointToProgress(a) - checkpointToProgress(b);
+        return checkpointToProgress(b) - checkpointToProgress(a);
     });
 
     finishedVehicles = finishedVehicles.concat(unfinishedVehicles);

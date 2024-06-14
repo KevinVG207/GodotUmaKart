@@ -194,7 +194,7 @@ func handle_rankings():
 		var start_position = end_position
 		start_position.x = 800
 		var new_panel = rank_panel_scene.instantiate() as RankPanel
-		new_panel.get_node("Rank").text = Util.make_ordinal(cur_idx+1)
+		new_panel.get_node("Rank").text = tr("ORD_%d" % (cur_idx+1))  # Util.make_ordinal(cur_idx+1)
 		new_panel.get_node("PlayerName").text = cur_vehicle.username
 		new_panel.position = start_position
 		

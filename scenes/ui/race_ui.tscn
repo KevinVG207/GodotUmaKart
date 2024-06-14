@@ -85,7 +85,6 @@ alignment = 2
 layout_mode = 2
 size_flags_vertical = 1
 theme_override_font_sizes/font_size = 45
-text = "Lap 3"
 vertical_alignment = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="LapCountContainer"]
@@ -114,7 +113,7 @@ offset_bottom = 6.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 50
-text = "Finished!"
+text = "RACE_FINISHED"
 horizontal_alignment = 1
 
 [node name="RaceOver" type="Label" parent="."]
@@ -132,7 +131,7 @@ offset_bottom = 72.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 40
-text = "Race Over!"
+text = "RACE_OVER"
 horizontal_alignment = 1
 
 [node name="Spectating" type="Label" parent="."]
@@ -147,7 +146,7 @@ offset_right = 101.5
 offset_bottom = 57.0
 grow_horizontal = 2
 theme_override_font_sizes/font_size = 40
-text = "Spectating"
+text = "RACE_SPECTATING"
 horizontal_alignment = 1
 
 [node name="Username" type="Label" parent="."]
@@ -220,4 +219,4 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 25
 disabled = true
-text = "Back to Lobby"
+text = "RACE_BTN_BACK"
