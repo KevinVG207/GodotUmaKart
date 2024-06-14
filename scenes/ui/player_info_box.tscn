@@ -1,9 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://cgubbv13lvah8"]
 
-[ext_resource type="Script" path="res://scenes/ui/lobby/player_info_box.gd" id="1_udc87"]
+[ext_resource type="Script" path="res://scenes/ui/player_info_box.gd" id="1_udc87"]
 [ext_resource type="Texture2D" uid="uid://53pqjniwp6x1" path="res://icon.svg" id="2_yk4si"]
 
 [node name="PlayerInfoBox" type="HBoxContainer"]
+custom_minimum_size = Vector2(500, 0)
 theme_override_constants/separation = 5
 script = ExtResource("1_udc87")
 current_user_color = Color(1, 1, 0.576471, 1)

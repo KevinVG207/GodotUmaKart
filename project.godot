@@ -28,6 +28,8 @@ Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
 
 [display]
 
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 window/vsync/vsync_mode=2
 
 [editor]

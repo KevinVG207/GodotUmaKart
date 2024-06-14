@@ -82,3 +82,19 @@ func get_race_course_path(course_name: String):
 func ticks_to_time_with_ping(ticks_left: int, tick_rate: int, ping_ms: int) -> float:
 	# Debug.print(["Ping: ", ping_ms])
 	return (float(ticks_left) / tick_rate) - (ping_ms / 1000.0)
+
+func make_ordinal(n: int) -> String:
+	var suffix = ""
+	if n % 100 in [11, 12, 13]:
+		suffix = "th"
+	else:
+		match n % 10:
+			1:
+				suffix = "st"
+			2:
+				suffix = "nd"
+			3:
+				suffix = "rd"
+			_:
+				suffix = "th"
+	return str(n) + suffix

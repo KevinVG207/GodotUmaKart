@@ -7,6 +7,8 @@ var socket: NakamaSocket
 # var is_matchmaking: bool = false
 # var is_in_match: bool = false
 
+var session_seed: String = str(randi_range(1, 99999999))
+
 var mm_tickets: Array = []
 var cur_match: NakamaRTAPI.Match = null
 var ready_match: String = ""
@@ -90,8 +92,19 @@ func _matchmake():
 		print("Failed to matchmake")
 		# is_matchmaking = false
 
+func update_username(new_username: String):
+	if new_username == session.username:
+		return true
+	
+	var resa = await client.update_account_async(session, new_username)
+	if resa.is_exception():
+		print("Error setting username")
+		return false
+	await reset()
+	await connect_client()
+	return true
 
-func matchmake():
+func matchmake(username: String = ""):
 	print("Matchmaking...")
 	if not is_socket():
 		print("No socket")
@@ -105,6 +118,10 @@ func matchmake():
 		print("Already have a ready match")
 		return false
 
+	if username:
+		var resa = await update_username(username)
+		if not resa:
+			return false
 	
 	# Try via list
 	var res = await matchmake_list()
@@ -255,7 +272,7 @@ func connect_client():
 	client.timeout = 10
 	socket = Nakama.create_socket_from(client) as NakamaSocket
 
-	var device_id = OS.get_unique_id() + str(randi_range(1, 99999999))
+	var device_id = OS.get_unique_id() + session_seed
 
 	var _session = await client.authenticate_device_async(device_id)
 	if _session.is_exception():

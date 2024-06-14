@@ -22,9 +22,15 @@ var timer_tick: int = 0
 @onready var vehicles_node: Node3D = $Vehicles
 
 var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_3.tscn")
+var rank_panel_scene: PackedScene = preload("res://scenes/ui/rank_panel.tscn")
 
 @export var lap_count: int = 3
 var finished = false
+
+var finish_order: Array = []
+var rankings_timer: int = 0
+var rankings_delay: int = 10
+var stop_rankings: bool = false
 
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
@@ -52,9 +58,11 @@ const STATE_COUNTDOWN = 5
 const STATE_COUNTING_DOWN = 6
 const STATE_RACE = 7
 const STATE_RACE_OVER = 8
-const STATE_RECEIVED_NEXT_MATCH = 9
-const STATE_JOINING_NEXT = 10
-const STATE_SPECTATING = 11
+const STATE_READY_FOR_RANKINGS = 9
+const STATE_SHOW_RANKINGS = 10
+const STATE_JOIN_NEXT = 11
+const STATE_JOINING_NEXT = 12
+const STATE_SPECTATING = 13
 
 const UPDATE_STATES = [
 	STATE_COUNTING_DOWN,
@@ -68,6 +76,8 @@ func _ready():
 	UI.race_ui.set_cur_lap(0)
 	
 	UI.show_race_ui()
+	
+	UI.race_ui.back_btn.pressed.connect(_on_back_pressed)
 
 	checkpoints = []
 	key_checkpoints = {}
@@ -88,6 +98,10 @@ func _process(_delta):
 	if state == STATE_RACE:
 		UI.race_ui.update_time(timer_tick * (1.0/Engine.physics_ticks_per_second))
 	
+	if state == STATE_SHOW_RANKINGS:
+		UI.race_ui.show_back_btn()
+		UI.race_ui.update_timeleft($NextRaceTimer.time_left)
+	
 	if spectate:
 		if !$PlayerCamera.target and players_dict:
 			$PlayerCamera.target = players_dict.values()[0]
@@ -95,7 +109,7 @@ func _process(_delta):
 		var spectator_index = players_dict.values().find($PlayerCamera.target)
 		if spectator_index > -1:
 			UI.race_ui.enable_spectating()
-			UI.race_ui.set_username(players_dict.keys()[spectator_index])
+			UI.race_ui.set_username(players_dict[players_dict.keys()[spectator_index]].username)
 			
 			if get_window().has_focus() and Input.is_action_just_pressed("accelerate"):
 				$PlayerCamera.instant = true
@@ -124,13 +138,22 @@ func _physics_process(_delta):
 			change_state(STATE_READY_FOR_START, send_ready)
 		STATE_COUNTDOWN:
 			$CountdownTimer.start(3.0)
+			timer_tick = -Engine.physics_ticks_per_second * 3
 			state = STATE_COUNTING_DOWN
+		STATE_COUNTING_DOWN:
+			timer_tick += 1
 		STATE_RACE:
 			timer_tick += 1
 		STATE_RACE_OVER:
 			UI.race_ui.race_over()
-		STATE_RECEIVED_NEXT_MATCH:
+		STATE_READY_FOR_RANKINGS:
 			UI.race_ui.race_over()
+			$NextRaceTimer.start(25)
+			state = STATE_SHOW_RANKINGS
+		STATE_SHOW_RANKINGS:
+			UI.race_ui.hide_time()
+			handle_rankings()
+		STATE_JOIN_NEXT:
 			if Global.MODE1 == Global.MODE1_ONLINE:
 				change_state(STATE_JOINING_NEXT, join_next)
 		_:
@@ -154,6 +177,35 @@ func _physics_process(_delta):
 					#player_vehicle.call_deferred("upload_data")
 		
 		check_finished()
+
+func handle_rankings():
+	if stop_rankings:
+		return
+	
+	if rankings_timer % rankings_delay == 0:
+		var cur_idx: int = rankings_timer / rankings_delay
+		
+		if cur_idx >= len(finish_order)-1:
+			stop_rankings = true
+			
+		var cur_vehicle: Vehicle3 = players_dict[finish_order[cur_idx]]
+		
+		var end_position = Vector2(-262, 16 + (40+5)*cur_idx)
+		var start_position = end_position
+		start_position.x = 800
+		var new_panel = rank_panel_scene.instantiate() as RankPanel
+		new_panel.get_node("Rank").text = Util.make_ordinal(cur_idx+1)
+		new_panel.get_node("PlayerName").text = cur_vehicle.username
+		new_panel.position = start_position
+		
+		if cur_vehicle == player_vehicle:
+			new_panel.set_border()
+		
+		UI.race_ui.get_node("Rankings").add_child(new_panel)
+		var tween = create_tween()
+		tween.tween_property(new_panel, "position", end_position, 0.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	
+	rankings_timer += 1
 
 func check_finished():
 	# Offline mode: All players have finished.
@@ -184,15 +236,20 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 		Global.MODE1_OFFLINE:
 			new_vehicle.is_cpu = true
 			new_vehicle.is_network = false
+			new_vehicle.username = "CPU"
 		Global.MODE1_ONLINE:
 			new_vehicle.is_cpu = false
 			new_vehicle.is_network = true
+			new_vehicle.username = "Network Player"
 	
 	if user_id == player_user_id:
 		new_vehicle.is_player = true
 		new_vehicle.is_network = false
 		player_vehicle = new_vehicle
 		$PlayerCamera.target = new_vehicle
+		new_vehicle.username = "Player"
+		if Global.MODE1 == Global.MODE1_ONLINE:
+			new_vehicle.username = Network.session.username
 
 func _remove_vehicle(user_id: String):
 	if user_id in players_dict.keys():
@@ -462,7 +519,8 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			Debug.print(["Rank: ", finish_position])
 
 			Network.ready_match = data.matchId
-			state = STATE_RECEIVED_NEXT_MATCH
+			finish_order = data.finishOrder
+			state = STATE_READY_FOR_RANKINGS
 		raceOp.SERVER_ABORT:
 			get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
 		_:
@@ -475,7 +533,6 @@ func _on_start_timer_timeout():
 
 func _on_countdown_timer_timeout():
 	state = STATE_RACE
-	timer_tick = 0
 	for vehicle: Vehicle3 in $Vehicles.get_children():
 		vehicle.axis_unlock()
 
@@ -484,3 +541,9 @@ func join_next():
 	UI.race_ui.visible = false
 	Network.socket.received_match_state.disconnect(_on_match_state)
 	get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
+
+func _on_back_pressed():
+	state = STATE_JOIN_NEXT
+
+func _on_next_race_timer_timeout():
+	state = STATE_JOIN_NEXT

@@ -143,9 +143,10 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
     if (state.started && Object.keys(state.vehicles).length <= 1) {
         // Race can't continue with less than 2 players
-        dispatcher.broadcastMessage(raceOp.SERVER_ABORT, JSON.stringify({}), null, null);
-        state.stop = tick + ctx.matchTickRate * 5;
-        return {state};
+        // dispatcher.broadcastMessage(raceOp.SERVER_ABORT, JSON.stringify({}), null, null);
+        // state.stop = tick + ctx.matchTickRate * 5;
+        // return {state};
+        state.finished = true;
     }
 
     if (state.finished || tick >= state.finishTimeout) {
@@ -155,7 +156,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             finType = finishType.TIMEOUT;
         }
 
-        var finishOrder = determineFinishOrder(state);
+        var finishOrder = determineFinishOrder(state, logger);
         logger.info("Finish order: " + finishOrder)
         // Start a new lobby.
         // Signal finish to all presences, with the next lobby match ID.
@@ -314,11 +315,11 @@ const raceMatchTerminate = function (ctx: nkruntime.Context, logger: nkruntime.L
     };
 }
 
-function checkpointToProgress(vehicle: any){
+function checkpointToProgress(vehicle: any, ){
     return 10000 * vehicle.lap + vehicle.check_idx + vehicle.check_progress;
 }
 
-function determineFinishOrder(state: nkruntime.MatchState) {
+function determineFinishOrder(state: nkruntime.MatchState, logger: nkruntime.Logger) {
     let finishedVehicles = [];
     let unfinishedVehicles = [];
 
@@ -331,8 +332,13 @@ function determineFinishOrder(state: nkruntime.MatchState) {
     }
 
     finishedVehicles.sort(function (a, b) {
-        return a.finishTime - b.finishTime;
+        return a.finish_time - b.finish_time;
     });
+
+    // Print finish order
+    for (let vehicle_data of finishedVehicles) {
+        logger.info("Finished vehicle: " + state.presences[vehicle_data.userId].username + " with time: " + vehicle_data.finish_time);
+    }
 
     unfinishedVehicles.sort(function (a, b) {
         return checkpointToProgress(a) - checkpointToProgress(b);
