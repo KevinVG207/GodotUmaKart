@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dqhi3idf6syay"]
 
 [ext_resource type="Script" path="res://scenes/ui/lobby/lobby.gd" id="1_5qmws"]
-[ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/lobby/player_info_box.tscn" id="2_r5fd3"]
+[ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_r5fd3"]
 
 [node name="Lobby" type="CanvasLayer"]
 layer = 101

@@ -156,7 +156,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             finType = finishType.TIMEOUT;
         }
 
-        var finishOrder = determineFinishOrder(state);
+        var finishOrder = determineFinishOrder(state, logger);
         logger.info("Finish order: " + finishOrder)
         // Start a new lobby.
         // Signal finish to all presences, with the next lobby match ID.
@@ -315,11 +315,11 @@ const raceMatchTerminate = function (ctx: nkruntime.Context, logger: nkruntime.L
     };
 }
 
-function checkpointToProgress(vehicle: any){
+function checkpointToProgress(vehicle: any, ){
     return 10000 * vehicle.lap + vehicle.check_idx + vehicle.check_progress;
 }
 
-function determineFinishOrder(state: nkruntime.MatchState) {
+function determineFinishOrder(state: nkruntime.MatchState, logger: nkruntime.Logger) {
     let finishedVehicles = [];
     let unfinishedVehicles = [];
 
@@ -334,6 +334,11 @@ function determineFinishOrder(state: nkruntime.MatchState) {
     finishedVehicles.sort(function (a, b) {
         return a.finishTime - b.finishTime;
     });
+
+    // Print finish order
+    for (let vehicle_data of finishedVehicles) {
+        logger.info("Finished vehicle: " + state.presences[vehicle_data.userId].username + " with time: " + vehicle_data.finishTime);
+    }
 
     unfinishedVehicles.sort(function (a, b) {
         return checkpointToProgress(a) - checkpointToProgress(b);

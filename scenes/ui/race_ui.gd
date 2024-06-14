@@ -2,6 +2,9 @@ extends Control
 
 class_name RaceUI
 
+@export var info_box_scene: PackedScene
+@onready var back_btn: Button = $BackToLobby
+
 func update_speed(speed):
 	$Speed.text = str(int(speed))
 
@@ -29,3 +32,13 @@ func set_username(usr: String):
 
 func update_time(time: float):
 	$Time.text = Util.format_time_ms(time)
+
+func hide_time():
+	$Time.visible = false
+
+func update_timeleft(time: float):
+	$TimeLeft.text = Util.format_time_minutes(time)
+
+func show_back_btn():
+	$BackToLobby.disabled = false
+	$BackToLobby.visible = true
