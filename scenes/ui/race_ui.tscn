@@ -1,7 +1,66 @@
-[gd_scene load_steps=3 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=9 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
+[ext_resource type="PackedScene" uid="uid://b4ktan2k4miry" path="res://scenes/ui/item_roulette.tscn" id="3_xg3tb"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_5eh43"]
+viewport_path = NodePath("ItemBox/3DLayer")
+
+[sub_resource type="Environment" id="Environment_5a2to"]
+
+[sub_resource type="Animation" id="Animation_jux7s"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ItemRoulette:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_sqxjf"]
+resource_name = "rotate"
+length = 0.5
+loop_mode = 1
+step = 0.0166667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ItemRoulette:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(1.5708, 0, 0)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../..")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_on_rotate_end"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ux71x"]
+_data = {
+"RESET": SubResource("Animation_jux7s"),
+"rotate": SubResource("Animation_sqxjf")
+}
 
 [node name="RaceUI" type="Control"]
 layout_mode = 3
@@ -12,6 +71,45 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_23b1w")
 info_box_scene = ExtResource("2_64c26")
+
+[node name="ItemBox" type="TextureRect" parent="."]
+layout_mode = 1
+offset_right = 215.0
+offset_bottom = 210.0
+texture = SubResource("ViewportTexture_5eh43")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="3DLayer" type="SubViewport" parent="ItemBox"]
+transparent_bg = true
+
+[node name="ItemRoulette" parent="ItemBox/3DLayer" instance=ExtResource("3_xg3tb")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="ItemBox/3DLayer"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.88955)
+cull_mask = 524288
+environment = SubResource("Environment_5a2to")
+fov = 40.3
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="ItemBox/3DLayer"]
+transform = Transform3D(0.611568, 0.4818, -0.627577, 0, 0.793205, 0.608955, 0.791192, -0.372418, 0.485099, 0, 0.0729002, 2.78216)
+layers = 524288
+light_energy = 1.5
+light_cull_mask = 4294443008
+
+[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="ItemBox/3DLayer"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0729002, 2.78216)
+layers = 524288
+light_energy = 0.5
+light_cull_mask = 4294443008
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="ItemBox/3DLayer"]
+deterministic = true
+callback_mode_method = 1
+libraries = {
+"": SubResource("AnimationLibrary_ux71x")
+}
 
 [node name="Speed" type="Label" parent="."]
 layout_mode = 1
