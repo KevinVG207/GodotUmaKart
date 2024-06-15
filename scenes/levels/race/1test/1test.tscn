@@ -1,11 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://tgm0tkbghr0c"]
+[gd_scene load_steps=5 format=3 uid="uid://tgm0tkbghr0c"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_h1sbr"]
 [ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_mcgly"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_qbcyl"]
+[ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="4_j2lk3"]
 
 [node name="RaceBase" instance=ExtResource("1_h1sbr")]
 lap_count = 1
+
+[node name="Course" parent="." index="0"]
+metadata/_edit_group_ = true
 
 [node name="1test" parent="Course" index="0" instance=ExtResource("2_mcgly")]
 
@@ -44,3 +48,18 @@ is_key = true
 
 [node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_qbcyl")]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)
+
+[node name="ItemPickup" parent="." index="8" instance=ExtResource("4_j2lk3")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.7305, 1.90735e-06, -19.2348)
+
+[node name="ItemPickup2" parent="." index="9" instance=ExtResource("4_j2lk3")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.181, 1.90735e-06, -19.8046)
+
+[node name="ItemPickup3" parent="." index="10" instance=ExtResource("4_j2lk3")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 10.7742, -1.90735e-06, -23.0451)
+
+[node name="ItemPickup4" parent="." index="11" instance=ExtResource("4_j2lk3")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 14.0165, -1.90735e-06, -23.6097)
+
+[node name="ItemPickup5" parent="." index="12" instance=ExtResource("4_j2lk3")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)

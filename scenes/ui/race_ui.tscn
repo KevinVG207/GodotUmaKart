@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=9 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
@@ -56,41 +56,10 @@ tracks/1/keys = {
 }]
 }
 
-[sub_resource type="Animation" id="Animation_2yo5s"]
-resource_name = "rotate_end"
-length = 0.5
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("ItemRoulette:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0, 0, 0), Vector3(1.5708, 0, 0)]
-}
-tracks/1/type = "method"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("../..")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.5),
-"transitions": PackedFloat32Array(1),
-"values": [{
-"args": [],
-"method": &"_on_rotate_true_end"
-}]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ux71x"]
 _data = {
 "RESET": SubResource("Animation_jux7s"),
-"rotate": SubResource("Animation_sqxjf"),
-"rotate_end": SubResource("Animation_2yo5s")
+"rotate": SubResource("Animation_sqxjf")
 }
 
 [node name="RaceUI" type="Control"]

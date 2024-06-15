@@ -69,11 +69,11 @@ var trick_frames: int = 0
 @onready var trick_boost_timer: Timer = normal_boost_timer
 
 @onready var small_boost_max_speed: float = max_speed * 1.2
-@onready var small_boost_initial_accel: float = initial_accel * 3
+@onready var small_boost_initial_accel: float = initial_accel * 5
 @onready var small_boost_exponent = accel_exponent
 
 @onready var normal_boost_max_speed: float = max_speed * 1.4
-@onready var normal_boost_initial_accel: float = initial_accel * 2
+@onready var normal_boost_initial_accel: float = initial_accel * 5
 @onready var normal_boost_exponent = accel_exponent
 
 @onready var big_boost_max_speed: float = max_speed * 1.6
@@ -654,6 +654,9 @@ func handle_item():
 		UI.race_ui.set_item_texture(item.texture)
 
 func get_item():
+	if is_network:
+		return
+	
 	if item:
 		return
 	can_use_item = false
@@ -784,7 +787,8 @@ func get_state() -> Dictionary:
 	}
 
 func apply_state(state: Dictionary):
-	if state.idx <= update_idx:
+	var a = [update_idx, state.idx]
+	if update_idx > state.idx:
 		return
 	
 	update_idx = state.idx
