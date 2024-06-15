@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://djkncdwh507k1"]
+[gd_scene load_steps=8 format=3 uid="uid://djkncdwh507k1"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_ecs37"]
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="2_cairb"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_02dhb"]
 [ext_resource type="Script" path="res://scenes/control/Water.gd" id="3_6mpm6"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_6gkg7"]
+[ext_resource type="PackedScene" uid="uid://camku2r2888iy" path="res://scenes/items/GreenShell.tscn" id="6_il0fm"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ubem1"]
 size = Vector3(300, 33.77, 141.27)
@@ -246,6 +247,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.64189, 102.467, -1.24659)
 
 [node name="ItemPickup6" parent="." index="15" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.03078, 83.743, 62.2938)
+guaranteed_item = ExtResource("6_il0fm")
 
 [connection signal="body_entered" from="Course/Water" to="Course/Water" method="_on_body_entered"]
 [connection signal="body_exited" from="Course/Water" to="Course/Water" method="_on_body_exited"]

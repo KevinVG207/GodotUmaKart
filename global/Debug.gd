@@ -2,6 +2,9 @@ extends CanvasLayer
 
 @onready var rtl: RichTextLabel = $MarginContainer/RichTextLabel
 
+func _physics_process(_delta):
+	$FPS.text = "FPS: " + str(Engine.get_frames_per_second())
+
 func print(input):
 	if not rtl:
 		return

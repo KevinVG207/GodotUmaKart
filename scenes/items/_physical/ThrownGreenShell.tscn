@@ -20,7 +20,9 @@ collision_layer = 8
 wall_min_slide_angle = 0.0
 floor_stop_on_slope = false
 floor_constant_speed = true
+floor_block_on_wall = false
 floor_max_angle = 1.5708
+floor_snap_length = 0.4
 script = ExtResource("1_hhyco")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

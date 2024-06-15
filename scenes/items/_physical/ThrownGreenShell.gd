@@ -5,8 +5,7 @@ var owner_id: String
 var world: RaceBase
 
 var gravity: Vector3
-var direction: Vector3
-var target_speed: float = 25.0
+var target_speed: float = 30.0
 var despawn_time: float = 30.0
 var grace_frames: int = 10
 var cur_grace: int = 0
@@ -21,7 +20,7 @@ func _enter_tree():
 	if thrower.input_updown < 0:
 		dir_multi = -1.0
 		offset = -thrower.transform.basis.x * (thrower.vehicle_length_behind * 2)
-	direction = thrower.transform.basis.x * dir_multi
+	var direction = thrower.transform.basis.x * dir_multi
 	
 	global_position = thrower.global_position + offset
 
@@ -39,24 +38,27 @@ func _ready():
 
 func _physics_process(delta):
 	var speed = velocity.length()
-	var new_speed = move_toward(speed, target_speed, delta * 10)
+	var new_speed = move_toward(speed, target_speed, delta * 30)
 	var ratio = new_speed / speed
 	velocity *= ratio
 	
-	velocity += gravity * delta * 5
+	velocity += gravity * delta * 2
 	
 	#var ray_result = Util.raycast_for_group(self, global_position, global_position + gravity.normalized() * 1.5, "floor", [self])
 	#if not ray_result:
 		#velocity += gravity * delta * 10
 	#else:
 		#velocity += gravity * delta * 30
-	
-	look_at(global_position + direction, -gravity)
 	up_direction = -gravity.normalized()
 	move_and_slide()
 	
 	if is_on_floor():
 		velocity = velocity - velocity.project(gravity)
+	
+	if velocity.length() < 0.01:
+		velocity = Vector3(0.1, 0.1, 0.1)
+	
+	look_at(global_position + velocity.normalized(), -gravity.normalized())
 
 	for i in get_slide_collision_count():
 		var col_data = get_slide_collision(i)
@@ -64,8 +66,9 @@ func _physics_process(delta):
 		if collider.is_in_group("wall"):
 			# Bounce off walls
 			var normal = col_data.get_normal(0)
-			velocity = velocity.bounce(normal)
-	print(velocity)
+			if velocity.length() > 0.1 and velocity.normalized().dot(normal) < 0:
+				velocity = velocity.bounce(normal)
+				velocity = velocity - velocity.project(gravity.normalized())
 	
 	cur_grace += 1
 

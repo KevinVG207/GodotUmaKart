@@ -276,11 +276,13 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				else:
 					in_drift = true
 			
-			if in_trick and trick_frames > 2:
+			if in_trick:
 				in_trick = false
+				if trick_frames > 5:
+					trick_boost_timer.start(trick_boost_duration)
 				trick_frames = 0
 				#Debug.print(["Starting trick boost", trick_boost_timer])
-				trick_boost_timer.start(trick_boost_duration)
+				
 		
 		if collider.is_in_group("boost"):
 			normal_boost_timer.start(normal_boost_duration)
@@ -665,14 +667,17 @@ func handle_item():
 		can_use_item = true
 		UI.race_ui.set_item_texture(item.texture)
 
-func get_item():
+func get_item(guaranteed_item: PackedScene = null):
 	if is_network:
 		return
 	
 	if item:
 		return
 	can_use_item = false
-	item = Global.items.pick_random().instantiate()
+	if guaranteed_item:
+		item = guaranteed_item.instantiate()
+	else:
+		item = Global.items.pick_random().instantiate()
 	world.add_child(item)
 	$ItemRouletteTimer.start(4)
 	if is_player:

@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://global/Debug.gd" id="1_gxon6"]
 
 [node name="Debug" type="CanvasLayer"]
-layer = 100
+layer = 128
 script = ExtResource("1_gxon6")
 
 [node name="EraseTimer" type="Timer" parent="."]
@@ -17,12 +17,17 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 5
+theme_override_constants/margin_top = 25
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 5
 
 [node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer"]
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 20
+
+[node name="FPS" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "FPS: 0"
 
 [connection signal="timeout" from="EraseTimer" to="." method="_on_erase_timer_timeout"]

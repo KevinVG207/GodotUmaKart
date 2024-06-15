@@ -13,15 +13,15 @@ func _physics_process(_delta):
 		world.make_physical_item("thrown_green_shell", world.players_dict[owner_id])
 		return
 	
-	var ray_start = vehicle.global_position + (-vehicle.transform.basis.x * (vehicle.vehicle_length_behind + 0.5))
-	ray_start += vehicle.transform.basis.y * 0.5
-	var ray_end = ray_start + -vehicle.transform.basis.y * (0.5 + vehicle.vehicle_height_below + 0.1)
+	var ray_start = vehicle.prev_transform.origin + (-vehicle.prev_transform.basis.x * (vehicle.vehicle_length_behind + 0.5))
+	ray_start += vehicle.prev_transform.basis.y * 0.5
+	var ray_end = ray_start + -vehicle.prev_transform.basis.y * (0.5 + vehicle.vehicle_height_below + 0.1)
 	var ray_hit = Util.raycast_for_group(self, ray_start, ray_end, "floor", [self])
 	var new_pos = ray_end
 	if ray_hit:
 		new_pos = ray_hit["position"]
 	global_position = new_pos
-	global_rotation = vehicle.global_rotation
+	transform.basis = vehicle.prev_transform.basis
 
 func get_state() -> Dictionary:
 	return {}
