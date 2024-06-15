@@ -29,6 +29,8 @@ var input_steer: float = 0
 var input_trick: bool = false
 var input_mirror: bool = false
 var input_item: bool = false
+var input_item_just: bool = false
+var input_updown: float = 0
 
 @export var max_speed: float = 20
 @onready var cur_max_speed = 20
@@ -86,7 +88,7 @@ var trick_frames: int = 0
 
 @export var vehicle_length_ahead: float = 1.0
 @export var vehicle_length_behind: float = 1.0
-@export var vehicle_width_bottom: float = 0.5
+@export var vehicle_height_below: float = 0.5
 
 var stick_speed: float = 100
 var stick_distance: float = 0.5
@@ -195,6 +197,8 @@ func handle_input():
 		input_trick = false
 		input_mirror = false
 		input_item = false
+		input_item_just = false
+		input_updown = 0.0
 		return
 	
 	if is_player and get_window().has_focus():
@@ -203,7 +207,9 @@ func handle_input():
 		input_steer = Input.get_axis("right", "left")
 		input_trick = Input.is_action_pressed("trick")
 		input_mirror = Input.is_action_pressed("mirror")
-		input_item = Input.is_action_just_pressed("item")
+		input_item = Input.is_action_pressed("item")
+		input_item_just = Input.is_action_just_pressed("item")
+		input_updown = Input.get_axis("down", "up")
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	handle_input()
@@ -631,13 +637,19 @@ func handle_item():
 	if not is_player:
 		return
 	
-	if not input_item:
+	if not input_item_just:
 		return
 	
 	if not can_use_item:
 		if not $ItemRouletteTimer.is_stopped():
 			# User pressed item button while roulette is running.
-			$ItemRouletteTimer.start(max($ItemRouletteTimer.time_left - 0.5, 0))
+			print($ItemRouletteTimer.time_left)
+			var new_time = $ItemRouletteTimer.time_left - 0.5
+			if new_time < 0:
+				$ItemRouletteTimer.stop()
+				_on_item_roulette_timer_timeout()
+			else:
+				$ItemRouletteTimer.start(new_time)
 		return
 	
 	if not item:
@@ -665,6 +677,7 @@ func get_item():
 	$ItemRouletteTimer.start(4)
 	if is_player:
 		UI.race_ui.start_roulette()
+
 
 func _on_item_roulette_timer_timeout():
 	if not item:

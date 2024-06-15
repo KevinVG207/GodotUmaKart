@@ -15,6 +15,9 @@ var removed_player_ids: Array = []
 var starting_order: Array = []
 var spectate: bool = false
 var timer_tick: int = 0
+var physical_item_counter = 0
+var physical_items: Dictionary = {}
+var deleted_physical_items: Array = []
 
 @export var start_offset_z: float = 2
 @export var start_offset_x: float = 3
@@ -129,6 +132,29 @@ func _process(_delta):
 func change_state(new_state: int, state_func: Callable = Callable()):
 	state = new_state
 	state_func.call()
+
+func make_physical_item(key: String, player: Vehicle3) -> Node:
+	if not player.is_player:
+		return
+
+	physical_item_counter += 1
+	var unique_key = player_user_id + str(physical_item_counter)
+	var instance = Global.physical_items[key].instantiate()
+	instance.item_id = unique_key
+	instance.owner_id = player_user_id
+	instance.world = self
+	physical_items[unique_key] = instance
+	$Items.add_child(instance)
+	return instance
+
+func destroy_physical_item(key: String):
+	if key in deleted_physical_items:
+		return
+	var instance = physical_items[key]
+	physical_items.erase(key)
+	instance.queue_free()
+	deleted_physical_items.append(key)
+
 
 func _physics_process(_delta):
 	match state:

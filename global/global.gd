@@ -1,6 +1,7 @@
 extends Node
 
 var randPing = 0
+var unique_string = OS.get_unique_id()
 
 const MODE1_OFFLINE = 0
 const MODE1_ONLINE = 1
@@ -21,8 +22,14 @@ var trick_col_to_node = {
 var items: Array = [
 	load("res://scenes/items/1carrot.tscn"),
 	#preload("res://scenes/items/2carrots.tscn"),
-	load("res://scenes/items/3carrots.tscn")
+	load("res://scenes/items/3carrots.tscn"),
+	load("res://scenes/items/GreenShell.tscn")
 ]
+
+var physical_items: Dictionary = {
+	"green_shell": load("res://scenes/items/_physical/DraggedGreenShell.tscn"),
+	"thrown_green_shell": load("res://scenes/items/_physical/ThrownGreenShell.tscn")
+}
 
 var item_tex: Array = []
 

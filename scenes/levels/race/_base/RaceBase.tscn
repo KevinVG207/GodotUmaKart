@@ -17,6 +17,8 @@ metadata/_edit_lock_ = true
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 
+[node name="Items" type="Node3D" parent="."]
+
 [node name="PlayerCamera" parent="." instance=ExtResource("3_70vu5")]
 cull_mask = 524287
 current = true
