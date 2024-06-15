@@ -18,12 +18,17 @@ var rank: int = 0
 var finished: bool = false
 var finish_time: float = 0
 var username: String = "Player"
+var world: RaceBase
+
+var item: ItemBase = null
+var can_use_item: bool = false
 
 var input_accel: bool = false
 var input_brake: bool = false
 var input_steer: float = 0
 var input_trick: bool = false
 var input_mirror: bool = false
+var input_item: bool = false
 
 @export var max_speed: float = 20
 @onready var cur_max_speed = 20
@@ -57,7 +62,11 @@ var trick_cooldown_time: float = 0.3
 @export var trick_force: float = 1.0
 var in_trick: bool = false
 var trick_frames: int = 0
-@onready var trick_boost_timer: Timer = $NormalBoostTimer
+
+@onready var small_boost_timer: Timer = $SmallBoostTimer
+@onready var normal_boost_timer: Timer = $NormalBoostTimer
+@onready var big_boost_timer: Timer = $BigBoostTimer
+@onready var trick_boost_timer: Timer = normal_boost_timer
 
 @onready var small_boost_max_speed: float = max_speed * 1.2
 @onready var small_boost_initial_accel: float = initial_accel * 3
@@ -139,7 +148,6 @@ var colliding_vehicles: Dictionary = {}
 	#if is_multiplayer_authority():
 		#is_player = true
 		#is_cpu = false
-	
 
 func _ready():
 	pass
@@ -149,6 +157,12 @@ func _ready():
 		#var wheel_marker = Marker3D.new()
 		#wheel_marker.transform = wheel.transform
 		#wheel_markers.append(wheel_marker)
+
+func make_player():
+	is_cpu = false
+	is_network = false
+	is_player = true
+	UI.race_ui.roulette_ended.connect(_on_roulette_stop)
 
 func set_finished(_finish_time: float):
 	finished = true
@@ -180,6 +194,7 @@ func handle_input():
 		input_steer = 0.0
 		input_trick = false
 		input_mirror = false
+		input_item = false
 		return
 	
 	if is_player and get_window().has_focus():
@@ -188,6 +203,7 @@ func handle_input():
 		input_steer = Input.get_axis("right", "left")
 		input_trick = Input.is_action_pressed("trick")
 		input_mirror = Input.is_action_pressed("mirror")
+		input_item = Input.is_action_just_pressed("item")
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	handle_input()
@@ -261,15 +277,15 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				trick_boost_timer.start(trick_boost_duration)
 		
 		if collider.is_in_group("boost"):
-			$NormalBoostTimer.start(normal_boost_duration)
+			normal_boost_timer.start(normal_boost_duration)
 		
 		if collider.is_in_group("trick"):
 			$TrickTimer.start(trick_cooldown_time)
-			trick_boost_timer = $NormalBoostTimer
+			trick_boost_timer = normal_boost_timer
 			trick_boost_duration = normal_boost_duration
 		if collider.is_in_group("small_trick"):
 			$TrickTimer.start(trick_cooldown_time)
-			trick_boost_timer = $SmallBoostTimer
+			trick_boost_timer = small_boost_timer
 			trick_boost_duration = small_boost_duration
 		
 		if collider.is_in_group("wall"):
@@ -386,7 +402,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	else:
 		if drift_gauge >= drift_gauge_max:
 			# Drift turbo
-			$SmallBoostTimer.start(small_boost_duration)
+			small_boost_timer.start(small_boost_duration)
 		drift_gauge = 0.0
 	#Debug.print(drift_gauge)
 	
@@ -428,6 +444,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	handle_vehicle_collisions(delta)
 
 	handle_particles()
+	handle_item()
 	# handle_wheels()
 
 	grounded = false
@@ -469,7 +486,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 				still_turbo_ready = false
 				# Perform miniturbo.
 				#Debug.print("Performing miniturbo")
-				$SmallBoostTimer.start(small_boost_duration)
+				small_boost_timer.start(small_boost_duration)
 				
 			cur_speed += get_accel_speed(delta)
 		elif is_brake and grounded:
@@ -544,11 +561,11 @@ func get_friction_speed(delta: float) -> float:
 
 
 func get_boost_speed(delta: float) -> float:
-	if not $NormalBoostTimer.is_stopped():
+	if not normal_boost_timer.is_stopped():
 		# Normal boost is active
 		return Util.get_vehicle_accel(normal_boost_max_speed, cur_speed, normal_boost_initial_accel, normal_boost_exponent) * delta
 
-	if not $SmallBoostTimer.is_stopped():
+	if not small_boost_timer.is_stopped():
 		# Small boost is active
 		return Util.get_vehicle_accel(small_boost_max_speed, cur_speed, small_boost_initial_accel, small_boost_exponent) * delta
 	
@@ -610,6 +627,56 @@ func handle_drift_particles():
 	elif still_turbo_ready:
 		$DriftParticles/CenterCharged.visible = true
 
+func handle_item():
+	if not is_player:
+		return
+	
+	if not input_item:
+		return
+	
+	if not can_use_item:
+		if not $ItemRouletteTimer.is_stopped():
+			# User pressed item button while roulette is running.
+			$ItemRouletteTimer.start(max($ItemRouletteTimer.time_left - 0.5, 0))
+		return
+	
+	if not item:
+		return
+
+	var new_item: ItemBase = item.use(self, world)
+	item = new_item
+	
+	if not item:
+		can_use_item = false
+		UI.race_ui.hide_roulette()
+	else:
+		can_use_item = true
+		UI.race_ui.set_item_texture(item.texture)
+
+func get_item():
+	if item:
+		return
+	can_use_item = false
+	item = Global.items.pick_random().instantiate()
+	world.add_child(item)
+	$ItemRouletteTimer.start(4)
+	if is_player:
+		UI.race_ui.start_roulette()
+
+func _on_item_roulette_timer_timeout():
+	if not item:
+		print("Error: Roulette stopped but no item assigned!")
+		return
+	
+	if not is_player:
+		can_use_item = true
+		return
+	
+	UI.race_ui.stop_roulette(item.texture)
+
+func _on_roulette_stop():
+	can_use_item = true
+
 # func _physics_process(delta):
 # 	handle_wheels(delta)
 
@@ -641,7 +708,7 @@ func _process(delta):
 		UI.race_ui.update_speed(spd)
 		
 		if cur_speed > max_speed:
-			extra_fov = (cur_speed - max_speed) * 0.25
+			extra_fov = (cur_speed - max_speed) * 0.3
 		else:
 			extra_fov = 0.0
 	

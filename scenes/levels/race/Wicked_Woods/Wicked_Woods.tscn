@@ -244,5 +244,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.59691, 102.752, 0.929933)
 [node name="ItemPickup5" parent="." index="13" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.64189, 102.467, -1.24659)
 
+[node name="ItemPickup6" parent="." index="15" instance=ExtResource("5_6gkg7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.03078, 83.743, 62.2938)
+
 [connection signal="body_entered" from="Course/Water" to="Course/Water" method="_on_body_entered"]
 [connection signal="body_exited" from="Course/Water" to="Course/Water" method="_on_body_exited"]

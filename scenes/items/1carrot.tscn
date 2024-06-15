@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://dvyn4jyqv7r48"]
+
+[ext_resource type="Script" path="res://scenes/items/1carrot.gd" id="1_v1ube"]
+[ext_resource type="Texture2D" uid="uid://b134jwnm6l5qe" path="res://assets/items/1carrot.png" id="2_pucap"]
+
+[node name="1Carrot" type="Node"]
+script = ExtResource("1_v1ube")
+texture = ExtResource("2_pucap")

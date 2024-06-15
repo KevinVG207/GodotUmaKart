@@ -18,9 +18,23 @@ var trick_col_to_node = {
 	"small_trick": "SmallBoostTimer"
 }
 
+var items: Array = [
+	load("res://scenes/items/1carrot.tscn"),
+	#preload("res://scenes/items/2carrots.tscn"),
+	load("res://scenes/items/3carrots.tscn")
+]
+
+var item_tex: Array = []
+
 func _enter_tree():
 	#TranslationServer.set_locale("ja")
 	return
+
+func _ready():
+	for item: PackedScene in items:
+		var instance = item.instantiate()
+		item_tex.append(instance.texture)
+		instance.queue_free()
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:

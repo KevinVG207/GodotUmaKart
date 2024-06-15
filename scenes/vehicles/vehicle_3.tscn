@@ -169,6 +169,9 @@ one_shot = true
 [node name="NormalBoostTimer" type="Timer" parent="."]
 one_shot = true
 
+[node name="BigBoostTimer" type="Timer" parent="."]
+one_shot = true
+
 [node name="TrickTimer" type="Timer" parent="."]
 one_shot = true
 
@@ -349,6 +352,10 @@ mesh = SubResource("CylinderMesh_w6knp")
 [node name="Front" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 
+[node name="ItemRouletteTimer" type="Timer" parent="."]
+one_shot = true
+
 [connection signal="area_entered" from="PlayerCollision" to="." method="_on_player_collision_area_entered"]
 [connection signal="area_exited" from="PlayerCollision" to="." method="_on_player_collision_area_exited"]
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]
+[connection signal="timeout" from="ItemRouletteTimer" to="." method="_on_item_roulette_timer_timeout"]

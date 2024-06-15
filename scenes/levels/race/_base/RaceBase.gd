@@ -232,6 +232,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 	new_vehicle.teleport(new_position, look_dir, up_dir)
 	new_vehicle.axis_lock()
 	new_vehicle.is_player = false
+	new_vehicle.world = self
 	
 	match Global.MODE1:
 		Global.MODE1_OFFLINE:
@@ -244,8 +245,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 			new_vehicle.username = "Network Player"
 	
 	if user_id == player_user_id:
-		new_vehicle.is_player = true
-		new_vehicle.is_network = false
+		new_vehicle.make_player()
 		player_vehicle = new_vehicle
 		$PlayerCamera.target = new_vehicle
 		new_vehicle.username = "Player"
