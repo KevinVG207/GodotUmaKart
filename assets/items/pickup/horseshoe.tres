@@ -4,9 +4,13 @@
 resource_name = "horseshoe"
 transparency = 4
 diffuse_mode = 3
+specular_mode = 1
 albedo_color = Color(0.906332, 0, 0.750355, 0.7)
+metallic = 0.44
+metallic_specular = 1.0
 roughness = 0.0
 emission_enabled = true
-emission = Color(0.735357, 0.0230984, 0.550258, 1)
+emission = Color(0.858763, 0.0594887, 0.645643, 1)
+emission_energy_multiplier = 1.5
 disable_receive_shadows = true
 billboard_keep_scale = true

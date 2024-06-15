@@ -7,35 +7,6 @@
 height = 2.25
 radius = 0.788274
 
-[sub_resource type="Animation" id="Animation_fn0sn"]
-resource_name = "hover"
-length = 8.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("ItemPickup:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(1, 4.9),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector3(0, 0.139626, 0.0349066), Vector3(0, -0.139626, -0.0349066)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("ItemPickup:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 2, 4, 6.1),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
-"update": 0,
-"values": [Vector3(0, 1, 0), Vector3(0, 1.35, 0), Vector3(0, 1, 0), Vector3(0, 1.35, 0)]
-}
-
 [sub_resource type="Animation" id="Animation_aw7da"]
 length = 0.001
 tracks/0/type = "value"
@@ -63,6 +34,35 @@ tracks/1/keys = {
 "values": [Vector3(0, 1, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_fn0sn"]
+resource_name = "hover"
+length = 8.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ItemPickup:rotation")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(1, 4.9),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0.139626, 0.0349066), Vector3(0, -0.139626, -0.0349066)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ItemPickup:position")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2, 4, 6.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 1, 0), Vector3(0, 1.35, 0), Vector3(0, 1, 0), Vector3(0, 1.35, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_fb0da"]
 _data = {
 "RESET": SubResource("Animation_aw7da"),
@@ -88,6 +88,7 @@ callback_mode_process = 0
 libraries = {
 "": SubResource("AnimationLibrary_fb0da")
 }
+autoplay = "hover"
 
 [node name="RespawnTimer" type="Timer" parent="."]
 wait_time = 5.0

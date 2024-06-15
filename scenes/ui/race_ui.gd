@@ -12,10 +12,10 @@ func update_countdown(cd):
 	$Countdown.text = str(cd)
 
 func set_max_laps(laps):
-	$LapCountContainer/MarginContainer/MaxLaps.text = "/%d" % int(max(laps, 0))
+	$LapCountContainer/MarginContainer/MaxLaps.text = "/%d" % int(max(laps, 1))
 
 func set_cur_lap(lap):
-	$LapCountContainer/CurLap.text = tr("RACE_LAP") % int(max(lap, 0))
+	$LapCountContainer/CurLap.text = tr("RACE_LAP") % int(max(lap, 1))
 
 func finished():
 	$Finished.visible = true
