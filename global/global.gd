@@ -19,7 +19,8 @@ var trick_col_to_node = {
 }
 
 func _enter_tree():
-	TranslationServer.set_locale("ja")
+	#TranslationServer.set_locale("ja")
+	return
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:

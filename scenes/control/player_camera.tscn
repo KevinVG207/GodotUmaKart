@@ -1,26 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://d0dhk013x7kj1"]
+[gd_scene load_steps=4 format=3 uid="uid://d0dhk013x7kj1"]
 
 [ext_resource type="Script" path="res://scenes/control/player_camera.gd" id="1_rf2un"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wyxeu"]
-sky_top_color = Color(5.77569e-07, 0.622787, 0.968066, 1)
-sky_horizon_color = Color(0.577675, 0.844434, 1, 1)
-ground_bottom_color = Color(0.318745, 0.516423, 0.932357, 1)
-ground_horizon_color = Color(0.2302, 0.55642, 0.867941, 1)
-
-[sub_resource type="Sky" id="Sky_d7v63"]
-sky_material = SubResource("ProceduralSkyMaterial_wyxeu")
-
-[sub_resource type="Environment" id="Environment_36oa2"]
-background_mode = 2
-sky = SubResource("Sky_d7v63")
-ambient_light_source = 2
-ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 0.1
-reflected_light_source = 1
-ssao_enabled = true
-ssao_intensity = 1.0
-ssil_enabled = true
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_xuuqo"]
 radius = 0.2
@@ -31,7 +11,6 @@ height = 0.4
 
 [node name="PlayerCamera" type="Camera3D"]
 transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, 0, 0, 0)
-environment = SubResource("Environment_36oa2")
 script = ExtResource("1_rf2un")
 
 [node name="CameraArea" type="Area3D" parent="."]
