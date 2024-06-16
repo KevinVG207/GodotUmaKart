@@ -6,6 +6,9 @@
 
 [node name="RaceBase" type="Node3D"]
 script = ExtResource("1_2b6un")
+start_offset_z = null
+start_offset_x = null
+lap_count = null
 
 [node name="Course" type="Node3D" parent="."]
 metadata/_edit_lock_ = true
