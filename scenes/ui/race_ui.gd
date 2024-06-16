@@ -6,11 +6,14 @@ signal roulette_ended
 
 @export var info_box_scene: PackedScene
 @onready var back_btn: Button = $BackToLobby
+@export var nametag_scene: PackedScene
 
 var last_item_texture: CompressedTexture2D = null
 var last_rotation: bool = false
 var roulette_end: bool = false
 var roulette_stop: bool = false
+
+var nametags: Dictionary = {}
 
 func _ready():
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item2").texture = Global.item_tex.pick_random()
@@ -103,3 +106,20 @@ func _on_rotate_end():
 
 func _on_rotate_true_end():
 	roulette_ended.emit()
+
+func show_nametag(user_id: String, username: String, coords: Vector2):
+	if not user_id in nametags:
+		var nt = nametag_scene.instantiate()
+		$Nametags.add_child(nt)
+		nt.username.text = username
+		nametags[user_id] = nt
+	
+	var cur_nt = nametags[user_id]
+	cur_nt.position = coords
+	cur_nt.visible = true
+
+func hide_nametag(user_id):
+	if not user_id in nametags:
+		return
+	
+	nametags[user_id].visible = false

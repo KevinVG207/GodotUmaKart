@@ -653,7 +653,6 @@ func handle_item():
 	if not can_use_item:
 		if not $ItemRouletteTimer.is_stopped():
 			# User pressed item button while roulette is running.
-			print($ItemRouletteTimer.time_left)
 			var new_time = $ItemRouletteTimer.time_left - 0.5
 			if new_time < 0:
 				$ItemRouletteTimer.stop()

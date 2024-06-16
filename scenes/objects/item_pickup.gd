@@ -12,8 +12,7 @@ func _ready():
 func _on_body_entered(body):
 	if not body is Vehicle3:
 		return
-	
-	print("Colliding with ", body)
+
 	$CollisionShape3D.set_deferred("disabled", true)
 	$ItemPickup.visible = false
 	$RespawnTimer.start()

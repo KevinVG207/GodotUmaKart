@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=10 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
 [ext_resource type="PackedScene" uid="uid://b4ktan2k4miry" path="res://scenes/ui/item_roulette.tscn" id="3_xg3tb"]
+[ext_resource type="PackedScene" uid="uid://2ani3pyd27xg" path="res://scenes/ui/nametag.tscn" id="4_5a5qs"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_5eh43"]
 viewport_path = NodePath("ItemBox/Viewport")
@@ -71,6 +72,12 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_23b1w")
 info_box_scene = ExtResource("2_64c26")
+nametag_scene = ExtResource("4_5a5qs")
+
+[node name="Nametags" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="ItemBox" type="TextureRect" parent="."]
 visible = false

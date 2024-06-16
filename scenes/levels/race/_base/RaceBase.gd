@@ -133,6 +133,40 @@ func _process(_delta):
 					spectator_index = players_dict.size()-1
 			
 			$PlayerCamera.target = players_dict.values()[spectator_index]
+	
+	if $PlayerCamera.target:
+		if state == STATE_RACE_OVER or state in UPDATE_STATES and player_vehicle.finished:
+			for user_id: String in players_dict.keys():
+				UI.race_ui.hide_nametag(user_id)
+		elif state == STATE_RACE:
+			# Display nametags.
+			var exclude_list: Array = []
+			for vehicle: Vehicle3 in players_dict.values():
+				exclude_list.append(vehicle.get_rid())
+			
+			for user_id: String in players_dict.keys():
+				var vehicle = players_dict[user_id] as Vehicle3
+				if vehicle == player_vehicle:
+					continue
+				var nametag_pos = vehicle.transform.origin + ($PlayerCamera.transform.basis.y * 1.5) as Vector3
+				var second_check = nametag_pos - ($PlayerCamera.transform.basis.z * 2.0)
+				if nametag_pos.distance_to($PlayerCamera.global_position) > 75 or not $PlayerCamera.is_position_in_frustum(nametag_pos) or not $PlayerCamera.is_position_in_frustum(second_check):
+					UI.race_ui.hide_nametag(user_id)
+					continue
+				
+				# Raycast between camera pos and nametag_pos. If anything is in-between, don't render the nametag.
+				var ray_result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create($PlayerCamera.global_position, nametag_pos, 0xFFFFFFFF, exclude_list))
+				if ray_result:
+					UI.race_ui.hide_nametag(user_id)
+					continue
+				
+				var screen_pos = $PlayerCamera.unproject_position(nametag_pos)
+				
+				if screen_pos.x < 100 or screen_pos.x > 1280-100 or screen_pos.y < 50 or screen_pos.y > 720-100:
+					UI.race_ui.hide_nametag(user_id)
+					continue
+				
+				UI.race_ui.show_nametag(user_id, vehicle.username, screen_pos)
 
 
 func change_state(new_state: int, state_func: Callable = Callable()):
