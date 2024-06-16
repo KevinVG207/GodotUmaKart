@@ -37,6 +37,10 @@ func _ready():
 	$DespawnTimer.start(despawn_time)
 
 func _physics_process(delta):
+	if item_id in world.deleted_physical_items:
+		self.queue_free()
+		return
+	
 	var speed = velocity.length()
 	var new_speed = move_toward(speed, target_speed, delta * 30)
 	var ratio = new_speed / speed
@@ -74,9 +78,18 @@ func _physics_process(delta):
 
 
 func get_state() -> Dictionary:
-	return {}
+	return {
+		"pos": Util.to_array(global_position),
+		"rot": Util.to_array(global_rotation),
+		"velocity": Util.to_array(velocity),
+		"gravity": Util.to_array(gravity)
+	}
 	
 func set_state(state: Dictionary):
+	global_position = Util.to_vector3(state.pos)
+	global_rotation = Util.to_vector3(state.rot)
+	velocity = Util.to_vector3(state.velocity)
+	gravity = Util.to_vector3(state.gravity)
 	return
 
 

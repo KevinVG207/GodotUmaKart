@@ -166,13 +166,20 @@ func spawn_physical_item(data: Dictionary):
 	if key in deleted_physical_items:
 		return
 	
+	# Ignore already owned items
+	if owner_id == player_user_id:
+		return
+	
+	if key in physical_items.keys():
+		return
+	
 	var instance = Global.physical_items[item_type].instantiate()
 	instance.item_id = key
 	instance.owner_id = owner_id
 	instance.world = self
 	physical_items[key] = instance
 	$Items.add_child(instance)
-	instance.apply_state(item_state)
+	instance.set_state(item_state)
 
 
 func destroy_physical_item(key: String):
@@ -190,6 +197,10 @@ func server_destroy_physical_item(data: Dictionary):
 	var key = data["uniqueId"]
 	if key in deleted_physical_items:
 		return
+	
+	if not key in physical_items.keys():
+		return
+
 	var instance = physical_items[key]
 	physical_items.erase(key)
 	instance.queue_free()
@@ -212,9 +223,15 @@ func apply_item_state(data: Dictionary):
 	if key in deleted_physical_items:
 		return
 	
+	if not key in physical_items.keys():
+		return
+	
+	if owner_id == player_user_id:
+		return
+	
 	var instance = physical_items[key]
 	instance.owner_id = owner_id
-	instance.apply_state(item_state)
+	instance.set_state(item_state)
 
 
 func _physics_process(_delta):
