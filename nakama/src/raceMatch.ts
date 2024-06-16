@@ -61,6 +61,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             emptyTimeout: emptyTimeout,
             vehicles: {},
             physicalItems: {},
+            destroyedItems: [],
             started: false,
             label: label,
             startingIds: JSON.parse(params.startingIds) as string[],
@@ -384,6 +385,11 @@ function determineFinishOrder(state: nkruntime.MatchState, logger: nkruntime.Log
 
 function handle_spawn_item(message: nkruntime.MatchMessage, data: any, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher, logger: nkruntime.Logger) {
     let uniqueId = data.uniqueId;
+
+    if (uniqueId in state.physicalItems) {
+        return;
+    }
+
     let item: PhysicalItem = {
         uniqueId: uniqueId,
         ownerId: message.sender.userId,
@@ -399,8 +405,13 @@ function handle_spawn_item(message: nkruntime.MatchMessage, data: any, state: nk
 function handle_destroy_item(message: nkruntime.MatchMessage, data: any, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher, logger: nkruntime.Logger) {
     let uniqueId = data.uniqueId;
 
+    if (state.destroyedItems.includes(uniqueId)) {
+        return;
+    }
+
     if (uniqueId in state.physicalItems) {
         delete state.physicalItems[uniqueId];
+        state.destroyedItems.push(uniqueId);
     }
 
     dispatcher.broadcastMessage(raceOp.SERVER_DESTROY_ITEM, JSON.stringify({ uniqueId: uniqueId }), null, null);
@@ -408,6 +419,10 @@ function handle_destroy_item(message: nkruntime.MatchMessage, data: any, state: 
 
 function handle_item_state(message: nkruntime.MatchMessage, data: any, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher, logger: nkruntime.Logger) {
     let uniqueId = data.uniqueId;
+
+    if (state.destroyedItems.includes(uniqueId)) {
+        return;
+    }
 
     if (uniqueId in state.physicalItems) {
         state.physicalItems[uniqueId].state = data.state;
