@@ -46,6 +46,12 @@ class raceOp:
 	const SERVER_RACE_OVER = 8
 	const SERVER_CLIENT_DISCONNECT = 9
 	const SERVER_ABORT = 10
+	const CLIENT_SPAWN_ITEM = 11
+	const CLIENT_DESTROY_ITEM = 12
+	const SERVER_SPAWN_ITEM = 13
+	const SERVER_DESTROY_ITEM = 14
+	const CLIENT_ITEM_STATE = 15
+	const SERVER_ITEM_STATE = 16
 
 class finishType:
 	const NORMAL = 0
@@ -145,15 +151,87 @@ func make_physical_item(key: String, player: Vehicle3) -> Node:
 	instance.world = self
 	physical_items[unique_key] = instance
 	$Items.add_child(instance)
+
+	Network.send_match_state(raceOp.CLIENT_SPAWN_ITEM, {"uniqueId": unique_key, "type": key, "state": instance.get_state()})
+
 	return instance
+
+
+func spawn_physical_item(data: Dictionary):
+	var key = data["uniqueId"]
+	var owner_id = data["ownerId"]
+	var item_type = data["type"]
+	var item_state = data["state"]
+
+	if key in deleted_physical_items:
+		return
+	
+	# Ignore already owned items
+	if owner_id == player_user_id:
+		return
+	
+	if key in physical_items.keys():
+		return
+	
+	var instance = Global.physical_items[item_type].instantiate()
+	instance.item_id = key
+	instance.owner_id = owner_id
+	instance.world = self
+	physical_items[key] = instance
+	$Items.add_child(instance)
+	instance.set_state(item_state)
+
 
 func destroy_physical_item(key: String):
 	if key in deleted_physical_items:
 		return
 	var instance = physical_items[key]
+
 	physical_items.erase(key)
 	instance.queue_free()
 	deleted_physical_items.append(key)
+	Network.send_match_state(raceOp.CLIENT_DESTROY_ITEM, {"uniqueId": key})
+
+
+func server_destroy_physical_item(data: Dictionary):
+	var key = data["uniqueId"]
+	if key in deleted_physical_items:
+		return
+	
+	if not key in physical_items.keys():
+		return
+
+	var instance = physical_items[key]
+	physical_items.erase(key)
+	instance.queue_free()
+	deleted_physical_items.append(key)
+
+
+func send_item_state(item: Node):
+	# Only the owner can send the state
+	if not item.owner_id == player_user_id:
+		return
+	
+	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {"uniqueId": item.item_id, "state": item.get_state()})
+
+
+func apply_item_state(data: Dictionary):
+	var key = data["uniqueId"]
+	var owner_id = data["ownerId"]
+	var item_state = data["state"]
+
+	if key in deleted_physical_items:
+		return
+	
+	if not key in physical_items.keys():
+		return
+	
+	if owner_id == player_user_id:
+		return
+	
+	var instance = physical_items[key]
+	instance.owner_id = owner_id
+	instance.set_state(item_state)
 
 
 func _physics_process(_delta):
@@ -202,6 +280,11 @@ func _physics_process(_delta):
 					var vehicle_data: Dictionary = player_vehicle.get_state()
 					Network.send_match_state(raceOp.CLIENT_UPDATE_VEHICLE_STATE, vehicle_data)
 					#player_vehicle.call_deferred("upload_data")
+				
+				for unique_id in physical_items.keys():
+					var item = physical_items[unique_id]
+					if item.owner_id == player_user_id:
+						send_item_state(item)
 		
 		check_finished()
 
@@ -548,6 +631,12 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			Network.ready_match = data.matchId
 			finish_order = data.finishOrder
 			state = STATE_READY_FOR_RANKINGS
+		raceOp.SERVER_SPAWN_ITEM:
+			spawn_physical_item(data)
+		raceOp.SERVER_DESTROY_ITEM:
+			server_destroy_physical_item(data)
+		raceOp.SERVER_ITEM_STATE:
+			apply_item_state(data)		
 		raceOp.SERVER_ABORT:
 			get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
 		_:

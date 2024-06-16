@@ -8,13 +8,26 @@ enum raceOp {
     CLIENT_READY = 7,
     SERVER_RACE_OVER = 8,
     SERVER_CLIENT_DISCONNECT = 9,
-    SERVER_ABORT = 10
+    SERVER_ABORT = 10,
+    CLIENT_SPAWN_ITEM = 11,
+    CLIENT_DESTROY_ITEM = 12,
+    SERVER_SPAWN_ITEM = 13,
+    SERVER_DESTROY_ITEM = 14,
+    CLIENT_ITEM_STATE = 15,
+    SERVER_ITEM_STATE = 16,
 }
 
 
 enum finishType {
     NORMAL = 0,
     TIMEOUT = 1
+}
+
+interface PhysicalItem {
+    uniqueId: string;
+    ownerId: string;
+    type: string;
+    state: any;
 }
 
 
@@ -47,6 +60,8 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             tickRate: tickRate,
             emptyTimeout: emptyTimeout,
             vehicles: {},
+            physicalItems: {},
+            destroyedItems: [],
             started: false,
             label: label,
             startingIds: JSON.parse(params.startingIds) as string[],
@@ -224,6 +239,15 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
                     state.ready = true;
                 }
                 break;
+            case raceOp.CLIENT_SPAWN_ITEM:
+                handle_spawn_item(message, data, state, dispatcher, logger);
+                break;
+            case raceOp.CLIENT_DESTROY_ITEM:
+                handle_destroy_item(message, data, state, dispatcher, logger);
+                break;
+            case raceOp.CLIENT_ITEM_STATE:
+                handle_item_state(message, data, state, dispatcher, logger);
+                break;
             default:
                 logger.warn("Unrecognized operation code", opCode);
                 break;
@@ -357,4 +381,53 @@ function determineFinishOrder(state: nkruntime.MatchState, logger: nkruntime.Log
     }
 
     return userIds;
+}
+
+function handle_spawn_item(message: nkruntime.MatchMessage, data: any, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher, logger: nkruntime.Logger) {
+    let uniqueId = data.uniqueId;
+
+    if (uniqueId in state.physicalItems) {
+        return;
+    }
+
+    let item: PhysicalItem = {
+        uniqueId: uniqueId,
+        ownerId: message.sender.userId,
+        type: data.type,
+        state: data.state
+    };
+
+    state.physicalItems[uniqueId] = item;
+
+    dispatcher.broadcastMessage(raceOp.SERVER_SPAWN_ITEM, JSON.stringify(item), null, null);
+}
+
+function handle_destroy_item(message: nkruntime.MatchMessage, data: any, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher, logger: nkruntime.Logger) {
+    let uniqueId = data.uniqueId;
+
+    if (state.destroyedItems.includes(uniqueId)) {
+        return;
+    }
+
+    if (uniqueId in state.physicalItems) {
+        delete state.physicalItems[uniqueId];
+        state.destroyedItems.push(uniqueId);
+    }
+
+    dispatcher.broadcastMessage(raceOp.SERVER_DESTROY_ITEM, JSON.stringify({ uniqueId: uniqueId }), null, null);
+}
+
+function handle_item_state(message: nkruntime.MatchMessage, data: any, state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher, logger: nkruntime.Logger) {
+    let uniqueId = data.uniqueId;
+
+    if (state.destroyedItems.includes(uniqueId)) {
+        return;
+    }
+
+    if (uniqueId in state.physicalItems) {
+        state.physicalItems[uniqueId].state = data.state;
+        state.physicalItems[uniqueId].ownerId = message.sender.userId;
+    }
+
+    dispatcher.broadcastMessage(raceOp.SERVER_ITEM_STATE, JSON.stringify(state.physicalItems[uniqueId]), null, null);
 }
