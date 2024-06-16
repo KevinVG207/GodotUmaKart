@@ -34,15 +34,18 @@ var input_updown: float = 0
 
 @export var max_speed: float = 20
 @onready var cur_max_speed = 20
-@onready var max_reverse_speed: float = max_speed * 0.5
+@export var reverse_multi: float = 0.5
+@onready var max_reverse_speed: float = max_speed * reverse_multi
 @export var initial_accel: float = 10
 @export var accel_exponent: float = 10
 @export var spd_steering_decrease: float = 1.0
 @export var weight_multi: float = 1.0
-@export var offroad_multiplier: float = 0.4
+@export var weak_offroad_multiplier: float = 0.7
+@export var offroad_multiplier: float = 0.5
 var push_force: float = 120
 var max_push_force: float = 2.75
 var offroad = false
+var weak_offroad = false
 
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
@@ -100,7 +103,7 @@ var stick_ray_count: int = 4
 @export var in_hop_frames: int = 0
 @export var in_drift: bool = false
 @export var drift_dir: int = 0
-@onready var min_hop_speed: float = max_speed * 0.5
+@onready var min_hop_speed: float = max_speed * 0.55
 var hop_force: float = 4.0
 @export var can_hop: bool = true
 #var global_hop: Vector3 = Vector3.ZERO
@@ -245,6 +248,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# Determine effective max speed
 	cur_max_speed = max_speed
 	cur_max_speed -= abs(cur_turn_speed) * spd_steering_decrease
+	
 	#Debug.print(cur_max_speed)
 	
 	if in_hop:
@@ -263,6 +267,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	#print("Contacts")
 	offroad = false
+	weak_offroad = false
 	for i in range(physics_state.get_contact_count()):
 		var collider = physics_state.get_contact_collider_object(i) as Node
 		if collider.is_in_group("floor"):
@@ -302,6 +307,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		if collider.is_in_group("offroad"):
 			offroad = true
 		
+		if collider.is_in_group("weak_offroad"):
+			weak_offroad = true
+		
 		if collider.is_in_group("wall"):
 			wall_contacts.append({
 				"normal": physics_state.get_contact_local_normal(i),
@@ -309,8 +317,12 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				"object": collider
 			})
 
-	if offroad == true:
+	if offroad:
 		cur_max_speed *= offroad_multiplier
+	elif weak_offroad:
+		cur_max_speed *= weak_offroad_multiplier
+	
+	max_reverse_speed = cur_max_speed * reverse_multi
 
 	# Handle walls
 	if bounce_frames > 0:
@@ -583,7 +595,10 @@ func get_boost_speed(delta: float) -> float:
 
 	if not small_boost_timer.is_stopped() and not offroad:
 		# Small boost is active. Does not work on offroad
-		return Util.get_vehicle_accel(small_boost_max_speed, cur_speed, small_boost_initial_accel, small_boost_exponent) * delta
+		var cur_boost_max_speed = small_boost_max_speed
+		if weak_offroad:
+			cur_boost_max_speed = max_speed
+		return Util.get_vehicle_accel(cur_boost_max_speed, cur_speed, small_boost_initial_accel, small_boost_exponent) * delta
 	
 	if cur_speed > cur_max_speed:
 		var speed_range = big_boost_max_speed - cur_max_speed

@@ -18,7 +18,7 @@ offset_top = -40.0
 offset_right = 107.0
 offset_bottom = -17.0
 theme_override_colors/font_outline_color = Color(0.485703, 0.485704, 0.485703, 1)
-theme_override_constants/outline_size = 2
+theme_override_constants/outline_size = 3
 text = "PLACEHOLDER"
 vertical_alignment = 2
 

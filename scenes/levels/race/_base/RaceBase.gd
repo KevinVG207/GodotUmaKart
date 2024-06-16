@@ -150,7 +150,8 @@ func _process(_delta):
 					continue
 				var nametag_pos = vehicle.transform.origin + ($PlayerCamera.transform.basis.y * 1.5) as Vector3
 				var second_check = nametag_pos - ($PlayerCamera.transform.basis.z * 2.0)
-				if nametag_pos.distance_to($PlayerCamera.global_position) > 75 or not $PlayerCamera.is_position_in_frustum(nametag_pos) or not $PlayerCamera.is_position_in_frustum(second_check):
+				var dist = nametag_pos.distance_to($PlayerCamera.global_position)
+				if dist > 75 or not $PlayerCamera.is_position_in_frustum(nametag_pos) or not $PlayerCamera.is_position_in_frustum(second_check):
 					UI.race_ui.hide_nametag(user_id)
 					continue
 				
@@ -165,9 +166,13 @@ func _process(_delta):
 				if screen_pos.x < 100 or screen_pos.x > 1280-100 or screen_pos.y < 50 or screen_pos.y > 720-100:
 					UI.race_ui.hide_nametag(user_id)
 					continue
+					
+				var opacity = 1.0
+				if dist > 60:
+					opacity = remap(dist, 60, 75, 1.0, 0.0)
 				
-				UI.race_ui.show_nametag(user_id, vehicle.username, screen_pos)
-
+				UI.race_ui.show_nametag(user_id, vehicle.username, screen_pos, opacity, dist)
+			UI.race_ui.sort_nametags()
 
 func change_state(new_state: int, state_func: Callable = Callable()):
 	state = new_state

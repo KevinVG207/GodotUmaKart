@@ -107,19 +107,29 @@ func _on_rotate_end():
 func _on_rotate_true_end():
 	roulette_ended.emit()
 
-func show_nametag(user_id: String, username: String, coords: Vector2):
+func show_nametag(user_id: String, username: String, coords: Vector2, opacity: float, dist: float):
+	opacity = clamp(opacity, 0, 1.0)
 	if not user_id in nametags:
 		var nt = nametag_scene.instantiate()
 		$Nametags.add_child(nt)
 		nt.username.text = username
 		nametags[user_id] = nt
 	
-	var cur_nt = nametags[user_id]
+	var cur_nt = nametags[user_id] as Nametag
 	cur_nt.position = coords
 	cur_nt.visible = true
+	cur_nt.modulate.a = opacity
+	cur_nt.dist = dist
 
 func hide_nametag(user_id):
 	if not user_id in nametags:
 		return
 	
 	nametags[user_id].visible = false
+
+func sort_nametags():
+	var order_list = nametags.keys()
+	order_list.sort_custom(func(a, b): return nametags[a].dist > nametags[b].dist)
+	for i in range(len(order_list)):
+		nametags[order_list[i]].z_index = i
+	

@@ -70,16 +70,16 @@ transform = Transform3D(0.554685, 0, 0.832061, 0, 1, 0, -0.832061, 0, 0.554685, 
 transform = Transform3D(0.554685, 0, 0.832061, 0, 1, 0, -0.832061, 0, 0.554685, -1.78982, 140.175, -240.774)
 
 [node name="ItemPickup12" parent="Objects" index="11" instance=ExtResource("5_6gkg7")]
-transform = Transform3D(0.847909, 0, -0.530141, 0, 1, 0, 0.530141, 0, 0.847909, 22.2493, 176.537, -271.222)
+transform = Transform3D(-0.847909, 0, 0.530141, 0, 1, 0, -0.530141, 0, -0.847909, 22.2493, 176.537, -271.222)
 
 [node name="ItemPickup13" parent="Objects" index="12" instance=ExtResource("5_6gkg7")]
-transform = Transform3D(0.847909, 0, -0.530141, 0, 1, 0, 0.530141, 0, 0.847909, 20.0069, 176.5, -272.704)
+transform = Transform3D(-0.847909, 0, 0.530141, 0, 1, 0, -0.530141, 0, -0.847909, 20.0069, 176.5, -272.704)
 
 [node name="ItemPickup14" parent="Objects" index="13" instance=ExtResource("5_6gkg7")]
-transform = Transform3D(0.847909, 0, -0.530141, 0, 1, 0, 0.530141, 0, 0.847909, 17.5761, 176.584, -274.209)
+transform = Transform3D(-0.847909, 0, 0.530141, 0, 1, 0, -0.530141, 0, -0.847909, 17.5761, 176.584, -274.209)
 
 [node name="ItemPickup15" parent="Objects" index="14" instance=ExtResource("5_6gkg7")]
-transform = Transform3D(0.847909, 0, -0.530141, 0, 1, 0, 0.530141, 0, 0.847909, 15.1847, 176.805, -275.728)
+transform = Transform3D(-0.847909, 0, 0.530141, 0, 1, 0, -0.530141, 0, -0.847909, 15.1847, 176.805, -275.728)
 
 [node name="ItemPickup16" parent="Objects" index="15" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(-0.64419, 0, -0.764865, 0, 1, 0, 0.764865, 0, -0.64419, -159.825, 83.168, 3.19319)
