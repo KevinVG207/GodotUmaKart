@@ -39,8 +39,10 @@ var input_updown: float = 0
 @export var accel_exponent: float = 10
 @export var spd_steering_decrease: float = 1.0
 @export var weight_multi: float = 1.0
+@export var offroad_multiplier: float = 0.4
 var push_force: float = 120
 var max_push_force: float = 2.75
+var offroad = false
 
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
@@ -260,6 +262,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var wall_contacts: Array = []
 	
 	#print("Contacts")
+	offroad = false
 	for i in range(physics_state.get_contact_count()):
 		var collider = physics_state.get_contact_collider_object(i) as Node
 		if collider.is_in_group("floor"):
@@ -296,6 +299,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			trick_boost_timer = small_boost_timer
 			trick_boost_duration = small_boost_duration
 		
+		if collider.is_in_group("offroad"):
+			offroad = true
+		
 		if collider.is_in_group("wall"):
 			wall_contacts.append({
 				"normal": physics_state.get_contact_local_normal(i),
@@ -303,6 +309,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				"object": collider
 			})
 
+	if offroad == true:
+		cur_max_speed *= offroad_multiplier
 
 	# Handle walls
 	if bounce_frames > 0:
@@ -573,8 +581,8 @@ func get_boost_speed(delta: float) -> float:
 		# Normal boost is active
 		return Util.get_vehicle_accel(normal_boost_max_speed, cur_speed, normal_boost_initial_accel, normal_boost_exponent) * delta
 
-	if not small_boost_timer.is_stopped():
-		# Small boost is active
+	if not small_boost_timer.is_stopped() and not offroad:
+		# Small boost is active. Does not work on offroad
 		return Util.get_vehicle_accel(small_boost_max_speed, cur_speed, small_boost_initial_accel, small_boost_exponent) * delta
 	
 	if cur_speed > cur_max_speed:

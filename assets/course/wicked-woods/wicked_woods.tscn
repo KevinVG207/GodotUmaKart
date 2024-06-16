@@ -62,11 +62,11 @@ disabled = true
 
 [node name="StaticBody3D" parent="Course_sand-road" index="0" groups=["floor"]]
 
-[node name="StaticBody3D" parent="Course_sand-offroad" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="Course_sand-offroad" index="0" groups=["floor", "offroad"]]
 
 [node name="StaticBody3D" parent="Course_dirt-road-trick" index="0" groups=["floor", "small_trick"]]
 
-[node name="StaticBody3D" parent="Course_grass-offroad" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="Course_grass-offroad" index="0" groups=["floor", "offroad"]]
 
 [node name="StaticBody3D" parent="Course_forest-wall" index="0" groups=["wall"]]
 

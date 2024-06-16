@@ -10,6 +10,8 @@ script = ExtResource("1_2b6un")
 [node name="Course" type="Node3D" parent="."]
 metadata/_edit_lock_ = true
 
+[node name="Objects" type="Node3D" parent="."]
+
 [node name="Checkpoints" type="Node3D" parent="."]
 metadata/_edit_lock_ = true
 
