@@ -429,11 +429,11 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		var outside_drift_multi = clamp(linear_velocity.length() / cur_max_speed, 0, 1)
 		if drift_dir > 0:
 			adjusted_steering = remap(adjusted_steering, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
-			if outside_drift:
+			if outside_drift and grounded:
 				linear_velocity += transform.basis.z * cur_outside_drift_force * delta * outside_drift_multi
 		else:
 			adjusted_steering = remap(adjusted_steering, -1, 1, -drift_turn_multiplier, -drift_turn_min_multiplier)
-			if outside_drift:
+			if outside_drift and grounded:
 				linear_velocity -= transform.basis.z * cur_outside_drift_force * delta * outside_drift_multi
 		
 		cur_outside_drift_force = move_toward(cur_outside_drift_force, 0, outside_drift_force_reduction * delta)
