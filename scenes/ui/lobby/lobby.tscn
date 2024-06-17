@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_r5fd3"]
 
 [node name="Lobby" type="CanvasLayer"]
-layer = 101
+layer = 11
 script = ExtResource("1_5qmws")
 info_box = ExtResource("2_r5fd3")
 

@@ -1,0 +1,63 @@
+[gd_scene load_steps=4 format=3 uid="uid://dak1demjog305"]
+
+[ext_resource type="Script" path="res://scenes/ui/home/home.gd" id="1_ombw4"]
+[ext_resource type="PackedScene" uid="uid://djkncdwh507k1" path="res://scenes/levels/race/Wicked_Woods/Wicked_Woods.tscn" id="2_j473p"]
+[ext_resource type="PackedScene" uid="uid://dqhi3idf6syay" path="res://scenes/ui/lobby/lobby.tscn" id="3_0ol4i"]
+
+[node name="Home" type="CanvasLayer"]
+layer = 20
+script = ExtResource("1_ombw4")
+single_scene = ExtResource("2_j473p")
+online_scene = ExtResource("3_0ol4i")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_constants/margin_top = 55
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 230
+columns = 2
+
+[node name="Control" type="VBoxContainer" parent="MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/GridContainer/Control"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "HOME_1P_OFFLINE_VS"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="VSButton" type="Button" parent="MarginContainer/GridContainer/Control"]
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "OFFLINE"
+
+[node name="Control2" type="VBoxContainer" parent="MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/GridContainer/Control2"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "HOME_1P_ONLINE_VS"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OnlineButton" type="Button" parent="MarginContainer/GridContainer/Control2"]
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "ONLINE"
+
+[connection signal="pressed" from="MarginContainer/GridContainer/Control/VSButton" to="." method="_on_vs_button_pressed"]
+[connection signal="pressed" from="MarginContainer/GridContainer/Control2/OnlineButton" to="." method="_on_online_button_pressed"]
