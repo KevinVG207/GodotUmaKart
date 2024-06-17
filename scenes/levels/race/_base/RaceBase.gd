@@ -342,7 +342,7 @@ func _physics_process(_delta):
 				
 				for unique_id in physical_items.keys():
 					var item = physical_items[unique_id]
-					if item.owner_id == player_user_id:
+					if not item.no_updates and item.owner_id == player_user_id:
 						send_item_state(item)
 		
 		check_finished()

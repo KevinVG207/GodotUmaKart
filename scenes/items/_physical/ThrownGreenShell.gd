@@ -3,6 +3,7 @@ extends CharacterBody3D
 var item_id: String
 var owner_id: String
 var world: RaceBase
+var no_updates: bool = false
 
 var gravity: Vector3
 var target_speed: float = 30.0

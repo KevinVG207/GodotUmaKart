@@ -3,6 +3,7 @@ extends Area3D
 var item_id: String
 var owner_id: String
 var world: RaceBase
+var no_updates: bool = false
 
 @export var next_item_key: String
 

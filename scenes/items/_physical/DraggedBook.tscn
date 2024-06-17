@@ -8,7 +8,7 @@ size = Vector3(0.623291, 0.391937, 0.793945)
 
 [node name="DraggedBook" type="Area3D"]
 script = ExtResource("1_13gny")
-next_item_key = "\"thrown_book\""
+next_item_key = "thrown_book"
 
 [node name="book" parent="." instance=ExtResource("2_0c5ik")]
 transform = Transform3D(-1.5299e-08, 0, -0.35, 0, 0.35, 0, 0.35, 0, -1.5299e-08, 0, 0, 0)

@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3 uid="uid://c1v5bpox4q5m5"]
+
+[ext_resource type="Script" path="res://scenes/items/_physical/ThrownBook.gd" id="1_ibqwy"]
+[ext_resource type="PackedScene" uid="uid://5i10cjnedc8f" path="res://assets/items/book/book.blend" id="2_fhwbd"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8fn56"]
+friction = 0.0
+bounce = 1.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lemdn"]
+size = Vector3(0.917725, 0.721001, 0.93457)
+
+[node name="ThrownBook" type="RigidBody3D"]
+collision_layer = 0
+physics_material_override = SubResource("PhysicsMaterial_8fn56")
+gravity_scale = 0.0
+max_contacts_reported = 10
+contact_monitor = true
+script = ExtResource("1_ibqwy")
+
+[node name="book" parent="." instance=ExtResource("2_fhwbd")]
+transform = Transform3D(-1.96701e-08, 0, -0.45, 0, 0.45, 0, 0.45, 0, -1.96701e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.400978, 0)
+shape = SubResource("BoxShape3D_lemdn")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 8
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.340694, 0)
+shape = SubResource("BoxShape3D_lemdn")
+
+[node name="DespawnTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 30.0
+one_shot = true
+
+[connection signal="timeout" from="DespawnTimer" to="." method="_on_despawn_timer_timeout"]

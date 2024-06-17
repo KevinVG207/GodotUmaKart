@@ -98,3 +98,9 @@ func make_ordinal(n: int) -> String:
 			_:
 				suffix = "th"
 	return str(n) + suffix
+
+func align_with_y(xform: Transform3D, new_y: Vector3):
+	xform.basis.y = new_y
+	xform.basis.x = -xform.basis.z.cross(new_y)
+	xform.basis = xform.basis.orthonormalized()
+	return xform
