@@ -47,6 +47,11 @@ var max_push_force: float = 2.75
 var offroad = false
 var weak_offroad = false
 
+@export var outside_drift: bool = true
+@export var outside_drift_force: float = 120.0
+var cur_outside_drift_force: float = 0.0
+var outside_drift_force_reduction: float = 100.0
+
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
 
@@ -283,6 +288,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 					in_drift = false
 				else:
 					in_drift = true
+					if outside_drift:
+						cur_outside_drift_force = outside_drift_force
 			
 			if in_trick:
 				in_trick = false
@@ -395,7 +402,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	angular_velocity = Vector3.ZERO
 
 	if in_water:
-		cur_grip *= 0.5
+		cur_grip *= 0.8
 
 	var target_vel: Vector3 = prev_vel.move_toward(new_vel, delta * cur_grip * grip_multiplier) + (_gravity * delta)
 	linear_velocity = target_vel
@@ -419,10 +426,17 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var adjusted_steering = steering
 	
 	if in_drift:
+		var outside_drift_multi = clamp(linear_velocity.length() / cur_max_speed, 0, 1)
 		if drift_dir > 0:
 			adjusted_steering = remap(adjusted_steering, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
+			if outside_drift:
+				linear_velocity += transform.basis.z * cur_outside_drift_force * delta * outside_drift_multi
 		else:
 			adjusted_steering = remap(adjusted_steering, -1, 1, -drift_turn_multiplier, -drift_turn_min_multiplier)
+			if outside_drift:
+				linear_velocity -= transform.basis.z * cur_outside_drift_force * delta * outside_drift_multi
+		
+		cur_outside_drift_force = move_toward(cur_outside_drift_force, 0, outside_drift_force_reduction * delta)
 		
 		drift_gauge += remap(abs(adjusted_steering), drift_turn_min_multiplier, drift_turn_multiplier, 1, 2) * drift_gauge_multi * delta
 		if drift_gauge > drift_gauge_max:

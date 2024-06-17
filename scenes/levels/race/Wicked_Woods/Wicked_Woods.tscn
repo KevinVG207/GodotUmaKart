@@ -11,9 +11,9 @@
 size = Vector3(300, 33.77, 141.27)
 
 [node name="RaceBase" instance=ExtResource("1_ecs37")]
-start_offset_z = null
-start_offset_x = null
-lap_count = null
+start_offset_z = 2.0
+start_offset_x = 3.0
+lap_count = 3
 
 [node name="Course" parent="." index="0"]
 metadata/_edit_group_ = true
