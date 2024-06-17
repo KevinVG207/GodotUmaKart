@@ -47,6 +47,10 @@ var max_push_force: float = 2.75
 var offroad = false
 var weak_offroad = false
 
+@export var outside_drift: bool = true
+@export var outside_drift_start: float = 3
+var outside_drift_cur_offset: float = 0
+
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
 
@@ -283,6 +287,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 					in_drift = false
 				else:
 					in_drift = true
+					if outside_drift:
+						outside_drift_cur_offset = outside_drift_start
 			
 			if in_trick:
 				in_trick = false
@@ -421,8 +427,12 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	if in_drift:
 		if drift_dir > 0:
 			adjusted_steering = remap(adjusted_steering, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
+			adjusted_steering -= outside_drift_cur_offset
 		else:
 			adjusted_steering = remap(adjusted_steering, -1, 1, -drift_turn_multiplier, -drift_turn_min_multiplier)
+			adjusted_steering += outside_drift_cur_offset
+		
+		outside_drift_cur_offset = move_toward(outside_drift_cur_offset, 0, delta * 5)
 		
 		drift_gauge += remap(abs(adjusted_steering), drift_turn_min_multiplier, drift_turn_multiplier, 1, 2) * drift_gauge_multi * delta
 		if drift_gauge > drift_gauge_max:
