@@ -40,7 +40,7 @@ func race_over():
 
 func enable_spectating():
 	$Spectating.visible = true
-	$Username.visible = true
+	#$Username.visible = true
 
 func set_username(usr: String):
 	$Username.text = usr
@@ -123,6 +123,7 @@ func update_nametag(user_id: String, username: String, coords: Vector2, opacity:
 	var cur_nt = nametags[user_id] as Nametag
 	cur_nt.position = coords
 	cur_nt.dist = dist
+	cur_nt.username.text = username
 	
 	if force:
 		cur_nt.modulate.a = opacity
@@ -137,3 +138,9 @@ func sort_nametags():
 	for i in range(len(order_list)):
 		nametags[order_list[i]].z_index = i
 	
+
+func remove_nametag(user_id: String):
+	if user_id in nametags:
+		var nt = nametags[user_id]
+		nametags.erase(user_id)
+		nt.queue_free()

@@ -125,6 +125,8 @@ func join():
 	if Network.ready_match_type == "race":
 		next_course = Network.ready_match_label['course']
 		switch_scene()
+		state = STATE_SWITCHING_SCENE
+		return
 	
 	var res: bool = await Network.join_match(Network.ready_match)
 	

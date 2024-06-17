@@ -9,10 +9,10 @@ var race_ui_scene: PackedScene = preload("res://scenes/ui/race_ui.tscn")
 var _next_scene: PackedScene
 var wait_after_transition: bool = false
 
-var top_rect_start: float = 301
-var top_rect_end: float = -1057
-var bottom_rect_start: float = 1667
-var bottom_rect_end: float = 270
+#var top_rect_start: float = 301
+#var top_rect_end: float = -1057
+#var bottom_rect_start: float = 1667
+#var bottom_rect_end: float = 270
 
 func show_race_ui():
 	race_ui.visible = true
@@ -46,13 +46,15 @@ func change_scene(next_scene: PackedScene, wait: bool = false):
 		return
 	_next_scene = next_scene
 	wait_after_transition = wait
-	$Transition/BottomRect.position.y = bottom_rect_start
-	$Transition/BottomRect.visible = true
-	$Transition/TopRect.position.y = top_rect_end
-	$Transition/TopRect.visible = false
-	
 	var tween = create_tween()
-	tween.tween_property($Transition/BottomRect, "position:y", bottom_rect_end, 0.5)
+	tween.tween_property($Transition/ColorRect, "modulate:a", 1.0, 0.5).set_trans(Tween.TRANS_CUBIC)
+	#$Transition/BottomRect.position.y = bottom_rect_start
+	#$Transition/BottomRect.visible = true
+	#$Transition/TopRect.position.y = top_rect_end
+	#$Transition/TopRect.visible = false
+	#
+	#var tween = create_tween()
+	#tween.tween_property($Transition/BottomRect, "position:y", bottom_rect_end, 0.5)
 	tween.finished.connect(_on_scene_transition_middle)
 
 func _on_scene_transition_middle():
@@ -65,10 +67,12 @@ func end_scene_change():
 		return
 	
 	_next_scene = null
-	$Transition/BottomRect.position.y = bottom_rect_start
-	$Transition/BottomRect.visible = false
-	$Transition/TopRect.position.y = top_rect_start
-	$Transition/TopRect.visible = true
-	
 	var tween = create_tween()
-	tween.tween_property($Transition/TopRect, "position:y", top_rect_end, 0.5)
+	tween.tween_property($Transition/ColorRect, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_CUBIC)
+	#$Transition/BottomRect.position.y = bottom_rect_start
+	#$Transition/BottomRect.visible = false
+	#$Transition/TopRect.position.y = top_rect_start
+	#$Transition/TopRect.visible = true
+	#
+	#var tween = create_tween()
+	#tween.tween_property($Transition/TopRect, "position:y", top_rect_end, 0.5)

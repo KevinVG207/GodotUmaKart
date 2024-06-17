@@ -117,12 +117,13 @@ func _process(delta):
 	if spectate:
 		if !$PlayerCamera.target and players_dict:
 			$PlayerCamera.target = players_dict.values()[0]
+			$PlayerCamera.instant = true
 			UI.end_scene_change()
 		
 		var spectator_index = players_dict.values().find($PlayerCamera.target)
 		if spectator_index > -1:
 			UI.race_ui.enable_spectating()
-			UI.race_ui.set_username(players_dict[players_dict.keys()[spectator_index]].username)
+			#UI.race_ui.set_username(players_dict[players_dict.keys()[spectator_index]].username)
 			
 			if get_window().has_focus() and Input.is_action_just_pressed("accelerate"):
 				$PlayerCamera.instant = true
@@ -142,6 +143,11 @@ func _process(delta):
 		var exclude_list: Array = []
 		for vehicle: Vehicle3 in players_dict.values():
 			exclude_list.append(vehicle.get_rid())
+			
+		var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+		var nt_deadzone_sides = viewport_size.x / 10
+		var nt_deadzone_top = viewport_size.y / 14
+		var nt_deadzone_bottom = viewport_size.y / 3
 		
 		for user_id: String in players_dict.keys():
 			var vehicle = players_dict[user_id] as Vehicle3
@@ -168,7 +174,8 @@ func _process(delta):
 			
 			var screen_pos = $PlayerCamera.unproject_position(nametag_pos)
 			
-			if screen_pos.x < 100 or screen_pos.x > 1280-100 or screen_pos.y < 50 or screen_pos.y > 720-300:
+			print(get_viewport().get_visible_rect())
+			if screen_pos.x < nt_deadzone_sides or screen_pos.x > viewport_size.x - nt_deadzone_sides or screen_pos.y < nt_deadzone_top or screen_pos.y > viewport_size.y - nt_deadzone_bottom:
 				tag_visible = false
 				
 			var opacity = 1.0
@@ -258,13 +265,13 @@ func send_item_state(item: Node):
 	if not item.owner_id == player_user_id:
 		return
 	
-	var state = item.get_state()
+	var item_state = item.get_state()
 
 	# Skip sending items that don't have a state
 	if not state:
 		return
 	
-	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {"uniqueId": item.item_id, "state": state})
+	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {"uniqueId": item.item_id, "state": item_state})
 
 
 func apply_item_state(data: Dictionary):
@@ -346,6 +353,7 @@ func handle_rankings():
 		return
 	
 	if rankings_timer % rankings_delay == 0:
+		@warning_ignore("integer_division")
 		var cur_idx: int = rankings_timer / rankings_delay
 		
 		if cur_idx >= len(finish_order)-1:
@@ -422,6 +430,7 @@ func _remove_vehicle(user_id: String):
 		vehicle.queue_free()
 		players_dict.erase(user_id)
 		removed_player_ids.append(user_id)
+		UI.race_ui.remove_nametag(user_id)
 
 
 func setup_vehicles():
