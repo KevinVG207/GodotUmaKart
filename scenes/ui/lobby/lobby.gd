@@ -318,12 +318,12 @@ func switch_scene():
 	Global.MODE1 = Global.MODE1_ONLINE
 	Network.socket.received_match_state.disconnect(_on_match_state)
 	Network.socket.closed.disconnect(_on_socket_closed)
-	get_tree().change_scene_to_file(Util.get_race_course_path(next_course))
+	UI.change_scene(load(Util.get_race_course_path(next_course)), true)
 
 func reload():
 	await Network.leave_match()
 	await Network.reset()
-	get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
+	get_tree().reload_current_scene()
 
 func _on_leave_button_pressed():
 	await reload()

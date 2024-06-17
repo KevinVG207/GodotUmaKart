@@ -15,8 +15,8 @@ func _on_language_change(index: int):
 	get_tree().reload_current_scene()
 
 func _on_vs_button_pressed():
-	get_tree().change_scene_to_packed(single_scene)
+	UI.change_scene(single_scene, true)
 
 
 func _on_online_button_pressed():
-	get_tree().change_scene_to_packed(online_scene)
+	UI.change_scene(online_scene)

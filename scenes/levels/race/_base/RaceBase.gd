@@ -27,6 +27,8 @@ var deleted_physical_items: Array = []
 var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_3.tscn")
 var rank_panel_scene: PackedScene = preload("res://scenes/ui/rank_panel.tscn")
 
+var lobby_scene: PackedScene = load("res://scenes/ui/lobby/lobby.tscn")
+
 @export var lap_count: int = 3
 var finished = false
 
@@ -100,7 +102,7 @@ func _ready():
 
 
 func _process(delta):
-	if not $CountdownTimer.is_stopped():
+	if not $CountdownTimer.is_stopped() and $CountdownTimer.time_left <= 3.0:
 		UI.race_ui.update_countdown(str(ceil($CountdownTimer.time_left)))
 	else:
 		UI.race_ui.update_countdown("")
@@ -115,6 +117,7 @@ func _process(delta):
 	if spectate:
 		if !$PlayerCamera.target and players_dict:
 			$PlayerCamera.target = players_dict.values()[0]
+			UI.end_scene_change()
 		
 		var spectator_index = players_dict.values().find($PlayerCamera.target)
 		if spectator_index > -1:
@@ -291,7 +294,8 @@ func _physics_process(_delta):
 		STATE_CAN_READY:
 			change_state(STATE_READY_FOR_START, send_ready)
 		STATE_COUNTDOWN:
-			$CountdownTimer.start(3.0)
+			UI.end_scene_change()
+			$CountdownTimer.start(4.0)
 			timer_tick = -Engine.physics_ticks_per_second * 3
 			state = STATE_COUNTING_DOWN
 		STATE_COUNTING_DOWN:
@@ -486,6 +490,7 @@ func join():
 
 func send_ready():
 	var res: bool = await Network.send_match_state(raceOp.CLIENT_READY, {})
+	UI.end_scene_change()
 	
 	if not res:
 		state = STATE_DISCONNECT
@@ -687,7 +692,7 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 		raceOp.SERVER_ITEM_STATE:
 			apply_item_state(data)		
 		raceOp.SERVER_ABORT:
-			get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
+			UI.change_scene(lobby_scene)
 		_:
 			print("Unknown match state op code: ", match_state.op_code)
 
@@ -705,7 +710,7 @@ func join_next():
 	UI.reset_race_ui()
 	UI.race_ui.visible = false
 	Network.socket.received_match_state.disconnect(_on_match_state)
-	get_tree().change_scene_to_file("res://scenes/ui/lobby/lobby.tscn")
+	UI.change_scene(lobby_scene)
 
 func _on_back_pressed():
 	state = STATE_JOIN_NEXT
