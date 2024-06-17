@@ -3,6 +3,16 @@ extends Node
 var randPing = 0
 var unique_string = OS.get_unique_id()
 
+var locales = [
+	"en",
+	"ja"
+]
+
+var cur_locale: int = 0:
+	set(value):
+		TranslationServer.set_locale(locales[value])
+		cur_locale = value
+
 const MODE1_OFFLINE = 0
 const MODE1_ONLINE = 1
 
@@ -34,7 +44,7 @@ var physical_items: Dictionary = {
 var item_tex: Array = []
 
 func _enter_tree():
-	#TranslationServer.set_locale("ja")
+	TranslationServer.set_locale(locales[cur_locale])
 	return
 
 func _ready():

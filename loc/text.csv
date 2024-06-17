@@ -40,3 +40,6 @@ HOME_1P_OFFLINE_VS,1P Offline VS,シングルVS
 HOME_1P_ONLINE_VS,1P Online VS,1P Wi-Fi VS
 OFFLINE,Offline,シングルプレイ
 ONLINE,Online,Wi-Fiプレイ
+HOME_LANGUAGE,Language,言語
+LANG_EN,English,英語
+LANG_JA,Japanese,日本語

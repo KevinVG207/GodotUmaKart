@@ -63,25 +63,20 @@ _data = {
 "rotate": SubResource("Animation_sqxjf")
 }
 
-[node name="RaceUI" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="RaceUI" type="CanvasLayer"]
+layer = 19
 script = ExtResource("1_23b1w")
 info_box_scene = ExtResource("2_64c26")
 nametag_scene = ExtResource("4_5a5qs")
 
 [node name="Nametags" type="Control" parent="."]
+layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ItemBox" type="TextureRect" parent="."]
 visible = false
-layout_mode = 1
 offset_right = 215.0
 offset_bottom = 210.0
 texture = SubResource("ViewportTexture_5eh43")
@@ -120,7 +115,6 @@ libraries = {
 }
 
 [node name="Speed" type="Label" parent="."]
-layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -137,7 +131,6 @@ horizontal_alignment = 2
 vertical_alignment = 2
 
 [node name="ColorRect" type="ColorRect" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -146,7 +139,6 @@ grow_vertical = 2
 color = Color(1, 1, 1, 0)
 
 [node name="Ranks" type="Label" parent="."]
-layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -159,7 +151,6 @@ theme_override_font_sizes/font_size = 20
 vertical_alignment = 2
 
 [node name="Countdown" type="Label" parent="."]
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -176,7 +167,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="LapCountContainer" type="HBoxContainer" parent="."]
-layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -206,7 +196,6 @@ vertical_alignment = 2
 
 [node name="Finished" type="Label" parent="."]
 visible = false
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -224,7 +213,6 @@ horizontal_alignment = 1
 
 [node name="RaceOver" type="Label" parent="."]
 visible = false
-layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -242,7 +230,6 @@ horizontal_alignment = 1
 
 [node name="Spectating" type="Label" parent="."]
 visible = false
-layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -257,7 +244,6 @@ horizontal_alignment = 1
 
 [node name="Username" type="Label" parent="."]
 visible = false
-layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -274,7 +260,6 @@ horizontal_alignment = 1
 vertical_alignment = 2
 
 [node name="Time" type="Label" parent="."]
-layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -287,7 +272,7 @@ theme_override_font_sizes/font_size = 40
 horizontal_alignment = 2
 
 [node name="Rankings" type="Control" parent="."]
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -297,7 +282,6 @@ offset_bottom = 40.0
 grow_horizontal = 2
 
 [node name="TimeLeft" type="Label" parent="."]
-layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -311,7 +295,6 @@ metadata/_edit_lock_ = true
 
 [node name="BackToLobby" type="Button" parent="."]
 visible = false
-layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0

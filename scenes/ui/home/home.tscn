@@ -59,5 +59,29 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "ONLINE"
 
+[node name="Label" type="Label" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -184.0
+offset_right = -7.0
+offset_bottom = 28.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 20
+text = "HOME_LANGUAGE"
+horizontal_alignment = 2
+
+[node name="LangSelect" type="OptionButton" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -52.0
+offset_top = 34.0
+offset_right = -7.0
+offset_bottom = 54.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 20
+alignment = 2
+
 [connection signal="pressed" from="MarginContainer/GridContainer/Control/VSButton" to="." method="_on_vs_button_pressed"]
 [connection signal="pressed" from="MarginContainer/GridContainer/Control2/OnlineButton" to="." method="_on_online_button_pressed"]
