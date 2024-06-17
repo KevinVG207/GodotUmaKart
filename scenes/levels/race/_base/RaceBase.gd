@@ -173,8 +173,7 @@ func _process(delta):
 					tag_visible = false
 			
 			var screen_pos = $PlayerCamera.unproject_position(nametag_pos)
-			
-			print(get_viewport().get_visible_rect())
+
 			if screen_pos.x < nt_deadzone_sides or screen_pos.x > viewport_size.x - nt_deadzone_sides or screen_pos.y < nt_deadzone_top or screen_pos.y > viewport_size.y - nt_deadzone_bottom:
 				tag_visible = false
 				

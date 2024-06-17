@@ -38,7 +38,8 @@ var items: Array = [
 
 var physical_items: Dictionary = {
 	"green_shell": load("res://scenes/items/_physical/DraggedGreenShell.tscn"),
-	"thrown_green_shell": load("res://scenes/items/_physical/ThrownGreenShell.tscn")
+	"thrown_green_shell": load("res://scenes/items/_physical/ThrownGreenShell.tscn"),
+	"book": load("res://scenes/items/_physical/DraggedBook.tscn")
 }
 
 var item_tex: Array = []

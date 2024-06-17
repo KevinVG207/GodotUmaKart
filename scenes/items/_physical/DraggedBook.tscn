@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj81tjgt7appr"]
+
+[ext_resource type="Script" path="res://scenes/items/_physical/DraggedItemBase.gd" id="1_13gny"]
+[ext_resource type="PackedScene" uid="uid://5i10cjnedc8f" path="res://assets/items/book/book.blend" id="2_0c5ik"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0kdv5"]
+size = Vector3(0.623291, 0.391937, 0.793945)
+
+[node name="DraggedBook" type="Area3D"]
+script = ExtResource("1_13gny")
+next_item_key = "\"thrown_book\""
+
+[node name="book" parent="." instance=ExtResource("2_0c5ik")]
+transform = Transform3D(-1.5299e-08, 0, -0.35, 0, 0.35, 0, 0.35, 0, -1.5299e-08, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.193222, 0)
+shape = SubResource("BoxShape3D_0kdv5")

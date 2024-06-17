@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://djkncdwh507k1"]
+[gd_scene load_steps=9 format=3 uid="uid://djkncdwh507k1"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_ecs37"]
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="2_cairb"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scenes/control/Water.gd" id="3_6mpm6"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_6gkg7"]
 [ext_resource type="PackedScene" uid="uid://camku2r2888iy" path="res://scenes/items/GreenShell.tscn" id="6_il0fm"]
+[ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="7_80i8t"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ubem1"]
 size = Vector3(300, 33.77, 141.27)
@@ -263,6 +264,10 @@ transform = Transform3D(-0.258819, 0, 0.965925, 0, 1, 0, -0.965926, 0, -0.258819
 
 [node name="Checkpoint51" parent="Checkpoints" index="50" instance=ExtResource("3_02dhb")]
 transform = Transform3D(-0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, -0.866025, -12.0013, 83.7979, 116.838)
+
+[node name="ItemPickup" parent="." index="10" instance=ExtResource("5_6gkg7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.48975, 83.8293, 61.5996)
+guaranteed_item = ExtResource("7_80i8t")
 
 [connection signal="body_entered" from="Course/Water" to="Course/Water" method="_on_body_entered"]
 [connection signal="body_exited" from="Course/Water" to="Course/Water" method="_on_body_exited"]

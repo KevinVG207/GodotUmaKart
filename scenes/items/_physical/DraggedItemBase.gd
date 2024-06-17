@@ -4,6 +4,8 @@ var item_id: String
 var owner_id: String
 var world: RaceBase
 
+@export var next_item_key: String
+
 func _enter_tree():
 	update_position()
 
@@ -15,9 +17,9 @@ func _physics_process(_delta):
 	var vehicle = world.players_dict[owner_id] as Vehicle3
 	
 	if vehicle.is_player and !vehicle.input_item:
-		# User let go of the item! Turn into thrown shell.
+		# User let go of the item! Turn into thrown item.
 		world.destroy_physical_item(item_id)
-		world.make_physical_item("thrown_green_shell", world.players_dict[owner_id])
+		world.make_physical_item(next_item_key, world.players_dict[owner_id])
 		return
 	
 	update_position()
