@@ -240,15 +240,21 @@ func handle_input():
 			return
 		# CPU brain goes here
 		set_all_input_zero()
+		if in_drift and drift_gauge >= 75:
+			input_brake = true
+		if !$TrickTimer.is_stopped():
+			input_trick = true
+		
 		if global_position.distance_to(cpu_target.global_position) < cpu_target.dist:
 			# Get next target
 			cpu_target = cpu_target.next_points.pick_random()
+			$FailsafeTimer.start()
 
 		
 		# Determine which side to steer
 		var target_dir = (cpu_target.global_position - global_position).normalized()
 		var angle = transform.basis.z.angle_to(target_dir) - PI/2
-		var max_angle = cpu_target.dist/2 / global_position.distance_to(cpu_target.global_position)
+		var max_angle = cpu_target.dist/1.5 / global_position.distance_to(cpu_target.global_position)
 
 		var is_behind = transform.basis.x.dot(target_dir) < 0
 
@@ -267,12 +273,19 @@ func handle_input():
 			# Should steer.
 			if angle < 0:
 				input_steer = -1.0
-				if in_drift and drift_dir > 0:
+				if in_drift and drift_dir > 0 and (drift_gauge <= 80 or drift_gauge == 100):
 					input_brake = false
 			else:
 				input_steer = 1.0
-				if in_drift and drift_dir < 0:
+				if in_drift and drift_dir < 0 and (drift_gauge <= 80 or drift_gauge == 100):
 					input_brake = false
+		
+		#if abs(angle) < max_angle:
+			#if angle < 0:
+				#input_steer = -1.0
+			#else:
+				#input_steer = 1.0
+			#input_steer *= randf() * 0.2
 		
 		var item_rand = randi_range(0, 300) == 0
 		# if item:
@@ -536,7 +549,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		cur_turn_accel *= air_turn_multiplier * air_turn_multiplier*5
 
 	if is_cpu:
-		cur_turn_speed = turn_target
+		cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta * 2)
 	else:
 		cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta)
 	rotation_degrees.y += cur_turn_speed
@@ -738,6 +751,7 @@ func respawn():
 	$RespawnTimer.start(respawn_time)
 
 func handle_respawn():
+	freeze = false
 	if not respawn_stage:
 		return
 	
@@ -753,6 +767,7 @@ func handle_respawn():
 		var respawn_data: Dictionary = world.get_respawn_point(self)
 		respawn_position = respawn_data.position
 		respawn_rotation = respawn_data.rotation
+		freeze = true
 		if is_player:
 			world.player_camera.instant = true
 	
@@ -1005,3 +1020,8 @@ func apply_state(state: Dictionary):
 	finished = state.finished
 	finish_time = state.finish_time
 	username = state.username
+
+
+func _on_failsafe_timer_timeout():
+	if not finished:
+		respawn()

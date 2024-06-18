@@ -118,6 +118,7 @@ mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_b3vot")
 gravity_scale = 0.0
 can_sleep = false
+freeze_mode = 1
 max_contacts_reported = 50
 contact_monitor = true
 script = ExtResource("1_lrmky")
@@ -363,7 +364,12 @@ one_shot = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
 gizmo_extents = 1.51
 
+[node name="FailsafeTimer" type="Timer" parent="."]
+wait_time = 20.0
+one_shot = true
+
 [connection signal="area_entered" from="PlayerCollision" to="." method="_on_player_collision_area_entered"]
 [connection signal="area_exited" from="PlayerCollision" to="." method="_on_player_collision_area_exited"]
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]
 [connection signal="timeout" from="ItemRouletteTimer" to="." method="_on_item_roulette_timer_timeout"]
+[connection signal="timeout" from="FailsafeTimer" to="." method="_on_failsafe_timer_timeout"]
