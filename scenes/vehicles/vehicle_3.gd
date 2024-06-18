@@ -330,6 +330,12 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			weak_offroad = true
 		
 		if collider.is_in_group("wall"):
+			var point = global_position + (transform.basis.y * -vehicle_height_below)
+			var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
+
+			if dist_above_floor < 0.1:
+				continue
+
 			wall_contacts.append({
 				"normal": physics_state.get_contact_local_normal(i),
 				"position": physics_state.get_contact_local_position(i),
@@ -676,6 +682,7 @@ func respawn():
 		return
 	
 	respawn_stage = 1
+	remove_item()
 	$RespawnTimer.start(respawn_time)
 
 func handle_respawn():
@@ -758,11 +765,17 @@ func handle_item():
 	item = new_item
 	
 	if not item:
-		can_use_item = false
-		UI.race_ui.hide_roulette()
+		remove_item()
 	else:
 		can_use_item = true
 		UI.race_ui.set_item_texture(item.texture)
+
+func remove_item():
+	if item:
+		item.queue_free()
+		item = null
+	can_use_item = false
+	UI.race_ui.hide_roulette()
 
 func get_item(guaranteed_item: PackedScene = null):
 	if is_network:

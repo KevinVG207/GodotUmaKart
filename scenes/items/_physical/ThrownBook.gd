@@ -28,6 +28,8 @@ func _enter_tree():
 	global_position = thrower.global_position + offset
 
 	linear_velocity = throw_force
+
+func _ready():
 	$DespawnTimer.start()
 
 

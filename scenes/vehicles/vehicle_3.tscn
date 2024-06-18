@@ -359,6 +359,10 @@ one_shot = true
 process_callback = 0
 one_shot = true
 
+[node name="Marker3D" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+gizmo_extents = 1.51
+
 [connection signal="area_entered" from="PlayerCollision" to="." method="_on_player_collision_area_entered"]
 [connection signal="area_exited" from="PlayerCollision" to="." method="_on_player_collision_area_exited"]
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]

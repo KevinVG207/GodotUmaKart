@@ -266,7 +266,7 @@ points = PackedVector3Array(-5.44664, -43.3953, -39.5735, -5.44664, -43.3953, -3
 points = PackedVector3Array(9.62704, -59.675, -45.0802, 9.71059, -59.6207, -45.0802, 9.62704, -59.675, -34.1367, 4.65999, -52.1331, -39.5742, 4.74304, -52.0781, -39.5742, 9.71059, -59.6207, -34.1367, 4.74304, -52.0781, -34.8223, 4.65999, -52.1331, -34.8223)
 
 [node name="WickedWoods" instance=ExtResource("1_6dn3j")]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 0, 0, 0)
 
 [node name="StaticBody3D" parent="Course_tower" index="0" groups=["wall"]]
 
