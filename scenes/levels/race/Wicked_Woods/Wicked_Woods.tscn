@@ -100,9 +100,6 @@ transform = Transform3D(-0.64419, 0, -0.764865, 0, 1, 0, 0.764865, 0, -0.64419, 
 [node name="ItemPickup21" parent="Objects" index="20" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(-0.64419, 0, -0.764865, 0, 1, 0, 0.764865, 0, -0.64419, -171.06, 84.7488, 12.3882)
 
-[node name="Checkpoints" parent="." index="2"]
-visible = false
-
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_02dhb")]
 transform = Transform3D(-1, 0, 8.74228e-08, -3.55271e-15, 1, 0, -8.74228e-08, 0, -1, 0, 83.2, 67)
 is_key = true

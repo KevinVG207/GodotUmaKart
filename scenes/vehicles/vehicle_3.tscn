@@ -355,6 +355,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 [node name="ItemRouletteTimer" type="Timer" parent="."]
 one_shot = true
 
+[node name="RespawnTimer" type="Timer" parent="."]
+process_callback = 0
+one_shot = true
+
 [connection signal="area_entered" from="PlayerCollision" to="." method="_on_player_collision_area_entered"]
 [connection signal="area_exited" from="PlayerCollision" to="." method="_on_player_collision_area_exited"]
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]

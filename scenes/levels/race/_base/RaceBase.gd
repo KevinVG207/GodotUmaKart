@@ -2,6 +2,7 @@ extends Node3D
 
 class_name RaceBase
 
+@onready var player_camera: Camera3D = $PlayerCamera
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
 var players_dict: Dictionary = {}
@@ -115,30 +116,30 @@ func _process(delta):
 		UI.race_ui.update_timeleft($NextRaceTimer.time_left)
 	
 	if spectate:
-		if !$PlayerCamera.target and players_dict:
-			$PlayerCamera.target = players_dict.values()[0]
-			$PlayerCamera.instant = true
+		if !player_camera.target and players_dict:
+			player_camera.target = players_dict.values()[0]
+			player_camera.instant = true
 			UI.end_scene_change()
 		
-		var spectator_index = players_dict.values().find($PlayerCamera.target)
+		var spectator_index = players_dict.values().find(player_camera.target)
 		if spectator_index > -1:
 			UI.race_ui.enable_spectating()
 			#UI.race_ui.set_username(players_dict[players_dict.keys()[spectator_index]].username)
 			
 			if get_window().has_focus() and Input.is_action_just_pressed("accelerate"):
-				$PlayerCamera.instant = true
+				player_camera.instant = true
 				spectator_index += 1
 				if spectator_index >= players_dict.size():
 					spectator_index = 0
 			elif get_window().has_focus() and Input.is_action_just_pressed("brake"):
-				$PlayerCamera.instant = true
+				player_camera.instant = true
 				spectator_index -= 1
 				if spectator_index < 0:
 					spectator_index = players_dict.size()-1
 			
-			$PlayerCamera.target = players_dict.values()[spectator_index]
+			player_camera.target = players_dict.values()[spectator_index]
 	
-	if $PlayerCamera.target:
+	if player_camera.target:
 		# Display nametags.
 		var exclude_list: Array = []
 		for vehicle: Vehicle3 in players_dict.values():
@@ -153,26 +154,26 @@ func _process(delta):
 			var vehicle = players_dict[user_id] as Vehicle3
 			if vehicle == player_vehicle:
 				continue
-			var nametag_pos = vehicle.transform.origin + ($PlayerCamera.transform.basis.y * 1.5) as Vector3
-			#var second_check = nametag_pos + ($PlayerCamera.transform.basis.z * -5.0)
-			var dist = nametag_pos.distance_to($PlayerCamera.global_position)
+			var nametag_pos = vehicle.transform.origin + (player_camera.transform.basis.y * 1.5) as Vector3
+			#var second_check = nametag_pos + (player_camera.transform.basis.z * -5.0)
+			var dist = nametag_pos.distance_to(player_camera.global_position)
 			var tag_visible = true
 			var force = false
-			#if dist > 75 or $PlayerCamera.is_position_behind(second_check):
+			#if dist > 75 or player_camera.is_position_behind(second_check):
 			if dist > 75:
 				tag_visible = false
 			
-			if not $PlayerCamera.is_position_in_frustum(nametag_pos):
+			if not player_camera.is_position_in_frustum(nametag_pos):
 				tag_visible = false
 				force = true
 			
 			# Raycast between camera pos and nametag_pos. If anything is in-between, don't render the nametag.
 			if tag_visible:
-				var ray_result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create($PlayerCamera.global_position, nametag_pos, 0xFFFFFFFF, exclude_list))
+				var ray_result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(player_camera.global_position, nametag_pos, 0xFFFFFFFF, exclude_list))
 				if ray_result:
 					tag_visible = false
 			
-			var screen_pos = $PlayerCamera.unproject_position(nametag_pos)
+			var screen_pos = player_camera.unproject_position(nametag_pos)
 
 			if screen_pos.x < nt_deadzone_sides or screen_pos.x > viewport_size.x - nt_deadzone_sides or screen_pos.y < nt_deadzone_top or screen_pos.y > viewport_size.y - nt_deadzone_bottom:
 				tag_visible = false
@@ -328,7 +329,7 @@ func _physics_process(_delta):
 		for vehicle: Vehicle3 in $Vehicles.get_children():
 			update_checkpoint(vehicle)
 			update_ranks()
-			if vehicle == $PlayerCamera.target:
+			if vehicle == player_camera.target:
 				UI.race_ui.set_cur_lap(vehicle.lap)
 		
 		if Global.MODE1 == Global.MODE1_ONLINE:
@@ -416,7 +417,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 	if user_id == player_user_id:
 		new_vehicle.make_player()
 		player_vehicle = new_vehicle
-		$PlayerCamera.target = new_vehicle
+		player_camera.target = new_vehicle
 		new_vehicle.username = "Player"
 		if Global.MODE1 == Global.MODE1_ONLINE:
 			new_vehicle.username = await Network.get_display_name()
@@ -424,8 +425,8 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 func _remove_vehicle(user_id: String):
 	if user_id in players_dict.keys():
 		var vehicle = players_dict[user_id]
-		if $PlayerCamera.target == vehicle:
-			$PlayerCamera.target = null
+		if player_camera.target == vehicle:
+			player_camera.target = null
 		vehicle.queue_free()
 		players_dict.erase(user_id)
 		removed_player_ids.append(user_id)
@@ -559,6 +560,9 @@ func update_ranks():
 
 
 func update_checkpoint(player: Vehicle3):
+	if player.respawn_stage:
+		return
+	
 	while true:
 		var next_idx = player.check_idx+1 % len(checkpoints)
 		if next_idx >= len(checkpoints):
@@ -639,6 +643,31 @@ func progress_in_cur_checkpoint(player: Vehicle3) -> float:
 	return dist_behind / (dist_behind + dist_ahead)
 
 
+func get_respawn_point(vehicle: Vehicle3) -> Dictionary:
+	var out: Dictionary = {
+		"position": Vector3.ZERO,
+		"rotation": Vector3.ZERO
+	}
+	
+	var cur_checkpoint = checkpoints[vehicle.check_idx] as Checkpoint
+	var player_idx = players_dict.values().find(vehicle)
+	
+	var spawn_pos = cur_checkpoint.global_position
+	var spawn_dir = -cur_checkpoint.transform.basis.z
+	var side_direction = cur_checkpoint.transform.basis.x
+	var up_dir = cur_checkpoint.transform.basis.y
+	
+	var side_multi = player_idx % 2
+	if side_multi < 0:
+		side_multi = -1
+	
+	var offset = spawn_dir * player_idx * 0.1 + side_direction * 0.2 * side_multi + up_dir * 2.0
+	spawn_pos += offset
+	
+	out.position = spawn_pos
+	out.rotation = cur_checkpoint.basis.rotated(up_dir, deg_to_rad(-90)).get_euler()
+	
+	return out
 
 func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 	if user_id == player_user_id:

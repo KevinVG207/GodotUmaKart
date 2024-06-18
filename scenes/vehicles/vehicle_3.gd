@@ -155,6 +155,12 @@ var wheel_markers: Array = []
 
 var colliding_vehicles: Dictionary = {}
 
+var respawn_time: float = 3.5
+var respawn_stage2_time: float = 1.0
+var respawn_stage: int = 0
+var respawn_position: Vector3 = Vector3.ZERO
+var respawn_rotation: Vector3 = Vector3.ZERO
+
 #func _enter_tree():
 	#set_multiplayer_authority(peer_id)
 	#if is_multiplayer_authority():
@@ -193,22 +199,28 @@ func axis_unlock():
 func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3):
 	global_position = new_pos
 	look_at_from_position(new_pos, new_pos + (look_dir.rotated(up_dir, deg_to_rad(-90))), up_dir, true)
+	set_movement_zero()
+
+func set_movement_zero():
 	prev_transform = transform
 	prev_frame_pre_sim_vel = Vector3.ZERO
 	prev_vel = Vector3.ZERO
 	cur_speed = 0
 	cur_turn_speed = 0
 
+func set_all_input_zero():
+	input_accel = false
+	input_brake = false
+	input_steer = 0.0
+	input_trick = false
+	input_mirror = false
+	input_item = false
+	input_item_just = false
+	input_updown = 0.0
+
 func handle_input():
 	if finished or not get_window().has_focus():
-		input_accel = false
-		input_brake = false
-		input_steer = 0.0
-		input_trick = false
-		input_mirror = false
-		input_item = false
-		input_item_just = false
-		input_updown = 0.0
+		set_all_input_zero()
 		return
 	
 	if is_player and get_window().has_focus():
@@ -323,6 +335,16 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				"position": physics_state.get_contact_local_position(i),
 				"object": collider
 			})
+		
+		if collider.is_in_group("out"):
+			if not respawn_stage:
+				respawn()
+	
+	
+	# Handle respawning
+	handle_respawn()
+	if respawn_stage == 2:
+		return
 
 	if offroad:
 		cur_max_speed *= offroad_multiplier
@@ -424,6 +446,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	# Turning
 	var adjusted_steering = steering
+	if respawn_stage:
+		adjusted_steering = 0.0
 	
 	if in_drift:
 		var outside_drift_multi = clamp(linear_velocity.length() / cur_max_speed, 0, 1)
@@ -644,6 +668,43 @@ func handle_vehicle_collisions(delta: float):
 			#Debug.print(["Push force", push_force.length()])
 			linear_velocity += new_push_force
 
+func respawn():
+	if respawn_stage:
+		return
+	
+	if is_network:
+		return
+	
+	respawn_stage = 1
+	$RespawnTimer.start(respawn_time)
+
+func handle_respawn():
+	if not respawn_stage:
+		return
+	
+	set_all_input_zero()
+	
+	if $RespawnTimer.is_stopped():
+		respawn_stage = 0
+		return
+	
+	if respawn_stage == 1 and $RespawnTimer.time_left <= respawn_stage2_time:
+		# Determine respawn point
+		respawn_stage = 2
+		var respawn_data: Dictionary = world.get_respawn_point(self)
+		respawn_position = respawn_data.position
+		respawn_rotation = respawn_data.rotation
+		world.player_camera.instant = true
+	
+	if respawn_stage == 2:
+		# Hold vehicle still at respawn point
+		set_movement_zero()
+		linear_velocity = Vector3.ZERO
+		angular_velocity = Vector3.ZERO
+		global_position = respawn_position
+		global_rotation = respawn_rotation
+
+
 func handle_particles():
 	handle_drift_particles()
 
@@ -705,6 +766,9 @@ func handle_item():
 
 func get_item(guaranteed_item: PackedScene = null):
 	if is_network:
+		return
+	
+	if respawn_stage:
 		return
 	
 	if item:
