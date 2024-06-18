@@ -10,6 +10,7 @@ var update_idx: int = 0
 @export var is_player: bool = false
 @export var is_cpu: bool = true
 var is_network: bool = false
+var user_id: String = ""
 var check_idx: int = -1
 var check_key_idx: int = 0
 var check_progress: float = 0.0
@@ -19,6 +20,8 @@ var finished: bool = false
 var finish_time: float = 0
 var username: String = "Player"
 var world: RaceBase
+
+var cpu_target: EnemyPath = null
 
 var item: ItemBase = null
 var can_use_item: bool = false
@@ -232,6 +235,51 @@ func handle_input():
 		input_item = Input.is_action_pressed("item")
 		input_item_just = Input.is_action_just_pressed("item")
 		input_updown = Input.get_axis("down", "up")
+	elif is_cpu:
+		if not cpu_target:
+			return
+		# CPU brain goes here
+		set_all_input_zero()
+		if global_position.distance_to(cpu_target.global_position) < cpu_target.dist:
+			# Get next target
+			cpu_target = cpu_target.next_points.pick_random()
+
+		
+		# Determine which side to steer
+		var target_dir = (cpu_target.global_position - global_position).normalized()
+		var angle = transform.basis.z.angle_to(target_dir) - PI/2
+		var max_angle = cpu_target.dist/2 / global_position.distance_to(cpu_target.global_position)
+
+		var is_behind = transform.basis.x.dot(target_dir) < 0
+
+		if is_behind:
+			if angle < 0:
+				angle -= 10
+			else:
+				angle += 10
+
+		input_accel = true
+
+		if abs(angle) > 0.4 and cur_speed > min_hop_speed:
+			input_brake = true
+		
+		if abs(angle) > max_angle:
+			# Should steer.
+			if angle < 0:
+				input_steer = -1.0
+				if in_drift and drift_dir > 0:
+					input_brake = false
+			else:
+				input_steer = 1.0
+				if in_drift and drift_dir < 0:
+					input_brake = false
+		
+		var item_rand = randi_range(0, 300) == 0
+		# if item:
+		# 	print(can_use_item, " ", item, " ", item_rand)
+		if can_use_item and item and item_rand:
+			input_item = true
+			input_item_just = true
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	handle_input()
@@ -486,7 +534,11 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var cur_turn_accel = turn_accel
 	if !grounded:
 		cur_turn_accel *= air_turn_multiplier * air_turn_multiplier*5
-	cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta)
+
+	if is_cpu:
+		cur_turn_speed = turn_target
+	else:
+		cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta)
 	rotation_degrees.y += cur_turn_speed
 	if !grounded:
 		linear_velocity = linear_velocity.rotated(transform.basis.y, deg_to_rad(cur_turn_speed))
@@ -701,7 +753,8 @@ func handle_respawn():
 		var respawn_data: Dictionary = world.get_respawn_point(self)
 		respawn_position = respawn_data.position
 		respawn_rotation = respawn_data.rotation
-		world.player_camera.instant = true
+		if is_player:
+			world.player_camera.instant = true
 	
 	if respawn_stage == 2:
 		# Hold vehicle still at respawn point
@@ -741,9 +794,6 @@ func handle_drift_particles():
 		$DriftParticles/CenterCharged.visible = true
 
 func handle_item():
-	if not is_player:
-		return
-	
 	if not input_item_just:
 		return
 	
@@ -768,14 +818,16 @@ func handle_item():
 		remove_item()
 	else:
 		can_use_item = true
-		UI.race_ui.set_item_texture(item.texture)
+		if is_player:
+			UI.race_ui.set_item_texture(item.texture)
 
 func remove_item():
 	if item:
 		item.queue_free()
 		item = null
 	can_use_item = false
-	UI.race_ui.hide_roulette()
+	if is_player:
+		UI.race_ui.hide_roulette()
 
 func get_item(guaranteed_item: PackedScene = null):
 	if is_network:

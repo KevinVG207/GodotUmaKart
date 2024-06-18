@@ -100,6 +100,15 @@ func _ready():
 		checkpoints.append(checkpoint)
 		if checkpoint.is_key:
 			key_checkpoints[checkpoint] = key_checkpoints.size()
+	
+	var path_points = $EnemyPathPoints.get_children()
+	for i in range(len(path_points)):
+		var path_point = path_points[i] as EnemyPath
+		var next_i = i+1
+		if next_i >= path_points.size():
+			next_i = 0
+		
+		path_point.next_points.append(path_points[next_i])
 
 
 func _process(delta):
@@ -193,14 +202,14 @@ func change_state(new_state: int, state_func: Callable = Callable()):
 	state_func.call()
 
 func make_physical_item(key: String, player: Vehicle3) -> Node:
-	if not player.is_player:
+	if player.is_network:
 		return
 
 	physical_item_counter += 1
 	var unique_key = player_user_id + str(physical_item_counter)
 	var instance = Global.physical_items[key].instantiate()
 	instance.item_id = unique_key
-	instance.owner_id = player_user_id
+	instance.owner_id = player.user_id
 	instance.world = self
 	physical_items[unique_key] = instance
 	$Items.add_child(instance)
@@ -403,12 +412,14 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 	new_vehicle.axis_lock()
 	new_vehicle.is_player = false
 	new_vehicle.world = self
+	new_vehicle.user_id = user_id
 	
 	match Global.MODE1:
 		Global.MODE1_OFFLINE:
 			new_vehicle.is_cpu = true
 			new_vehicle.is_network = false
 			new_vehicle.username = "CPU"
+			new_vehicle.cpu_target = $EnemyPathPoints.get_child(0)
 		Global.MODE1_ONLINE:
 			new_vehicle.is_cpu = false
 			new_vehicle.is_network = true

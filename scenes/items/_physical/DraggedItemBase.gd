@@ -17,7 +17,7 @@ func _physics_process(_delta):
 	
 	var vehicle = world.players_dict[owner_id] as Vehicle3
 	
-	if vehicle.is_player and !vehicle.input_item:
+	if !vehicle.input_item:
 		# User let go of the item! Turn into thrown item.
 		world.destroy_physical_item(item_id)
 		world.make_physical_item(next_item_key, world.players_dict[owner_id])
