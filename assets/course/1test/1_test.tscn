@@ -5,7 +5,7 @@
 [node name="1test" instance=ExtResource("1_or65s")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
-[node name="StaticBody3D" parent="grass" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="grass" index="0" groups=["floor", "offroad"]]
 
 [node name="StaticBody3D" parent="road" index="0" groups=["floor"]]
 

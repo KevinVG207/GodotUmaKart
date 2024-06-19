@@ -22,6 +22,7 @@ var username: String = "Player"
 var world: RaceBase
 
 var cpu_target: EnemyPath = null
+var cpu_target_offset: Vector3 = get_random_target_offset()
 
 var item: ItemBase = null
 var can_use_item: bool = false
@@ -221,8 +222,11 @@ func set_all_input_zero():
 	input_item_just = false
 	input_updown = 0.0
 
+func get_random_target_offset() -> Vector3:
+	return Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))
+
 func handle_input():
-	if finished or not get_window().has_focus():
+	if finished or (is_player and not get_window().has_focus()):
 		set_all_input_zero()
 		return
 	
@@ -245,16 +249,19 @@ func handle_input():
 		if !$TrickTimer.is_stopped():
 			input_trick = true
 		
-		if global_position.distance_to(cpu_target.global_position) < cpu_target.dist:
+		var cpu_target_pos = cpu_target.global_position + (cpu_target_offset * cpu_target.dist / 3)
+		
+		if global_position.distance_to(cpu_target_pos) < cpu_target.dist:
 			# Get next target
 			cpu_target = cpu_target.next_points.pick_random()
+			cpu_target_offset = get_random_target_offset()
 			$FailsafeTimer.start()
 
 		
 		# Determine which side to steer
-		var target_dir = (cpu_target.global_position - global_position).normalized()
+		var target_dir = (cpu_target_pos - global_position).normalized()
 		var angle = transform.basis.z.angle_to(target_dir) - PI/2
-		var max_angle = cpu_target.dist/1.5 / global_position.distance_to(cpu_target.global_position)
+		var max_angle = cpu_target.dist/2 / global_position.distance_to(cpu_target_pos)
 
 		var is_behind = transform.basis.x.dot(target_dir) < 0
 

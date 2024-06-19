@@ -333,7 +333,7 @@ func _physics_process(_delta):
 		_:
 			pass
 	
-	if state in UPDATE_STATES:
+	if state in UPDATE_STATES or Global.MODE1 == Global.MODE1_OFFLINE:
 		# Player checkpoints
 		for vehicle: Vehicle3 in $Vehicles.get_children():
 			update_checkpoint(vehicle)
@@ -477,7 +477,9 @@ func get_starting_order():
 			var player_array = []
 			for i in range(11):
 				player_array.append("CPU" + str(i))
-			player_array.insert(randi_range(0, 11), player_user_id)
+			#player_array.insert(randi_range(0, 11), player_user_id)
+			player_array.append(player_user_id)
+			player_array.shuffle()
 			return player_array
 	return []
 

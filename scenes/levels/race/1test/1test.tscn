@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://tgm0tkbghr0c"]
+[gd_scene load_steps=7 format=3 uid="uid://tgm0tkbghr0c"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_h1sbr"]
 [ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_mcgly"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_qbcyl"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="4_j2lk3"]
 [ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="5_75dfq"]
+[ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="6_rs3mg"]
 
 [node name="RaceBase" instance=ExtResource("1_h1sbr")]
 lap_count = 1
@@ -49,6 +50,21 @@ is_key = true
 
 [node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_qbcyl")]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)
+
+[node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("6_rs3mg")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 25.6578, 0.00012207, -1.62639)
+
+[node name="EnemyPath4" parent="EnemyPathPoints" index="1" instance=ExtResource("6_rs3mg")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 4.23475, -0.00012207, -24.0745)
+
+[node name="EnemyPath7" parent="EnemyPathPoints" index="2" instance=ExtResource("6_rs3mg")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -23.5435, 0.00012207, -7.67405)
+
+[node name="EnemyPath10" parent="EnemyPathPoints" index="3" instance=ExtResource("6_rs3mg")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -11.6532, -0.000244141, 21.8467)
+
+[node name="EnemyPath13" parent="EnemyPathPoints" index="4" instance=ExtResource("6_rs3mg")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 20.1752, 0.00012207, 15.6837)
 
 [node name="ItemPickup" parent="." index="8" instance=ExtResource("4_j2lk3")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.7305, 1.90735e-06, -19.2348)
