@@ -1,5 +1,6 @@
 extends CharacterBody3D
 
+var physical_item = true
 var item_id: String
 var owner_id: String
 var world: RaceBase
@@ -99,13 +100,18 @@ func _on_despawn_timer_timeout():
 
 
 func _on_area_3d_body_entered(body):
-	print(body)
+	if body == self:
+		return
+	if "physical_item" in body:
+		world.destroy_physical_item(item_id)
+		world.destroy_physical_item(body.item_id)
+		return
+	
 	if not body is Vehicle3:
-		print("Not vehicle3")
 		return
 	
 	if body == world.players_dict[owner_id] and cur_grace <= grace_frames:
 		return
 	
-	print("HIT ", body)
+	body.damage(Vehicle3.DamageType.spin)
 	world.destroy_physical_item(item_id)

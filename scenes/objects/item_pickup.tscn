@@ -91,7 +91,7 @@ libraries = {
 autoplay = "hover"
 
 [node name="RespawnTimer" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 3.0
 one_shot = true
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

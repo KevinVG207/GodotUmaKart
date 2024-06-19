@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://djkncdwh507k1"]
+[gd_scene load_steps=10 format=3 uid="uid://djkncdwh507k1"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_ecs37"]
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="2_cairb"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scenes/control/Water.gd" id="3_6mpm6"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_6gkg7"]
 [ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="5_208oa"]
+[ext_resource type="PackedScene" uid="uid://camku2r2888iy" path="res://scenes/items/GreenShell.tscn" id="6_ak40w"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="6_x6qyg"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ubem1"]
@@ -45,18 +46,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.78025, -0.250145, 0.157288
 
 [node name="ItemPickup" parent="Objects" index="0" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.992484, 91.2936, -11.9785)
+guaranteed_item = ExtResource("5_208oa")
 
 [node name="ItemPickup3" parent="Objects" index="1" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.80415, 91.5984, -9.18063)
+guaranteed_item = ExtResource("5_208oa")
 
 [node name="ItemPickup4" parent="Objects" index="2" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.34392, 91.2044, -12.0773)
+guaranteed_item = ExtResource("5_208oa")
 
 [node name="ItemPickup5" parent="Objects" index="3" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.80235, 91.5313, -9.20723)
+guaranteed_item = ExtResource("6_ak40w")
 
 [node name="ItemPickup6" parent="Objects" index="4" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.67744, 91.1088, -12.1889)
+guaranteed_item = ExtResource("6_ak40w")
 
 [node name="ItemPickup7" parent="Objects" index="5" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(0.546789, 0, 0.83727, 0, 1, 0, -0.83727, 0, 0.546789, -9.82223, 125.929, -213.1)

@@ -1,14 +1,19 @@
 extends Area3D
 
+var physical_item = true
 var item_id: String
 var owner_id: String
 var world: RaceBase
 var no_updates: bool = false
 
 @export var next_item_key: String
+@export var damage_type: int
 
 func _enter_tree():
 	update_position()
+
+func _ready():
+	self.body_entered.connect(_on_body_entered)
 
 func _physics_process(_delta):
 	if item_id in world.deleted_physical_items:
@@ -43,3 +48,16 @@ func update_position():
 		new_pos = ray_hit["position"]
 	global_position = new_pos
 	transform.basis = vehicle.prev_transform.basis
+
+
+func _on_body_entered(body):
+	if body == self:
+		return
+	if "physical_item" in body:
+		world.destroy_physical_item(item_id)
+		world.destroy_physical_item(body.item_id)
+		return
+	
+	if body is Vehicle3 and body.user_id != owner_id and damage_type:
+		body.damage(damage_type)
+		world.destroy_physical_item(item_id)

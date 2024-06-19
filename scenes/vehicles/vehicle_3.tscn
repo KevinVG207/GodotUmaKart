@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=23 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="2_b5ade"]
@@ -6,6 +6,40 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
 absorbent = true
+
+[sub_resource type="Animation" id="Animation_8ksb3"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_oqrol"]
+resource_name = "dmg_spin"
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(6.283, -0.25, 0, 0.05, -4.33713, 0, -0.5, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_yrkfx"]
+_data = {
+"RESET": SubResource("Animation_8ksb3"),
+"dmg_spin": SubResource("Animation_oqrol")
+}
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_80jr0"]
 
@@ -123,6 +157,42 @@ max_contacts_reported = 50
 contact_monitor = true
 script = ExtResource("1_lrmky")
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Visual")
+libraries = {
+"": SubResource("AnimationLibrary_yrkfx")
+}
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
+shape = SubResource("CapsuleShape3D_80jr0")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
+shape = SubResource("CapsuleShape3D_80jr0")
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_h0c43")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
+mesh = SubResource("BoxMesh_tyxqj")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
+mesh = SubResource("CapsuleMesh_h0c43")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Visual"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
+mesh = SubResource("CapsuleMesh_h0c43")
+skeleton = NodePath("../..")
+
 [node name="PlayerCollision" type="Area3D" parent="."]
 collision_layer = 4
 collision_mask = 7
@@ -132,30 +202,6 @@ transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 
 shape = SubResource("CapsuleShape3D_80jr0")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="PlayerCollision"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
-shape = SubResource("CapsuleShape3D_80jr0")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("CapsuleMesh_h0c43")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
-mesh = SubResource("BoxMesh_tyxqj")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
-mesh = SubResource("CapsuleMesh_h0c43")
-
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
-shape = SubResource("CapsuleShape3D_80jr0")
-
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
-mesh = SubResource("CapsuleMesh_h0c43")
-
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
 shape = SubResource("CapsuleShape3D_80jr0")
 
@@ -368,8 +414,15 @@ gizmo_extents = 1.51
 wait_time = 10.0
 one_shot = true
 
+[node name="DamageTimer" type="Timer" parent="."]
+process_callback = 0
+one_shot = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+
 [connection signal="area_entered" from="PlayerCollision" to="." method="_on_player_collision_area_entered"]
 [connection signal="area_exited" from="PlayerCollision" to="." method="_on_player_collision_area_exited"]
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]
 [connection signal="timeout" from="ItemRouletteTimer" to="." method="_on_item_roulette_timer_timeout"]
 [connection signal="timeout" from="FailsafeTimer" to="." method="_on_failsafe_timer_timeout"]
+[connection signal="timeout" from="DamageTimer" to="." method="_on_damage_timer_timeout"]

@@ -1,5 +1,6 @@
 extends RigidBody3D
 
+var physical_item = true
 var item_id: String
 var owner_id: String
 var world: RaceBase
@@ -7,6 +8,9 @@ var no_updates: bool = true
 
 var gravity: Vector3
 var landed: bool = false
+
+var grace_frames: int = 10
+var cur_grace: int = 0
 
 func _enter_tree():
 	var thrower = world.players_dict[owner_id] as Vehicle3
@@ -38,6 +42,7 @@ func _ready():
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var delta: float = physics_state.step
+	cur_grace += 1
 	
 	if landed:
 		linear_velocity = Vector3.ZERO
@@ -50,7 +55,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		if collider.is_in_group("floor"):
 			# Floor touched! Snap to it and land.
 			landed = true
-			print("LANDED")
+			cur_grace += grace_frames
 			$DespawnTimer.stop()
 			var normal: Vector3 = physics_state.get_contact_local_normal(i)
 			var ray_start = global_position + normal.normalized() * 0.5
@@ -102,6 +107,24 @@ func set_state(state: Dictionary):
 	gravity = Util.to_vector3(state.gravity)
 	landed = state.landed
 	return
+
+
+func _on_area_3d_body_entered(body):
+	if body == self:
+		return
+	if "physical_item" in body:
+		world.destroy_physical_item(item_id)
+		world.destroy_physical_item(body.item_id)
+		return
+	
+	if not body is Vehicle3:
+		return
+	
+	if body == world.players_dict[owner_id] and cur_grace <= grace_frames:
+		return
+	
+	body.damage(Vehicle3.DamageType.spin)
+	world.destroy_physical_item(item_id)
 
 
 func _on_despawn_timer_timeout():

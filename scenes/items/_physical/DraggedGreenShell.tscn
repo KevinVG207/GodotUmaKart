@@ -13,8 +13,11 @@ height = 0.5
 radius = 0.456419
 
 [node name="GreenShell" type="Area3D"]
+collision_layer = 8
+collision_mask = 14
 script = ExtResource("1_2w2he")
 next_item_key = "thrown_green_shell"
+damage_type = 1
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.6, 0, 0, 0, 0.8, 0, 0.2, 0)

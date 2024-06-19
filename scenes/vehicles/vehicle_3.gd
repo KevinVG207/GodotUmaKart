@@ -6,6 +6,8 @@ class_name Vehicle3
 #var initial_transform: Transform3D
 
 var update_idx: int = 0
+@onready var vani: AnimationPlayer = $AnimationPlayer
+@onready var cani: AnimationPlayer # TODO: Character animation player
 
 @export var is_player: bool = false
 @export var is_cpu: bool = true
@@ -47,7 +49,7 @@ var input_updown: float = 0
 @export var weight_multi: float = 1.0
 @export var weak_offroad_multiplier: float = 0.7
 @export var offroad_multiplier: float = 0.5
-var push_force: float = 120
+var push_force: float = 50
 var max_push_force: float = 2.75
 var offroad = false
 var weak_offroad = false
@@ -166,6 +168,15 @@ var respawn_stage: int = 0
 var respawn_position: Vector3 = Vector3.ZERO
 var respawn_rotation: Vector3 = Vector3.ZERO
 
+var in_damage: int = DamageType.none
+const DamageType = {
+	none = 0,
+	spin = 1,
+	tumble = 2,
+	explode = 3
+}
+
+
 #func _enter_tree():
 	#set_multiplayer_authority(peer_id)
 	#if is_multiplayer_authority():
@@ -191,6 +202,7 @@ func set_finished(_finish_time: float):
 	finished = true
 	finish_time = _finish_time
 	if is_player:
+		UI.race_ui.hide_roulette()
 		UI.race_ui.finished()
 
 func axis_lock():
@@ -227,7 +239,7 @@ func get_random_target_offset() -> Vector3:
 	return Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))
 
 func handle_input():
-	if finished or (is_player and not get_window().has_focus()):
+	if finished or (is_player and not get_window().has_focus()) or in_damage or is_cpu:
 		set_all_input_zero()
 		return
 	
@@ -240,79 +252,89 @@ func handle_input():
 		input_item = Input.is_action_pressed("item")
 		input_item_just = Input.is_action_just_pressed("item")
 		input_updown = Input.get_axis("down", "up")
-	elif is_cpu:
-		if not cpu_target:
-			return
-		# CPU brain goes here
-		set_all_input_zero()
-		if in_drift and drift_gauge >= 75:
-			input_brake = true
-		if !$TrickTimer.is_stopped():
-			input_trick = true
-		
-		var cpu_target_pos = cpu_target.global_position + (cpu_target_offset * cpu_target.dist / 3)
-		
-		if global_position.distance_to(cpu_target_pos) < cpu_target.dist:
-			# Get next target
-			cpu_target = cpu_target.next_points.pick_random()
-			cpu_target_offset = get_random_target_offset()
-			# $FailsafeTimer.start()
 
-		
-		# Determine which side to steer
-		var target_dir = (cpu_target_pos - global_position).normalized()
-		var angle = transform.basis.z.angle_to(target_dir) - PI/2
-		var max_angle = cpu_target.dist/2 / global_position.distance_to(cpu_target_pos)
+func cpu_control():
+	if !is_cpu or in_damage:
+		return
+	
+	if not cpu_target:
+		return
 
-		var is_behind = transform.basis.x.dot(target_dir) < 0
+	# CPU brain goes here
+	set_all_input_zero()
+	if in_drift and drift_gauge >= 75:
+		input_brake = true
+	if !$TrickTimer.is_stopped():
+		input_trick = true
+	
+	var cpu_target_pos = cpu_target.global_position + (cpu_target_offset * cpu_target.dist / 3)
+	
+	if global_position.distance_to(cpu_target_pos) < cpu_target.dist:
+		# Get next target
+		cpu_target = cpu_target.next_points.pick_random()
+		cpu_target_offset = get_random_target_offset()
+		# $FailsafeTimer.start()
 
-		if is_behind:
-			if angle < 0:
-				angle -= 10
-			else:
-				angle += 10
+	
+	# Determine which side to steer
+	var target_dir = (cpu_target_pos - global_position).normalized()
+	var angle = transform.basis.z.angle_to(target_dir) - PI/2
+	var max_angle = cpu_target.dist/2 / global_position.distance_to(cpu_target_pos)
 
-		input_accel = true
+	var is_behind = transform.basis.x.dot(target_dir) < 0
 
-		if abs(angle) > 0.4 and cur_speed > min_hop_speed:
-			input_brake = true
-		
-		if abs(angle) > max_angle:
-			# Should steer.
-			if angle < 0:
-				input_steer = -1.0
-				if in_drift and drift_dir > 0 and (drift_gauge <= 80 or drift_gauge == 100):
-					input_brake = false
-			else:
-				input_steer = 1.0
-				if in_drift and drift_dir < 0 and (drift_gauge <= 80 or drift_gauge == 100):
-					input_brake = false
-		
-		#if abs(angle) < max_angle:
-			#if angle < 0:
-				#input_steer = -1.0
-			#else:
-				#input_steer = 1.0
-			#input_steer *= randf() * 0.2
-		
-		var item_rand = randi_range(0, 300) == 0
-		# if item:
-		# 	print(can_use_item, " ", item, " ", item_rand)
-		if can_use_item and item and item_rand:
-			input_item = true
-			input_item_just = true
-		
-		var new_progress = world.get_vehicle_progress(self)
-		if new_progress > cur_progress:
-			cur_progress = new_progress
-			$FailsafeTimer.stop()
+	if is_behind:
+		if angle < 0:
+			angle -= 10
 		else:
-			# No progress made in this frame.
-			if $FailsafeTimer.is_stopped():
-				$FailsafeTimer.start()
+			angle += 10
+
+	input_accel = true
+
+	if abs(angle) > 0.4 and cur_speed > min_hop_speed:
+		input_brake = true
+	
+	if abs(angle) > max_angle:
+		# Should steer.
+		if angle < 0:
+			input_steer = -1.0
+			if in_drift and drift_dir > 0 and (drift_gauge <= 80 or drift_gauge == 100):
+				input_brake = false
+		else:
+			input_steer = 1.0
+			if in_drift and drift_dir < 0 and (drift_gauge <= 80 or drift_gauge == 100):
+				input_brake = false
+	
+	#if abs(angle) < max_angle:
+		#if angle < 0:
+			#input_steer = -1.0
+		#else:
+			#input_steer = 1.0
+		#input_steer *= randf() * 0.2
+	
+	var item_rand = randi_range(0, 300) == 0
+	# if item:
+	# 	print(can_use_item, " ", item, " ", item_rand)
+	if can_use_item and item and item_rand:
+		input_item = true
+		input_item_just = true
+	
+	var new_progress = world.get_vehicle_progress(self)
+	if new_progress > cur_progress:
+		cur_progress = new_progress
+		$FailsafeTimer.stop()
+	else:
+		# No progress made in this frame.
+		if $FailsafeTimer.is_stopped():
+			$FailsafeTimer.start()
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
+	if finished:
+		is_cpu = true
+	
 	handle_input()
+	cpu_control()
+	
 	if !is_player:
 		set_collision_layer_value(2, false)
 		set_collision_layer_value(3, true)
@@ -715,6 +737,11 @@ func get_friction_speed(delta: float) -> float:
 
 
 func get_boost_speed(delta: float) -> float:
+	if in_damage:
+		$SmallBoostTimer.stop()
+		$NormalBoostTimer.stop()
+		$BigBoostTimer.stop()
+	
 	if not normal_boost_timer.is_stopped():
 		# Normal boost is active
 		return Util.get_vehicle_accel(normal_boost_max_speed, cur_speed, normal_boost_initial_accel, normal_boost_exponent) * delta
@@ -851,7 +878,7 @@ func handle_item():
 		remove_item()
 	else:
 		can_use_item = true
-		if is_player:
+		if is_player and !is_cpu:
 			UI.race_ui.set_item_texture(item.texture)
 
 func remove_item():
@@ -878,7 +905,7 @@ func get_item(guaranteed_item: PackedScene = null):
 		item = Global.items.pick_random().instantiate()
 	world.add_child(item)
 	$ItemRouletteTimer.start(4)
-	if is_player:
+	if is_player and !is_cpu:
 		UI.race_ui.start_roulette()
 
 
@@ -887,7 +914,7 @@ func _on_item_roulette_timer_timeout():
 		print("Error: Roulette stopped but no item assigned!")
 		return
 	
-	if not is_player:
+	if is_cpu or is_network:
 		can_use_item = true
 		return
 	
@@ -1043,3 +1070,18 @@ func apply_state(state: Dictionary):
 func _on_failsafe_timer_timeout():
 	if not finished:
 		respawn()
+
+func damage(damage_type: int):
+	if in_damage:
+		return
+
+	in_damage = damage_type
+	
+	match damage_type:
+		DamageType.spin:
+			$DamageTimer.start(1.5)
+			vani.play("dmg_spin")
+
+
+func _on_damage_timer_timeout():
+	in_damage = DamageType.none
