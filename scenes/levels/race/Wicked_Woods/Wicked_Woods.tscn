@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://djkncdwh507k1"]
+[gd_scene load_steps=9 format=3 uid="uid://djkncdwh507k1"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_ecs37"]
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="2_cairb"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_02dhb"]
 [ext_resource type="Script" path="res://scenes/control/Water.gd" id="3_6mpm6"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_6gkg7"]
+[ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="5_208oa"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="6_x6qyg"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ubem1"]
@@ -21,6 +22,8 @@ metadata/_edit_group_ = true
 transform = Transform3D(-0.764252, 0.474445, 0.436831, 0.374999, -0.224144, 0.899519, 0.524685, 0.851271, -0.00661415, -15.5561, 248.104, 15.5561)
 light_color = Color(1, 0.922912, 0.91767, 1)
 shadow_enabled = true
+shadow_bias = 0.05
+shadow_normal_bias = 1.0
 shadow_opacity = 0.75
 directional_shadow_blend_splits = true
 directional_shadow_max_distance = 500.0
@@ -96,6 +99,10 @@ transform = Transform3D(-0.736003, 0, -0.676979, 0, 1, 0, 0.676979, 0, -0.736003
 
 [node name="ItemPickup20" parent="Objects" index="18" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(-0.736003, 0, -0.676979, 0, 1, 0, 0.676979, 0, -0.736003, -146.156, 76.3163, 13.0631)
+
+[node name="ItemPickup2" parent="Objects" index="19" instance=ExtResource("5_6gkg7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.29563, 76.6755, 51.9035)
+guaranteed_item = ExtResource("5_208oa")
 
 [node name="Checkpoints" parent="." index="2"]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)

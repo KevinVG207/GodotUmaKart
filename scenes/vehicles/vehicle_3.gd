@@ -23,6 +23,7 @@ var world: RaceBase
 
 var cpu_target: EnemyPath = null
 var cpu_target_offset: Vector3 = get_random_target_offset()
+var cur_progress: float = -100000
 
 var item: ItemBase = null
 var can_use_item: bool = false
@@ -255,7 +256,7 @@ func handle_input():
 			# Get next target
 			cpu_target = cpu_target.next_points.pick_random()
 			cpu_target_offset = get_random_target_offset()
-			$FailsafeTimer.start()
+			# $FailsafeTimer.start()
 
 		
 		# Determine which side to steer
@@ -300,6 +301,15 @@ func handle_input():
 		if can_use_item and item and item_rand:
 			input_item = true
 			input_item_just = true
+		
+		var new_progress = world.get_vehicle_progress(self)
+		if new_progress > cur_progress:
+			cur_progress = new_progress
+			$FailsafeTimer.stop()
+		else:
+			# No progress made in this frame.
+			if $FailsafeTimer.is_stopped():
+				$FailsafeTimer.start()
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	handle_input()
@@ -756,6 +766,7 @@ func respawn():
 	respawn_stage = 1
 	remove_item()
 	$RespawnTimer.start(respawn_time)
+	cur_progress = -100000
 
 func handle_respawn():
 	freeze = false

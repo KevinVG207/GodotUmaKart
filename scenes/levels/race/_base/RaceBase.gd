@@ -521,6 +521,13 @@ func send_ready():
 	state = STATE_WAIT_FOR_START
 	return
 
+func get_vehicle_progress(vehicle: Vehicle3) -> float:
+	var check_idx = vehicle.check_idx
+	if check_idx < 0:
+		check_idx = checkpoints.size() - check_idx - 2
+	var cur_progress = 10000 * vehicle.lap + check_idx + vehicle.check_progress
+	return cur_progress
+
 func update_ranks():
 	var ranks = []
 	var ranks_vehicles = []
@@ -532,10 +539,7 @@ func update_ranks():
 			finished_vehicles.append(vehicle)
 			continue
 
-		var check_idx = vehicle.check_idx
-		if check_idx < 0:
-			check_idx = checkpoints.size() - check_idx - 2
-		var cur_progress = 10000 * vehicle.lap + check_idx + vehicle.check_progress
+		var cur_progress = get_vehicle_progress(vehicle)
 		if not ranks:
 			ranks.append(cur_progress)
 			ranks_vehicles.append(vehicle)

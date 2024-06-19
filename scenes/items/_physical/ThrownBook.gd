@@ -22,7 +22,10 @@ func _enter_tree():
 	var throw_force = thrower.linear_velocity
 	if dir_multi > 0:
 		offset += thrower.transform.basis.y * 0.5
-		throw_force += ((direction * 1.5) + (thrower.transform.basis.y * 1.0)) * 20
+		var multi: float = 1.0
+		if thrower.in_hop:
+			multi = 1.5
+		throw_force += ((direction * 1.5) + (thrower.transform.basis.y * 1.0)) * 13 * multi
 
 	global_rotation = thrower.global_rotation
 	global_position = thrower.global_position + offset
