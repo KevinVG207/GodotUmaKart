@@ -6,3 +6,4 @@
 [node name="Book" type="Node"]
 script = ExtResource("1_ox0ic")
 texture = ExtResource("2_bmapf")
+to_pos = 6

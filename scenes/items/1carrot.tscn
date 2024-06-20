@@ -6,3 +6,5 @@
 [node name="1Carrot" type="Node"]
 script = ExtResource("1_v1ube")
 texture = ExtResource("2_pucap")
+from_pos = 2
+to_pos = 8

@@ -6,3 +6,4 @@
 [node name="RedBean" type="Node"]
 script = ExtResource("1_jrd61")
 texture = ExtResource("2_k2jhv")
+from_pos = 2

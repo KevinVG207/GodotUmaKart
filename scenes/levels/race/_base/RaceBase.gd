@@ -305,7 +305,6 @@ func apply_item_state(data: Dictionary):
 
 
 func _physics_process(_delta):
-	print(state)
 	match state:
 		STATE_INITIAL:
 			state = STATE_JOINING
@@ -478,9 +477,9 @@ func get_starting_order():
 		Global.MODE1_OFFLINE:
 			player_user_id = "Player"
 			var player_array = []
-			# TODO: Uncomment this
-			#for i in range(11):
-				#player_array.append("CPU" + str(i))
+
+			for i in range(Global.player_count-1):
+				player_array.append("CPU" + str(i))
 			player_array.append(player_user_id)
 			player_array.shuffle()
 			return player_array

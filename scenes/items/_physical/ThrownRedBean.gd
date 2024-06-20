@@ -99,7 +99,7 @@ func _physics_process(delta):
 				if dist_to_target < target_point.dist:
 					target_point = target_point.next_points.pick_random()
 				
-				target_pos = target_point.global_position
+			target_pos = target_point.global_position
 	
 	if target_pos:
 		# Determine which side to steer

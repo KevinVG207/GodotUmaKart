@@ -55,9 +55,9 @@ var offroad = false
 var weak_offroad = false
 
 @export var outside_drift: bool = true
-@export var outside_drift_force: float = 120.0
+@export var outside_drift_force: float = 2000.0
 var cur_outside_drift_force: float = 0.0
-var outside_drift_force_reduction: float = 100.0
+var outside_drift_force_reduction: float = 1500.0
 
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
@@ -230,7 +230,6 @@ func set_all_input_zero():
 	input_brake = false
 	input_steer = 0.0
 	input_trick = false
-	input_mirror = false
 	input_item = false
 	input_item_just = false
 	input_updown = 0.0
@@ -239,6 +238,9 @@ func get_random_target_offset() -> Vector3:
 	return Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))
 
 func handle_input():
+	if is_player and get_window().has_focus():
+		input_mirror = Input.is_action_pressed("mirror")
+
 	if finished or (is_player and not get_window().has_focus()) or in_damage or is_cpu:
 		set_all_input_zero()
 		return
@@ -248,7 +250,6 @@ func handle_input():
 		input_brake = Input.is_action_pressed("brake")
 		input_steer = Input.get_axis("right", "left")
 		input_trick = Input.is_action_pressed("trick")
-		input_mirror = Input.is_action_pressed("mirror")
 		input_item = Input.is_action_pressed("item")
 		input_item_just = Input.is_action_just_pressed("item")
 		input_updown = Input.get_axis("down", "up")
@@ -312,7 +313,7 @@ func cpu_control():
 			#input_steer = 1.0
 		#input_steer *= randf() * 0.2
 	
-	var item_rand = randi_range(0, 300) == 0
+	var item_rand = randi_range(0, 900) == 0
 	# if item:
 	# 	print(can_use_item, " ", item, " ", item_rand)
 	if can_use_item and item and item_rand:
@@ -401,7 +402,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				else:
 					in_drift = true
 					if outside_drift:
-						cur_outside_drift_force = outside_drift_force
+						cur_outside_drift_force = outside_drift_force * (cur_speed / cur_max_speed)
 			
 			if in_trick:
 				in_trick = false
@@ -902,7 +903,7 @@ func get_item(guaranteed_item: PackedScene = null):
 	if guaranteed_item:
 		item = guaranteed_item.instantiate()
 	else:
-		item = Global.items.pick_random().instantiate()
+		item = Global.item_dist[floor(rank * (world.players_dict.size() / Global.player_count))].pick_random().instantiate()
 	world.add_child(item)
 	$ItemRouletteTimer.start(4)
 	if is_player and !is_cpu:

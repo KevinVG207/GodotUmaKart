@@ -1,5 +1,7 @@
 extends Node
 
+var player_count = 12
+
 var randPing = 0
 var unique_string = OS.get_unique_id()
 
@@ -38,6 +40,8 @@ var items: Array = [
 	load("res://scenes/items/Book.tscn")
 ]
 
+var item_dist: Array = []
+
 var physical_items: Dictionary = {
 	"green_bean": load("res://scenes/items/_physical/DraggedGreenBean.tscn"),
 	"thrown_green_bean": load("res://scenes/items/_physical/ThrownGreenBean.tscn"),
@@ -54,10 +58,18 @@ func _enter_tree():
 	return
 
 func _ready():
+	#item_dist.resize(12)
+	for _i in range(player_count):
+		item_dist.append([])
+	
 	for item: PackedScene in items:
 		var instance = item.instantiate()
 		item_tex.append(instance.texture)
+		for i in range(instance.from_pos-1, instance.to_pos):
+			if i < player_count:
+				item_dist[i].append(item)
 		instance.queue_free()
+	print(item_dist)
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:

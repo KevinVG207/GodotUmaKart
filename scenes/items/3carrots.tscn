@@ -6,3 +6,4 @@
 [node name="3Carrots" type="Node"]
 script = ExtResource("1_fxybg")
 texture = ExtResource("2_jjgb5")
+from_pos = 6
