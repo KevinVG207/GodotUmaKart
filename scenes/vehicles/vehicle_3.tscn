@@ -153,6 +153,7 @@ physics_material_override = SubResource("PhysicsMaterial_b3vot")
 gravity_scale = 0.0
 can_sleep = false
 freeze_mode = 1
+continuous_cd = true
 max_contacts_reported = 50
 contact_monitor = true
 script = ExtResource("1_lrmky")

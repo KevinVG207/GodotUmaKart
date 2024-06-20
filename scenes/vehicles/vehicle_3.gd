@@ -45,7 +45,7 @@ var input_updown: float = 0
 @onready var max_reverse_speed: float = max_speed * reverse_multi
 @export var initial_accel: float = 10
 @export var accel_exponent: float = 10
-@export var spd_steering_decrease: float = 1.0
+@export var spd_steering_decrease: float = 0.025
 @export var weight_multi: float = 1.0
 @export var weak_offroad_multiplier: float = 0.7
 @export var offroad_multiplier: float = 0.5
@@ -68,14 +68,14 @@ var outside_drift_force_reduction: float = 100.0
 @onready var reverse_initial_accel: float = initial_accel * 0.5
 @onready var reverse_exponent: float = accel_exponent
 
-@export var max_turn_speed: float = 1.0
-@export var drift_turn_multiplier: float = 1.75
+@export var max_turn_speed: float = 100.0
+@export var drift_turn_multiplier: float = 1.2
 #@onready var max_turn_speed_drift: float = max_turn_speed * drift_turn_multiplier
 @export var drift_turn_min_multiplier: float = 0.5
 @export var air_turn_multiplier: float = 0.15
 
 @export var cur_turn_speed: float = 0
-var turn_accel: float = 15
+var turn_accel: float = 2000
 
 var trick_cooldown_time: float = 0.3
 @export var trick_force: float = 1.0
@@ -107,8 +107,8 @@ var trick_frames: int = 0
 @export var vehicle_length_behind: float = 1.0
 @export var vehicle_height_below: float = 0.5
 
-var stick_speed: float = 100
-var stick_distance: float = 0.5
+var stick_speed: float = 300
+var stick_distance: float = 0.75
 var stick_ray_count: int = 4
 @export var air_frames: int = 0
 @export var in_hop: bool = false
@@ -135,7 +135,7 @@ var still_turbo_ready: bool = false
 var terminal_velocity = 30
 
 @export var grip_multiplier: float = 1.0
-@export var default_grip: float = 100.0
+@export var default_grip: float = 2700
 var cur_grip: float = 100.0
 
 var max_displacement_for_sleep = 0.003
@@ -389,7 +389,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		var collider = physics_state.get_contact_collider_object(i) as Node
 		if collider.is_in_group("floor"):
 			grounded = true
-			if in_hop and in_hop_frames > 2:
+			if in_hop and in_hop_frames > 6:
 				# Switch from hop to drift
 				if is_brake:
 					# Block hopping
@@ -405,7 +405,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			
 			if in_trick:
 				in_trick = false
-				if trick_frames > 5:
+				if trick_frames > 15:
 					trick_boost_timer.start(trick_boost_duration)
 				trick_frames = 0
 				#Debug.print(["Starting trick boost", trick_boost_timer])
@@ -495,7 +495,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 					linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
 				grounded = false
 				prev_vel = linear_velocity
-				bounce_frames = 3
+				bounce_frames = 9
 				wall_contacts = []
 			cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
 
@@ -538,7 +538,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	# Stick to ground.
 	# Perform raycast in local -y direction
-	if air_frames < 5 and !in_hop and bounce_frames == 0:
+	if air_frames < 15 and !in_hop and bounce_frames == 0:
 		var space_state = get_world_3d().direct_space_state
 		var ray_origin = transform.origin + transform.basis.y * -0.5
 		var ray_end = ray_origin + transform.basis.y * -0.9
@@ -591,9 +591,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta * 2)
 	else:
 		cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta)
-	rotation_degrees.y += cur_turn_speed
+	rotation_degrees.y += cur_turn_speed * delta
 	if !grounded:
-		linear_velocity = linear_velocity.rotated(transform.basis.y, deg_to_rad(cur_turn_speed))
+		linear_velocity = linear_velocity.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta)
 	#Debug.print(in_drift)
 	
 

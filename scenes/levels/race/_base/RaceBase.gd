@@ -6,7 +6,7 @@ class_name RaceBase
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
 var players_dict: Dictionary = {}
-var frames_between_update: int = 15
+var frames_between_update: int = 45
 var update_wait_frames: int = 0
 var should_exit: bool = false
 var update_thread: Thread
@@ -305,6 +305,7 @@ func apply_item_state(data: Dictionary):
 
 
 func _physics_process(_delta):
+	print(state)
 	match state:
 		STATE_INITIAL:
 			state = STATE_JOINING
@@ -477,9 +478,9 @@ func get_starting_order():
 		Global.MODE1_OFFLINE:
 			player_user_id = "Player"
 			var player_array = []
-			for i in range(11):
-				player_array.append("CPU" + str(i))
-			#player_array.insert(randi_range(0, 11), player_user_id)
+			# TODO: Uncomment this
+			#for i in range(11):
+				#player_array.append("CPU" + str(i))
 			player_array.append(player_user_id)
 			player_array.shuffle()
 			return player_array

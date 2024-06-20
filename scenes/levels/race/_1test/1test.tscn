@@ -16,14 +16,6 @@ metadata/_edit_group_ = true
 
 [node name="1test" parent="Course" index="0" instance=ExtResource("2_e76k5")]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Course" index="1"]
-transform = Transform3D(-0.482963, -0.866025, 0.12941, 0.258819, -4.37114e-08, 0.965926, -0.836516, 0.5, 0.224144, -15.5561, 50.104, 15.5561)
-light_color = Color(1, 0.922912, 0.91767, 1)
-shadow_enabled = true
-shadow_opacity = 0.75
-directional_shadow_blend_splits = true
-directional_shadow_max_distance = 500.0
-
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_3hbld")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 26, 0, 0)
 is_key = true

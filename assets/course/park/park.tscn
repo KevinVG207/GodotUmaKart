@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://2h3tlp4kedpv"]
+
+[ext_resource type="PackedScene" uid="uid://ye4ta88hy2cq" path="res://assets/course/park/park.blend" id="1_x0a6j"]
+
+[node name="park" instance=ExtResource("1_x0a6j")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+
+[node name="StaticBody3D" parent="Plane" index="0" groups=["floor"]]

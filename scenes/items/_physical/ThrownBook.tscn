@@ -14,6 +14,7 @@ size = Vector3(0.917725, 0.721001, 0.93457)
 collision_layer = 0
 physics_material_override = SubResource("PhysicsMaterial_8fn56")
 gravity_scale = 0.0
+continuous_cd = true
 max_contacts_reported = 10
 contact_monitor = true
 script = ExtResource("1_ibqwy")

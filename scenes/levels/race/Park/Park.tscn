@@ -1,0 +1,34 @@
+[gd_scene load_steps=5 format=3 uid="uid://conawy02kqwxr"]
+
+[ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_jfhjy"]
+[ext_resource type="PackedScene" uid="uid://2h3tlp4kedpv" path="res://assets/course/park/park.tscn" id="2_xpcoo"]
+[ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_xk2ml"]
+[ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_emh6j"]
+
+[node name="RaceBase" instance=ExtResource("1_jfhjy")]
+
+[node name="park" parent="Course" index="0" instance=ExtResource("2_xpcoo")]
+
+[node name="Checkpoints" parent="." index="2"]
+visible = false
+
+[node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_xk2ml")]
+is_key = true
+
+[node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("3_xk2ml")]
+transform = Transform3D(-0.0963669, 0, -0.995346, 0, 1, 0, 0.995346, 0, -0.0963669, -10.3028, 0, 32.8382)
+
+[node name="Checkpoint3" parent="Checkpoints" index="2" instance=ExtResource("3_xk2ml")]
+transform = Transform3D(-0.976503, 0, -0.215502, 0, 1, 0, 0.215502, 0, -0.976503, -26.6892, -5.95866, 9.26379)
+is_key = true
+
+[node name="Checkpoint4" parent="Checkpoints" index="3" instance=ExtResource("3_xk2ml")]
+transform = Transform3D(-0.120397, 0, 0.992726, 0, 1, 0, -0.992726, 0, -0.120397, -23.7051, -5.95866, -25.023)
+
+[node name="EnemyPathPoints" parent="." index="3"]
+visible = false
+
+[node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("4_emh6j")]
+
+[node name="EnemyPath2" parent="EnemyPathPoints" index="1" instance=ExtResource("4_emh6j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.1486, 0, 0)

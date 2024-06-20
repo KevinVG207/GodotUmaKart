@@ -108,4 +108,6 @@ locale/translations=PackedStringArray("res://loc/text.en.translation", "res://lo
 
 [physics]
 
+common/physics_ticks_per_second=180
+common/max_physics_steps_per_frame=18
 3d/default_gravity=20.0
