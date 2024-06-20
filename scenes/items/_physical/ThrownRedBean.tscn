@@ -1,21 +1,21 @@
-[gd_scene load_steps=6 format=3 uid="uid://b3weoxg0yjr52"]
+[gd_scene load_steps=6 format=3 uid="uid://b1k75qqx23vj2"]
 
-[ext_resource type="Script" path="res://scenes/items/_physical/ThrownGreenShell.gd" id="1_hhyco"]
+[ext_resource type="Script" path="res://scenes/items/_physical/ThrownRedBean.gd" id="1_ieo53"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_v8qc4"]
 height = 1.32048
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5qrcn"]
-albedo_color = Color(0, 0.639216, 0.0823529, 1)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ts7cj"]
+albedo_color = Color(0.984556, 0, 0.00390013, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_crqg3"]
-material = SubResource("StandardMaterial3D_5qrcn")
+material = SubResource("StandardMaterial3D_ts7cj")
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_hsbh8"]
 height = 0.5
 radius = 0.736184
 
-[node name="ThrownGreenShell" type="CharacterBody3D"]
+[node name="ThrownRedBean" type="CharacterBody3D"]
 collision_layer = 8
 wall_min_slide_angle = 0.0
 floor_stop_on_slope = false
@@ -23,7 +23,7 @@ floor_constant_speed = true
 floor_block_on_wall = false
 floor_max_angle = 1.5708
 floor_snap_length = 0.4
-script = ExtResource("1_hhyco")
+script = ExtResource("1_ieo53")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.25, 0)

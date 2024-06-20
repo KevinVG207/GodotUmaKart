@@ -104,3 +104,31 @@ func align_with_y(xform: Transform3D, new_y: Vector3):
 	xform.basis.x = -xform.basis.z.cross(new_y)
 	xform.basis = xform.basis.orthonormalized()
 	return xform
+
+func get_path_point_ahead_of_player(world: RaceBase, player: Vehicle3):
+	var points: Array = world.get_node("EnemyPathPoints").find_children("*", "EnemyPath")
+	var plane_pos: Vector3 = player.get_node("Front").global_position
+	var plane_normal: Vector3 = player.transform.basis.x
+	
+	var filtered_point: EnemyPath
+	var filtered_distance = 1000000000
+	
+	for point: EnemyPath in points:
+		var dist_ahead: float = plane_normal.dot(point.global_position - plane_pos)
+		if dist_ahead >= 0:
+			var dist: float = player.global_position.distance_to(point.global_position)
+			if dist < filtered_distance:
+				filtered_distance = dist
+				filtered_point = point
+	
+	if filtered_point:
+		return filtered_point
+	
+	# Fallback to nearest
+	for point: EnemyPath in points:
+		var dist: float = player.global_position.distance_to(point.global_position)
+		if dist < filtered_distance:
+			filtered_distance = dist
+			filtered_point = filtered_point
+	
+	return filtered_point

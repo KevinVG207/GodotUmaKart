@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://tgm0tkbghr0c"]
+[gd_scene load_steps=8 format=3 uid="uid://tgm0tkbghr0c"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_h1sbr"]
 [ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_mcgly"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_qbcyl"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="4_j2lk3"]
 [ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="5_75dfq"]
+[ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="6_14thf"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="6_rs3mg"]
 
 [node name="RaceBase" instance=ExtResource("1_h1sbr")]
@@ -68,6 +69,7 @@ transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 20.1752, 0.00012207, 15
 
 [node name="ItemPickup" parent="." index="8" instance=ExtResource("4_j2lk3")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.7305, 1.90735e-06, -19.2348)
+guaranteed_item = ExtResource("6_14thf")
 
 [node name="ItemPickup2" parent="." index="9" instance=ExtResource("4_j2lk3")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.181, 1.90735e-06, -19.8046)

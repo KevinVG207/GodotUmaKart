@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://ce0p0or6swliy"]
+
+[ext_resource type="Script" path="res://scenes/items/RedBean.gd" id="1_jrd61"]
+[ext_resource type="Texture2D" uid="uid://chjvxxnrtrfvk" path="res://assets/items/jellybean_red.png" id="2_k2jhv"]
+
+[node name="RedBean" type="Node"]
+script = ExtResource("1_jrd61")
+texture = ExtResource("2_k2jhv")

@@ -33,15 +33,18 @@ var items: Array = [
 	load("res://scenes/items/1carrot.tscn"),
 	#preload("res://scenes/items/2carrots.tscn"),
 	load("res://scenes/items/3carrots.tscn"),
-	load("res://scenes/items/GreenShell.tscn"),
+	load("res://scenes/items/GreenBean.tscn"),
+	load("res://scenes/items/RedBean.tscn"),
 	load("res://scenes/items/Book.tscn")
 ]
 
 var physical_items: Dictionary = {
-	"green_shell": load("res://scenes/items/_physical/DraggedGreenShell.tscn"),
-	"thrown_green_shell": load("res://scenes/items/_physical/ThrownGreenShell.tscn"),
+	"green_bean": load("res://scenes/items/_physical/DraggedGreenBean.tscn"),
+	"thrown_green_bean": load("res://scenes/items/_physical/ThrownGreenBean.tscn"),
 	"book": load("res://scenes/items/_physical/DraggedBook.tscn"),
-	"thrown_book": load("res://scenes/items/_physical/ThrownBook.tscn")
+	"thrown_book": load("res://scenes/items/_physical/ThrownBook.tscn"),
+	"red_bean": load("res://scenes/items/_physical/DraggedRedBean.tscn"),
+	"thrown_red_bean": load("res://scenes/items/_physical/ThrownRedBean.tscn")
 }
 
 var item_tex: Array = []

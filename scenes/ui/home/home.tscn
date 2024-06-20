@@ -1,13 +1,13 @@
 [gd_scene load_steps=4 format=3 uid="uid://dak1demjog305"]
 
 [ext_resource type="Script" path="res://scenes/ui/home/home.gd" id="1_ombw4"]
-[ext_resource type="PackedScene" uid="uid://tgm0tkbghr0c" path="res://scenes/levels/race/1test/1test.tscn" id="2_a15tt"]
+[ext_resource type="PackedScene" uid="uid://djkncdwh507k1" path="res://scenes/levels/race/Wicked_Woods/Wicked_Woods.tscn" id="2_ph3pe"]
 [ext_resource type="PackedScene" uid="uid://dqhi3idf6syay" path="res://scenes/ui/lobby/lobby.tscn" id="3_0ol4i"]
 
 [node name="Home" type="CanvasLayer"]
 layer = 20
 script = ExtResource("1_ombw4")
-single_scene = ExtResource("2_a15tt")
+single_scene = ExtResource("2_ph3pe")
 online_scene = ExtResource("3_0ol4i")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
