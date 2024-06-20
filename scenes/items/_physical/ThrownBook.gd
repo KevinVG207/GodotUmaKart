@@ -9,7 +9,7 @@ var no_updates: bool = true
 var gravity: Vector3
 var landed: bool = false
 
-var grace_frames: int = 10
+var grace_frames: int = 30
 var cur_grace: int = 0
 
 func _enter_tree():
