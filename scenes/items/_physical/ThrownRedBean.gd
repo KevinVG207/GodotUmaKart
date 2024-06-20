@@ -23,6 +23,7 @@ var target_player: Vehicle3 = null
 var target_point: EnemyPath
 var target_pos: Vector3
 var dist_to_homing: float = 20.0
+var new_owner: String = ""
 
 func _enter_tree():
 	if Global.MODE1 == Global.MODE1_ONLINE:
@@ -43,7 +44,7 @@ func _enter_tree():
 	direction = direction - direction.project(gravity.normalized())
 	direction = direction.normalized()
 
-	var speed = max(0, thrower.linear_velocity.project(direction).length()) + 5
+	var speed = max(5, thrower.linear_velocity.project(direction).length()) + 3
 	
 	look_at(global_position + direction, -gravity)
 	velocity = direction * speed
@@ -77,12 +78,13 @@ func _physics_process(delta):
 	var dist_to_target_player = global_position.distance_to(target_player.global_position)
 	if target_mode == TargetMode.follow and dist_to_target_player < dist_to_homing and owner_id == world.player_user_id:
 		target_mode = TargetMode.homing
+		new_owner = target_player.user_id
+		#print("SETTING OWNER: ", new_owner)
 	
 	match target_mode:
 		TargetMode.homing:
-			owner_id = target_player.user_id
 			target_pos = target_player.global_position
-			target_speed = remap(clamp(dist_to_target_player, 0.0, 20.0), 0.0, 20.0, target_player.linear_velocity.length(), start_speed)
+			target_speed = remap(clamp(dist_to_target_player, 0.0, 20.0), 0.0, 20.0, max(5, target_player.linear_velocity.length()), start_speed)
 	
 		TargetMode.follow:
 			# First, change the target player.
@@ -114,6 +116,10 @@ func _physics_process(delta):
 		var turn_speed = 1.0
 		if angle < 0:
 			turn_speed *= -1
+		
+		if dist_to_target_player < 10:
+			turn_speed *= 2
+		
 		velocity = velocity.rotated(transform.basis.y, turn_speed * delta * 3)
 	
 	var speed = velocity.length()
@@ -151,13 +157,18 @@ func _physics_process(delta):
 
 
 func get_state() -> Dictionary:
+	var _owner_id = owner_id
+	if new_owner:
+		_owner_id = new_owner
+		new_owner = ""
+	
 	return {
 		"pos": Util.to_array(global_position),
 		"rot": Util.to_array(global_rotation),
 		"velocity": Util.to_array(velocity),
 		"gravity": Util.to_array(gravity),
 		"target_mode": target_mode,
-		"owner_id": owner_id
+		"owner_id": _owner_id
 	}
 	
 func set_state(state: Dictionary):

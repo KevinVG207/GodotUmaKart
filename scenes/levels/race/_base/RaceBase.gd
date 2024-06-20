@@ -280,6 +280,7 @@ func send_item_state(item: Node):
 	if not state:
 		return
 	
+	print(player_user_id, " sends ", item.item_id)
 	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {"uniqueId": item.item_id, "state": item_state})
 
 
@@ -298,8 +299,9 @@ func apply_item_state(data: Dictionary):
 		return
 	
 	var instance = physical_items[key]
-	instance.owner_id = owner_id
 	instance.set_state(item_state)
+	#print(player_user_id, " receives ", key)
+	#print("New owner ", instance.owner_id)
 
 
 func _physics_process(_delta):
