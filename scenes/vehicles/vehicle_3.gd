@@ -6,7 +6,7 @@ class_name Vehicle3
 #var initial_transform: Transform3D
 
 var update_idx: int = 0
-@onready var vani: AnimationPlayer = $AnimationPlayer
+@onready var vani: VehicleAnimationTree = $VehicleAnimationTree
 @onready var cani: AnimationPlayer # TODO: Character animation player
 
 @export var is_player: bool = false
@@ -998,6 +998,7 @@ func get_state() -> Dictionary:
 	update_idx += 1
 	return {
 		"idx": update_idx,
+		"vani": vani.animation,
 		"pos": Util.to_array(global_position),
 		"rot": Util.to_array(rotation),
 		"lin_vel": Util.to_array(linear_velocity),
@@ -1036,6 +1037,7 @@ func apply_state(state: Dictionary):
 		return
 	
 	update_idx = state.idx
+	vani.animation = state.vani
 	global_position = Util.to_vector3(state.pos)
 	rotation = Util.to_vector3(state.rot)
 	linear_velocity = Util.to_vector3(state.lin_vel)
@@ -1081,7 +1083,7 @@ func damage(damage_type: int):
 	match damage_type:
 		DamageType.spin:
 			$DamageTimer.start(1.5)
-			vani.play("dmg_spin")
+			vani.animation = vani.Type.dmg_spin
 
 
 func _on_damage_timer_timeout():

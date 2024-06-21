@@ -280,7 +280,7 @@ func send_item_state(item: Node):
 	if not state:
 		return
 	
-	print(player_user_id, " sends ", item.item_id)
+	#print(player_user_id, " sends ", item.item_id)
 	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {"uniqueId": item.item_id, "state": item_state})
 
 
@@ -736,7 +736,7 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			finished = true
 			var finish_position: int = data.finishOrder.find(player_user_id)
 
-			Debug.print(["Rank: ", finish_position])
+			#Debug.print(["Rank: ", finish_position])
 
 			Network.ready_match = data.matchId
 			finish_order = data.finishOrder

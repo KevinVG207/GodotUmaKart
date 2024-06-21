@@ -1,11 +1,34 @@
-[gd_scene load_steps=23 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=29 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="2_b5ade"]
+[ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="2_v00a1"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
 absorbent = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xypq3"]
+animation = &"RESET"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bleu3"]
+animation = &"dmg_spin"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kfx7h"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kjaip"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_nguqk"]
+states/RESET/node = SubResource("AnimationNodeAnimation_xypq3")
+states/RESET/position = Vector2(551, 93)
+states/Start/position = Vector2(279, 93)
+states/dmg_spin/node = SubResource("AnimationNodeAnimation_bleu3")
+states/dmg_spin/position = Vector2(551, 208)
+transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_kfx7h"), "dmg_spin", "RESET", SubResource("AnimationNodeStateMachineTransition_kjaip")]
+graph_offset = Vector2(-19, -37)
 
 [sub_resource type="Animation" id="Animation_8ksb3"]
 length = 0.001
@@ -158,7 +181,13 @@ max_contacts_reported = 50
 contact_monitor = true
 script = ExtResource("1_lrmky")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="VehicleAnimationTree" type="AnimationTree" parent="."]
+root_node = NodePath("../Visual")
+tree_root = SubResource("AnimationNodeStateMachine_nguqk")
+anim_player = NodePath("../VehicleAnimationPlayer")
+script = ExtResource("2_v00a1")
+
+[node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Visual")
 libraries = {
 "": SubResource("AnimationLibrary_yrkfx")
@@ -418,8 +447,6 @@ one_shot = true
 [node name="DamageTimer" type="Timer" parent="."]
 process_callback = 0
 one_shot = true
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 
 [connection signal="area_entered" from="PlayerCollision" to="." method="_on_player_collision_area_entered"]
 [connection signal="area_exited" from="PlayerCollision" to="." method="_on_player_collision_area_exited"]
