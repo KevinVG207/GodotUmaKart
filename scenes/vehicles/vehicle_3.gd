@@ -68,17 +68,17 @@ var outside_drift_force_reduction: float = 0.0
 @onready var reverse_initial_accel: float = initial_accel * 0.5
 @onready var reverse_exponent: float = accel_exponent
 
-@export var max_turn_speed: float = 100.0
+@export var max_turn_speed: float = 80.0
 @export var drift_turn_multiplier: float = 1.2
 #@onready var max_turn_speed_drift: float = max_turn_speed * drift_turn_multiplier
 @export var drift_turn_min_multiplier: float = 0.5
 @export var air_turn_multiplier: float = 0.5
 
 @export var cur_turn_speed: float = 0
-var turn_accel: float = 2000
+var turn_accel: float = 1800
 
 var trick_cooldown_time: float = 0.3
-@export var trick_force: float = 1.0
+@export var trick_force: float = 1.5
 var in_trick: bool = false
 var trick_frames: int = 0
 
@@ -108,7 +108,7 @@ var trick_frames: int = 0
 @export var vehicle_height_below: float = 0.5
 
 var stick_speed: float = 400
-var stick_distance: float = 2.0
+var stick_distance: float = 0.75
 var stick_ray_count: int = 4
 @export var air_frames: int = 0
 @export var in_hop: bool = false
@@ -382,15 +382,18 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	cur_max_speed = max_speed
 	cur_max_speed -= abs(cur_turn_speed) * spd_steering_decrease
 	
+	if global_position.y < -100:
+		respawn()
+	
 	#Debug.print(cur_max_speed)
 	if in_bounce:
 		bounce_frames += 1
 	if in_hop:
 		in_hop_frames += 1
-		# if drift_dir == 0 and !is_equal_approx(steering, 0.0):
-		# 	drift_dir = -1
-		# 	if steering > 0:
-		# 		drift_dir = 1
+		if drift_dir == 0 and !is_equal_approx(steering, 0.0):
+			drift_dir = -1
+			if steering > 0:
+				drift_dir = 1
 	if in_drift and !input_brake:
 		in_drift = false
 	if not is_brake:
@@ -418,15 +421,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 					can_hop = false
 				in_hop = false
 				in_hop_frames = 0
-				# if drift_dir == 0:
-				# 	in_drift = false
-				if is_equal_approx(steering, 0.0):
+				if drift_dir == 0:
 					in_drift = false
 				else:
 					in_drift = true
-					drift_dir = -1
-					if steering > 0:
-						drift_dir = 1
 					if outside_drift:
 						cur_outside_drift_force = outside_drift_force * (cur_speed / cur_max_speed)
 			
@@ -542,9 +540,11 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			# print("cur_speed: ", cur_speed)
 
 	
-	if not grounded and trick_input and not $TrickTimer.is_stopped():
+	if not grounded and trick_input and not $TrickTimer.is_stopped() and !in_trick:
 		#Debug.print("Trick input detected")
 		in_trick = true
+		if not in_hop:
+			rest_vel += transform.basis.y * trick_force
 
 	if in_hop_frames == 1:
 		grounded = false
@@ -580,8 +580,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# 	_gravity *= 2
 
 	var new_grav = gravity
-	if grounded:
-		new_grav *= 2
+	#if grounded:
+		#new_grav *= 2
 	rest_vel += new_grav * delta
 
 	angular_velocity = Vector3.ZERO

@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://ye4ta88hy2cq"
-path="res://.godot/imported/park.blend-235a31735ab4cb6b4226430702dd2adf.scn"
+uid="uid://dq3rhtuwa3qbv"
+path="res://.godot/imported/park1.blend-59a8509e195464577819fdff0bbe636c.scn"
 
 [deps]
 
-source_file="res://assets/course/park/park.blend"
-dest_files=["res://.godot/imported/park.blend-235a31735ab4cb6b4226430702dd2adf.scn"]
+source_file="res://assets/course/park/park1.blend"
+dest_files=["res://.godot/imported/park1.blend-59a8509e195464577819fdff0bbe636c.scn"]
 
 [params]
 
@@ -18,11 +18,11 @@ nodes/root_name=""
 nodes/apply_root_scale=true
 nodes/root_scale=1.0
 meshes/ensure_tangents=true
-meshes/generate_lods=false
+meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
-meshes/force_disable_compression=true
+meshes/force_disable_compression=false
 skins/use_named_skins=true
 animation/import=true
 animation/fps=30
@@ -32,7 +32,7 @@ import_script/path=""
 _subresources={}
 gltf/naming_version=1
 gltf/embedded_image_handling=1
-blender/nodes/visible=1
+blender/nodes/visible=0
 blender/nodes/punctual_lights=true
 blender/nodes/cameras=true
 blender/nodes/custom_properties=true
