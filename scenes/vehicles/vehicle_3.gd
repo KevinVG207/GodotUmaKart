@@ -55,9 +55,9 @@ var offroad = false
 var weak_offroad = false
 
 @export var outside_drift: bool = true
-@export var outside_drift_force: float = 2000.0
+@export var outside_drift_force: float = 1000.0
 var cur_outside_drift_force: float = 0.0
-var outside_drift_force_reduction: float = 1500.0
+var outside_drift_force_reduction: float = 0.0
 
 @onready var friction_initial_accel: float = initial_accel * 1.5
 @onready var friction_exponent: float = accel_exponent
@@ -72,7 +72,7 @@ var outside_drift_force_reduction: float = 1500.0
 @export var drift_turn_multiplier: float = 1.2
 #@onready var max_turn_speed_drift: float = max_turn_speed * drift_turn_multiplier
 @export var drift_turn_min_multiplier: float = 0.5
-@export var air_turn_multiplier: float = 0.15
+@export var air_turn_multiplier: float = 0.75
 
 @export var cur_turn_speed: float = 0
 var turn_accel: float = 2000
@@ -107,8 +107,8 @@ var trick_frames: int = 0
 @export var vehicle_length_behind: float = 1.0
 @export var vehicle_height_below: float = 0.5
 
-var stick_speed: float = 300
-var stick_distance: float = 0.75
+var stick_speed: float = 400
+var stick_distance: float = 2.0
 var stick_ray_count: int = 4
 @export var air_frames: int = 0
 @export var in_hop: bool = false
@@ -116,7 +116,7 @@ var stick_ray_count: int = 4
 @export var in_drift: bool = false
 @export var drift_dir: int = 0
 @onready var min_hop_speed: float = max_speed * 0.55
-var hop_force: float = 4.0
+var hop_force: float = 2.0
 @export var can_hop: bool = true
 #var global_hop: Vector3 = Vector3.ZERO
 
@@ -132,7 +132,12 @@ var still_turbo_ready: bool = false
 @export var grounded: bool = false
 
 @export var gravity: Vector3 = Vector3.DOWN * 15
-var terminal_velocity = 30
+var terminal_velocity = 3000
+
+# var grav_vel: Vector3 = Vector3.ZERO  # Velocity due to gravity
+var prop_vel: Vector3 = Vector3.ZERO  # Velocity due to propulsion
+var rest_vel: Vector3 = Vector3.ZERO  # Other velocity
+var floor_normal = Vector3(0, 1, 0)
 
 @export var grip_multiplier: float = 1.0
 @export var default_grip: float = 2700
@@ -151,8 +156,9 @@ var extra_fov: float = 0.0
 var in_water = false
 var water_bodies: Dictionary = {}
 
-var bounce_force: float = 10
-@export var bounce_frames: int = 0
+var bounce_force: float = 10.0
+var in_bounce = false
+var bounce_frames = 0
 @export var prev_frame_pre_sim_vel: Vector3 = Vector3.ZERO
 @onready var min_bounce_speed: float = max_speed * 0.4
 
@@ -224,6 +230,10 @@ func set_movement_zero():
 	prev_vel = Vector3.ZERO
 	cur_speed = 0
 	cur_turn_speed = 0
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+	prop_vel = Vector3.ZERO
+	rest_vel = Vector3.ZERO
 
 func set_all_input_zero():
 	input_accel = false
@@ -345,11 +355,16 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		
 	var delta: float = physics_state.step
 	var prev_vel: Vector3 = linear_velocity
-	var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
+	# var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
+	# var prev_grav_vel: Vector3 = grav_vel
+	var prev_prop_vel: Vector3 = prop_vel
+	var prev_rest_vel: Vector3 = rest_vel
 
 
 	var prev_origin = prev_transform.origin
 	var prev_rotation = prev_transform.basis
+
+	grip_multiplier = 1.0
 
 	sleep = false
 	if prev_origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
@@ -368,7 +383,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	cur_max_speed -= abs(cur_turn_speed) * spd_steering_decrease
 	
 	#Debug.print(cur_max_speed)
-	
+	if in_bounce:
+		bounce_frames += 1
 	if in_hop:
 		in_hop_frames += 1
 		if drift_dir == 0 and !is_equal_approx(steering, 0.0):
@@ -386,10 +402,15 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	#print("Contacts")
 	offroad = false
 	weak_offroad = false
+	var floor_normals: Array = []
 	for i in range(physics_state.get_contact_count()):
 		var collider = physics_state.get_contact_collider_object(i) as Node
 		if collider.is_in_group("floor"):
 			grounded = true
+			floor_normals.append(physics_state.get_contact_local_normal(i))
+			if in_bounce and bounce_frames > 9:
+				in_bounce = false
+				bounce_frames = 0
 			if in_hop and in_hop_frames > 6:
 				# Switch from hop to drift
 				if is_brake:
@@ -447,6 +468,13 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			if not respawn_stage:
 				respawn()
 	
+	if floor_normals.size() > 0:
+		var avg_normal: Vector3 = Vector3.ZERO
+		for normal in floor_normals:
+			avg_normal += normal
+		avg_normal /= floor_normals.size()
+		floor_normal = avg_normal.normalized()
+
 	
 	# Handle respawning
 	handle_respawn()
@@ -461,8 +489,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	max_reverse_speed = cur_max_speed * reverse_multi
 
 	# Handle walls
-	if bounce_frames > 0:
-		bounce_frames -= 1
 	if wall_contacts.size() > 0:
 		var avg_normal: Vector3 = Vector3.ZERO
 		var avg_position: Vector3 = Vector3.ZERO
@@ -491,55 +517,80 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			#Debug.print(perp_vel)
 			var new_max_speed = (1 - abs(dp)) * cur_max_speed
 			if perp_vel > min_bounce_speed:
-				linear_velocity = prev_frame_pre_sim_vel.bounce(avg_normal.normalized()) * bounce_ratio
-				if grounded:
-					linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
+				print("Bounce ", bounce_ratio)
+				# prop_vel = prop_vel.bounce(avg_normal.normalized()) * bounce_ratio
+				rest_vel = (prop_vel + rest_vel).bounce(avg_normal.normalized()) * bounce_ratio
+				prop_vel = Vector3.ZERO
+				rest_vel += -gravity.normalized() * bounce_force * bounce_ratio
+				# linear_velocity = prev_frame_pre_sim_vel.bounce(avg_normal.normalized()) * bounce_ratio
+				# if grounded:
+				# 	linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
 				grounded = false
-				prev_vel = linear_velocity
-				bounce_frames = 9
+				# prev_vel = linear_velocity
+				in_bounce = true
 				wall_contacts = []
-			cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
+				cur_speed *= -1 * bounce_ratio
+			else:
+				if prop_vel.length() > new_max_speed:
+					prop_vel = prop_vel.normalized() * new_max_speed
+				cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
+			# print("cur_speed: ", cur_speed)
 
 	
 	if not grounded and trick_input and not $TrickTimer.is_stopped():
 		#Debug.print("Trick input detected")
 		in_trick = true
+
+	if in_hop_frames == 1:
+		grounded = false
 	
-	var new_vel = Vector3.ZERO
-	var ground_vel = get_grounded_vel(delta)
-	if grounded and bounce_frames == 0:
+	# var new_vel = Vector3.ZERO
+	# var ground_vel = get_grounded_vel(delta)
+	if grounded and !in_bounce:
 		air_frames = 0
-		new_vel = ground_vel
-		#print("grounded ", new_vel)
+		# Apply friction to rest_vel along the ground
+		var rest_vel_rest = rest_vel.project(floor_normal)
+		var rest_vel_ground = rest_vel - rest_vel_rest
+
+		rest_vel_ground = rest_vel_ground.move_toward(Vector3.ZERO, cur_grip * delta)
+
+		rest_vel = rest_vel_ground
+
+		prop_vel = get_grounded_vel(delta)
 	else:
 		air_frames += 1
-		new_vel = get_air_vel(delta)
+		# new_vel = get_air_vel(delta)
 		#print("airborne ", new_vel)
 	
 	if in_trick and not in_hop:
 		trick_frames += 1
-		new_vel += transform.basis.y * trick_force / (trick_frames+1)
+		# new_vel += transform.basis.y * trick_force / (trick_frames+1)
 	
 	#print(speed_vec)
 	
-	var _gravity: Vector3 = gravity
-	if (prev_gravity_vel + (_gravity*delta)).length() > terminal_velocity:
-		_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
+	# var _gravity: Vector3 = gravity
+	# if (prev_gravity_vel + (_gravity*delta)).length() > terminal_velocity:
+	# 	_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
+	# if grounded:
+	# 	_gravity *= 2
+
+	var new_grav = gravity
 	if grounded:
-		_gravity *= 2
+		new_grav *= 2
+	rest_vel += new_grav * delta
 
 	angular_velocity = Vector3.ZERO
 
 	if in_water:
-		cur_grip *= 0.8
+		grip_multiplier = 0.8
 
-	var target_vel: Vector3 = prev_vel.move_toward(new_vel, delta * cur_grip * grip_multiplier) + (_gravity * delta)
-	linear_velocity = target_vel
-	prev_vel = target_vel
+	# var target_vel: Vector3 = prev_vel.move_toward(new_vel, delta * cur_grip * grip_multiplier) + (_gravity * delta)
+
+	# print(prop_vel, " ", rest_vel, " ", linear_velocity)
 	
 	# Stick to ground.
 	# Perform raycast in local -y direction
-	if air_frames < 15 and !in_hop and bounce_frames == 0:
+	if air_frames < 15 and !in_hop and !in_bounce:
 		var space_state = get_world_3d().direct_space_state
 		var ray_origin = transform.origin + transform.basis.y * -0.5
 		var ray_end = ray_origin + transform.basis.y * -0.9
@@ -548,7 +599,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		if ray_result:
 			# var distance = ray_result.position.distance_to(ray_origin)
 			# Apply stick_speed to stick to ground
-			linear_velocity += -transform.basis.y.project(gravity.normalized()) * stick_speed * delta
+			rest_vel += -transform.basis.y.project(gravity.normalized()) * stick_speed * delta
 			#Debug.print(linear_velocity.y)
 
 	# Turning
@@ -557,15 +608,15 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		adjusted_steering = 0.0
 	
 	if in_drift:
-		var outside_drift_multi = clamp(linear_velocity.length() / cur_max_speed, 0, 1)
+		var outside_drift_multi = clamp((prop_vel + rest_vel).length() / cur_max_speed, 0, 1)
 		if drift_dir > 0:
 			adjusted_steering = remap(adjusted_steering, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
 			if outside_drift and grounded:
-				linear_velocity += transform.basis.z * cur_outside_drift_force * delta * outside_drift_multi
+				rest_vel += transform.basis.z * cur_outside_drift_force * delta * outside_drift_multi
 		else:
 			adjusted_steering = remap(adjusted_steering, -1, 1, -drift_turn_multiplier, -drift_turn_min_multiplier)
 			if outside_drift and grounded:
-				linear_velocity -= transform.basis.z * cur_outside_drift_force * delta * outside_drift_multi
+				rest_vel -= transform.basis.z * cur_outside_drift_force * delta * outside_drift_multi
 		
 		cur_outside_drift_force = move_toward(cur_outside_drift_force, 0, outside_drift_force_reduction * delta)
 		
@@ -585,16 +636,25 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var turn_target = adjusted_steering * adjusted_max_turn_speed
 
 	var cur_turn_accel = turn_accel
-	if !grounded:
-		cur_turn_accel *= air_turn_multiplier * air_turn_multiplier*5
+	# if !grounded:
+	# 	cur_turn_accel *= air_turn_multiplier * air_turn_multiplier*5
 
 	if is_cpu:
 		cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta * 2)
 	else:
 		cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta)
-	rotation_degrees.y += cur_turn_speed * delta
+	
+	var cur_multi = grip_multiplier
 	if !grounded:
-		linear_velocity = linear_velocity.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta)
+		prop_vel = prop_vel.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta * air_turn_multiplier)
+		rest_vel = rest_vel.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta * air_turn_multiplier)
+		cur_multi *= air_turn_multiplier
+
+	rotation_degrees.y += cur_turn_speed * delta * cur_multi
+	# prop_vel = prop_vel.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta)
+	# rest_vel = rest_vel.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta)
+	# if !grounded:
+	# 	linear_velocity = linear_velocity.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta)
 	#Debug.print(in_drift)
 	
 
@@ -624,7 +684,14 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	handle_item()
 	# handle_wheels()
 
-	grounded = false
+	# Limit rest_vel to terminal_velocity
+	if rest_vel.length() > terminal_velocity:
+		rest_vel = rest_vel.normalized() * terminal_velocity
+	
+	linear_velocity = prop_vel + rest_vel
+	prev_vel = linear_velocity
+
+	# grounded = false
 	prev_transform = transform
 	prev_frame_pre_sim_vel = linear_velocity
 
@@ -636,14 +703,15 @@ func get_grounded_vel(delta: float) -> Vector3:
 	#print(is_accel, is_brake, steering)
 	var hop_vel = Vector3.ZERO
 	
-	var should_hop = false
 	if is_accel and is_brake:
 		if cur_speed > min_hop_speed:
 			if in_drift:
 				cur_speed += get_accel_speed(delta)
-			elif can_hop:
+			elif can_hop and not in_hop:
 				# Perform hop for drift
-				should_hop = true
+				in_hop = true
+				rest_vel += transform.basis.y * hop_force
+				grounded = false
 			else:
 				cur_speed += get_friction_speed(delta)
 		else:
@@ -683,19 +751,15 @@ func get_grounded_vel(delta: float) -> Vector3:
 	# Apply boosts
 	cur_speed += get_boost_speed(delta)
 	
-	if should_hop:
-		in_hop = true
-		hop_vel = transform.basis.y * hop_force / (in_hop_frames+1)
+	# if should_hop:
+	# 	in_hop = true
+	# 	hop_vel = transform.basis.y * hop_force / (in_hop_frames+1)
 	
 	var speed_vel = transform.basis.x.normalized() * cur_speed
 	
 	var vel = speed_vel + hop_vel;
 	
 	return vel
-
-
-func get_air_vel(delta: float) -> Vector3:
-	return linear_velocity
 
 
 func get_accel_speed(delta: float) -> float:
@@ -782,7 +846,7 @@ func handle_vehicle_collisions(delta: float):
 			if new_push_force.length() > max_push_force:
 				new_push_force = new_push_force.normalized() * max_push_force
 			#Debug.print(["Push force", push_force.length()])
-			linear_velocity += new_push_force
+			rest_vel += new_push_force
 
 func respawn():
 	if respawn_stage:
@@ -1019,6 +1083,7 @@ func get_state() -> Dictionary:
 		"drift_gauge_max": drift_gauge_max,
 		"grounded": grounded,
 		"gravity": Util.to_array(gravity),
+		"in_bounce": in_bounce,
 		"bounce_frames": bounce_frames,
 		"prev_frame_pre_sim_vel": Util.to_array(prev_frame_pre_sim_vel),
 		"in_water": in_water,
@@ -1058,6 +1123,7 @@ func apply_state(state: Dictionary):
 	drift_gauge_max = state.drift_gauge_max
 	grounded = state.grounded
 	gravity = Util.to_vector3(state.gravity)
+	in_bounce = state.in_bounce
 	bounce_frames = state.bounce_frames
 	prev_frame_pre_sim_vel = Util.to_vector3(state.prev_frame_pre_sim_vel)
 	in_water = state.in_water

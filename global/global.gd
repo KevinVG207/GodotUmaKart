@@ -1,6 +1,6 @@
 extends Node
 
-var player_count = 12
+var player_count = 1
 
 var randPing = 0
 var unique_string = OS.get_unique_id()
