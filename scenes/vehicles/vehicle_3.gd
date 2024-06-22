@@ -54,7 +54,7 @@ var max_push_force: float = 2.75
 var offroad = false
 var weak_offroad = false
 
-@export var outside_drift: bool = true
+@export var outside_drift: bool = false
 @export var outside_drift_force: float = 1000.0
 var cur_outside_drift_force: float = 0.0
 var outside_drift_force_reduction: float = 0.0
@@ -72,7 +72,7 @@ var outside_drift_force_reduction: float = 0.0
 @export var drift_turn_multiplier: float = 1.2
 #@onready var max_turn_speed_drift: float = max_turn_speed * drift_turn_multiplier
 @export var drift_turn_min_multiplier: float = 0.5
-@export var air_turn_multiplier: float = 0.75
+@export var air_turn_multiplier: float = 0.5
 
 @export var cur_turn_speed: float = 0
 var turn_accel: float = 2000
@@ -387,10 +387,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		bounce_frames += 1
 	if in_hop:
 		in_hop_frames += 1
-		if drift_dir == 0 and !is_equal_approx(steering, 0.0):
-			drift_dir = -1
-			if steering > 0:
-				drift_dir = 1
+		# if drift_dir == 0 and !is_equal_approx(steering, 0.0):
+		# 	drift_dir = -1
+		# 	if steering > 0:
+		# 		drift_dir = 1
 	if in_drift and !input_brake:
 		in_drift = false
 	if not is_brake:
@@ -418,10 +418,15 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 					can_hop = false
 				in_hop = false
 				in_hop_frames = 0
-				if drift_dir == 0:
+				# if drift_dir == 0:
+				# 	in_drift = false
+				if is_equal_approx(steering, 0.0):
 					in_drift = false
 				else:
 					in_drift = true
+					drift_dir = -1
+					if steering > 0:
+						drift_dir = 1
 					if outside_drift:
 						cur_outside_drift_force = outside_drift_force * (cur_speed / cur_max_speed)
 			
