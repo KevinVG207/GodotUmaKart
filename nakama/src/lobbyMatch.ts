@@ -30,6 +30,10 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         });
     }
 
+    logger.info("Prev user ids: " + prevUserIds);
+    logger.info("Presences: " + JSON.stringify(presences));
+    logger.info("Userdata: " + JSON.stringify(userData));
+
     let label: label = {
         matchType: params.matchType,
         joinable: joinable,
