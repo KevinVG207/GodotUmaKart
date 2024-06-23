@@ -30,10 +30,6 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
         });
     }
 
-    logger.info("Prev user ids: " + prevUserIds);
-    logger.info("Presences: " + JSON.stringify(presences));
-    logger.info("Userdata: " + JSON.stringify(userData));
-
     let label: label = {
         matchType: params.matchType,
         joinable: joinable,
@@ -234,8 +230,6 @@ function processMessages(messages: nkruntime.MatchMessage[], nk: nkruntime.Nakam
     for (let userId in state.pingData) {
         pingDict[userId] = state.pingData[userId].ping;
     }
-
-    logger.info("User data: " + JSON.stringify(state.userData));
 
     var vote_data = {
         votes: state.votes,
