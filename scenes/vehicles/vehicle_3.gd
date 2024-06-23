@@ -972,7 +972,7 @@ func get_item(guaranteed_item: PackedScene = null):
 	if guaranteed_item:
 		item = guaranteed_item.instantiate()
 	else:
-		item = Global.item_dist[floor(rank * (world.players_dict.size() / Global.player_count))].pick_random().instantiate()
+		item = Global.item_dist[floor(rank-1 * (world.players_dict.size() / Global.player_count))].pick_random().instantiate()
 	world.add_child(item)
 	$ItemRouletteTimer.start(4)
 	if is_player and !is_cpu:
