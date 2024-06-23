@@ -34,10 +34,14 @@ func _physics_process(delta):
 	var cur_offset_bw = offset_bw
 	var cur_lerp_speed = lerp_speed
 	var cur_look_offset = look_offset
+
+	var target_finished = target.finished
+	if target.world.spectate:
+		target_finished = false
 	
-	if finished != target.finished:
+	if finished != target_finished:
 		instant = true
-		finished = target.finished
+		finished = target_finished
 	
 	if finished:
 		cur_offset = offset_finished

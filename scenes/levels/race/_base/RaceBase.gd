@@ -323,9 +323,12 @@ func _physics_process(_delta):
 		STATE_RACE_OVER:
 			UI.race_ui.race_over()
 		STATE_READY_FOR_RANKINGS:
-			UI.race_ui.race_over()
-			$NextRaceTimer.start(25)
-			state = STATE_SHOW_RANKINGS
+			if spectate:
+				change_state(STATE_JOINING_NEXT, join_next)
+			else:
+				UI.race_ui.race_over()
+				$NextRaceTimer.start(25)
+				state = STATE_SHOW_RANKINGS
 		STATE_SHOW_RANKINGS:
 			UI.race_ui.hide_time()
 			handle_rankings()
@@ -734,10 +737,6 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			_remove_vehicle(data.userId)
 		raceOp.SERVER_RACE_OVER:
 			finished = true
-			var finish_position: int = data.finishOrder.find(player_user_id)
-
-			#Debug.print(["Rank: ", finish_position])
-
 			Network.ready_match = data.matchId
 			finish_order = data.finishOrder
 			state = STATE_READY_FOR_RANKINGS

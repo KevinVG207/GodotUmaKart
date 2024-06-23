@@ -75,11 +75,13 @@ func _physics_process(delta):
 		# Determine the target point currently in front of the target player.
 		target_point = Util.get_path_point_ahead_of_player(world, world.players_dict[owner_id])
 	
-	var dist_to_target_player = global_position.distance_to(target_player.global_position)
-	if target_mode == TargetMode.follow and dist_to_target_player < dist_to_homing and owner_id == world.player_user_id:
-		target_mode = TargetMode.homing
-		new_owner = target_player.user_id
-		#print("SETTING OWNER: ", new_owner)
+	var dist_to_target_player: float = 10000
+	if target_player:
+		dist_to_target_player = global_position.distance_to(target_player.global_position)
+		if target_mode == TargetMode.follow and dist_to_target_player < dist_to_homing and owner_id == world.player_user_id:
+			target_mode = TargetMode.homing
+			new_owner = target_player.user_id
+			#print("SETTING OWNER: ", new_owner)
 	
 	match target_mode:
 		TargetMode.homing:
