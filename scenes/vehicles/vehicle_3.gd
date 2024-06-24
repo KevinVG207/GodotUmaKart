@@ -140,8 +140,9 @@ var rest_vel: Vector3 = Vector3.ZERO  # Other velocity
 var floor_normal = Vector3(0, 1, 0)
 
 @export var grip_multiplier: float = 1.0
-@export var default_grip: float = 2700
-var cur_grip: float = 100.0
+@export var default_grip: float = 800.0
+@export var default_grip_rest: float = 800.0
+#var cur_grip: float = 100.0
 
 var max_displacement_for_sleep = 0.003
 var max_degrees_change_for_sleep = 0.01
@@ -365,6 +366,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var prev_rotation = prev_transform.basis
 
 	grip_multiplier = 1.0
+	
+	if in_water:
+		grip_multiplier = 0.1
 
 	sleep = false
 	if prev_origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
@@ -375,7 +379,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var is_brake = input_brake
 	var steering: float = clamp(input_steer, -1.0, 1.0)
 	var trick_input: bool = input_trick
-	cur_grip = default_grip
+	#cur_grip = default_grip
 	grounded = false
 	
 	# Determine effective max speed
@@ -524,6 +528,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				# prop_vel = prop_vel.bounce(avg_normal.normalized()) * bounce_ratio
 				rest_vel = (prop_vel + rest_vel).bounce(avg_normal.normalized()) * bounce_ratio
 				prop_vel = Vector3.ZERO
+				prev_prop_vel = prop_vel
 				rest_vel += -gravity.normalized() * bounce_force * bounce_ratio
 				# linear_velocity = prev_frame_pre_sim_vel.bounce(avg_normal.normalized()) * bounce_ratio
 				# if grounded:
@@ -536,6 +541,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			else:
 				if prop_vel.length() > new_max_speed:
 					prop_vel = prop_vel.normalized() * new_max_speed
+					prev_prop_vel = prop_vel
 				cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
 			# print("cur_speed: ", cur_speed)
 
@@ -557,7 +563,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		var rest_vel_rest = rest_vel.project(floor_normal)
 		var rest_vel_ground = rest_vel - rest_vel_rest
 
-		rest_vel_ground = rest_vel_ground.move_toward(Vector3.ZERO, cur_grip * delta)
+		rest_vel_ground = rest_vel_ground.move_toward(Vector3.ZERO, default_grip_rest * delta)
 
 		rest_vel = rest_vel_ground
 
@@ -585,9 +591,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	rest_vel += new_grav * delta
 
 	angular_velocity = Vector3.ZERO
-
-	if in_water:
-		grip_multiplier = 0.8
 
 	# var target_vel: Vector3 = prev_vel.move_toward(new_vel, delta * cur_grip * grip_multiplier) + (_gravity * delta)
 
@@ -649,7 +652,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	else:
 		cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta)
 	
-	var cur_multi = grip_multiplier
+	var cur_multi = 1.0
 	if !grounded:
 		prop_vel = prop_vel.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta * air_turn_multiplier)
 		rest_vel = rest_vel.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta * air_turn_multiplier)
@@ -692,6 +695,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# Limit rest_vel to terminal_velocity
 	if rest_vel.length() > terminal_velocity:
 		rest_vel = rest_vel.normalized() * terminal_velocity
+	
+	prop_vel = prev_prop_vel.move_toward(prop_vel, delta * default_grip * grip_multiplier)
 	
 	linear_velocity = prop_vel + rest_vel
 	prev_vel = linear_velocity
