@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://dj5me24rsutei"]
+
+[ext_resource type="PackedScene" uid="uid://b6ka26iis3guu" path="res://scenes/ui/select_vehicle/vehicle_button.tscn" id="1_d5jwh"]
+[ext_resource type="Script" path="res://scenes/ui/select_vehicle/VehicleSelectScene.gd" id="1_y2q76"]
+
+[node name="VehicleSelectScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y2q76")
+vehicle_button_scene = ExtResource("1_d5jwh")
+
+[node name="ListContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 640
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 25
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ListContainer"]
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="ListContainer/ScrollContainer"]
+layout_mode = 2
+columns = 2

@@ -63,8 +63,7 @@ func format_time_ms(seconds: float) -> String:
 	return str(minutes).pad_zeros(1) + ":" + str(_seconds).pad_zeros(2) + "." + str(ms).pad_zeros(3)
 
 func get_race_courses() -> Array:
-	# All race courses are stored in scenes/race/COURSE_NAME/COURSE_NAME.tscn
-	# I want to index the course names.
+	# All race courses are stored as scenes/race/COURSE_NAME/COURSE_NAME.tscn
 	var race_dir = DirAccess.open("res://scenes/levels/race")
 	var dirs = race_dir.get_directories()
 	var courses = []
@@ -78,6 +77,22 @@ func get_race_courses() -> Array:
 
 func get_race_course_path(course_name: String):
 	return "res://scenes/levels/race/" + course_name + "/" + course_name + ".tscn"
+
+func get_vehicles() -> Array:
+	# All vehicles are stored as scenes/vehicles/list/NAME.tscn
+	var dir = DirAccess.open("res://scenes/vehicles/list")
+	var files = dir.get_files()
+	var vehicles = []
+	for file in files:
+		var key: String = file.split("/")[-1].rsplit(".", true, 1)[0]
+		vehicles.append(key)
+	return vehicles
+
+func get_vehicle_texture(vehicle_name: String) -> CompressedTexture2D:
+	return load("res://assets/vehicles/" + vehicle_name + ".png")
+
+func get_vehicle_scene_path(vehicle_name: String):
+	return "res://scenes/vehicles/list/" + vehicle_name + ".tscn"
 
 func ticks_to_time_with_ping(ticks_left: int, tick_rate: int, ping_ms: int) -> float:
 	# Debug.print(["Ping: ", ping_ms])

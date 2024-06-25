@@ -9,8 +9,8 @@ var update_idx: int = 0
 @onready var vani: VehicleAnimationTree = $VehicleAnimationTree
 @onready var cani: AnimationPlayer # TODO: Character animation player
 
-@export var is_player: bool = false
-@export var is_cpu: bool = true
+var is_player: bool = false
+var is_cpu: bool = true
 var is_network: bool = false
 var user_id: String = ""
 var check_idx: int = -1
@@ -38,7 +38,8 @@ var input_mirror: bool = false
 var input_item: bool = false
 var input_item_just: bool = false
 var input_updown: float = 0
-
+@export var list_image: CompressedTexture2D
+@export var list_order: int = 0
 @export var max_speed: float = 20
 @onready var cur_max_speed = 20
 @export var reverse_multi: float = 0.5
@@ -49,8 +50,9 @@ var input_updown: float = 0
 @export var weight_multi: float = 1.0
 @export var weak_offroad_multiplier: float = 0.7
 @export var offroad_multiplier: float = 0.5
-var push_force: float = 50
+var push_force: float = 10.0
 var max_push_force: float = 2.75
+var push_force_vert: float = 0.05
 var offroad = false
 var weak_offroad = false
 
@@ -841,22 +843,38 @@ func _on_still_turbo_timer_timeout():
 func handle_vehicle_collisions(delta: float):
 	if colliding_vehicles.size() > 0:
 		for col_vehicle: Vehicle3 in colliding_vehicles.keys():
-			var push_dir: Vector3 = -(col_vehicle.global_position - global_position).normalized()
-			
-			var dir_multi: float = 1.0
-			var dp: float = linear_velocity.normalized().dot(col_vehicle.linear_velocity.normalized())
-			dp -= 2
-			dp = -dp / 3
-			
-			var new_push_force: Vector3 = push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi) * dp * ((linear_velocity.length() + col_vehicle.linear_velocity.length()) / 2) * delta
+			var push_dir: Vector3 = -(col_vehicle.global_position - global_position)
+			push_dir -= push_dir.project(gravity.normalized())
+			push_dir = push_dir.normalized()
 
-			var push_force_along_gravity = new_push_force.project(transform.basis.y.normalized())
-			new_push_force -= push_force_along_gravity
+			# var dp = linear_velocity.normalized().dot(-push_dir)
+			# print(dp)
+			# if dp > 0:
+			rest_vel += push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi)
+				# if !in_bounce:
+				# 	rest_vel += -gravity.normalized() * push_force_vert
+			grounded = false
+			in_bounce = true
+			
+			# var dir_multi: float = 1.0
+			# var dp: float = linear_velocity.normalized().dot(col_vehicle.linear_velocity.normalized())
+			# print(dp)
 
-			if new_push_force.length() > max_push_force:
-				new_push_force = new_push_force.normalized() * max_push_force
+
+			# dp -= 2
+			# dp = -dp / 3
+			
+			# var new_push_force: Vector3 = push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi) * dp * ((linear_velocity.length() + col_vehicle.linear_velocity.length()) / 2) * delta
+
+			# var push_force_along_gravity = new_push_force.project(transform.basis.y.normalized())
+			# new_push_force -= push_force_along_gravity + (transform.basis.y * 4.0)
+			# grounded = false
+			# in_bounce = true
+
+			# if new_push_force.length() > max_push_force:
+			# 	new_push_force = new_push_force.normalized() * max_push_force
 			#Debug.print(["Push force", push_force.length()])
-			rest_vel += new_push_force
+			# rest_vel += new_push_force
 
 func respawn():
 	if respawn_stage:

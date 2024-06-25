@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://b6ka26iis3guu"]
+
+[ext_resource type="Script" path="res://scenes/ui/select_vehicle/vehicle_button.gd" id="1_lcowd"]
+[ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_ynech"]
+
+[node name="VehicleButton" type="MarginContainer"]
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+script = ExtResource("1_lcowd")
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(290, 120)
+layout_mode = 2
+
+[node name="VehicleImage" type="TextureRect" parent="Panel"]
+layout_mode = 2
+offset_left = 92.0
+offset_top = 4.0
+offset_right = 604.0
+offset_bottom = 516.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.214684, 0.214684)
+texture = ExtResource("2_ynech")

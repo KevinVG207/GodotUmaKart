@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://sl40go8b7j6g"]
+
+[ext_resource type="PackedScene" uid="uid://nomey8ht6xwd" path="res://scenes/vehicles/vehicle_3.tscn" id="1_etpa7"]
+[ext_resource type="Texture2D" uid="uid://cofi1xhnwlvy4" path="res://assets/vehicles/inside_drift.png" id="2_vaaw8"]
+
+[node name="InsideDrift" instance=ExtResource("1_etpa7")]
+list_image = ExtResource("2_vaaw8")
