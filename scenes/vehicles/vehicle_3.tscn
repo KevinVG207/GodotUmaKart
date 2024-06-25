@@ -171,6 +171,8 @@ bottom_radius = 0.2
 height = 0.1
 
 [node name="Vehicle3" type="RigidBody3D" groups=["vehicle"]]
+process_priority = 1000
+process_physics_priority = 1000
 collision_layer = 2
 mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_b3vot")

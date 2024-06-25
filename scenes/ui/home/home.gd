@@ -1,4 +1,4 @@
-extends CanvasLayer
+extends Control
 
 @export var single_scene: PackedScene
 @export var online_scene: PackedScene

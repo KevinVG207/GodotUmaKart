@@ -10,16 +10,16 @@ theme_override_constants/margin_right = 5
 theme_override_constants/margin_bottom = 5
 script = ExtResource("1_lcowd")
 
-[node name="Panel" type="Panel" parent="."]
-custom_minimum_size = Vector2(290, 120)
+[node name="Button" type="Button" parent="."]
+custom_minimum_size = Vector2(285, 120)
 layout_mode = 2
 
-[node name="VehicleImage" type="TextureRect" parent="Panel"]
+[node name="VehicleImage" type="TextureRect" parent="Button"]
 layout_mode = 2
-offset_left = 92.0
-offset_top = 4.0
-offset_right = 604.0
-offset_bottom = 516.0
+offset_left = 89.0
+offset_top = 5.0
+offset_right = 601.0
+offset_bottom = 517.0
 grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.214684, 0.214684)

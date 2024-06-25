@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://d4abd73ksv5yu"]
+
+[ext_resource type="PackedScene" uid="uid://dak1demjog305" path="res://scenes/ui/home/home.tscn" id="1_hh14f"]
+[ext_resource type="PackedScene" uid="uid://dj5me24rsutei" path="res://scenes/ui/select_vehicle/VehicleSelectScene.tscn" id="2_3clve"]
+
+[node name="MainMenu" type="CanvasLayer"]
+layer = 10
+
+[node name="Home" parent="." instance=ExtResource("1_hh14f")]
+visible = false
+
+[node name="VehicleSelectScene" parent="." instance=ExtResource("2_3clve")]
