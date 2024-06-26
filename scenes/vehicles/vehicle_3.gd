@@ -118,7 +118,7 @@ var stick_ray_count: int = 4
 @export var in_drift: bool = false
 @export var drift_dir: int = 0
 @onready var min_hop_speed: float = max_speed * 0.55
-var hop_force: float = 2.0
+var hop_force: float = 3.0
 @export var can_hop: bool = true
 #var global_hop: Vector3 = Vector3.ZERO
 
@@ -142,8 +142,11 @@ var rest_vel: Vector3 = Vector3.ZERO  # Other velocity
 var floor_normal = Vector3(0, 1, 0)
 
 @export var grip_multiplier: float = 1.0
-@export var default_grip: float = 800.0
-@export var default_grip_rest: float = 800.0
+@export var default_grip: float = 30.0
+@export var air_decel: float = default_grip * 0.2
+var ground_rot_multi: float = 5.0
+#@export var default_grip_rest: float = 30.0
+var test_force: float = 10.0
 #var cur_grip: float = 100.0
 
 var max_displacement_for_sleep = 0.003
@@ -370,7 +373,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	grip_multiplier = 1.0
 	
 	if in_water:
-		grip_multiplier = 0.1
+		grip_multiplier = 0.75
 
 	sleep = false
 	if prev_origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
@@ -562,16 +565,29 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	if grounded and !in_bounce:
 		air_frames = 0
 		# Apply friction to rest_vel along the ground
-		var rest_vel_rest = rest_vel.project(floor_normal)
-		var rest_vel_ground = rest_vel - rest_vel_rest
+		#var rest_vel_rest = rest_vel.project(floor_normal)
+		#var rest_vel_ground = rest_vel - rest_vel_rest
 
-		rest_vel_ground = rest_vel_ground.move_toward(Vector3.ZERO, default_grip_rest * delta)
+		#rest_vel_ground = rest_vel_ground.move_toward(Vector3.ZERO, default_grip_rest * delta)
 
-		rest_vel = rest_vel_ground
+		#rest_vel = rest_vel_ground
+		
+		# Remove gravity.
+		var vel_grav = rest_vel.project(gravity.normalized())
+		print(vel_grav)
+		rest_vel -= vel_grav / 4
+		
+		rest_vel = rest_vel.move_toward(Vector3.ZERO, default_grip * delta)
 
 		prop_vel = get_grounded_vel(delta)
 	else:
 		air_frames += 1
+		
+		var grav_component = rest_vel.project(gravity.normalized())
+		var other = rest_vel - grav_component
+		other = other.move_toward(Vector3.ZERO, air_decel * delta)
+		
+		rest_vel = other + grav_component
 		# new_vel = get_air_vel(delta)
 		#print("airborne ", new_vel)
 	
@@ -579,18 +595,20 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		trick_frames += 1
 		# new_vel += transform.basis.y * trick_force / (trick_frames+1)
 	
+	if Input.is_action_just_pressed("trick"):
+		rest_vel += transform.basis.z * test_force
+	
 	#print(speed_vec)
 	
-	# var _gravity: Vector3 = gravity
+	var _gravity: Vector3 = gravity
 	# if (prev_gravity_vel + (_gravity*delta)).length() > terminal_velocity:
 	# 	_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
-	# if grounded:
-	# 	_gravity *= 2
+	if grounded:
+		_gravity *= 4
 
-	var new_grav = gravity
 	#if grounded:
 		#new_grav *= 2
-	rest_vel += new_grav * delta
+	rest_vel += _gravity * delta
 
 	angular_velocity = Vector3.ZERO
 
@@ -674,6 +692,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var floor_below = Util.raycast_for_group(self, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
 	if not grounded and (!in_hop or !floor_below):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
+	#if grounded:
+		#rotation = rotation.rotated(transform.basis.z, transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * delta)
 
 
 	# REFUSE TO GO UPSIDE DOWN (assuming we were at some point right side up)
@@ -702,6 +722,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	linear_velocity = prop_vel + rest_vel
 	prev_vel = linear_velocity
+	print(grounded)
 
 	# grounded = false
 	prev_transform = transform
