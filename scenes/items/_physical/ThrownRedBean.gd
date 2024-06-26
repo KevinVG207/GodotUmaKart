@@ -86,7 +86,7 @@ func _physics_process(delta):
 	match target_mode:
 		TargetMode.homing:
 			target_pos = target_player.global_position
-			target_speed = remap(clamp(dist_to_target_player, 0.0, 20.0), 0.0, 20.0, max(5, target_player.linear_velocity.length()), start_speed)
+			target_speed = remap(clamp(dist_to_target_player, 0.0, 20.0), 0.0, 20.0, max(8, target_player.prop_vel.length()), start_speed)
 	
 		TargetMode.follow:
 			# First, change the target player.

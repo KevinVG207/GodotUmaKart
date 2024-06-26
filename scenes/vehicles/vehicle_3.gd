@@ -50,9 +50,9 @@ var input_updown: float = 0
 @export var weight_multi: float = 1.0
 @export var weak_offroad_multiplier: float = 0.7
 @export var offroad_multiplier: float = 0.5
-var push_force: float = 10.0
+var push_force: float = 1.0
 var max_push_force: float = 2.75
-var push_force_vert: float = 0.05
+var push_force_vert: float = 1.0
 var offroad = false
 var weak_offroad = false
 
@@ -529,7 +529,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			#Debug.print(perp_vel)
 			var new_max_speed = (1 - abs(dp)) * cur_max_speed
 			if perp_vel > min_bounce_speed:
-				print("Bounce ", bounce_ratio)
+				# print("Bounce ", bounce_ratio)
 				# prop_vel = prop_vel.bounce(avg_normal.normalized()) * bounce_ratio
 				rest_vel = (prop_vel + rest_vel).bounce(avg_normal.normalized()) * bounce_ratio
 				prop_vel = Vector3.ZERO
@@ -574,7 +574,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		
 		# Remove gravity.
 		var vel_grav = rest_vel.project(gravity.normalized())
-		print(vel_grav)
+		# print(vel_grav)
 		rest_vel -= vel_grav / 4
 		
 		rest_vel = rest_vel.move_toward(Vector3.ZERO, default_grip * delta)
@@ -594,9 +594,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	if in_trick and not in_hop:
 		trick_frames += 1
 		# new_vel += transform.basis.y * trick_force / (trick_frames+1)
-	
-	if Input.is_action_just_pressed("trick"):
-		rest_vel += transform.basis.z * test_force
 	
 	#print(speed_vec)
 	
@@ -722,7 +719,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	linear_velocity = prop_vel + rest_vel
 	prev_vel = linear_velocity
-	print(grounded)
+	# print(grounded)
 
 	# grounded = false
 	prev_transform = transform
@@ -842,6 +839,7 @@ func get_boost_speed(delta: float) -> float:
 	
 	if not normal_boost_timer.is_stopped():
 		# Normal boost is active
+		grip_multiplier = 2.0
 		return Util.get_vehicle_accel(normal_boost_max_speed, cur_speed, normal_boost_initial_accel, normal_boost_exponent) * delta
 
 	if not small_boost_timer.is_stopped() and not offroad:
@@ -849,11 +847,13 @@ func get_boost_speed(delta: float) -> float:
 		var cur_boost_max_speed = small_boost_max_speed
 		if weak_offroad:
 			cur_boost_max_speed = max_speed
+		grip_multiplier = 2.0
 		return Util.get_vehicle_accel(cur_boost_max_speed, cur_speed, small_boost_initial_accel, small_boost_exponent) * delta
 	
 	if cur_speed > cur_max_speed:
 		var speed_range = big_boost_max_speed - cur_max_speed
 		var ratio = big_boost_max_speed - cur_speed
+		grip_multiplier = 2.0
 		return -Util.get_vehicle_accel(speed_range, ratio, friction_initial_accel, friction_exponent) * delta
 	return 0
 
@@ -868,14 +868,14 @@ func handle_vehicle_collisions(delta: float):
 			push_dir -= push_dir.project(gravity.normalized())
 			push_dir = push_dir.normalized()
 
-			# var dp = linear_velocity.normalized().dot(-push_dir)
+			var dp = linear_velocity.normalized().dot(-push_dir)
 			# print(dp)
-			# if dp > 0:
-			rest_vel += push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi)
+			if dp > 0:
+				rest_vel += push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi)
 				# if !in_bounce:
 				# 	rest_vel += -gravity.normalized() * push_force_vert
-			grounded = false
-			in_bounce = true
+				# grounded = false
+				# in_bounce = true
 			
 			# var dir_multi: float = 1.0
 			# var dp: float = linear_velocity.normalized().dot(col_vehicle.linear_velocity.normalized())
