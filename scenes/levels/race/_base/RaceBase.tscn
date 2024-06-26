@@ -1,8 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://crersi2gg0o1o"]
+[gd_scene load_steps=7 format=3 uid="uid://crersi2gg0o1o"]
 
 [ext_resource type="Script" path="res://scenes/levels/race/_base/RaceBase.gd" id="1_2b6un"]
 [ext_resource type="Environment" uid="uid://bkllq0dgr17en" path="res://scenes/levels/race/_base/base_env.tres" id="3_34w1p"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_70vu5"]
+[ext_resource type="Shader" path="res://addons/3D Outline/Outline.gdshader" id="4_1adry"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8a7sg"]
+shading_mode = 0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mijsb"]
+render_priority = 0
+next_pass = SubResource("StandardMaterial3D_8a7sg")
+shader = ExtResource("4_1adry")
+shader_parameter/enable = true
+shader_parameter/outline_thickness = 0.5
+shader_parameter/color = Color(0.377919, 0.377919, 0.377919, 1)
 
 [node name="RaceBase" type="Node3D"]
 script = ExtResource("1_2b6un")
@@ -62,6 +74,12 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 100
 cull_mask = 262144
 projection = 1
 size = 600.0
+
+[node name="MapMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+layers = 262144
+material_override = SubResource("ShaderMaterial_mijsb")
+cast_shadow = 0
 
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
 [connection signal="timeout" from="CountdownTimer" to="." method="_on_countdown_timer_timeout"]

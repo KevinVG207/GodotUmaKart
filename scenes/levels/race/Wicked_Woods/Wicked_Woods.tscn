@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://djkncdwh507k1"]
+[gd_scene load_steps=10 format=3 uid="uid://djkncdwh507k1"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_ecs37"]
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="2_cairb"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_6gkg7"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="6_x6qyg"]
 [ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="7_0b1q8"]
+[ext_resource type="ArrayMesh" uid="uid://dtyvvgshfl4xh" path="res://assets/course/wicked-woods/map_mesh.tres" id="8_torjd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ubem1"]
 size = Vector3(300, 33.77, 141.27)
@@ -400,8 +401,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.3551, 74.0337, 105.531)
 [node name="EnemyPath49" parent="EnemyPathPoints" index="45" instance=ExtResource("6_x6qyg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.03516, 74.1702, 83.0981)
 
+[node name="PlayerCamera" parent="." index="6"]
+cull_mask = 1023
+
 [node name="MapCamera" parent="." index="11"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -26.466, 1000, -109.108)
+
+[node name="MapMesh" parent="." index="12"]
+transform = Transform3D(4.5, 0, 0, 0, -1.96701e-07, -4.5, 0, 4.5, -1.96701e-07, 0, 0, 0)
+visible = false
+mesh = ExtResource("8_torjd")
 
 [connection signal="body_entered" from="Course/Water" to="Course/Water" method="_on_body_entered"]
 [connection signal="body_exited" from="Course/Water" to="Course/Water" method="_on_body_exited"]

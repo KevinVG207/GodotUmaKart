@@ -113,7 +113,8 @@ func _ready():
 		
 		path_point.next_points.append(path_points[next_i])
 	
-	minimap_recursive($Course)
+	#minimap_recursive($Course)
+	$MapMesh.visible = true
 	map_camera.reparent(UI.race_ui.map_viewport)
 
 
