@@ -12,6 +12,7 @@ var last_item_texture: CompressedTexture2D = null
 var last_rotation: bool = false
 var roulette_end: bool = false
 var roulette_stop: bool = false
+@onready var map_viewport: SubViewport = $Map/MapViewport
 
 var nametags: Dictionary = {}
 

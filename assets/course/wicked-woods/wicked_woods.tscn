@@ -270,7 +270,11 @@ transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 0, 0, 0)
 
 [node name="StaticBody3D" parent="Course_tower" index="0" groups=["wall"]]
 
+[node name="Course_castle-road" parent="." index="1" groups=["map"]]
+
 [node name="StaticBody3D" parent="Course_castle-road" index="0" groups=["floor"]]
+
+[node name="Course_wood-road" parent="." index="2" groups=["map"]]
 
 [node name="StaticBody3D" parent="Course_wood-road" index="0" groups=["floor"]]
 
@@ -279,6 +283,8 @@ transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 0, 0, 0)
 [node name="StaticBody3D" parent="Course_boost-border" index="0" groups=["boost", "floor", "trick"]]
 
 [node name="StaticBody3D" parent="Course_wood-fence" index="0" groups=["wall"]]
+
+[node name="Course_ruins-road" parent="." index="7" groups=["map"]]
 
 [node name="StaticBody3D" parent="Course_ruins-road" index="0" groups=["floor"]]
 
@@ -295,6 +301,9 @@ physics_material_override = SubResource("PhysicsMaterial_vexeb")
 
 [node name="StaticBody3D" parent="Course_castle-under-road" index="0" groups=["wall"]]
 
+[node name="Course_dirt-road" parent="." index="16" groups=["map"]]
+transform = Transform3D(1, 0, 0, 0, -1.19209e-07, -1, 0, 1, -1.19209e-07, 0, 0, 0)
+
 [node name="StaticBody3D" parent="Course_dirt-road" index="0" groups=["floor"]]
 
 [node name="StaticBody3D" parent="Course_bridge" index="0" groups=["floor"]]
@@ -302,6 +311,8 @@ physics_material_override = SubResource("PhysicsMaterial_vexeb")
 [node name="StaticBody3D" parent="Course_bridge-trick" index="0" groups=["floor", "small_trick"]]
 
 [node name="StaticBody3D" parent="Course_bridge-wall" index="0" groups=["wall"]]
+
+[node name="Course_castle-road-trick" parent="." index="20" groups=["map"]]
 
 [node name="StaticBody3D" parent="Course_castle-road-trick" index="0" groups=["floor", "small_trick"]]
 
@@ -313,15 +324,25 @@ disabled = true
 
 [node name="StaticBody3D" parent="Course_ruins-rim" index="0" groups=["wall"]]
 
+[node name="Course_ruins-road-trick" parent="." index="24" groups=["map"]]
+
 [node name="StaticBody3D" parent="Course_ruins-road-trick" index="0" groups=["floor", "small_trick"]]
+
+[node name="Course_dirt-road2" parent="." index="25" groups=["map"]]
 
 [node name="StaticBody3D" parent="Course_dirt-road2" index="0" groups=["floor"]]
 
+[node name="Course_dirt-road-nograss" parent="." index="26" groups=["map"]]
+
 [node name="StaticBody3D" parent="Course_dirt-road-nograss" index="0" groups=["floor"]]
+
+[node name="Course_sand-road" parent="." index="27" groups=["map"]]
 
 [node name="StaticBody3D" parent="Course_sand-road" index="0" groups=["floor"]]
 
 [node name="StaticBody3D" parent="Course_sand-offroad" index="0" groups=["floor", "weak_offroad"]]
+
+[node name="Course_dirt-road-trick" parent="." index="29" groups=["map"]]
 
 [node name="StaticBody3D" parent="Course_dirt-road-trick" index="0" groups=["floor", "small_trick"]]
 

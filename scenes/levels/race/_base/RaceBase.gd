@@ -38,6 +38,7 @@ var rankings_timer: int = 0
 var rankings_delay: int = 30
 var stop_rankings: bool = false
 
+
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
 	const CLIENT_UPDATE_VEHICLE_STATE = 2
@@ -84,6 +85,8 @@ const UPDATE_STATES = [
 
 var state = STATE_INITIAL
 
+@onready var map_camera: Camera3D = $MapCamera
+
 func _ready():
 	UI.race_ui.set_max_laps(lap_count)
 	UI.race_ui.set_cur_lap(0)
@@ -109,6 +112,9 @@ func _ready():
 			next_i = 0
 		
 		path_point.next_points.append(path_points[next_i])
+	
+	minimap_recursive($Course)
+	map_camera.reparent(UI.race_ui.map_viewport)
 
 
 func _process(delta):
@@ -196,6 +202,15 @@ func _process(delta):
 			
 			UI.race_ui.update_nametag(user_id, vehicle.username, screen_pos, opacity, dist, tag_visible, force, delta)
 		UI.race_ui.sort_nametags()
+
+func minimap_recursive(node: Node):
+	for child in node.get_children():
+		minimap_recursive(child)
+	
+	# Add floor meshes to minimap layer
+	if node is MeshInstance3D:
+		if node.is_in_group("map"):
+			node.set_layer_mask_value(19, true)  # Minimap layer
 
 func change_state(new_state: int, state_func: Callable = Callable()):
 	state = new_state

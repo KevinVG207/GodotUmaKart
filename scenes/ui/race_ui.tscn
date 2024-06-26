@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=11 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
@@ -63,6 +63,9 @@ _data = {
 "rotate": SubResource("Animation_sqxjf")
 }
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_i2ab8"]
+viewport_path = NodePath("Map/MapViewport")
+
 [node name="RaceUI" type="CanvasLayer"]
 layer = 19
 script = ExtResource("1_23b1w")
@@ -113,6 +116,24 @@ callback_mode_method = 1
 libraries = {
 "": SubResource("AnimationLibrary_ux71x")
 }
+
+[node name="Map" type="TextureRect" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -519.0
+offset_top = -506.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = SubResource("ViewportTexture_i2ab8")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="MapViewport" type="SubViewport" parent="Map"]
+transparent_bg = true
+size = Vector2i(1024, 1024)
 
 [node name="Speed" type="Label" parent="."]
 anchors_preset = 3

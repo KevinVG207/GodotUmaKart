@@ -331,7 +331,7 @@ func cpu_control():
 	var item_rand = randi_range(0, 900) == 0
 	# if item:
 	# 	print(can_use_item, " ", item, " ", item_rand)
-	if can_use_item and item and item_rand:
+	if !finished and can_use_item and item and item_rand:
 		input_item = true
 		input_item_just = true
 	

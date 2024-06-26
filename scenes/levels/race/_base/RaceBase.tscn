@@ -57,6 +57,12 @@ one_shot = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_34w1p")
 
+[node name="MapCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1000, 0)
+cull_mask = 262144
+projection = 1
+size = 600.0
+
 [connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
 [connection signal="timeout" from="CountdownTimer" to="." method="_on_countdown_timer_timeout"]
 [connection signal="timeout" from="NextRaceTimer" to="." method="_on_next_race_timer_timeout"]
