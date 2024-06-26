@@ -557,8 +557,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# Stick to ground.
 	# Perform raycast in local -y direction
 	var is_stick: bool = false
-	if is_player:
-		print(in_hop, " ", grounded)
+	#if is_player:
+		#print(in_hop, " ", grounded)
 	if air_frames < 15 and !in_hop and !in_bounce:
 		var space_state = get_world_3d().direct_space_state
 		var ray_origin = transform.origin + transform.basis.y * -0.5
