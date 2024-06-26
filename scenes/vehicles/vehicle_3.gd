@@ -110,7 +110,7 @@ var trick_frames: int = 0
 @export var vehicle_height_below: float = 0.5
 
 var stick_speed: float = 400
-var stick_distance: float = 0.75
+var stick_distance: float = 0.5
 var stick_ray_count: int = 4
 @export var air_frames: int = 0
 @export var in_hop: bool = false
@@ -118,7 +118,7 @@ var stick_ray_count: int = 4
 @export var in_drift: bool = false
 @export var drift_dir: int = 0
 @onready var min_hop_speed: float = max_speed * 0.55
-var hop_force: float = 3.0
+var hop_force: float = 3.25
 @export var can_hop: bool = true
 #var global_hop: Vector3 = Vector3.ZERO
 
@@ -423,7 +423,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			if in_bounce and bounce_frames > 9:
 				in_bounce = false
 				bounce_frames = 0
+			if in_hop:
+				grounded = false
 			if in_hop and in_hop_frames > 6:
+				grounded = true
 				# Switch from hop to drift
 				if is_brake:
 					# Block hopping
@@ -551,6 +554,24 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			# print("cur_speed: ", cur_speed)
 
 	
+	# Stick to ground.
+	# Perform raycast in local -y direction
+	var is_stick: bool = false
+	if is_player:
+		print(in_hop, " ", grounded)
+	if air_frames < 15 and !in_hop and !in_bounce:
+		var space_state = get_world_3d().direct_space_state
+		var ray_origin = transform.origin + transform.basis.y * -0.5
+		var ray_end = ray_origin + transform.basis.y * -0.9
+		var ray_result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
+
+		if ray_result:
+			is_stick = true
+			grounded = true
+			# var distance = ray_result.position.distance_to(ray_origin)
+			# Apply stick_speed to stick to ground
+
+	
 	if not grounded and trick_input and not $TrickTimer.is_stopped() and !in_trick:
 		#Debug.print("Trick input detected")
 		in_trick = true
@@ -601,7 +622,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# if (prev_gravity_vel + (_gravity*delta)).length() > terminal_velocity:
 	# 	_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
 	if grounded:
-		_gravity *= 4
+		_gravity *= 2
 
 	#if grounded:
 		#new_grav *= 2
@@ -613,18 +634,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	# print(prop_vel, " ", rest_vel, " ", linear_velocity)
 	
-	# Stick to ground.
-	# Perform raycast in local -y direction
-	if air_frames < 15 and !in_hop and !in_bounce:
-		var space_state = get_world_3d().direct_space_state
-		var ray_origin = transform.origin + transform.basis.y * -0.5
-		var ray_end = ray_origin + transform.basis.y * -0.9
-		var ray_result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
+	
+	if is_stick:
+		rest_vel += -transform.basis.y.project(gravity.normalized()) * stick_speed * delta
 
-		if ray_result:
-			# var distance = ray_result.position.distance_to(ray_origin)
-			# Apply stick_speed to stick to ground
-			rest_vel += -transform.basis.y.project(gravity.normalized()) * stick_speed * delta
 			#Debug.print(linear_velocity.y)
 
 	# Turning
@@ -719,7 +732,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	linear_velocity = prop_vel + rest_vel
 	prev_vel = linear_velocity
-	# print(grounded)
+
+	# if is_player:
+	# 	print(grounded)
 
 	# grounded = false
 	prev_transform = transform
