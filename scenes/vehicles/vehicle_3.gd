@@ -79,10 +79,9 @@ var outside_drift_force_reduction: float = 0.0
 @export var cur_turn_speed: float = 0
 var turn_accel: float = 1800
 
-var trick_cooldown_time: float = 0.3
+var trick_cooldown_time: float = 0.4
 @export var trick_force: float = 1.5
 var in_trick: bool = false
-var trick_frames: int = 0
 
 @onready var small_boost_timer: Timer = $SmallBoostTimer
 @onready var normal_boost_timer: Timer = $NormalBoostTimer
@@ -109,7 +108,7 @@ var trick_frames: int = 0
 @export var vehicle_length_behind: float = 1.0
 @export var vehicle_height_below: float = 0.5
 
-var stick_speed: float = 400
+var stick_speed: float = 100
 var stick_distance: float = 0.5
 var stick_ray_count: int = 4
 @export var air_frames: int = 0
@@ -133,7 +132,7 @@ var still_turbo_ready: bool = false
 
 @export var grounded: bool = false
 
-@export var gravity: Vector3 = Vector3.DOWN * 15
+@export var gravity: Vector3 = Vector3.DOWN * 16
 var terminal_velocity = 3000
 
 # var grav_vel: Vector3 = Vector3.ZERO  # Velocity due to gravity
@@ -149,7 +148,7 @@ var ground_rot_multi: float = 5.0
 var test_force: float = 10.0
 #var cur_grip: float = 100.0
 
-var max_displacement_for_sleep = 0.003
+var max_displacement_for_sleep = 0.006
 var max_degrees_change_for_sleep = 0.01
 
 var prev_vel: Vector3 = Vector3.ZERO
@@ -265,7 +264,7 @@ func handle_input():
 		input_accel = Input.is_action_pressed("accelerate")
 		input_brake = Input.is_action_pressed("brake")
 		input_steer = Input.get_axis("right", "left")
-		input_trick = Input.is_action_pressed("trick")
+		input_trick = Input.is_action_just_pressed("trick")
 		input_item = Input.is_action_pressed("item")
 		input_item_just = Input.is_action_just_pressed("item")
 		input_updown = Input.get_axis("down", "up")
@@ -383,7 +382,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var is_accel = input_accel
 	var is_brake = input_brake
 	var steering: float = clamp(input_steer, -1.0, 1.0)
-	var trick_input: bool = input_trick
 	#cur_grip = default_grip
 	grounded = false
 	
@@ -442,10 +440,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			
 			if in_trick:
 				in_trick = false
-				if trick_frames > 15:
-					trick_boost_timer.start(trick_boost_duration)
-				trick_frames = 0
-				#Debug.print(["Starting trick boost", trick_boost_timer])
+				trick_boost_timer.start(trick_boost_duration)
+				if is_player:
+					Debug.print(["Starting trick boost", trick_boost_timer])
 				
 		
 		if collider.is_in_group("boost"):
@@ -572,8 +569,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			# Apply stick_speed to stick to ground
 
 	
-	if not grounded and trick_input and not $TrickTimer.is_stopped() and !in_trick:
-		#Debug.print("Trick input detected")
+	if not grounded and input_trick and !$TrickTimer.is_stopped() and !in_trick:
+		if is_player:
+			Debug.print("Trick input detected")
 		in_trick = true
 		if not in_hop:
 			rest_vel += transform.basis.y * trick_force
@@ -596,9 +594,11 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		# Remove gravity.
 		var vel_grav = rest_vel.project(gravity.normalized())
 		# print(vel_grav)
-		rest_vel -= vel_grav / 4
+		rest_vel -= vel_grav / 16
 		
 		rest_vel = rest_vel.move_toward(Vector3.ZERO, default_grip * delta)
+		if rest_vel.length() < max_displacement_for_sleep:
+			rest_vel = Vector3.ZERO
 
 		prop_vel = get_grounded_vel(delta)
 	else:
@@ -612,16 +612,12 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		# new_vel = get_air_vel(delta)
 		#print("airborne ", new_vel)
 	
-	if in_trick and not in_hop:
-		trick_frames += 1
-		# new_vel += transform.basis.y * trick_force / (trick_frames+1)
-	
 	#print(speed_vec)
 	
 	var _gravity: Vector3 = gravity
 	# if (prev_gravity_vel + (_gravity*delta)).length() > terminal_velocity:
 	# 	_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
-	if grounded:
+	if grounded and $TrickTimer.is_stopped():
 		_gravity *= 2
 
 	#if grounded:
@@ -702,8 +698,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var floor_below = Util.raycast_for_group(self, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
 	if not grounded and (!in_hop or !floor_below):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
-	#if grounded:
-		#rotation = rotation.rotated(transform.basis.z, transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * delta)
+	if grounded:
+		rotation = rotation.rotated(transform.basis.z, transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * delta)
 
 
 	# REFUSE TO GO UPSIDE DOWN (assuming we were at some point right side up)
@@ -1138,7 +1134,6 @@ func get_state() -> Dictionary:
 		"cur_speed": cur_speed,
 		"cur_turn_speed": cur_turn_speed,
 		"in_trick": in_trick,
-		"trick_frames": trick_frames,
 		"in_hop": in_hop,
 		"in_hop_frames": in_hop_frames,
 		"in_drift": in_drift,
@@ -1178,7 +1173,6 @@ func apply_state(state: Dictionary):
 	cur_speed = state.cur_speed
 	cur_turn_speed = state.cur_turn_speed
 	in_trick = state.in_trick
-	trick_frames = state.trick_frames
 	in_hop = state.in_hop
 	in_hop_frames = state.in_hop_frames
 	in_drift = state.in_drift

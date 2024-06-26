@@ -54,6 +54,7 @@ var physical_items: Dictionary = {
 var item_tex: Array = []
 
 func _enter_tree():
+	#seed(1)
 	TranslationServer.set_locale(locales[cur_locale])
 	return
 
