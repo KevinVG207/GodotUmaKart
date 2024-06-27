@@ -12,7 +12,11 @@ var last_item_texture: CompressedTexture2D = null
 var last_rotation: bool = false
 var roulette_end: bool = false
 var roulette_stop: bool = false
-@onready var map_viewport: SubViewport = $Map/MapViewport
+@onready var map_viewport: SubViewport = $MapContainer/MapTexture/MapViewport
+var map_camera: Camera3D
+@onready var map_texture: TextureRect = $MapContainer/MapTexture
+@onready var startline_marker: Sprite2D = $MapContainer/StartLineMarker
+@onready var player_icons: Node = $MapContainer/PlayerIcons
 
 var nametags: Dictionary = {}
 
@@ -20,6 +24,31 @@ func _ready():
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item2").texture = Global.item_tex.pick_random()
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = Global.item_tex.pick_random()
 	pass
+
+func set_map_camera(cam: Camera3D):
+	cam.reparent(map_viewport)
+	map_camera = cam
+
+func set_startline(checkpoint: Checkpoint):
+	var global_pos = checkpoint.to_global(checkpoint.position)
+	var global_forward = global_pos + checkpoint.transform.basis.z
+	var local_pos = map_camera.to_local(global_pos)
+	var local_forward = map_camera.to_local(global_forward)
+	var local_dir = local_forward - local_pos
+	print("Startline")
+	print(checkpoint.transform.basis.z)
+	print(local_dir)
+	var canvas_dir: Vector2 = Vector2(local_dir.x, -local_dir.y).normalized()
+	var canvas_coords: Vector2 = map_camera.unproject_position(checkpoint.global_position)
+	print("Startline coords: ", canvas_coords)
+	print("Startline dir: ", canvas_dir)
+	move_map_sprite(startline_marker, canvas_coords, canvas_dir)
+
+func move_map_sprite(sprite: Sprite2D, viewport_pos: Vector2, direction: Vector2 = Vector2.RIGHT):
+	var final_x = viewport_pos.x / map_viewport.size.x * map_texture.size.x + map_texture.position.x
+	var final_y = viewport_pos.y / map_viewport.size.y * map_texture.size.y + map_texture.position.y
+	sprite.position = Vector2(final_x, final_y)
+	sprite.look_at(sprite.position + direction.rotated(PI/2))
 
 func update_speed(speed):
 	$Speed.text = str(int(speed))

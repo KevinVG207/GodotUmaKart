@@ -115,7 +115,8 @@ func _ready():
 	
 	#minimap_recursive($Course)
 	$MapMesh.visible = true
-	map_camera.reparent(UI.race_ui.map_viewport)
+	UI.race_ui.set_map_camera(map_camera)
+	UI.race_ui.set_startline(checkpoints[0])
 
 
 func _process(delta):

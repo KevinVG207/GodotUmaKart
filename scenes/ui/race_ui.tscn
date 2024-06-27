@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=12 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
 [ext_resource type="PackedScene" uid="uid://b4ktan2k4miry" path="res://scenes/ui/item_roulette.tscn" id="3_xg3tb"]
 [ext_resource type="PackedScene" uid="uid://2ani3pyd27xg" path="res://scenes/ui/nametag.tscn" id="4_5a5qs"]
+[ext_resource type="Texture2D" uid="uid://cf2x8b1awq2b5" path="res://assets/race/startline.png" id="5_s54dk"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_5eh43"]
 viewport_path = NodePath("ItemBox/Viewport")
@@ -64,7 +65,7 @@ _data = {
 }
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_i2ab8"]
-viewport_path = NodePath("Map/MapViewport")
+viewport_path = NodePath("MapContainer/MapTexture/MapViewport")
 
 [node name="RaceUI" type="CanvasLayer"]
 layer = 19
@@ -117,24 +118,32 @@ libraries = {
 "": SubResource("AnimationLibrary_ux71x")
 }
 
-[node name="Map" type="TextureRect" parent="."]
+[node name="MapContainer" type="Node" parent="."]
+
+[node name="MapTexture" type="TextureRect" parent="MapContainer"]
 modulate = Color(1, 1, 1, 0.470588)
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -519.0
-offset_top = -506.0
+offset_left = -512.0
+offset_top = -512.0
 grow_horizontal = 0
 grow_vertical = 0
 texture = SubResource("ViewportTexture_i2ab8")
 expand_mode = 1
 stretch_mode = 4
 
-[node name="MapViewport" type="SubViewport" parent="Map"]
+[node name="MapViewport" type="SubViewport" parent="MapContainer/MapTexture"]
 transparent_bg = true
 size = Vector2i(1024, 1024)
+
+[node name="StartLineMarker" type="Sprite2D" parent="MapContainer"]
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("5_s54dk")
+
+[node name="PlayerIcons" type="Node" parent="MapContainer"]
 
 [node name="Speed" type="Label" parent="."]
 anchors_preset = 3
