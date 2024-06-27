@@ -40,6 +40,7 @@ var input_item_just: bool = false
 var input_updown: float = 0
 @export var list_image: CompressedTexture2D
 @export var list_order: int = 0
+@export var icon: CompressedTexture2D
 @export var max_speed: float = 20
 @onready var cur_max_speed = 20
 @export var reverse_multi: float = 0.5

@@ -7,6 +7,8 @@ signal roulette_ended
 @export var info_box_scene: PackedScene
 @onready var back_btn: Button = $BackToLobby
 @export var nametag_scene: PackedScene
+#@export var icon_material: ShaderMaterial
+#@export var icon_material_player: ShaderMaterial
 
 var last_item_texture: CompressedTexture2D = null
 var last_rotation: bool = false
@@ -16,14 +18,44 @@ var roulette_stop: bool = false
 var map_camera: Camera3D
 @onready var map_texture: TextureRect = $MapContainer/MapTexture
 @onready var startline_marker: Sprite2D = $MapContainer/StartLineMarker
-@onready var player_icons: Node = $MapContainer/PlayerIcons
+@onready var player_icons_node: Node = $MapContainer/PlayerIcons
 
 var nametags: Dictionary = {}
+var player_icons: Dictionary = {}
 
 func _ready():
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item2").texture = Global.item_tex.pick_random()
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = Global.item_tex.pick_random()
 	pass
+
+func update_icons(players: Array):
+	for icon: Sprite2D in player_icons.values():
+		icon.visible = false
+	
+	for player: Vehicle3 in players:
+		var id: String = player.user_id
+		
+		# Create new icons
+		if not id in player_icons:
+			var new_icon = Sprite2D.new()
+			new_icon.scale = Vector2(0.3, 0.3)
+			new_icon.texture = player.icon
+			if player.is_player:
+				#new_icon.material = icon_material_player
+				pass
+			else:
+				#new_icon.material = icon_material
+				new_icon.modulate.a = 0.4
+			player_icons_node.add_child(new_icon)
+			player_icons[id] = new_icon
+		
+		var icon: Sprite2D = player_icons[id]
+		icon.z_index = len(players) - player.rank
+		if player.is_player:
+			icon.z_index += len(players)
+		icon.visible = true
+		move_map_sprite(icon, player.global_position)
+		
 
 func set_map_camera(cam: Camera3D):
 	cam.reparent(map_viewport)
@@ -35,16 +67,11 @@ func set_startline(checkpoint: Checkpoint):
 	var local_pos = map_camera.to_local(global_pos)
 	var local_forward = map_camera.to_local(global_forward)
 	var local_dir = local_forward - local_pos
-	print("Startline")
-	print(checkpoint.transform.basis.z)
-	print(local_dir)
 	var canvas_dir: Vector2 = Vector2(local_dir.x, -local_dir.y).normalized()
-	var canvas_coords: Vector2 = map_camera.unproject_position(checkpoint.global_position)
-	print("Startline coords: ", canvas_coords)
-	print("Startline dir: ", canvas_dir)
-	move_map_sprite(startline_marker, canvas_coords, canvas_dir)
+	move_map_sprite(startline_marker, checkpoint.global_position, canvas_dir)
 
-func move_map_sprite(sprite: Sprite2D, viewport_pos: Vector2, direction: Vector2 = Vector2.RIGHT):
+func move_map_sprite(sprite: Sprite2D, global_pos: Vector3, direction: Vector2 = Vector2.RIGHT):
+	var viewport_pos: Vector2 = map_camera.unproject_position(global_pos)
 	var final_x = viewport_pos.x / map_viewport.size.x * map_texture.size.x + map_texture.position.x
 	var final_y = viewport_pos.y / map_viewport.size.y * map_texture.size.y + map_texture.position.y
 	sprite.position = Vector2(final_x, final_y)

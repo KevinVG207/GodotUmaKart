@@ -96,6 +96,7 @@ guaranteed_item = ExtResource("7_0b1q8")
 
 [node name="Checkpoints" parent="." index="2"]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
+visible = false
 
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_02dhb")]
 transform = Transform3D(-1, 0, -2.98023e-08, 0, 1, 0, 2.98023e-08, 0, -1, 0, 83.2, 67)

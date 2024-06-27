@@ -142,6 +142,7 @@ size = Vector2i(1024, 1024)
 [node name="StartLineMarker" type="Sprite2D" parent="MapContainer"]
 scale = Vector2(0.4, 0.4)
 texture = ExtResource("5_s54dk")
+region_rect = Rect2(0, 0, 80, 20)
 
 [node name="PlayerIcons" type="Node" parent="MapContainer"]
 

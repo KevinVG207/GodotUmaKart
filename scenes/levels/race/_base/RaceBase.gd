@@ -156,6 +156,10 @@ func _process(delta):
 			
 			player_camera.target = players_dict.values()[spectator_index]
 	
+	# Minimap icons
+	UI.race_ui.update_icons(players_dict.values())
+	
+	# Nametags
 	if player_camera.target:
 		# Display nametags.
 		var exclude_list: Array = []

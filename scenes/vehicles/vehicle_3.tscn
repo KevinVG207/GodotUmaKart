@@ -1,9 +1,10 @@
-[gd_scene load_steps=30 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=31 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="2_b5ade"]
 [ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="2_v00a1"]
+[ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="3_2njw6"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -180,10 +181,11 @@ gravity_scale = 0.0
 can_sleep = false
 freeze_mode = 1
 continuous_cd = true
-max_contacts_reported = 50
+max_contacts_reported = 10
 contact_monitor = true
 script = ExtResource("1_lrmky")
 list_image = ExtResource("2_6jcjm")
+icon = ExtResource("3_2njw6")
 
 [node name="VehicleAnimationTree" type="AnimationTree" parent="."]
 root_node = NodePath("../Visual")
