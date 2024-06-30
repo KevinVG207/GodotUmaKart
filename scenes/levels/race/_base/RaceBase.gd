@@ -114,12 +114,14 @@ func _ready():
 		path_point.next_points.append(path_points[next_i])
 	
 	#minimap_recursive($Course)
-	$MapMesh.visible = true
+	$Course/MapMesh.visible = true
 	UI.race_ui.set_map_camera(map_camera)
 	UI.race_ui.set_startline(checkpoints[0])
 
 
 func _process(delta):
+	UI.race_ui.set_startline(checkpoints[0])
+	
 	if not $CountdownTimer.is_stopped() and $CountdownTimer.time_left <= 3.0:
 		UI.race_ui.update_countdown(str(ceil($CountdownTimer.time_left)))
 	else:

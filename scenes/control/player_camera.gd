@@ -12,6 +12,7 @@ var lerp_speed: float = 12
 var lerp_speed_finished: float = 20
 var lerp_speed_look: float = 30
 var look_target: Array = []
+@export var safe_distance: float = 1.0
 #var look_target = Vector3.INF
 @onready var cur_pos: Vector3 = position
 @onready var cur_pos_bw: Vector3 = position
@@ -50,10 +51,51 @@ func _physics_process(delta):
 
 	var prev_pos = cur_pos
 	var prev_pos_bw = cur_pos_bw
-	cur_pos = cur_pos.lerp(target.global_transform.translated_local(cur_offset).origin, cur_lerp_speed * delta)
-	cur_pos.y = lerpf(prev_pos.y, target.global_transform.translated_local(cur_offset).origin.y, cur_lerp_speed * delta * 0.5)
-	cur_pos_bw = cur_pos_bw.lerp(target.global_transform.translated_local(cur_offset_bw).origin, cur_lerp_speed * delta)
-	cur_pos_bw.y = lerpf(prev_pos_bw.y, target.global_transform.translated_local(cur_offset_bw).origin.y, cur_lerp_speed * delta * 0.5)
+
+	var new_pos = target.global_transform.translated_local(cur_offset).origin
+	var new_pos_bw = target.global_transform.translated_local(cur_offset_bw).origin
+
+
+	# Raycast to keep the camera from going through walls
+	# Forward
+	var ray_start = target.global_transform.translated_local(Vector3(0, cur_offset.y, 0)).origin
+	var ray_end = new_pos
+	var result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
+	if result:
+		var cur_safe_distance = safe_distance
+		var dist_to_point = result.position.distance_to(ray_start)
+		if dist_to_point < safe_distance:
+			cur_safe_distance = dist_to_point
+		
+		new_pos = result.position + (ray_start - ray_end).normalized() * cur_safe_distance
+	
+	# Backwards
+	ray_start = target.global_transform.translated_local(Vector3(0, cur_offset_bw.y, 0)).origin
+	ray_end = new_pos_bw
+	result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
+	if result:
+		var cur_safe_distance = safe_distance
+		var dist_to_point = result.position.distance_to(ray_start)
+		if dist_to_point < safe_distance:
+			cur_safe_distance = dist_to_point
+		
+		new_pos_bw = result.position + (ray_start - ray_end).normalized() * cur_safe_distance
+
+
+	cur_pos = cur_pos.lerp(new_pos, cur_lerp_speed * delta)
+	cur_pos.y = lerpf(prev_pos.y, new_pos.y, cur_lerp_speed * delta * 0.5)
+	cur_pos_bw = cur_pos_bw.lerp(new_pos_bw, cur_lerp_speed * delta)
+	cur_pos_bw.y = lerpf(prev_pos_bw.y, new_pos_bw.y, cur_lerp_speed * delta * 0.5)
+
+
+
+
+	# # Backwards
+	# ray_start = target.global_transform.translated_local(Vector3(0, cur_offset_bw.y, 0)).origin
+	# ray_end = cur_pos_bw
+	# result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
+	# if result:
+	# 	cur_pos_bw = result.position
 
 	if instant:
 		cur_pos = target.global_transform.translated_local(cur_offset).origin

@@ -1,0 +1,14 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://c0453n1hsktoe"]
+
+[ext_resource type="Shader" path="res://addons/3D Outline/Outline.gdshader" id="1_x7bea"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8a7sg"]
+shading_mode = 0
+
+[resource]
+render_priority = 0
+next_pass = SubResource("StandardMaterial3D_8a7sg")
+shader = ExtResource("1_x7bea")
+shader_parameter/enable = true
+shader_parameter/outline_thickness = 0.5
+shader_parameter/color = Color(0.377919, 0.377919, 0.377919, 1)

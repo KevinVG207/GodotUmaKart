@@ -147,7 +147,7 @@ func _physics_process(delta):
 		var collider = col_data.get_collider(0)
 		if collider.is_in_group("wall"):
 			# Break on walls
-			if owner_id == world.player_user_id:
+			if owner_id == world.player_user_id or Global.MODE1 == Global.MODE1_OFFLINE:
 				world.destroy_physical_item(item_id)
 			
 			#var normal = col_data.get_normal(0)

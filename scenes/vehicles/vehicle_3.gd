@@ -81,7 +81,7 @@ var outside_drift_force_reduction: float = 0.0
 var turn_accel: float = 1800
 
 var trick_cooldown_time: float = 0.4
-@export var trick_force: float = 1.5
+@export var trick_force: float = 2.5
 var in_trick: bool = false
 
 @onready var small_boost_timer: Timer = $SmallBoostTimer
@@ -118,7 +118,7 @@ var stick_ray_count: int = 4
 @export var in_drift: bool = false
 @export var drift_dir: int = 0
 @onready var min_hop_speed: float = max_speed * 0.55
-var hop_force: float = 3.25
+var hop_force: float = 3.5
 @export var can_hop: bool = true
 #var global_hop: Vector3 = Vector3.ZERO
 
@@ -149,7 +149,7 @@ var ground_rot_multi: float = 5.0
 var test_force: float = 10.0
 #var cur_grip: float = 100.0
 
-var max_displacement_for_sleep = 0.006
+var max_displacement_for_sleep = 0.003
 var max_degrees_change_for_sleep = 0.01
 
 var prev_vel: Vector3 = Vector3.ZERO
@@ -424,7 +424,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				bounce_frames = 0
 			if in_hop:
 				grounded = false
-			if in_hop and in_hop_frames > 6:
+			if in_hop and in_hop_frames > 30:
 				grounded = true
 				# Switch from hop to drift
 				if is_brake:
@@ -620,6 +620,11 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# 	_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
 	if grounded and $TrickTimer.is_stopped():
 		_gravity *= 2
+	
+	if in_bounce and bounce_frames < 9:
+		_gravity = Vector3.ZERO
+	if in_hop and in_hop_frames < 9:
+		_gravity = Vector3.ZERO
 
 	#if grounded:
 		#new_grav *= 2
@@ -755,7 +760,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 				rest_vel += transform.basis.y * hop_force
 				grounded = false
 			else:
-				cur_speed += get_friction_speed(delta)
+				cur_speed += get_accel_speed(delta)
 		else:
 			in_drift = false
 			# Decelerate to standstill
