@@ -118,7 +118,6 @@ func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 	var initial_points = []
 	for i in range(len(path_points)):
 		var cur_point = path_points[i]
-		print(cur_point.get_path())
 		
 		if i == 1:
 			initial_points = prev_points
@@ -127,7 +126,6 @@ func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 			var new_prev_points: Array = []
 			for branch in cur_point.get_children():
 				new_prev_points += recursive_path_link(branch, prev_points)
-			print(new_prev_points)
 			prev_points = new_prev_points
 			continue
 		

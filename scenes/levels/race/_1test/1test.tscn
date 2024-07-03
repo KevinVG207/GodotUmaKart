@@ -1,0 +1,77 @@
+[gd_scene load_steps=8 format=3 uid="uid://tgm0tkbghr0c"]
+
+[ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_2vsv6"]
+[ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_5k6we"]
+[ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_864dc"]
+[ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_qon5u"]
+[ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_jv31a"]
+[ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="6_i62ff"]
+[ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="7_gntdf"]
+
+[node name="RaceBase" instance=ExtResource("1_2vsv6")]
+lap_count = 1
+
+[node name="Course" parent="." index="0"]
+metadata/_edit_group_ = true
+
+[node name="1test" parent="Course" index="0" instance=ExtResource("2_5k6we")]
+
+[node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_864dc")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 26, 0, 0)
+is_key = true
+
+[node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("3_864dc")]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 19, 0, -17)
+
+[node name="Checkpoint3" parent="Checkpoints" index="2" instance=ExtResource("3_864dc")]
+transform = Transform3D(-5.96046e-08, 0, -1, 0, 1, 0, 1, 0, -5.96046e-08, 0, 0, -25)
+is_key = true
+
+[node name="Checkpoint4" parent="Checkpoints" index="3" instance=ExtResource("3_864dc")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -17, 0, -19)
+
+[node name="Checkpoint5" parent="Checkpoints" index="4" instance=ExtResource("3_864dc")]
+transform = Transform3D(1, 0, -8.9407e-08, 0, 1, 0, 8.9407e-08, 0, 1, -25, 0, 0)
+is_key = true
+
+[node name="Checkpoint6" parent="Checkpoints" index="5" instance=ExtResource("3_864dc")]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -20, 0, 16)
+
+[node name="Checkpoint7" parent="Checkpoints" index="6" instance=ExtResource("3_864dc")]
+transform = Transform3D(8.9407e-08, 0, 1, 0, 1, 0, -1, 0, 8.9407e-08, 0, 0, 26)
+is_key = true
+
+[node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_864dc")]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)
+
+[node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 25.6578, 0.00012207, -1.62639)
+
+[node name="EnemyPath4" parent="EnemyPathPoints" index="1" instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 4.23475, -0.00012207, -24.0745)
+
+[node name="EnemyPath7" parent="EnemyPathPoints" index="2" instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -23.5435, 0.00012207, -7.67405)
+
+[node name="EnemyPath10" parent="EnemyPathPoints" index="3" instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -11.6532, -0.000244141, 21.8467)
+
+[node name="EnemyPath13" parent="EnemyPathPoints" index="4" instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 20.1752, 0.00012207, 15.6837)
+
+[node name="ItemPickup" parent="." index="8" instance=ExtResource("5_jv31a")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.7305, 1.90735e-06, -19.2348)
+guaranteed_item = ExtResource("6_i62ff")
+
+[node name="ItemPickup2" parent="." index="9" instance=ExtResource("5_jv31a")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.181, 1.90735e-06, -19.8046)
+
+[node name="ItemPickup3" parent="." index="10" instance=ExtResource("5_jv31a")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 10.7742, -1.90735e-06, -23.0451)
+
+[node name="ItemPickup4" parent="." index="11" instance=ExtResource("5_jv31a")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 14.0165, -1.90735e-06, -23.6097)
+
+[node name="ItemPickup5" parent="." index="12" instance=ExtResource("5_jv31a")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)
+guaranteed_item = ExtResource("7_gntdf")

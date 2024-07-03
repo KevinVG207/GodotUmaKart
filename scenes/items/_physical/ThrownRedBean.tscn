@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://b1k75qqx23vj2"]
+[gd_scene load_steps=7 format=3 uid="uid://b1k75qqx23vj2"]
 
 [ext_resource type="Script" path="res://scenes/items/_physical/ThrownRedBean.gd" id="1_ieo53"]
+[ext_resource type="Texture2D" uid="uid://chjvxxnrtrfvk" path="res://assets/items/jellybean_red.png" id="2_yaknc"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_v8qc4"]
 height = 1.32048
@@ -24,6 +25,7 @@ floor_block_on_wall = false
 floor_max_angle = 1.5708
 floor_snap_length = 0.4
 script = ExtResource("1_ieo53")
+target_texture = ExtResource("2_yaknc")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.25, 0)

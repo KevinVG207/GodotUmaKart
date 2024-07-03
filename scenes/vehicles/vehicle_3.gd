@@ -9,6 +9,7 @@ var update_idx: int = 0
 @onready var vani: VehicleAnimationTree = $VehicleAnimationTree
 @onready var cani: AnimationPlayer # TODO: Character animation player
 
+var started: bool = false
 var is_player: bool = false
 var is_cpu: bool = true
 var is_network: bool = false
@@ -181,6 +182,8 @@ var respawn_stage: int = 0
 var respawn_position: Vector3 = Vector3.ZERO
 var respawn_rotation: Vector3 = Vector3.ZERO
 
+var targeted_by_dict: Dictionary = {}
+
 var in_damage: int = DamageType.none
 const DamageType = {
 	none = 0,
@@ -223,6 +226,7 @@ func axis_lock():
 	axis_lock_linear_z = true
 
 func axis_unlock():
+	started = true
 	axis_lock_linear_x = false
 	axis_lock_linear_z = false
 
@@ -272,7 +276,7 @@ func handle_input():
 		input_updown = Input.get_axis("down", "up")
 
 func cpu_control():
-	if !is_cpu or in_damage:
+	if !is_cpu or in_damage or !started:
 		return
 	
 	if not cpu_target:
@@ -280,6 +284,7 @@ func cpu_control():
 
 	# CPU brain goes here
 	set_all_input_zero()
+	
 	if in_drift and drift_gauge >= 75:
 		input_brake = true
 	if !$TrickTimer.is_stopped():
@@ -632,7 +637,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# if (prev_gravity_vel + (_gravity*delta)).length() > terminal_velocity:
 	# 	_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
 	if grounded and $TrickTimer.is_stopped():
-		_gravity *= 2
+		_gravity *= 1
 	
 	if in_bounce and bounce_frames < 9:
 		_gravity = Vector3.ZERO
@@ -1046,7 +1051,7 @@ func get_item(guaranteed_item: PackedScene = null):
 	if guaranteed_item:
 		item = guaranteed_item.instantiate()
 	else:
-		item = Global.item_dist[floor(rank * (world.players_dict.size() / Global.player_count))].pick_random().instantiate()
+		item = Global.item_dist[ceil(rank * (world.players_dict.size() / Global.player_count))].pick_random().instantiate()
 	world.add_child(item)
 	$ItemRouletteTimer.start(4)
 	if is_player and !is_cpu:
@@ -1094,6 +1099,11 @@ func _process(delta):
 		#is_player = true
 	
 	if is_player:
+		# Update alerts
+		for alert_object: Node3D in targeted_by_dict:
+			var tex = targeted_by_dict[alert_object]
+			UI.race_ui.update_alert(alert_object, tex, self, world.player_camera)
+		
 		var spd = linear_velocity.length()
 		UI.race_ui.update_speed(spd)
 		
@@ -1243,3 +1253,12 @@ func set_rank(new_rank: int):
 	if is_player and new_rank != rank:
 		UI.race_ui.update_rank(new_rank)
 	rank = new_rank
+
+func add_targeted(object: Node3D, tex: CompressedTexture2D):
+	if not object in targeted_by_dict:
+		targeted_by_dict[object] = tex
+
+func remove_targeted(object: Node3D):
+	if object in targeted_by_dict:
+		targeted_by_dict.erase(object)
+		UI.race_ui.remove_alert(object)

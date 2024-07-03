@@ -25,6 +25,10 @@ var first_rank_change: bool = true
 var nametags: Dictionary = {}
 var player_icons: Dictionary = {}
 
+@export var alert_scene: PackedScene
+var alert_dict: Dictionary = {}
+var alert_max_dist: float = 50
+
 func _ready():
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item2").texture = Global.item_tex.pick_random()
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = Global.item_tex.pick_random()
@@ -213,3 +217,29 @@ func remove_nametag(user_id: String):
 		var nt = nametags[user_id]
 		nametags.erase(user_id)
 		nt.queue_free()
+
+func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle3, cam: Camera3D):
+	if not object in alert_dict:
+		var alert = alert_scene.instantiate()
+		$Alerts.add_child(alert)
+		alert.set_image(tex)
+		alert_dict[object] = alert
+	
+	if player.global_position.distance_to(object.global_position) > alert_max_dist or cam.is_position_in_frustum(object.global_position):
+		alert_dict[object].visible = false
+		return
+	
+	var offset = Util.dist_to_plane(player.transform.basis.z, player.global_position, object.global_position)
+	offset *= 50
+	offset += 1280 / 2
+	
+	offset = clamp(offset, 64, 1280 - 64)
+	
+	alert_dict[object].position = Vector2(offset, $Alerts.size.y)
+	alert_dict[object].visible = true
+
+func remove_alert(object: Node3D):
+	if object in alert_dict:
+		var alert = alert_dict[object]
+		alert_dict.erase(object)
+		alert.queue_free()

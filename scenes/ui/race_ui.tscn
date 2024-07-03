@@ -1,10 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=17 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
 [ext_resource type="PackedScene" uid="uid://b4ktan2k4miry" path="res://scenes/ui/item_roulette.tscn" id="3_xg3tb"]
 [ext_resource type="PackedScene" uid="uid://2ani3pyd27xg" path="res://scenes/ui/nametag.tscn" id="4_5a5qs"]
 [ext_resource type="Texture2D" uid="uid://cf2x8b1awq2b5" path="res://assets/race/startline.png" id="5_s54dk"]
+[ext_resource type="PackedScene" uid="uid://ttgvsua40ods" path="res://scenes/ui/race/alert.tscn" id="6_1cm01"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_5eh43"]
 viewport_path = NodePath("ItemBox/Viewport")
@@ -72,6 +73,31 @@ font_size = 85
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="Animation" id="Animation_wlpck"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
 [sub_resource type="Animation" id="Animation_eman3"]
 resource_name = "change"
 length = 0.2
@@ -99,31 +125,6 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0, 0.15, 0.2)
 }
 
-[sub_resource type="Animation" id="Animation_wlpck"]
-length = 0.001
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale:x")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/1/type = "bezier"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:scale:y")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_k88iy"]
 _data = {
 "RESET": SubResource("Animation_wlpck"),
@@ -135,6 +136,7 @@ layer = 19
 script = ExtResource("1_23b1w")
 info_box_scene = ExtResource("2_64c26")
 nametag_scene = ExtResource("4_5a5qs")
+alert_scene = ExtResource("6_1cm01")
 
 [node name="Nametags" type="Control" parent="."]
 layout_mode = 3
@@ -405,6 +407,14 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 25
 disabled = true
 text = "RACE_BTN_BACK"
+
+[node name="Alerts" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Rank" type="Label" parent="."]
 anchors_preset = 2

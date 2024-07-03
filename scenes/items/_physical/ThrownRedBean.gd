@@ -12,6 +12,7 @@ var target_speed: float = start_speed
 var despawn_time: float = 30.0
 var grace_frames: int = 30
 var cur_grace: int = 0
+@export var target_texture: CompressedTexture2D
 
 const TargetMode = {
 	none = 0,
@@ -19,7 +20,13 @@ const TargetMode = {
 	homing = 2
 }
 var target_mode: int = TargetMode.follow
-var target_player: Vehicle3 = null
+var target_player: Vehicle3 = null:
+	set(value):
+		if value != target_player:
+			value.add_targeted(self, target_texture)
+			if target_player:
+				target_player.remove_targeted(self)
+		target_player = value
 var target_point: EnemyPath
 var target_pos: Vector3
 var dist_to_homing: float = 20.0
@@ -72,7 +79,7 @@ func _physics_process(delta):
 		#return
 		
 	if not target_point:
-		# Determine the target point currently in front of the target player.
+		# Determine the target point currently in front of the thrower.
 		target_point = Util.get_path_point_ahead_of_player(world, world.players_dict[owner_id])
 	
 	var dist_to_target_player: float = 10000
@@ -182,6 +189,10 @@ func set_state(state: Dictionary):
 	owner_id = state.owner_id
 	return
 
+func _exit_tree():
+	# Remove target indicator
+	if target_player:
+		target_player.remove_targeted(self)
 
 func _on_despawn_timer_timeout():
 	world.destroy_physical_item(item_id)
