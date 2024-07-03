@@ -19,6 +19,8 @@ var map_camera: Camera3D
 @onready var map_texture: TextureRect = $MapContainer/MapTexture
 @onready var startline_marker: Sprite2D = $MapContainer/StartLineMarker
 @onready var player_icons_node: Node = $MapContainer/PlayerIcons
+var first_rank_change: bool = true
+@onready var rank_label: Label = $Rank
 
 var nametags: Dictionary = {}
 var player_icons: Dictionary = {}
@@ -26,7 +28,8 @@ var player_icons: Dictionary = {}
 func _ready():
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item2").texture = Global.item_tex.pick_random()
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = Global.item_tex.pick_random()
-	pass
+	rank_label.text = ""
+	#rank_label.visible = false
 
 func update_icons(players: Array):
 	for icon: Sprite2D in player_icons.values():
@@ -110,6 +113,15 @@ func hide_time():
 
 func update_timeleft(time: float):
 	$TimeLeft.text = Util.format_time_minutes(time)
+
+func update_rank(rank):
+	rank_label.text = tr("ORD_%s" % (rank+1))
+	if first_rank_change:
+		first_rank_change = false
+		return
+	
+	$Rank/AnimationPlayer.stop()
+	$Rank/AnimationPlayer.play("change")
 
 func show_back_btn():
 	$BackToLobby.disabled = false

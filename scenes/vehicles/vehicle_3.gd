@@ -17,7 +17,7 @@ var check_idx: int = -1
 var check_key_idx: int = 0
 var check_progress: float = 0.0
 var lap: int = 0
-var rank: int = 0
+var rank: int = 999999
 var finished: bool = false
 var finish_time: float = 0
 var username: String = "Player"
@@ -443,8 +443,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			if in_trick:
 				in_trick = false
 				trick_boost_timer.start(trick_boost_duration)
-				if is_player:
-					Debug.print(["Starting trick boost", trick_boost_timer])
+				#if is_player:
+					#Debug.print(["Starting trick boost", trick_boost_timer])
 				
 		
 		if collider.is_in_group("boost"):
@@ -584,8 +584,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	
 	if not grounded and input_trick and !$TrickTimer.is_stopped() and !in_trick:
-		if is_player:
-			Debug.print("Trick input detected")
+		#if is_player:
+			#Debug.print("Trick input detected")
 		in_trick = true
 		if not in_hop:
 			rest_vel += transform.basis.y * trick_force
@@ -1238,3 +1238,8 @@ func damage(damage_type: int):
 
 func _on_damage_timer_timeout():
 	in_damage = DamageType.none
+
+func set_rank(new_rank: int):
+	if is_player and new_rank != rank:
+		UI.race_ui.update_rank(new_rank)
+	rank = new_rank

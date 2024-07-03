@@ -665,7 +665,7 @@ func update_ranks():
 
 
 	for i in range(finished_vehicles.size()):
-		finished_vehicles[i].rank = i
+		finished_vehicles[i].set_rank(i)
 	
 	UI.update_ranks(finished_vehicles)
 
@@ -854,6 +854,7 @@ func _on_countdown_timer_timeout():
 	state = STATE_RACE
 	for vehicle: Vehicle3 in $Vehicles.get_children():
 		vehicle.axis_unlock()
+	#UI.race_ui.rank_label.visible = true
 
 func join_next():
 	UI.reset_race_ui()
