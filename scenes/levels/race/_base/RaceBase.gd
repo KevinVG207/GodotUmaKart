@@ -20,6 +20,7 @@ var physical_item_counter = 0
 var physical_items: Dictionary = {}
 var deleted_physical_items: Array = []
 var all_path_points: Array = []
+var network_path_points: Dictionary = {}
 
 @export var start_offset_z: float = 2
 @export var start_offset_x: float = 3
@@ -34,10 +35,14 @@ var lobby_scene: PackedScene = load("res://scenes/ui/lobby/lobby.tscn")
 @export var lap_count: int = 3
 var finished = false
 
+var path_point_scene: PackedScene = preload("res://scenes/control/path/EnemyPath.tscn")
+
 var finish_order: Array = []
 var rankings_timer: int = 0
 var rankings_delay: int = 30
 var stop_rankings: bool = false
+
+var pings: Dictionary
 
 
 class raceOp:
@@ -57,6 +62,7 @@ class raceOp:
 	const SERVER_DESTROY_ITEM = 14
 	const CLIENT_ITEM_STATE = 15
 	const SERVER_ITEM_STATE = 16
+	const SERVER_PING_UPDATE = 17
 
 class finishType:
 	const NORMAL = 0
@@ -518,9 +524,13 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 			new_vehicle.username = "CPU"
 			new_vehicle.cpu_target = $EnemyPathPoints.get_child(0)
 		Global.MODE1_ONLINE:
-			new_vehicle.is_cpu = false
+			new_vehicle.is_cpu = true
 			new_vehicle.is_network = true
 			new_vehicle.username = "Network Player"
+			var path_point: EnemyPath = path_point_scene.instantiate()
+			network_path_points[new_vehicle] = path_point
+			path_point.visible = false
+			$NetworkPathPoints.add_child(path_point)
 	
 	if user_id == player_user_id:
 		new_vehicle.make_player()
@@ -805,7 +815,7 @@ func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 
 
 func handle_race_start(data: Dictionary):
-	var pings: Dictionary = data.pings as Dictionary
+	pings = data.pings as Dictionary
 	var ticks_to_start: int = data.ticksToStart as int
 	var tick_rate: int = data.tickRate as int
 
@@ -823,6 +833,8 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			update_vehicle_state(data, match_state.presence.user_id)
 		raceOp.SERVER_PING:
 			Network.send_match_state(raceOp.SERVER_PING, data)
+		raceOp.SERVER_PING_UPDATE:
+			pings = data.pings
 		raceOp.SERVER_RACE_START:
 			handle_race_start(data)
 		raceOp.SERVER_CLIENT_DISCONNECT:

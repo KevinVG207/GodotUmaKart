@@ -23,6 +23,7 @@ var finished: bool = false
 var finish_time: float = 0
 var username: String = "Player"
 var world: RaceBase
+var prev_state: Dictionary = {}
 
 var cpu_target: EnemyPath = null
 var cpu_target_offset: Vector3 = get_random_target_offset()
@@ -30,6 +31,7 @@ var cur_progress: float = -100000
 
 var item: ItemBase = null
 var can_use_item: bool = false
+var moved_to_next: bool = false
 
 var input_accel: bool = false
 var input_brake: bool = false
@@ -58,6 +60,8 @@ var push_force_vert: float = 1.0
 var offroad_ticks: int = 0
 var offroad = false
 var weak_offroad = false
+
+var network_teleport_distance: float = 25.0
 
 @export var outside_drift: bool = false
 @export var outside_drift_force: float = 1000.0
@@ -262,7 +266,7 @@ func handle_input():
 	if is_player and get_window().has_focus():
 		input_mirror = Input.is_action_pressed("mirror")
 
-	if finished or (is_player and not get_window().has_focus()) or in_damage or is_cpu:
+	if finished or (is_player and not get_window().has_focus()) or in_damage or is_cpu and !is_network:
 		set_all_input_zero()
 		return
 	
@@ -275,7 +279,7 @@ func handle_input():
 		input_item_just = Input.is_action_just_pressed("item")
 		input_updown = Input.get_axis("down", "up")
 
-func cpu_control():
+func cpu_control(delta):
 	if !is_cpu or in_damage or !started:
 		return
 	
@@ -283,19 +287,21 @@ func cpu_control():
 		return
 
 	# CPU brain goes here
-	set_all_input_zero()
+	if !is_network:
+		set_all_input_zero()
 	
-	if in_drift and drift_gauge >= 75:
+	if !is_network and in_drift and drift_gauge >= 75:
 		input_brake = true
-	if !$TrickTimer.is_stopped():
+	if !is_network and !$TrickTimer.is_stopped():
 		input_trick = true
 	
 	var cpu_target_pos = cpu_target.global_position + (cpu_target_offset * cpu_target.dist / 3)
-	
 	if global_position.distance_to(cpu_target_pos) < cpu_target.dist or Util.dist_to_plane(cpu_target.normal, cpu_target.global_position, global_position) > 0:
 		# Get next target
 		cpu_target = world.pick_next_path_point(cpu_target)
 		cpu_target_offset = get_random_target_offset()
+		cpu_target_pos = cpu_target.global_position + (cpu_target_offset * cpu_target.dist / 3)
+		moved_to_next = true
 		# $FailsafeTimer.start()
 
 	
@@ -312,20 +318,21 @@ func cpu_control():
 		else:
 			angle += 10
 
-	input_accel = true
+	if !is_network or prev_state and global_position.distance_to(Util.to_vector3(prev_state.pos)) > 3.0:
+		input_accel = true
 
-	if abs(angle) > 0.4 and cur_speed > min_hop_speed:
+	if !is_network and abs(angle) > 0.4 and cur_speed > min_hop_speed:
 		input_brake = true
 	
 	if abs(angle) > max_angle:
 		# Should steer.
 		if angle < 0:
 			input_steer = -1.0
-			if in_drift and drift_dir > 0 and (drift_gauge <= 80 or drift_gauge == 100):
+			if !is_network and in_drift and drift_dir > 0 and (drift_gauge <= 80 or drift_gauge == 100):
 				input_brake = false
 		else:
 			input_steer = 1.0
-			if in_drift and drift_dir < 0 and (drift_gauge <= 80 or drift_gauge == 100):
+			if !is_network and in_drift and drift_dir < 0 and (drift_gauge <= 80 or drift_gauge == 100):
 				input_brake = false
 	
 	#if abs(angle) < max_angle:
@@ -335,28 +342,49 @@ func cpu_control():
 			#input_steer = 1.0
 		#input_steer *= randf() * 0.2
 	
-	var item_rand = randi_range(0, 900) == 0
-	# if item:
-	# 	print(can_use_item, " ", item, " ", item_rand)
-	if !finished and can_use_item and item and item_rand:
-		input_item = true
-		input_item_just = true
+	if is_network and prev_state:
+		var network_pos: Vector3 = Util.to_vector3(prev_state.pos)
+		var network_rot: Vector3 = Util.to_vector3(prev_state.rot)
+		var move_multi = 1.0
+		var rot_multi = 1.0
+		
+		if prev_state.cur_speed < 5.0: # and global_position.distance_to(network_pos) < 3.0:
+			move_multi = 2.0
+			rot_multi = 5.0
+			input_steer = 0.0
+		
+		if !moved_to_next and global_position.distance_to(network_pos) > network_teleport_distance / 2:
+			#print("catch up!")
+			move_multi = 10.0
+		
+		global_position = global_position.move_toward(network_pos, delta * move_multi)
+		rotation = rotation.move_toward(network_rot, delta * rot_multi)
 	
-	var new_progress = world.get_vehicle_progress(self)
-	if new_progress > cur_progress:
-		cur_progress = new_progress
-		$FailsafeTimer.stop()
-	else:
-		# No progress made in this frame.
-		if $FailsafeTimer.is_stopped():
-			start_failsafe_timer()
+	if !is_network:
+		var item_rand = randi_range(0, 900) == 0
+		# if item:
+		# 	print(can_use_item, " ", item, " ", item_rand)
+		if !finished and can_use_item and item and item_rand:
+			input_item = true
+			input_item_just = true
+		
+		var new_progress = world.get_vehicle_progress(self)
+		if new_progress > cur_progress:
+			cur_progress = new_progress
+			$FailsafeTimer.stop()
+		else:
+			# No progress made in this frame.
+			if $FailsafeTimer.is_stopped():
+				start_failsafe_timer()
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
+	var delta: float = physics_state.step
+	
 	if finished:
 		is_cpu = true
 	
 	handle_input()
-	cpu_control()
+	cpu_control(delta)
 	
 	if !is_player:
 		set_collision_layer_value(2, false)
@@ -365,7 +393,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		set_collision_layer_value(2, true)
 		set_collision_layer_value(3, false)
 		
-	var delta: float = physics_state.step
 	var prev_vel: Vector3 = linear_velocity
 	# var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
 	# var prev_grav_vel: Vector3 = grav_vel
@@ -1188,19 +1215,38 @@ func apply_state(state: Dictionary):
 	var a = [update_idx, state.idx]
 	if update_idx > state.idx:
 		return
+		
+	prev_state = state
 	
+	# Fix up network path point
+	var network_path = world.network_path_points[self] as EnemyPath
+	cpu_target = network_path
+	network_path.global_position = Util.to_vector3(state.pos)
+	network_path.rotation = Util.to_vector3(state.rot)
+	network_path.normal = network_path.transform.basis.x
+	if user_id in world.pings:
+		network_path.global_position += network_path.transform.basis.x * state.cur_speed * world.pings[user_id] / 1000 * 15
+	network_path.next_points = [Util.get_path_point_ahead_of_player(world, self)]
+	network_path.prev_points = network_path.next_points[0].prev_points
+	cpu_target_offset = Vector3.ZERO
+	moved_to_next = false
+
 	update_idx = state.idx
 	vani.animation = state.vani
-	global_position = Util.to_vector3(state.pos)
-	rotation = Util.to_vector3(state.rot)
-	linear_velocity = Util.to_vector3(state.lin_vel)
+	cur_speed = state.cur_speed
+	cur_turn_speed = state.cur_turn_speed
+	grounded = state.grounded
+	in_bounce = state.in_bounce
+	bounce_frames = state.bounce_frames
+	# rotation = Util.to_vector3(state.rot)
+	finished = state.finished
+	finish_time = state.finish_time
+	username = state.username
 	input_accel = state.input_accel
 	input_brake = state.input_brake
 	input_steer = state.input_steer
 	input_trick = state.input_trick
 	input_mirror = state.input_mirror
-	cur_speed = state.cur_speed
-	cur_turn_speed = state.cur_turn_speed
 	in_trick = state.in_trick
 	in_hop = state.in_hop
 	in_hop_frames = state.in_hop_frames
@@ -1208,19 +1254,19 @@ func apply_state(state: Dictionary):
 	drift_dir = state.drift_dir
 	drift_gauge = state.drift_gauge
 	drift_gauge_max = state.drift_gauge_max
-	grounded = state.grounded
 	gravity = Util.to_vector3(state.gravity)
-	in_bounce = state.in_bounce
-	bounce_frames = state.bounce_frames
-	prev_frame_pre_sim_vel = Util.to_vector3(state.prev_frame_pre_sim_vel)
-	in_water = state.in_water
-	check_idx = state.check_idx
-	check_key_idx = state.check_key_idx
-	check_progress = state.check_progress
-	lap = state.lap
-	finished = state.finished
-	finish_time = state.finish_time
-	username = state.username
+	
+	if global_position.distance_to(Util.to_vector3(state.pos)) > network_teleport_distance:
+		global_position = Util.to_vector3(state.pos)
+		rotation = Util.to_vector3(state.rot)
+		linear_velocity = Util.to_vector3(state.lin_vel)
+		prev_frame_pre_sim_vel = Util.to_vector3(state.prev_frame_pre_sim_vel)
+		in_water = state.in_water
+		check_idx = state.check_idx
+		check_key_idx = state.check_key_idx
+		check_progress = state.check_progress
+		lap = state.lap
+		teleport(global_position, transform.basis.x, transform.basis.y)
 
 
 func _on_failsafe_timer_timeout():
