@@ -15,6 +15,7 @@ enum raceOp {
     SERVER_DESTROY_ITEM = 14,
     CLIENT_ITEM_STATE = 15,
     SERVER_ITEM_STATE = 16,
+    SERVER_PING_UPDATE = 17
 }
 
 
@@ -314,7 +315,7 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         state.finished = finished;
     }
 
-        dispatcher.broadcastMessage(raceOp.SERVER_PING, JSON.stringify({ pings: pingDict }), null, null);
+        dispatcher.broadcastMessage(raceOp.SERVER_PING_UPDATE, JSON.stringify({ pings: pingDict }), null, null);
     }
 
     return {
