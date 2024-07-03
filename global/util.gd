@@ -121,7 +121,7 @@ func align_with_y(xform: Transform3D, new_y: Vector3):
 	return xform
 
 func get_path_point_ahead_of_player(world: RaceBase, player: Vehicle3):
-	var points: Array = world.get_node("EnemyPathPoints").find_children("*", "EnemyPath")
+	var points: Array = world.all_path_points
 	var plane_pos: Vector3 = player.get_node("Front").global_position
 	var plane_normal: Vector3 = player.transform.basis.x
 	
@@ -144,6 +144,9 @@ func get_path_point_ahead_of_player(world: RaceBase, player: Vehicle3):
 		var dist: float = player.global_position.distance_to(point.global_position)
 		if dist < filtered_distance:
 			filtered_distance = dist
-			filtered_point = filtered_point
+			filtered_point = point
 	
 	return filtered_point
+
+func dist_to_plane(plane_normal: Vector3, plane_pos: Vector3, point: Vector3) -> float:
+	return plane_normal.dot(point - plane_pos)

@@ -41,8 +41,8 @@ var input_updown: float = 0
 @export var list_image: CompressedTexture2D
 @export var list_order: int = 0
 @export var icon: CompressedTexture2D
-@export var max_speed: float = 20
-@onready var cur_max_speed = 20
+@export var max_speed: float = 25
+@onready var cur_max_speed = max_speed
 @export var reverse_multi: float = 0.5
 @onready var max_reverse_speed: float = max_speed * reverse_multi
 @export var initial_accel: float = 10
@@ -54,6 +54,7 @@ var input_updown: float = 0
 var push_force: float = 1.0
 var max_push_force: float = 2.75
 var push_force_vert: float = 1.0
+var offroad_ticks: int = 0
 var offroad = false
 var weak_offroad = false
 
@@ -133,7 +134,7 @@ var still_turbo_ready: bool = false
 
 @export var grounded: bool = false
 
-@export var gravity: Vector3 = Vector3.DOWN * 16
+@export var gravity: Vector3 = Vector3.DOWN * 20
 var terminal_velocity = 3000
 
 # var grav_vel: Vector3 = Vector3.ZERO  # Velocity due to gravity
@@ -286,9 +287,9 @@ func cpu_control():
 	
 	var cpu_target_pos = cpu_target.global_position + (cpu_target_offset * cpu_target.dist / 3)
 	
-	if global_position.distance_to(cpu_target_pos) < cpu_target.dist:
+	if global_position.distance_to(cpu_target_pos) < cpu_target.dist or Util.dist_to_plane(cpu_target.normal, cpu_target.global_position, global_position) > 0:
 		# Get next target
-		cpu_target = cpu_target.next_points.pick_random()
+		cpu_target = world.pick_next_path_point(cpu_target)
 		cpu_target_offset = get_random_target_offset()
 		# $FailsafeTimer.start()
 
@@ -343,7 +344,7 @@ func cpu_control():
 	else:
 		# No progress made in this frame.
 		if $FailsafeTimer.is_stopped():
-			$FailsafeTimer.start()
+			start_failsafe_timer()
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	if finished:
@@ -466,7 +467,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		
 		if collider.is_in_group("wall"):
 			var point = global_position + (transform.basis.y * -vehicle_height_below)
-			var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
+			# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
+			var dist_above_floor = Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
 
 			if dist_above_floor < 0.1:
 				continue
@@ -480,6 +482,11 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		if collider.is_in_group("out"):
 			if not respawn_stage:
 				respawn()
+	
+	if offroad or weak_offroad:
+		offroad_ticks += 1
+	else:
+		offroad_ticks = 0
 	
 	if floor_normals.size() > 0:
 		var avg_normal: Vector3 = Vector3.ZERO
@@ -498,6 +505,12 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		cur_max_speed *= offroad_multiplier
 	elif weak_offroad:
 		cur_max_speed *= weak_offroad_multiplier
+	
+	if offroad_ticks and offroad_ticks < 10:
+		cur_max_speed = 0.1
+	
+	if cur_max_speed < 0.1:
+		cur_max_speed = 0.1
 	
 	max_reverse_speed = cur_max_speed * reverse_multi
 
@@ -670,7 +683,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		drift_gauge = 0.0
 	#Debug.print(drift_gauge)
 	
-	var adjusted_max_turn_speed = 0.5/(2*max(0.0, cur_speed)+1) + max_turn_speed
+	var adjusted_max_turn_speed = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
 	#Debug.print(adjusted_max_turn_speed)
 	
 	var turn_target = adjusted_steering * adjusted_max_turn_speed
@@ -1204,7 +1217,14 @@ func _on_failsafe_timer_timeout():
 	if not finished:
 		respawn()
 
+func start_failsafe_timer():
+	if is_player:
+		return
+	$FailsafeTimer.start()
+
 func damage(damage_type: int):
+	start_failsafe_timer()
+
 	if in_damage:
 		return
 

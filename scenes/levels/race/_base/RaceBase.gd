@@ -19,6 +19,7 @@ var timer_tick: int = 0
 var physical_item_counter = 0
 var physical_items: Dictionary = {}
 var deleted_physical_items: Array = []
+var all_path_points: Array = []
 
 @export var start_offset_z: float = 2
 @export var start_offset_x: float = 3
@@ -104,20 +105,89 @@ func _ready():
 		if checkpoint.is_key:
 			key_checkpoints[checkpoint] = key_checkpoints.size()
 	
-	var path_points = $EnemyPathPoints.get_children()
-	for i in range(len(path_points)):
-		var path_point = path_points[i] as EnemyPath
-		var next_i = i+1
-		if next_i >= path_points.size():
-			next_i = 0
-		
-		path_point.next_points.append(path_points[next_i])
+	setup_enemy_path()
 	
 	#minimap_recursive($Course)
 	$Course/MapMesh.visible = true
 	UI.race_ui.set_map_camera(map_camera)
 	UI.race_ui.set_startline(checkpoints[0])
 
+func recursive_path_link(parent: Node, prev_points: Array) -> Array:
+	var root: bool = len(prev_points) == 0
+	var path_points = parent.get_children()
+	var initial_points = []
+	for i in range(len(path_points)):
+		var cur_point = path_points[i]
+		print(cur_point.get_path())
+		
+		if i == 1:
+			initial_points = prev_points
+		
+		if cur_point is PathSplit:
+			var new_prev_points: Array = []
+			for branch in cur_point.get_children():
+				new_prev_points += recursive_path_link(branch, prev_points)
+			print(new_prev_points)
+			prev_points = new_prev_points
+			continue
+		
+		all_path_points.append(cur_point)
+		
+		for point in prev_points:
+			point.next_points.append(cur_point)
+		
+		prev_points = [cur_point]
+		
+		var next_i = i+1
+		if next_i >= path_points.size():
+			if root:
+				cur_point.next_points = initial_points
+			
+			return prev_points
+	
+	return prev_points
+
+
+func setup_enemy_path():
+	var last_point: Array = recursive_path_link($EnemyPathPoints, [])
+	
+	# Set up prev_points
+	for point: EnemyPath in all_path_points:
+		var normals: PackedVector3Array = []
+		for next_point: EnemyPath in point.next_points:
+			next_point.prev_points.append(point)
+			normals.append((next_point.global_position - point.global_position).normalized())
+		
+		var avg_normal: Vector3 = Util.sum(normals) / normals.size()
+		point.normal = avg_normal
+
+func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath):
+	var cur_leaves: Array = target_point.prev_points
+	
+	while true:
+		cur_leaves.shuffle()
+		var new_leaves: Array = []
+		for i in len(cur_leaves):
+			var leaf: EnemyPath = cur_leaves[i]
+			if cur_point in leaf.prev_points:
+				return leaf
+			new_leaves += leaf.prev_points
+		cur_leaves = new_leaves
+	
+
+func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false):
+	var next_points: Array = cur_point.next_points
+	return next_points.pick_random()
+	
+#func find_closest_enemy_point(player: Vehicle3) -> EnemyPath:
+	#var closest_pt: EnemyPath = all_path_points[0]
+	#var closest_dist: float = closest_pt.global_position.distance_to(player.global_position)
+	#for point: EnemyPath in all_path_points.slice(1):
+		#var dist: float = point.global_position.distance_to(player.global_position)
+		#if dist < closest_dist:
+			#closest_dist = dist
+			#closest_pt = point
+	#return closest_pt
 
 func _process(delta):
 	UI.race_ui.set_startline(checkpoints[0])
@@ -205,7 +275,8 @@ func _process(delta):
 			if dist > 60:
 				opacity = remap(dist, 60, 75, 1.0, 0.0)
 			
-			if state == STATE_RACE_OVER or state in UPDATE_STATES and player_vehicle.finished:
+			#if state == STATE_RACE_OVER or state in UPDATE_STATES and player_vehicle.finished:
+			if state != STATE_RACE or timer_tick < 2 * Engine.physics_ticks_per_second:
 				tag_visible = false
 			
 			UI.race_ui.update_nametag(user_id, vehicle.username, screen_pos, opacity, dist, tag_visible, force, delta)
@@ -679,7 +750,7 @@ func update_checkpoint(player: Vehicle3):
 
 func dist_to_checkpoint(player: Vehicle3, checkpoint_idx: int) -> float:
 	var checkpoint = checkpoints[checkpoint_idx % len(checkpoints)] as Node3D
-	return checkpoint.transform.basis.z.dot(player.get_node("Front").global_position - checkpoint.global_position)
+	return Util.dist_to_plane(checkpoint.transform.basis.z, checkpoint.global_position, player.get_node("Front").global_position)
 
 
 func progress_in_cur_checkpoint(player: Vehicle3) -> float:

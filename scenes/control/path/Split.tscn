@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://b70opqruhfce3"]
+
+[ext_resource type="Script" path="res://scenes/control/path/Split.gd" id="1_l1drg"]
+
+[node name="Split" type="Node3D"]
+script = ExtResource("1_l1drg")
+
+[node name="Branch1" type="Node3D" parent="."]
+
+[node name="Branch2" type="Node3D" parent="."]

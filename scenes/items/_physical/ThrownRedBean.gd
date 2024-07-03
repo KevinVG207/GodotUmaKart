@@ -99,7 +99,7 @@ func _physics_process(delta):
 				
 				var dist_to_target = global_position.distance_to(target_point.global_position)
 				if dist_to_target < target_point.dist:
-					target_point = target_point.next_points.pick_random()
+					target_point = world.pick_next_point_to_target(target_point, Util.get_path_point_ahead_of_player(world, target_player))
 				
 			target_pos = target_point.global_position
 	
