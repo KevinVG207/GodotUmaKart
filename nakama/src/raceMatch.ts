@@ -225,6 +225,13 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
                     break;
                 }
 
+                // 1 in 4 chance
+                if (Math.random() < 0.25) {
+                    // Simulate 0.5s delay
+                    var now = Date.now();
+                    while (Date.now() < now + 500) { }
+                }
+
                 state.vehicles[message.sender.userId] = data;
                 state.vehicles[message.sender.userId].userId = message.sender.userId;
                 dispatcher.broadcastMessage(raceOp.SERVER_UPDATE_VEHICLE_STATE, payload, null, message.sender);
@@ -256,8 +263,8 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         }
     });
 
-    // Every half
-    if (tick % Math.floor(ctx.matchTickRate / 2) === 0) {
+    // Every 5 ticks
+    if (tick % Math.floor(ctx.matchTickRate / 5) === 0) {
         var pingDict: { [key: string]: number; } = {};
 
         var ready = true;
