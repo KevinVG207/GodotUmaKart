@@ -225,13 +225,6 @@ const raceMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logger
                     break;
                 }
 
-                // 1 in 4 chance
-                if (Math.random() < 0.25) {
-                    // Simulate 0.5s delay
-                    var now = Date.now();
-                    while (Date.now() < now + 500) { }
-                }
-
                 state.vehicles[message.sender.userId] = data;
                 state.vehicles[message.sender.userId].userId = message.sender.userId;
                 dispatcher.broadcastMessage(raceOp.SERVER_UPDATE_VEHICLE_STATE, payload, null, message.sender);
