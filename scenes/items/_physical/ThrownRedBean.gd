@@ -209,6 +209,9 @@ func _on_area_3d_body_entered(body):
 	if not body is Vehicle3:
 		return
 	
+	if body.is_network:
+		return
+	
 	if body == world.players_dict[owner_id] and cur_grace <= grace_frames:
 		return
 	

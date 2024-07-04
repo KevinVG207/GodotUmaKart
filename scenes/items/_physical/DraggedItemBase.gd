@@ -58,6 +58,6 @@ func _on_body_entered(body):
 		world.destroy_physical_item(body.item_id)
 		return
 	
-	if body is Vehicle3 and body.user_id != owner_id and damage_type:
+	if body is Vehicle3 and body.user_id != owner_id and damage_type and !body.is_network:
 		body.damage(damage_type)
 		world.destroy_physical_item(item_id)

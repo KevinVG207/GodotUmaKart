@@ -32,6 +32,7 @@ var cur_progress: float = -100000
 var item: ItemBase = null
 var can_use_item: bool = false
 var moved_to_next: bool = false
+var catch_up: bool = false
 
 var input_accel: bool = false
 var input_brake: bool = false
@@ -61,7 +62,7 @@ var offroad_ticks: int = 0
 var offroad = false
 var weak_offroad = false
 
-var network_teleport_distance: float = 25.0
+var network_teleport_distance: float = 20.0
 
 @export var outside_drift: bool = false
 @export var outside_drift_force: float = 1000.0
@@ -155,8 +156,8 @@ var ground_rot_multi: float = 5.0
 var test_force: float = 10.0
 #var cur_grip: float = 100.0
 
-var max_displacement_for_sleep = 0.003
-var max_degrees_change_for_sleep = 0.01
+var max_displacement_for_sleep = 0.006
+var max_degrees_change_for_sleep = 0.5
 
 var prev_vel: Vector3 = Vector3.ZERO
 
@@ -350,15 +351,28 @@ func cpu_control(delta):
 		
 		if prev_state.cur_speed < 5.0: # and global_position.distance_to(network_pos) < 3.0:
 			move_multi = 2.0
-			rot_multi = 5.0
+			rot_multi = 3.0
 			input_steer = 0.0
 		
-		if !moved_to_next and global_position.distance_to(network_pos) > network_teleport_distance / 2:
-			#print("catch up!")
+		if !moved_to_next and (catch_up or global_position.distance_to(network_pos) > network_teleport_distance / 2):
+			Debug.print("catch up!")
+			catch_up = true
 			move_multi = 10.0
 		
-		global_position = global_position.move_toward(network_pos, delta * move_multi)
-		rotation = rotation.move_toward(network_rot, delta * rot_multi)
+		var new_pos: Vector3 = global_position.lerp(network_pos, delta * move_multi)
+		var new_movement: Vector3 = new_pos - global_position
+
+		# Remove the component along the gravity vector
+		new_movement = Plane(-gravity.normalized()).project(new_movement)
+
+		global_position += new_movement
+		
+		if global_position.distance_to(network_pos) < 3.0:
+			catch_up = false
+		
+		var cur_quat = Quaternion.from_euler(rotation)
+		var target_quat = Quaternion.from_euler(network_rot)
+		rotation = cur_quat.slerp(target_quat, rot_multi * delta).get_euler()
 	
 	if !is_network:
 		var item_rand = randi_range(0, 900) == 0
@@ -409,7 +423,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		grip_multiplier = 0.75
 
 	sleep = false
-	if prev_origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
+	if !is_network and prev_origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
 		transform = prev_transform
 		sleep = true
 	
@@ -800,10 +814,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 			if in_drift:
 				cur_speed += get_accel_speed(delta)
 			elif can_hop and not in_hop:
-				# Perform hop for drift
-				in_hop = true
-				rest_vel += transform.basis.y * hop_force
-				grounded = false
+				do_hop()
 			else:
 				cur_speed += get_accel_speed(delta)
 		else:
@@ -1202,6 +1213,8 @@ func get_state() -> Dictionary:
 		"bounce_frames": bounce_frames,
 		"prev_frame_pre_sim_vel": Util.to_array(prev_frame_pre_sim_vel),
 		"in_water": in_water,
+		"respawn_stage": respawn_stage,
+		"respawn_time": $RespawnTimer.time_left,
 		"check_idx": check_idx,
 		"check_key_idx": check_key_idx,
 		"check_progress": check_progress,
@@ -1230,6 +1243,11 @@ func apply_state(state: Dictionary):
 	network_path.prev_points = network_path.next_points[0].prev_points
 	cpu_target_offset = Vector3.ZERO
 	moved_to_next = false
+	
+	if state.in_hop:
+		do_hop()
+	if state.in_drift and !in_drift and !state.in_hop:
+		do_hop()
 
 	update_idx = state.idx
 	vani.animation = state.vani
@@ -1238,7 +1256,6 @@ func apply_state(state: Dictionary):
 	grounded = state.grounded
 	in_bounce = state.in_bounce
 	bounce_frames = state.bounce_frames
-	# rotation = Util.to_vector3(state.rot)
 	finished = state.finished
 	finish_time = state.finish_time
 	username = state.username
@@ -1248,13 +1265,14 @@ func apply_state(state: Dictionary):
 	input_trick = state.input_trick
 	input_mirror = state.input_mirror
 	in_trick = state.in_trick
-	in_hop = state.in_hop
-	in_hop_frames = state.in_hop_frames
 	in_drift = state.in_drift
 	drift_dir = state.drift_dir
 	drift_gauge = state.drift_gauge
 	drift_gauge_max = state.drift_gauge_max
 	gravity = Util.to_vector3(state.gravity)
+	respawn_stage = state.respawn_stage
+	if state.respawn_time:
+		$RespawnTimer.start(state.respawn_time)
 	
 	if global_position.distance_to(Util.to_vector3(state.pos)) > network_teleport_distance:
 		global_position = Util.to_vector3(state.pos)
@@ -1266,7 +1284,10 @@ func apply_state(state: Dictionary):
 		check_key_idx = state.check_key_idx
 		check_progress = state.check_progress
 		lap = state.lap
+		in_hop = state.in_hop
+		in_hop_frames = state.in_hop_frames
 		teleport(global_position, transform.basis.x, transform.basis.y)
+		Debug.print("TELEPORT!")
 
 
 func _on_failsafe_timer_timeout():
@@ -1308,3 +1329,12 @@ func remove_targeted(object: Node3D):
 	if object in targeted_by_dict:
 		targeted_by_dict.erase(object)
 		UI.race_ui.remove_alert(object)
+
+func do_hop():
+	# Perform hop for drift
+	if in_hop or in_drift:
+		return
+	in_hop = true
+	rest_vel += transform.basis.y * hop_force
+	grounded = false
+	in_hop_frames = 0
