@@ -57,7 +57,7 @@ func update_icons(players: Array):
 			player_icons[id] = new_icon
 		
 		var icon: Sprite2D = player_icons[id]
-		icon.z_index = len(players) - player.rank
+		icon.z_index = clamp(len(players) - player.rank, 0, 100)
 		if player.is_player:
 			icon.z_index += len(players)
 		icon.visible = true

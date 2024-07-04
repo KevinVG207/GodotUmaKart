@@ -132,7 +132,7 @@ _data = {
 }
 
 [node name="RaceUI" type="CanvasLayer"]
-layer = 30
+layer = 10
 script = ExtResource("1_23b1w")
 info_box_scene = ExtResource("2_64c26")
 nametag_scene = ExtResource("4_5a5qs")

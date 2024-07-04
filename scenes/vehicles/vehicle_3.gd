@@ -346,7 +346,7 @@ func cpu_control(delta):
 	if is_network and prev_state:
 		var network_pos: Vector3 = Util.to_vector3(prev_state.pos)
 		var network_rot: Vector3 = Util.to_vector3(prev_state.rot)
-		var move_multi = 1.0
+		var move_multi = 0.2
 		var rot_multi = 1.0
 		
 		if prev_state.cur_speed < 5.0: # and global_position.distance_to(network_pos) < 3.0:
@@ -354,20 +354,24 @@ func cpu_control(delta):
 			rot_multi = 3.0
 			input_steer = 0.0
 		
-		if !moved_to_next and (catch_up or global_position.distance_to(network_pos) > network_teleport_distance / 2):
-			Debug.print("catch up!")
+		if !moved_to_next and (catch_up or global_position.distance_to(network_pos) > (network_teleport_distance / 3) * 2):
+			#Debug.print("catch up!")
 			catch_up = true
-			move_multi = 10.0
+			move_multi = 2.0
 		
 		var new_pos: Vector3 = global_position.lerp(network_pos, delta * move_multi)
 		var new_movement: Vector3 = new_pos - global_position
 
 		# Remove the component along the gravity vector
-		new_movement = Plane(-gravity.normalized()).project(new_movement)
+		var adjusted_movement: Vector3 = Plane(-gravity.normalized()).project(new_movement)
+		var vertical_movement: Vector3 = new_movement - adjusted_movement
 
-		global_position += new_movement
+		global_position += adjusted_movement
 		
-		if global_position.distance_to(network_pos) < 3.0:
+		if vertical_movement.length() > network_teleport_distance / 2:
+			global_position = network_pos
+		
+		if global_position.distance_to(network_pos) < 5.0:
 			catch_up = false
 		
 		var cur_quat = Quaternion.from_euler(rotation)
@@ -813,7 +817,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 		if cur_speed > min_hop_speed:
 			if in_drift:
 				cur_speed += get_accel_speed(delta)
-			elif can_hop and not in_hop:
+			elif can_hop and not in_hop and !is_network:
 				do_hop()
 			else:
 				cur_speed += get_accel_speed(delta)
@@ -1238,7 +1242,7 @@ func apply_state(state: Dictionary):
 	network_path.rotation = Util.to_vector3(state.rot)
 	network_path.normal = network_path.transform.basis.x
 	if user_id in world.pings:
-		network_path.global_position += network_path.transform.basis.x * state.cur_speed * world.pings[user_id] / 1000 * 15
+		network_path.global_position += network_path.transform.basis.x * state.cur_speed * (world.pings[user_id] + world.pings[world.player_user_id]) / 1000 * 1
 	network_path.next_points = [Util.get_path_point_ahead_of_player(world, self)]
 	network_path.prev_points = network_path.next_points[0].prev_points
 	cpu_target_offset = Vector3.ZERO
@@ -1287,7 +1291,7 @@ func apply_state(state: Dictionary):
 		in_hop = state.in_hop
 		in_hop_frames = state.in_hop_frames
 		teleport(global_position, transform.basis.x, transform.basis.y)
-		Debug.print("TELEPORT!")
+		#Debug.print("TELEPORT!")
 
 
 func _on_failsafe_timer_timeout():
