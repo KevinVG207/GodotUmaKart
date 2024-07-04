@@ -39,6 +39,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
 
     var tickRate = 20;
     var emptyTimeout = 60 * tickRate;
+    var finishTimeout = tickRate * 60 * 30;  // 30 minutes for testing. 6 minutes for production
     
     var course: string = JSON.parse(params.winningVote).course;
 
@@ -73,7 +74,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             ready: false,
             oneFinished: false,
             finished: false,
-            finishTimeout: tickRate * 60 * 6
+            finishTimeout: finishTimeout
         },
         tickRate: tickRate,
         label: '{}'
