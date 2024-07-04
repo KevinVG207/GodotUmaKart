@@ -529,7 +529,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 			new_vehicle.username = "Network Player"
 			var path_point: EnemyPath = path_point_scene.instantiate()
 			network_path_points[new_vehicle] = path_point
-			path_point.visible = false
+			#path_point.visible = false
 			$NetworkPathPoints.add_child(path_point)
 	
 	if user_id == player_user_id:

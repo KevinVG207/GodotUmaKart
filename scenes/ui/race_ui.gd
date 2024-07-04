@@ -218,7 +218,7 @@ func remove_nametag(user_id: String):
 		nametags.erase(user_id)
 		nt.queue_free()
 
-func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle3, cam: Camera3D):
+func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle3, cam: Camera3D, delta: float):
 	if not object in alert_dict:
 		var alert = alert_scene.instantiate()
 		$Alerts.add_child(alert)
@@ -235,7 +235,7 @@ func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle3, ca
 	
 	offset = clamp(offset, 64, 1280 - 64)
 	
-	alert_dict[object].position = Vector2(offset, $Alerts.size.y)
+	alert_dict[object].position = alert_dict[object].position.lerp(Vector2(offset, $Alerts.size.y), delta * 2)
 	alert_dict[object].visible = true
 
 func remove_alert(object: Node3D):

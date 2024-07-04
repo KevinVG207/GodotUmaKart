@@ -124,7 +124,7 @@ var stick_ray_count: int = 4
 @export var in_hop_frames: int = 0
 @export var in_drift: bool = false
 @export var drift_dir: int = 0
-@onready var min_hop_speed: float = max_speed * 0.55
+@onready var min_hop_speed: float = max_speed * 0.4
 var hop_force: float = 3.5
 @export var can_hop: bool = true
 #var global_hop: Vector3 = Vector3.ZERO
@@ -156,7 +156,7 @@ var ground_rot_multi: float = 5.0
 var test_force: float = 10.0
 #var cur_grip: float = 100.0
 
-var max_displacement_for_sleep = 0.006
+var max_displacement_for_sleep = 0.003
 var max_degrees_change_for_sleep = 0.5
 
 var prev_vel: Vector3 = Vector3.ZERO
@@ -344,20 +344,27 @@ func cpu_control(delta):
 		#input_steer *= randf() * 0.2
 	
 	if is_network and prev_state:
-		var network_pos: Vector3 = Util.to_vector3(prev_state.pos)
+		var network_pos: Vector3 = cpu_target.global_position
 		var network_rot: Vector3 = Util.to_vector3(prev_state.rot)
-		var move_multi = 0.2
+		var move_multi = 0.0
 		var rot_multi = 1.0
-		
-		if prev_state.cur_speed < 5.0: # and global_position.distance_to(network_pos) < 3.0:
-			move_multi = 2.0
-			rot_multi = 3.0
-			input_steer = 0.0
 		
 		if !moved_to_next and (catch_up or global_position.distance_to(network_pos) > (network_teleport_distance / 3) * 2):
 			#Debug.print("catch up!")
 			catch_up = true
 			move_multi = 2.0
+		
+		if !moved_to_next:
+			network_pos = cpu_target.global_position
+		else:
+			catch_up = false
+			move_multi = 0.0
+		
+		if prev_state.cur_speed < 5.0: # and global_position.distance_to(network_pos) < 3.0:
+			network_pos = Util.to_vector3(prev_state.pos)
+			move_multi = 2.0
+			rot_multi = 3.0
+			input_steer = 0.0
 		
 		var new_pos: Vector3 = global_position.lerp(network_pos, delta * move_multi)
 		var new_movement: Vector3 = new_pos - global_position
@@ -368,7 +375,7 @@ func cpu_control(delta):
 
 		global_position += adjusted_movement
 		
-		if vertical_movement.length() > network_teleport_distance / 2:
+		if vertical_movement.length() > network_teleport_distance / 2 and !moved_to_next:
 			global_position = network_pos
 		
 		if global_position.distance_to(network_pos) < 5.0:
@@ -1093,7 +1100,8 @@ func get_item(guaranteed_item: PackedScene = null):
 	if guaranteed_item:
 		item = guaranteed_item.instantiate()
 	else:
-		item = Global.item_dist[ceil(rank * (world.players_dict.size() / Global.player_count))].pick_random().instantiate()
+		var item_rank = round(remap(rank, 0, world.players_dict.size(), 0, Global.player_count))
+		item = Global.item_dist[item_rank].pick_random().instantiate()
 	world.add_child(item)
 	$ItemRouletteTimer.start(4)
 	if is_player and !is_cpu:
@@ -1144,7 +1152,7 @@ func _process(delta):
 		# Update alerts
 		for alert_object: Node3D in targeted_by_dict:
 			var tex = targeted_by_dict[alert_object]
-			UI.race_ui.update_alert(alert_object, tex, self, world.player_camera)
+			UI.race_ui.update_alert(alert_object, tex, self, world.player_camera, delta)
 		
 		var spd = linear_velocity.length()
 		UI.race_ui.update_speed(spd)
@@ -1242,7 +1250,7 @@ func apply_state(state: Dictionary):
 	network_path.rotation = Util.to_vector3(state.rot)
 	network_path.normal = network_path.transform.basis.x
 	if user_id in world.pings:
-		network_path.global_position += network_path.transform.basis.x * state.cur_speed * (world.pings[user_id] + world.pings[world.player_user_id]) / 1000 * 1
+		network_path.global_position += network_path.transform.basis.x * state.cur_speed * (1 + ((world.pings[user_id] + world.pings[world.player_user_id])/1000)) * 0.5
 	network_path.next_points = [Util.get_path_point_ahead_of_player(world, self)]
 	network_path.prev_points = network_path.next_points[0].prev_points
 	cpu_target_offset = Vector3.ZERO
