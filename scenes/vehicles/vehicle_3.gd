@@ -62,7 +62,7 @@ var offroad_ticks: int = 0
 var offroad = false
 var weak_offroad = false
 
-var network_teleport_distance: float = 20.0
+var network_teleport_distance: float = 25.0
 
 @export var outside_drift: bool = false
 @export var outside_drift_force: float = 1000.0
@@ -349,23 +349,27 @@ func cpu_control(delta):
 		var move_multi = 0.0
 		var rot_multi = 1.0
 		
-		if !moved_to_next and (catch_up or global_position.distance_to(network_pos) > (network_teleport_distance / 3) * 2):
-			#Debug.print("catch up!")
-			catch_up = true
-			move_multi = 2.0
+		#if !moved_to_next and (catch_up or global_position.distance_to(network_pos) > (network_teleport_distance / 3) * 2):
+			##Debug.print("catch up!")
+			#catch_up = true
+			#move_multi = 2.0
 		
 		if !moved_to_next:
-			network_pos = cpu_target.global_position
+			#network_pos = cpu_target.global_position
+			var dist: float = max(network_teleport_distance/2, global_position.distance_to(network_pos))
+			move_multi = remap(dist, network_teleport_distance/2, network_teleport_distance, 0.0, 3.0)
+		
 		else:
-			catch_up = false
+			#catch_up = false
 			move_multi = 0.0
 		
 		if prev_state.cur_speed < 5.0: # and global_position.distance_to(network_pos) < 3.0:
 			network_pos = Util.to_vector3(prev_state.pos)
-			move_multi = 2.0
+			move_multi = clamp(remap(prev_state.cur_speed, 0, 5.0, 2.0, 0.0), 0.0, 2.0)
 			rot_multi = 3.0
 			input_steer = 0.0
 		
+		#Debug.print(move_multi)
 		var new_pos: Vector3 = global_position.lerp(network_pos, delta * move_multi)
 		var new_movement: Vector3 = new_pos - global_position
 
@@ -1250,7 +1254,7 @@ func apply_state(state: Dictionary):
 	network_path.rotation = Util.to_vector3(state.rot)
 	network_path.normal = network_path.transform.basis.x
 	if user_id in world.pings:
-		network_path.global_position += network_path.transform.basis.x * state.cur_speed * (1 + ((world.pings[user_id] + world.pings[world.player_user_id])/1000)) * 0.5
+		network_path.global_position += network_path.transform.basis.x * state.cur_speed * (1 + ((world.pings[user_id] + world.pings[world.player_user_id])/1000)) * 0.35
 	network_path.next_points = [Util.get_path_point_ahead_of_player(world, self)]
 	network_path.prev_points = network_path.next_points[0].prev_points
 	cpu_target_offset = Vector3.ZERO
