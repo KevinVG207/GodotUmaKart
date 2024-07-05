@@ -1,0 +1,75 @@
+[gd_scene load_steps=6 format=3 uid="uid://bsshdpp4v1mpx"]
+
+[ext_resource type="PackedScene" uid="uid://b4gkyhsv3o7vf" path="res://scenes/ui/transition/scene_transition.tscn" id="1_l7tuh"]
+
+[sub_resource type="Animation" id="Animation_huhvf"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-529, 144)]
+}
+
+[sub_resource type="Animation" id="Animation_momd2"]
+resource_name = "begin"
+length = 0.25
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-529, 1400), Vector2(-529, 144)]
+}
+
+[sub_resource type="Animation" id="Animation_atkxt"]
+resource_name = "end"
+length = 0.25
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ColorRect:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(-529, 144), Vector2(-529, -1200)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vu2cq"]
+_data = {
+"RESET": SubResource("Animation_huhvf"),
+"begin": SubResource("Animation_momd2"),
+"end": SubResource("Animation_atkxt")
+}
+
+[node name="SceneTransition" instance=ExtResource("1_l7tuh")]
+
+[node name="ColorRect" type="ColorRect" parent="." index="0"]
+layout_mode = 0
+offset_left = -529.0
+offset_top = 144.0
+offset_right = 1471.0
+offset_bottom = 1361.01
+rotation = -0.349066
+color = Color(1, 1, 0.796078, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="1"]
+libraries = {
+"": SubResource("AnimationLibrary_vu2cq")
+}

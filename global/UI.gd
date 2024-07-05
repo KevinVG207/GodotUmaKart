@@ -8,11 +8,9 @@ var race_ui_scene: PackedScene = preload("res://scenes/ui/race_ui.tscn")
 @onready var race_ui: RaceUI = $RaceUI
 var _next_scene: PackedScene
 var wait_after_transition: bool = false
-
-#var top_rect_start: float = 301
-#var top_rect_end: float = -1057
-#var bottom_rect_start: float = 1667
-#var bottom_rect_end: float = 270
+@onready var transition_layer: CanvasLayer = $Transition
+var transition_instance: SceneTransition = null
+var default_transition: PackedScene = preload("res://scenes/ui/transition/default_transition.tscn")
 
 func show_race_ui():
 	race_ui.visible = true
@@ -41,21 +39,19 @@ func update_ranks(vehicles: Array):
 		rank_strings.append("#" + str(vehicle.rank) + ": " + vehicle.username)
 	race_ui.get_node("Ranks").text = "\n".join(rank_strings)
 
-func change_scene(next_scene: PackedScene, wait: bool = false):
-	if _next_scene:
+func change_scene(next_scene: PackedScene, wait: bool = false, transition: PackedScene=default_transition):
+	if _next_scene or transition_instance:
 		return
 	_next_scene = next_scene
 	wait_after_transition = wait
-	var tween = create_tween()
-	tween.tween_property($Transition/ColorRect, "modulate:a", 1.0, 0.5).set_trans(Tween.TRANS_CUBIC)
-	#$Transition/BottomRect.position.y = bottom_rect_start
-	#$Transition/BottomRect.visible = true
-	#$Transition/TopRect.position.y = top_rect_end
-	#$Transition/TopRect.visible = false
-	#
+	
+	transition_instance = transition.instantiate() as SceneTransition
+	transition_layer.add_child(transition_instance)
+	transition_instance.middle_reached.connect(_on_scene_transition_middle)
+	transition_instance.start()
 	#var tween = create_tween()
-	#tween.tween_property($Transition/BottomRect, "position:y", bottom_rect_end, 0.5)
-	tween.finished.connect(_on_scene_transition_middle)
+	#tween.tween_property($Transition/ColorRect, "modulate:a", 1.0, 0.5).set_trans(Tween.TRANS_CUBIC)
+	#tween.finished.connect(_on_scene_transition_middle)
 
 func _on_scene_transition_middle():
 	get_tree().change_scene_to_packed(_next_scene)
@@ -63,16 +59,7 @@ func _on_scene_transition_middle():
 		end_scene_change()
 	
 func end_scene_change():
-	if not _next_scene:
-		return
-	
 	_next_scene = null
-	var tween = create_tween()
-	tween.tween_property($Transition/ColorRect, "modulate:a", 0.0, 0.5).set_trans(Tween.TRANS_CUBIC)
-	#$Transition/BottomRect.position.y = bottom_rect_start
-	#$Transition/BottomRect.visible = false
-	#$Transition/TopRect.position.y = top_rect_start
-	#$Transition/TopRect.visible = true
-	#
-	#var tween = create_tween()
-	#tween.tween_property($Transition/TopRect, "position:y", top_rect_end, 0.5)
+	if transition_instance:
+		transition_instance.end()
+		transition_instance = null

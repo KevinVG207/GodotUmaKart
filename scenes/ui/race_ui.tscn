@@ -183,10 +183,13 @@ libraries = {
 "": SubResource("AnimationLibrary_ux71x")
 }
 
-[node name="MapContainer" type="Node" parent="."]
+[node name="MapContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
 
 [node name="MapTexture" type="TextureRect" parent="MapContainer"]
 modulate = Color(1, 1, 1, 0.470588)
+layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -209,7 +212,8 @@ scale = Vector2(0.4, 0.4)
 texture = ExtResource("5_s54dk")
 region_rect = Rect2(0, 0, 80, 20)
 
-[node name="PlayerIcons" type="Node" parent="MapContainer"]
+[node name="PlayerIcons" type="Control" parent="MapContainer"]
+anchors_preset = 0
 
 [node name="Speed" type="Label" parent="."]
 anchors_preset = 3
