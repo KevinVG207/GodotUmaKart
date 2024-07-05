@@ -9,6 +9,7 @@ var update_idx: int = 0
 @onready var vani: VehicleAnimationTree = $VehicleAnimationTree
 @onready var cani: AnimationPlayer # TODO: Character animation player
 
+var frame: int = 0
 var started: bool = false
 var is_player: bool = false
 var is_cpu: bool = true
@@ -52,12 +53,12 @@ var input_updown: float = 0
 @export var initial_accel: float = 10
 @export var accel_exponent: float = 10
 @export var spd_steering_decrease: float = 0.025
-@export var weight_multi: float = 1.0
+@export var weight: float = 1.0
 @export var weak_offroad_multiplier: float = 0.7
 @export var offroad_multiplier: float = 0.5
-var push_force: float = 1.0
-var max_push_force: float = 2.75
-var push_force_vert: float = 1.0
+var push_force: float = 5.0
+# var max_push_force: float = 2.75
+# var push_force_vert: float = 1.0
 var offroad_ticks: int = 0
 var offroad = false
 var weak_offroad = false
@@ -196,6 +197,8 @@ const DamageType = {
 	tumble = 2,
 	explode = 3
 }
+
+var collided_with: Dictionary = {}
 
 
 #func _enter_tree():
@@ -407,13 +410,14 @@ func cpu_control(delta):
 				start_failsafe_timer()
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
+	frame += 1
 	var delta: float = physics_state.step
 	
 	if finished:
 		is_cpu = true
 	
 	handle_input()
-	cpu_control(delta)
+	# cpu_control(delta)
 	
 	if !is_player:
 		set_collision_layer_value(2, false)
@@ -427,6 +431,12 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# var prev_grav_vel: Vector3 = grav_vel
 	var prev_prop_vel: Vector3 = prop_vel
 	var prev_rest_vel: Vector3 = rest_vel
+	
+	var tmp: Array = collided_with.keys()
+	for vehicle: Vehicle3 in tmp:
+		var timeout_frame = collided_with[vehicle]
+		if frame >= timeout_frame:
+			collided_with.erase(vehicle)
 
 
 	var prev_origin = prev_transform.origin
@@ -779,7 +789,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	if not grounded and (!in_hop or !floor_below):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
 	if grounded:
-		rotation = rotation.rotated(transform.basis.z, transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * delta)
+		rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * delta)
 
 
 	# REFUSE TO GO UPSIDE DOWN (assuming we were at some point right side up)
@@ -952,38 +962,59 @@ func _on_still_turbo_timer_timeout():
 func handle_vehicle_collisions(delta: float):
 	if colliding_vehicles.size() > 0:
 		for col_vehicle: Vehicle3 in colliding_vehicles.keys():
-			var push_dir: Vector3 = -(col_vehicle.global_position - global_position)
-			push_dir -= push_dir.project(gravity.normalized())
-			push_dir = push_dir.normalized()
-
-			var dp = linear_velocity.normalized().dot(-push_dir)
-			# print(dp)
-			if dp > 0:
-				rest_vel += push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi)
-				# if !in_bounce:
-				# 	rest_vel += -gravity.normalized() * push_force_vert
-				# grounded = false
-				# in_bounce = true
+			if col_vehicle in collided_with.keys():
+				continue
 			
-			# var dir_multi: float = 1.0
-			# var dp: float = linear_velocity.normalized().dot(col_vehicle.linear_velocity.normalized())
-			# print(dp)
-
-
-			# dp -= 2
-			# dp = -dp / 3
+			if prev_frame_pre_sim_vel.length() < col_vehicle.prev_frame_pre_sim_vel.length():
+				# Let the other do the work.
+				continue
 			
-			# var new_push_force: Vector3 = push_dir * push_force * col_vehicle.weight_multi * (1/weight_multi) * dp * ((linear_velocity.length() + col_vehicle.linear_velocity.length()) / 2) * delta
+			var my_weight: float = weight * remap(min(prev_frame_pre_sim_vel.length(), 2*max_speed), 0, 2*max_speed, 1.0, 1.2)
+			var their_weight: float = col_vehicle.weight * remap(min(col_vehicle.prev_frame_pre_sim_vel.length(), 2*col_vehicle.max_speed), 0, 2*col_vehicle.max_speed, 1.0, 1.2)
 
-			# var push_force_along_gravity = new_push_force.project(transform.basis.y.normalized())
-			# new_push_force -= push_force_along_gravity + (transform.basis.y * 4.0)
-			# grounded = false
-			# in_bounce = true
+			var my_weight_ratio: float = their_weight / my_weight
+			var their_weight_ratio: float = my_weight / their_weight
+			
+			#if is_player:
+				#print("weight")
+				#print(my_weight, their_weight)
+				#print(my_weight_ratio, their_weight_ratio)
 
-			# if new_push_force.length() > max_push_force:
-			# 	new_push_force = new_push_force.normalized() * max_push_force
-			#Debug.print(["Push force", push_force.length()])
-			# rest_vel += new_push_force
+			var my_force: float = push_force * my_weight_ratio
+			var their_force: float = push_force * their_weight_ratio
+
+			var my_side: float = Util.dist_to_plane(transform.basis.z, global_position, col_vehicle.global_position)
+			var their_side: float = Util.dist_to_plane(col_vehicle.prev_transform.basis.z, col_vehicle.prev_transform.origin, prev_transform.origin)
+
+			var my_multi: float = 1.0
+			if my_side > 0:
+				my_multi = -1.0
+			
+			var their_multi: float = 1.0
+			if their_side > 0:
+				their_multi = -1.0
+			
+			#var my_multi: float = -their_multi
+			#var dp: float = prev_transform.basis.x.dot(col_vehicle.prev_transform.basis.x)
+			#if dp < 0:
+				#my_multi *= -1
+			#print(dp)
+			
+			apply_push(my_force * my_multi, col_vehicle)
+			col_vehicle.apply_push(their_force * their_multi, self)
+
+func apply_push(force: float, vehicle: Vehicle3):
+	if vehicle in collided_with:
+		return
+	
+	collided_with[vehicle] = frame + 10
+
+	rest_vel += transform.basis.z * force
+	
+	if is_player:
+		Debug.print([force, vehicle])
+
+
 
 func respawn():
 	if respawn_stage:
