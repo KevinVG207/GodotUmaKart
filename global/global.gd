@@ -70,7 +70,6 @@ func _ready():
 			if i < player_count:
 				item_dist[i].append(item)
 		instance.queue_free()
-	print(item_dist)
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:

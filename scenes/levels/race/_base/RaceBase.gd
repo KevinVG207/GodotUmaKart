@@ -30,7 +30,7 @@ var network_path_points: Dictionary = {}
 var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_3.tscn")
 var rank_panel_scene: PackedScene = preload("res://scenes/ui/rank_panel.tscn")
 
-var lobby_scene: PackedScene = load("res://scenes/ui/lobby/lobby.tscn")
+var lobby_scene: String = "res://scenes/ui/lobby/lobby.tscn"
 
 @export var lap_count: int = 3
 var finished = false
@@ -414,7 +414,7 @@ func _physics_process(_delta):
 			if Global.MODE1 == Global.MODE1_ONLINE:
 				$CountdownTimer.start(3.0)
 			else:
-				$CountdownTimer.start(5.0)
+				$CountdownTimer.start(4.0)
 			timer_tick = -Engine.physics_ticks_per_second * $CountdownTimer.time_left
 			state = STATE_COUNTING_DOWN
 		STATE_COUNTING_DOWN:

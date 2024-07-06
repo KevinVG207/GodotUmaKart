@@ -321,7 +321,7 @@ func switch_scene():
 	Global.MODE1 = Global.MODE1_ONLINE
 	Network.socket.received_match_state.disconnect(_on_match_state)
 	Network.socket.closed.disconnect(_on_socket_closed)
-	UI.change_scene(load(Util.get_race_course_path(next_course)), true)
+	UI.change_scene(Util.get_race_course_path(next_course), true)
 
 func reload():
 	await Network.leave_match()

@@ -1,7 +1,7 @@
 extends Control
 
-@export var single_scene: PackedScene
-@export var online_scene: PackedScene
+@export var single_scene: String
+@export var online_scene: String
 
 func _enter_tree():
 	for i in range(len(Global.locales)):

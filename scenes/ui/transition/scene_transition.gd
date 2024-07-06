@@ -5,6 +5,8 @@ class_name SceneTransition
 signal middle_reached
 
 @onready var ani: AnimationPlayer = $AnimationPlayer
+var can_swap: bool = false
+var progress: float = 0.0
 
 func _process(delta):
 	# Scale to fit screen.
@@ -34,3 +36,6 @@ func end():
 
 func _cleanup(_anim_name):
 	queue_free()
+
+func _start_loading():
+	can_swap = true

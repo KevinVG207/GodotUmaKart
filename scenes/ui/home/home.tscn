@@ -1,8 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://dak1demjog305"]
+[gd_scene load_steps=2 format=3 uid="uid://dak1demjog305"]
 
 [ext_resource type="Script" path="res://scenes/ui/home/home.gd" id="1_ombw4"]
-[ext_resource type="PackedScene" uid="uid://djkncdwh507k1" path="res://scenes/levels/race/Wicked_Woods/Wicked_Woods.tscn" id="2_mlu7n"]
-[ext_resource type="PackedScene" uid="uid://dqhi3idf6syay" path="res://scenes/ui/lobby/lobby.tscn" id="3_0ol4i"]
 
 [node name="Home" type="Control"]
 layout_mode = 3
@@ -12,8 +10,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ombw4")
-single_scene = ExtResource("2_mlu7n")
-online_scene = ExtResource("3_0ol4i")
+single_scene = "res://scenes/levels/race/Wicked_Woods/Wicked_Woods.tscn"
+online_scene = "res://scenes/ui/lobby/lobby.tscn"
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
