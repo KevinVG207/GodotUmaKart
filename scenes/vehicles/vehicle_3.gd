@@ -56,7 +56,7 @@ var input_updown: float = 0
 @export var weight: float = 1.0
 @export var weak_offroad_multiplier: float = 0.7
 @export var offroad_multiplier: float = 0.5
-var push_force: float = 5.0
+var push_force: float = 6.0
 # var max_push_force: float = 2.75
 # var push_force_vert: float = 1.0
 var offroad_ticks: int = 0
@@ -150,9 +150,9 @@ var rest_vel: Vector3 = Vector3.ZERO  # Other velocity
 var floor_normal = Vector3(0, 1, 0)
 
 @export var grip_multiplier: float = 1.0
-@export var default_grip: float = 30.0
+@export var default_grip: float = 40.0
 @export var air_decel: float = default_grip * 0.2
-var ground_rot_multi: float = 5.0
+var ground_rot_multi: float = 1.0
 #@export var default_grip_rest: float = 30.0
 var test_force: float = 10.0
 #var cur_grip: float = 100.0
@@ -180,7 +180,7 @@ var bounce_frames = 0
 @export var wheel_max_down: float = 0.5
 var wheel_markers: Array = []
 
-var colliding_vehicles: Dictionary = {}
+#var colliding_vehicles: Dictionary = {}
 
 var respawn_time: float = 3.5
 var respawn_stage2_time: float = 1.0
@@ -417,7 +417,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		is_cpu = true
 	
 	handle_input()
-	# cpu_control(delta)
+	cpu_control(delta)
 	
 	if !is_player:
 		set_collision_layer_value(2, false)
@@ -804,7 +804,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			rotation_degrees.z += 180
 			Debug.print("ROTATION PANIC: Could not recover from upside down state")
 
-	handle_vehicle_collisions(delta)
+	handle_vehicle_collisions()
 
 	handle_particles()
 	handle_item()
@@ -959,60 +959,57 @@ func _on_still_turbo_timer_timeout():
 	#Debug.print("Miniturbo ready")
 	still_turbo_ready = true
 
-func handle_vehicle_collisions(delta: float):
-	if colliding_vehicles.size() > 0:
-		for col_vehicle: Vehicle3 in colliding_vehicles.keys():
-			if col_vehicle in collided_with.keys():
+func handle_vehicle_collisions():
+	var colliding_vehicles: Dictionary = {}
+	for shape: ShapeCast3D in $PlayerCollision.get_children():
+		shape.force_shapecast_update()
+		for i in range(shape.get_collision_count()):
+			var collider: Node3D = shape.get_collider(i)
+			if collider == self:
 				continue
+			if collider is Vehicle3:
+				if collider not in colliding_vehicles:
+					colliding_vehicles[collider] = []
+				colliding_vehicles[collider].append(shape.get_collision_point(i))
+	
+	for col_vehicle: Vehicle3 in colliding_vehicles.keys():
+		if col_vehicle in collided_with.keys():
+			continue
+		
+		if prev_frame_pre_sim_vel.length() < col_vehicle.prev_frame_pre_sim_vel.length():
+			# Let the other do the work.
+			continue
 			
-			if prev_frame_pre_sim_vel.length() < col_vehicle.prev_frame_pre_sim_vel.length():
-				# Let the other do the work.
-				continue
-			
-			var my_weight: float = weight * remap(min(prev_frame_pre_sim_vel.length(), 2*max_speed), 0, 2*max_speed, 1.0, 1.2)
-			var their_weight: float = col_vehicle.weight * remap(min(col_vehicle.prev_frame_pre_sim_vel.length(), 2*col_vehicle.max_speed), 0, 2*col_vehicle.max_speed, 1.0, 1.2)
+		var avg_point: Vector3 = Util.sum(colliding_vehicles[col_vehicle]) / len(colliding_vehicles[col_vehicle])
+		
+		var my_weight: float = weight * remap(min(prev_frame_pre_sim_vel.length(), 2*max_speed), 0, 2*max_speed, 1.0, 2.0)
+		var their_weight: float = col_vehicle.weight * remap(min(col_vehicle.prev_frame_pre_sim_vel.length(), 2*col_vehicle.max_speed), 0, 2*col_vehicle.max_speed, 1.0, 2.0)
 
-			var my_weight_ratio: float = their_weight / my_weight
-			var their_weight_ratio: float = my_weight / their_weight
-			
-			#if is_player:
-				#print("weight")
-				#print(my_weight, their_weight)
-				#print(my_weight_ratio, their_weight_ratio)
+		var my_weight_ratio: float = their_weight / my_weight
+		var their_weight_ratio: float = my_weight / their_weight
+		
+		#if is_player:
+			#print("weight")
+			#print(my_weight, their_weight)
+			#print(my_weight_ratio, their_weight_ratio)
 
-			var my_force: float = push_force * my_weight_ratio
-			var their_force: float = push_force * their_weight_ratio
+		var my_force: float = push_force * my_weight_ratio
+		var their_force: float = push_force * their_weight_ratio
 
-			var my_side: float = Util.dist_to_plane(transform.basis.z, global_position, col_vehicle.global_position)
-			var their_side: float = Util.dist_to_plane(col_vehicle.prev_transform.basis.z, col_vehicle.prev_transform.origin, prev_transform.origin)
+		
+		var my_dir: Vector3 = Plane(prev_transform.basis.y).project(prev_transform.origin - avg_point).normalized()
+		var their_dir: Vector3 = Plane(col_vehicle.prev_transform.basis.y).project(col_vehicle.prev_transform.origin - avg_point).normalized()
+		
+		apply_push(my_force * my_dir, col_vehicle)
+		col_vehicle.apply_push(their_force * their_dir, self)
 
-			var my_multi: float = 1.0
-			if my_side > 0:
-				my_multi = -1.0
-			
-			var their_multi: float = 1.0
-			if their_side > 0:
-				their_multi = -1.0
-			
-			#var my_multi: float = -their_multi
-			#var dp: float = prev_transform.basis.x.dot(col_vehicle.prev_transform.basis.x)
-			#if dp < 0:
-				#my_multi *= -1
-			#print(dp)
-			
-			apply_push(my_force * my_multi, col_vehicle)
-			col_vehicle.apply_push(their_force * their_multi, self)
-
-func apply_push(force: float, vehicle: Vehicle3):
+func apply_push(force: Vector3, vehicle: Vehicle3):
 	if vehicle in collided_with:
 		return
 	
 	collided_with[vehicle] = frame + 10
 
-	rest_vel += transform.basis.z * force
-	
-	if is_player:
-		Debug.print([force, vehicle])
+	rest_vel += force
 
 
 
@@ -1213,20 +1210,20 @@ func water_exited(area):
 		in_water = false
 
 
-func _on_player_collision_area_entered(area: Area3D):
-	var area_parent = area.get_parent()
-	if not area_parent is Vehicle3:
-		return
-	#Debug.print([self, "collided with", area_parent])
-	colliding_vehicles[area_parent] = true
-
-
-func _on_player_collision_area_exited(area):
-	var area_parent = area.get_parent()
-	if not area_parent is Vehicle3:
-		return
-	#Debug.print([self, "uncollided with", area_parent])
-	colliding_vehicles.erase(area_parent)
+#func _on_player_collision_area_entered(area: Area3D):
+	#var area_parent = area.get_parent()
+	#if not area_parent is Vehicle3:
+		#return
+	##Debug.print([self, "collided with", area_parent])
+	#colliding_vehicles[area_parent] = true
+#
+#
+#func _on_player_collision_area_exited(area):
+	#var area_parent = area.get_parent()
+	#if not area_parent is Vehicle3:
+		#return
+	##Debug.print([self, "uncollided with", area_parent])
+	#colliding_vehicles.erase(area_parent)
 	
 #func upload_data():
 	#var state: Dictionary = get_state()

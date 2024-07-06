@@ -185,7 +185,13 @@ libraries = {
 
 [node name="MapContainer" type="Control" parent="."]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="MapTexture" type="TextureRect" parent="MapContainer"]
 modulate = Color(1, 1, 1, 0.470588)
