@@ -1,54 +1,136 @@
-[gd_scene load_steps=6 format=3 uid="uid://bsshdpp4v1mpx"]
+[gd_scene load_steps=9 format=3 uid="uid://bsshdpp4v1mpx"]
 
 [ext_resource type="PackedScene" uid="uid://b4gkyhsv3o7vf" path="res://scenes/ui/transition/scene_transition.tscn" id="1_l7tuh"]
+[ext_resource type="Texture2D" uid="uid://cch1wu0bimqbn" path="res://assets/ui/transition/default/bg.png" id="2_demad"]
+[ext_resource type="Texture2D" uid="uid://dxsgmq37pyik7" path="res://assets/ui/transition/default/stopwatch.png" id="3_c0xkh"]
+[ext_resource type="Texture2D" uid="uid://c785f4nmoqgi8" path="res://assets/ui/transition/default/hand.png" id="4_5smfp"]
 
 [sub_resource type="Animation" id="Animation_huhvf"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("ColorRect:position")
+tracks/0/path = NodePath("TextureRect:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(-529, 144)]
+"values": [Vector2(1306, -791)]
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TextureRect2:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(-66.5, -0.25, 0, 0.25, 0, -66.5, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.001)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TextureRect2/TextureRect:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("TextureRect2:position:x")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [330.0]
 }
 
 [sub_resource type="Animation" id="Animation_momd2"]
 resource_name = "begin"
-length = 0.25
+length = 0.75
 step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("ColorRect:position")
+tracks/0/path = NodePath("TextureRect:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.25),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(-529, 1400), Vector2(-529, 144)]
+"values": [Vector2(1306, 707.275), Vector2(1306, -791)]
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TextureRect2:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0, 0),
+"points": PackedFloat32Array(400, -0.25, 0, 0.05, -386.113, -82.7766, -0.118121, 0.667084, 0.0818788, 1.6001, -55.1585, -0.0848264, 0.106319, 0.0651736, -0.826694, -66.5, -0.0848264, 0.251701, 0.05, 0),
+"times": PackedFloat32Array(0.15, 0.4, 0.6, 0.75)
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TextureRect2:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [330.0]
 }
 
 [sub_resource type="Animation" id="Animation_atkxt"]
 resource_name = "end"
-length = 0.25
 step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("ColorRect:position")
+tracks/0/path = NodePath("TextureRect:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.25),
+"times": PackedFloat32Array(0.75, 1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(-529, 144), Vector2(-529, -1200)]
+"values": [Vector2(1306, -791), Vector2(1306, -2283.46)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("TextureRect2:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.75, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(330, -66.5), Vector2(330, -1558.95)]
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("TextureRect2/TextureRect:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.35, 6.15963, 6.28319, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.75)
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vu2cq"]
@@ -59,17 +141,54 @@ _data = {
 }
 
 [node name="SceneTransition" instance=ExtResource("1_l7tuh")]
+metadata/_edit_lock_ = true
 
-[node name="ColorRect" type="ColorRect" parent="." index="0"]
-layout_mode = 0
-offset_left = -529.0
-offset_top = 144.0
-offset_right = 1471.0
-offset_bottom = 1361.01
-rotation = -0.349066
-color = Color(1, 1, 0.796078, 1)
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="1"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="0"]
 libraries = {
 "": SubResource("AnimationLibrary_vu2cq")
 }
+
+[node name="TextureRect" type="TextureRect" parent="." index="1"]
+layout_mode = 0
+offset_left = 1306.0
+offset_top = -791.0
+offset_right = 3933.0
+offset_bottom = 3774.0
+rotation = 1.0472
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_demad")
+stretch_mode = 1
+
+[node name="TextureRect2" type="TextureRect" parent="." index="2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 330.0
+offset_top = -66.5
+offset_right = 950.0
+offset_bottom = 666.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.2, 0.2)
+pivot_offset = Vector2(310, 426.5)
+texture = ExtResource("3_c0xkh")
+
+[node name="TextureRect" type="TextureRect" parent="TextureRect2" index="0"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -66.0
+offset_top = -154.0
+offset_right = 62.0
+offset_bottom = 102.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(64, 214.695)
+texture = ExtResource("4_5smfp")

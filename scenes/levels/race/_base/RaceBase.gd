@@ -411,8 +411,11 @@ func _physics_process(_delta):
 			change_state(STATE_READY_FOR_START, send_ready)
 		STATE_COUNTDOWN:
 			UI.end_scene_change()
-			$CountdownTimer.start(4.0)
-			timer_tick = -Engine.physics_ticks_per_second * 3
+			if Global.MODE1 == Global.MODE1_ONLINE:
+				$CountdownTimer.start(3.0)
+			else:
+				$CountdownTimer.start(5.0)
+			timer_tick = -Engine.physics_ticks_per_second * $CountdownTimer.time_left
 			state = STATE_COUNTING_DOWN
 		STATE_COUNTING_DOWN:
 			timer_tick += 1
