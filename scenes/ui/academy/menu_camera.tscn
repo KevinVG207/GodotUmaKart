@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://b7pfkfsy5a05"]
+
+[ext_resource type="Script" path="res://scenes/ui/academy/MenuCam.gd" id="1_w8mpw"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_isl1y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fqnba"]
+resource_local_to_scene = true
+transparency = 1
+no_depth_test = true
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_isl1y")
+disable_receive_shadows = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_73ltu"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_fqnba")
+size = Vector2(1, 1)
+orientation = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7oodl"]
+size = Vector3(1, 1, 0.545044)
+
+[node name="MenuCamera" type="Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+script = ExtResource("1_w8mpw")
+
+[node name="Plane" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_73ltu")
+
+[node name="Area3D" type="Area3D" parent="Plane"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Plane/Area3D"]
+transform = Transform3D(0.999999, 4.17233e-07, -5.06639e-07, 8.9407e-07, 0.999998, 2.68221e-07, 1.01328e-06, -1.49012e-07, 0.999999, 3.8147e-06, 3.8147e-06, -0.227478)
+shape = SubResource("BoxShape3D_7oodl")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+transparent_bg = true
+size = Vector2i(1280, 720)
+render_target_update_mode = 3

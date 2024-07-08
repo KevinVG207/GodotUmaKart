@@ -2,21 +2,26 @@ extends Camera3D
 
 class_name MenuCam
 
-@export var plane: MeshInstance3D
-@export var viewport: SubViewport
-@export var distance: float = 50
+@export var distance: float = 10
 var menu_container: Control
 var scale_multi: float = 1.0
 
+@onready var plane: MeshInstance3D = $Plane
+@onready var viewport: SubViewport = $SubViewport
+@onready var click_area: Area3D = $Plane/Area3D
+
 var opacity: float:
 	set(value):
+		print(self, " ", value)
 		plane.transparency = 1.0 - value
 	get:
 		return 1.0 - plane.transparency
 
-func _enter_tree():
+func _ready():
+	print(self)
 	opacity = 0.0
 	menu_container = viewport.get_children()[0]
+	click_area.input_event.connect(_on_area_3d_input_event)
 
 func _process(_delta):
 	var view_rect: Rect2 = get_viewport().get_visible_rect()

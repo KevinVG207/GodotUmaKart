@@ -7,23 +7,17 @@ var cam_follow: PathFollow3D
 var from_cam: MenuCam
 var to_cam: MenuCam
 
-@onready var CAM = {
-	INITIAL = $Menus/CamInitial,
-	FOUNTAIN = $Menus/CamFountain,
-	SPICA = $Menus/CamSpica
-}
-
 func _ready():
 	hide_cams()
 	
-	cam.rotation = CAM.INITIAL.rotation
-	cam.global_position = CAM.INITIAL.global_position
-	cam.fov = CAM.INITIAL.fov
-	CAM.INITIAL.opacity = 1.0
-	CAM.INITIAL.visible = true
+	cam.rotation = %CamInitial.rotation
+	cam.global_position = %CamInitial.global_position
+	cam.fov = %CamInitial.fov
+	%CamInitial.opacity = 1.0
+	%CamInitial.visible = true
 
 func hide_cams():
-	for camera: MenuCam in CAM.values():
+	for camera: MenuCam in $Menus.get_children():
 		camera.visible = false
 
 func _process(delta):
@@ -31,13 +25,13 @@ func _process(delta):
 		cam.global_position = cam_follow.global_position
 	if not traveling:
 		if Input.is_action_just_pressed("F1"):
-			start_cam_travel(CAM.INITIAL, CAM.FOUNTAIN, $PathInitialFountain/Follow, travel_time, false)
+			start_cam_travel(%CamInitial, %CamFountain, $PathInitialFountain/Follow, travel_time, false)
 		elif Input.is_action_just_pressed("F2"):
-			start_cam_travel(CAM.FOUNTAIN, CAM.INITIAL, $PathInitialFountain/Follow, travel_time, true)
+			start_cam_travel(%CamFountain, %CamInitial, $PathInitialFountain/Follow, travel_time, true)
 		elif Input.is_action_just_pressed("F3"):
-			start_cam_travel(CAM.FOUNTAIN, CAM.SPICA, $PathFountainSpica/Follow, travel_time)
+			start_cam_travel(%CamFountain, %CamSpica, $PathFountainSpica/Follow, travel_time)
 		elif Input.is_action_just_pressed("F4"):
-			start_cam_travel(CAM.SPICA, CAM.FOUNTAIN, $PathFountainSpica/Follow, travel_time, true)
+			start_cam_travel(%CamSpica, %CamFountain, $PathFountainSpica/Follow, travel_time, true)
 
 func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFollow3D, time: float, reverse: bool=false, fade_time: float=-1, wait_fade_start: bool=false, wait_fade_end: bool=false):
 	traveling = true

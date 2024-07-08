@@ -1,11 +1,10 @@
-[gd_scene load_steps=23 format=3 uid="uid://b5o18sbk4ypar"]
+[gd_scene load_steps=21 format=3 uid="uid://b5o18sbk4ypar"]
 
 [ext_resource type="PackedScene" uid="uid://ddwe67q5fgedw" path="res://assets/ui/tracen/tracen_academy.tscn" id="1_2jrec"]
 [ext_resource type="Script" path="res://scenes/ui/academy/menu_academy.gd" id="1_ueiln"]
-[ext_resource type="Script" path="res://scenes/ui/academy/MenuCam.gd" id="3_w6f36"]
 [ext_resource type="PackedScene" uid="uid://d2pr13dqnvme2" path="res://scenes/ui/academy/cam_initial_menu.tscn" id="4_j2yy8"]
-[ext_resource type="Script" path="res://scenes/ui/academy/subviewport.tres.gd" id="5_6ym8v"]
 [ext_resource type="PackedScene" uid="uid://doyxcgm8r6edh" path="res://scenes/ui/academy/cam_fountain_menu.tscn" id="5_dswq1"]
+[ext_resource type="PackedScene" uid="uid://b7pfkfsy5a05" path="res://scenes/ui/academy/menu_camera.tscn" id="5_t5vkb"]
 [ext_resource type="PackedScene" uid="uid://dhi2e4527p0wh" path="res://scenes/ui/academy/cam_spica_menu.tscn" id="6_wc85s"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wyxeu"]
@@ -27,52 +26,51 @@ reflected_light_source = 1
 ssao_enabled = true
 ssao_intensity = 1.0
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_oi12v"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_0ysej"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gbc1q"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y25ph"]
 resource_local_to_scene = true
 transparency = 1
 no_depth_test = true
 shading_mode = 0
-albedo_texture = SubResource("ViewportTexture_oi12v")
+albedo_texture = SubResource("ViewportTexture_0ysej")
 disable_receive_shadows = true
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_5u4un"]
-material = SubResource("StandardMaterial3D_gbc1q")
+[sub_resource type="PlaneMesh" id="PlaneMesh_gy6so"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_y25ph")
 size = Vector2(1, 1)
 orientation = 2
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_isl1y"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_lp8u2"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fqnba"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_62v4g"]
 resource_local_to_scene = true
 transparency = 1
 no_depth_test = true
 shading_mode = 0
-albedo_texture = SubResource("ViewportTexture_isl1y")
+albedo_texture = SubResource("ViewportTexture_lp8u2")
 disable_receive_shadows = true
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_73ltu"]
-material = SubResource("StandardMaterial3D_fqnba")
+[sub_resource type="PlaneMesh" id="PlaneMesh_crr0e"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_62v4g")
 size = Vector2(1, 1)
 orientation = 2
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_7oodl"]
-size = Vector3(1, 1, 0.545044)
+[sub_resource type="ViewportTexture" id="ViewportTexture_iyfra"]
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_j8f75"]
-viewport_path = NodePath("CamInitial/SubViewport")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yx3x4"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_timay"]
 resource_local_to_scene = true
 transparency = 1
 no_depth_test = true
 shading_mode = 0
-albedo_texture = SubResource("ViewportTexture_j8f75")
+albedo_texture = SubResource("ViewportTexture_iyfra")
 disable_receive_shadows = true
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_8n56p"]
-material = SubResource("StandardMaterial3D_yx3x4")
+[sub_resource type="PlaneMesh" id="PlaneMesh_2aa2i"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_timay")
 size = Vector2(1, 1)
 orientation = 2
 
@@ -112,67 +110,34 @@ cull_mask = 1023
 
 [node name="Menus" type="Node3D" parent="."]
 
-[node name="CamInitial" type="Camera3D" parent="Menus" node_paths=PackedStringArray("plane", "viewport")]
-transform = Transform3D(0.87462, 0.271102, -0.401926, 0, 0.829038, 0.559193, 0.48481, -0.489081, 0.725093, -31.392, 77.094, 133.588)
-script = ExtResource("3_w6f36")
-plane = NodePath("MeshInstance3D")
-viewport = NodePath("SubViewport")
+[node name="CamInitial" parent="Menus" instance=ExtResource("5_t5vkb")]
+unique_name_in_owner = true
+transform = Transform3D(0.87462, 0.271102, -0.401925, 0, 0.829038, 0.559193, 0.48481, -0.489081, 0.725093, -31.392, 77.094, 133.588)
+distance = 50.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Menus/CamInitial"]
-transform = Transform3D(1, -1.49012e-08, -2.98023e-08, 1.49012e-08, 1, -2.98023e-08, 2.98023e-08, 2.98023e-08, 1, 0, 0, 0)
-cast_shadow = 0
-mesh = SubResource("PlaneMesh_5u4un")
+[node name="Plane" parent="Menus/CamInitial" index="0"]
+mesh = SubResource("PlaneMesh_gy6so")
 
-[node name="SubViewport" type="SubViewport" parent="Menus/CamInitial"]
-transparent_bg = true
-size = Vector2i(1280, 720)
+[node name="CamInitialMenu" parent="Menus/CamInitial/SubViewport" index="0" instance=ExtResource("4_j2yy8")]
 
-[node name="CamInitialMenu" parent="Menus/CamInitial/SubViewport" instance=ExtResource("4_j2yy8")]
-
-[node name="CamFountain" type="Camera3D" parent="Menus" node_paths=PackedStringArray("plane", "viewport")]
+[node name="CamFountain" parent="Menus" instance=ExtResource("5_t5vkb")]
+unique_name_in_owner = true
 transform = Transform3D(0.950516, 0.0367853, 0.308491, 0, 0.992966, -0.118404, -0.310676, 0.112545, 0.943829, 23.713, 1.694, 48.668)
-script = ExtResource("3_w6f36")
-plane = NodePath("MeshInstance3D")
-viewport = NodePath("SubViewport")
-distance = 10.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Menus/CamFountain"]
-transform = Transform3D(1, 0, 0, 1.49012e-08, 1, -2.98023e-08, 2.98023e-08, 2.98023e-08, 1, 0, 0, 0)
-cast_shadow = 0
-mesh = SubResource("PlaneMesh_73ltu")
+[node name="Plane" parent="Menus/CamFountain" index="0"]
+mesh = SubResource("PlaneMesh_crr0e")
 
-[node name="Area3D" type="Area3D" parent="Menus/CamFountain/MeshInstance3D"]
+[node name="CamFountainMenu" parent="Menus/CamFountain/SubViewport" index="0" instance=ExtResource("5_dswq1")]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Menus/CamFountain/MeshInstance3D/Area3D"]
-transform = Transform3D(0.999999, 4.17233e-07, -5.06639e-07, 8.9407e-07, 0.999998, 2.68221e-07, 1.01328e-06, -1.49012e-07, 0.999999, 3.8147e-06, 3.8147e-06, -0.227478)
-shape = SubResource("BoxShape3D_7oodl")
-
-[node name="SubViewport" type="SubViewport" parent="Menus/CamFountain"]
-transparent_bg = true
-size = Vector2i(1280, 720)
-render_target_update_mode = 4
-script = ExtResource("5_6ym8v")
-
-[node name="CamFountainMenu" parent="Menus/CamFountain/SubViewport" instance=ExtResource("5_dswq1")]
-
-[node name="CamSpica" type="Camera3D" parent="Menus" node_paths=PackedStringArray("plane", "viewport")]
+[node name="CamSpica" parent="Menus" instance=ExtResource("5_t5vkb")]
+unique_name_in_owner = true
 transform = Transform3D(0.761538, 0, -0.64812, 0, 1, 0, 0.64812, 0, 0.761538, 168.439, 1.024, 130.088)
-script = ExtResource("3_w6f36")
-plane = NodePath("MeshInstance3D")
-viewport = NodePath("SubViewport")
 distance = 5.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Menus/CamSpica"]
-transform = Transform3D(1, -8.88178e-16, 0, 1.49012e-08, 1, -2.98023e-08, 0, 2.98023e-08, 1, 0, 0, 0)
-cast_shadow = 0
-mesh = SubResource("PlaneMesh_8n56p")
+[node name="Plane" parent="Menus/CamSpica" index="0"]
+mesh = SubResource("PlaneMesh_2aa2i")
 
-[node name="SubViewport" type="SubViewport" parent="Menus/CamSpica"]
-transparent_bg = true
-size = Vector2i(1280, 720)
-render_target_update_mode = 3
-
-[node name="CamSpicaMenu" parent="Menus/CamSpica/SubViewport" instance=ExtResource("6_wc85s")]
+[node name="CamSpicaMenu" parent="Menus/CamSpica/SubViewport" index="0" instance=ExtResource("6_wc85s")]
 
 [node name="PathInitialFountain" type="Path3D" parent="."]
 curve = SubResource("Curve3D_iuq7k")
@@ -186,4 +151,6 @@ curve = SubResource("Curve3D_tkw6u")
 [node name="Follow" type="PathFollow3D" parent="PathFountainSpica"]
 transform = Transform3D(-0.996852, -0.0445939, -0.0655394, 0, 0.826767, -0.562543, 0.0792718, -0.560773, -0.824165, 23.713, 1.694, 48.668)
 
-[connection signal="input_event" from="Menus/CamFountain/MeshInstance3D/Area3D" to="Menus/CamFountain" method="_on_area_3d_input_event"]
+[editable path="Menus/CamInitial"]
+[editable path="Menus/CamFountain"]
+[editable path="Menus/CamSpica"]
