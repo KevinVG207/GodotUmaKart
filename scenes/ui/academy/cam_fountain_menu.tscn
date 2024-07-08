@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://doyxcgm8r6edh"]
 
-[ext_resource type="Texture2D" uid="uid://53pqjniwp6x1" path="res://icon.svg" id="1_yt7qt"]
+[ext_resource type="Script" path="res://scenes/ui/academy/cam_fountain_menu.gd" id="1_1cqih"]
 
 [node name="CamFountainMenu" type="Control"]
 layout_mode = 3
@@ -9,48 +9,80 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_1cqih")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -626.0
-offset_top = -352.0
-offset_right = -348.0
-offset_bottom = -74.0
+offset_left = -415.0
+offset_right = 415.0
+offset_bottom = 264.0
 grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_yt7qt")
+theme_override_constants/margin_top = 55
 
-[node name="TextureRect2" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 346.0
-offset_top = 75.0
-offset_right = 624.0
-offset_bottom = 353.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_yt7qt")
+[node name="GridContainer" type="GridContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 230
+columns = 2
 
-[node name="TextureRect3" type="TextureRect" parent="."]
+[node name="Control" type="VBoxContainer" parent="MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/GridContainer/Control"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "HOME_1P_OFFLINE_VS"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="VSButton" type="Button" parent="MarginContainer/GridContainer/Control"]
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "OFFLINE"
+
+[node name="Control2" type="VBoxContainer" parent="MarginContainer/GridContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/GridContainer/Control2"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "HOME_1P_ONLINE_VS"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OnlineButton" type="Button" parent="MarginContainer/GridContainer/Control2"]
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "ONLINE"
+
+[node name="Label" type="Label" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -139.0
-offset_top = -140.0
-offset_right = 139.0
-offset_bottom = 138.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_yt7qt")
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -184.0
+offset_right = -7.0
+offset_bottom = 28.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 20
+text = "HOME_LANGUAGE"
+horizontal_alignment = 2
+
+[node name="LangSelect" type="OptionButton" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -52.0
+offset_top = 34.0
+offset_right = -7.0
+offset_bottom = 54.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 20
+alignment = 2

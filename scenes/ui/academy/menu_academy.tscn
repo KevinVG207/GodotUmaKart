@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://b5o18sbk4ypar"]
+[gd_scene load_steps=22 format=3 uid="uid://b5o18sbk4ypar"]
 
 [ext_resource type="PackedScene" uid="uid://ddwe67q5fgedw" path="res://assets/ui/tracen/tracen_academy.tscn" id="1_2jrec"]
 [ext_resource type="Script" path="res://scenes/ui/academy/menu_academy.gd" id="1_ueiln"]
@@ -56,6 +56,9 @@ material = SubResource("StandardMaterial3D_fqnba")
 size = Vector2(1, 1)
 orientation = 2
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_7oodl"]
+size = Vector3(1, 1, 0.545044)
+
 [sub_resource type="ViewportTexture" id="ViewportTexture_j8f75"]
 viewport_path = NodePath("CamInitial/SubViewport")
 
@@ -112,7 +115,7 @@ plane = NodePath("MeshInstance3D")
 viewport = NodePath("SubViewport")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Menus/CamInitial"]
-transform = Transform3D(1, 0, 0, 1.49012e-08, 1, -2.98023e-08, 2.98023e-08, 2.98023e-08, 1, 0, 0, 0)
+transform = Transform3D(1, -1.49012e-08, -2.98023e-08, 1.49012e-08, 1, -2.98023e-08, 2.98023e-08, 2.98023e-08, 1, 0, 0, 0)
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_5u4un")
 
@@ -134,9 +137,17 @@ transform = Transform3D(1, 0, 0, 1.49012e-08, 1, -2.98023e-08, 2.98023e-08, 2.98
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_73ltu")
 
+[node name="Area3D" type="Area3D" parent="Menus/CamFountain/MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Menus/CamFountain/MeshInstance3D/Area3D"]
+transform = Transform3D(0.999999, 4.17233e-07, -5.06639e-07, 8.9407e-07, 0.999998, 2.68221e-07, 1.01328e-06, -1.49012e-07, 0.999999, 3.8147e-06, 3.8147e-06, -0.227478)
+shape = SubResource("BoxShape3D_7oodl")
+
 [node name="SubViewport" type="SubViewport" parent="Menus/CamFountain"]
 transparent_bg = true
 size = Vector2i(1280, 720)
+render_target_update_mode = 4
 
 [node name="CamFountainMenu" parent="Menus/CamFountain/SubViewport" instance=ExtResource("5_dswq1")]
 
@@ -170,3 +181,5 @@ curve = SubResource("Curve3D_tkw6u")
 
 [node name="Follow" type="PathFollow3D" parent="PathFountainSpica"]
 transform = Transform3D(-0.996852, -0.0445939, -0.0655393, 0, 0.826767, -0.562543, 0.0792718, -0.560773, -0.824165, 23.713, 1.694, 48.668)
+
+[connection signal="input_event" from="Menus/CamFountain/MeshInstance3D/Area3D" to="Menus/CamInitial" method="_on_area_3d_input_event"]

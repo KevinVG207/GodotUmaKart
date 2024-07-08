@@ -5,6 +5,7 @@ class_name MenuCam
 @export var plane: MeshInstance3D
 @export var viewport: SubViewport
 @export var distance: float = 50
+var menu_container: Control
 
 var opacity: float:
 	set(value):
@@ -14,6 +15,7 @@ var opacity: float:
 
 func _enter_tree():
 	opacity = 0.0
+	menu_container = viewport.get_children()[0]
 
 func _process(_delta):
 	var view_rect: Rect2 = get_viewport().get_visible_rect()
@@ -29,8 +31,7 @@ func _process(_delta):
 	viewport.size = get_viewport().size
 	viewport.size_2d_override = Vector2(view_rect.size.y * aspect, view_rect.size.y)
 	
-	for child: Control in viewport.get_children():
-		child.scale = Vector2(true_scale_multi, true_scale_multi)
+	menu_container.scale = Vector2(true_scale_multi, true_scale_multi)
 	
 	plane.mesh.material.albedo_texture = viewport.get_texture()
 
@@ -38,3 +39,14 @@ func _process(_delta):
 	
 	#plane.transform = transform
 	#plane.translate(Vector3(0, 0, distance))
+
+
+func _on_area_3d_input_event(camera: Camera3D, event, _position, _normal, _shape_idx):
+	#print(event.position)
+	viewport.handle_input_locally = true
+	Input.parse_input_event(event)
+	#print(get_viewport().is_input_handled())
+	#viewport.set_process_input(true)
+	#viewport.push_unhandled_input(event)
+	#print(get_viewport().is_input_handled())
+	viewport.handle_input_locally = false
