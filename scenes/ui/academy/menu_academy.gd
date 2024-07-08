@@ -4,26 +4,40 @@ var traveling: bool = false
 var travel_time: float = 2.5
 @onready var cam: Camera3D = $ActiveCamera
 var cam_follow: PathFollow3D
-var target_cam: MenuCam
+var from_cam: MenuCam
+var to_cam: MenuCam
+
+@onready var CAM = {
+	INITIAL = $Menus/CamInitial,
+	FOUNTAIN = $Menus/CamFountain,
+	SPICA = $Menus/CamSpica
+}
 
 func _ready():
-	cam.rotation = $CamInitial.rotation
-	cam.global_position = $CamInitial.global_position
-	cam.fov = $CamInitial.fov
-	$CamInitial.opacity = 1.0
+	hide_cams()
+	
+	cam.rotation = CAM.INITIAL.rotation
+	cam.global_position = CAM.INITIAL.global_position
+	cam.fov = CAM.INITIAL.fov
+	CAM.INITIAL.opacity = 1.0
+	CAM.INITIAL.visible = true
+
+func hide_cams():
+	for camera: MenuCam in CAM.values():
+		camera.visible = false
 
 func _process(delta):
 	if traveling:
 		cam.global_position = cam_follow.global_position
 	if not traveling:
 		if Input.is_action_just_pressed("F1"):
-			start_cam_travel($CamInitial, $CamFountain, $PathInitialFountain/Follow, travel_time, false)
+			start_cam_travel(CAM.INITIAL, CAM.FOUNTAIN, $PathInitialFountain/Follow, travel_time, false)
 		elif Input.is_action_just_pressed("F2"):
-			start_cam_travel($CamFountain, $CamInitial, $PathInitialFountain/Follow, travel_time, true)
+			start_cam_travel(CAM.FOUNTAIN, CAM.INITIAL, $PathInitialFountain/Follow, travel_time, true)
 		elif Input.is_action_just_pressed("F3"):
-			start_cam_travel($CamFountain, $CamSpica, $PathFountainSpica/Follow, travel_time)
+			start_cam_travel(CAM.FOUNTAIN, CAM.SPICA, $PathFountainSpica/Follow, travel_time)
 		elif Input.is_action_just_pressed("F4"):
-			start_cam_travel($CamSpica, $CamFountain, $PathFountainSpica/Follow, travel_time, true)
+			start_cam_travel(CAM.SPICA, CAM.FOUNTAIN, $PathFountainSpica/Follow, travel_time, true)
 
 func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFollow3D, time: float, reverse: bool=false, fade_time: float=-1, wait_fade_start: bool=false, wait_fade_end: bool=false):
 	traveling = true
@@ -45,6 +59,10 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	end_cam.opacity = 0.0
 	cam.rotation = start_cam.rotation
 	cam.fov = start_cam.fov
+	
+	hide_cams()
+	start_cam.visible = true
+	end_cam.visible = true
 	tween.tween_property(start_cam, "opacity", 0.0, fade_time).set_delay(fade_delay_start).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(end_cam, "opacity", 1.0, fade_time).set_delay(fade_delay_end + wait_start).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(cam, "rotation", end_cam.rotation, time).set_delay(wait_start).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
@@ -60,7 +78,9 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	cam_follow = path_follow
 	tween.tween_property(path_follow, "progress_ratio", end_val, time).set_delay(wait_start).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 	tween.finished.connect(_on_cam_tween_finished)
-	target_cam = end_cam
+	from_cam = start_cam
+	to_cam = end_cam
 	
 func _on_cam_tween_finished():
+	from_cam.visible = false
 	traveling = false
