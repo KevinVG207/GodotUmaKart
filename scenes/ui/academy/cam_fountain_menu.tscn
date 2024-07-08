@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://doyxcgm8r6edh"]
+
+[ext_resource type="Texture2D" uid="uid://53pqjniwp6x1" path="res://icon.svg" id="1_yt7qt"]
+
+[node name="CamFountainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Icon3" type="Sprite2D" parent="."]
+position = Vector2(423, 405)
+texture = ExtResource("1_yt7qt")
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(196, 220)
+scale = Vector2(1.74609, 2.9375)
+texture = ExtResource("1_yt7qt")
+
+[node name="Icon2" type="Sprite2D" parent="."]
+position = Vector2(1042, 377)
+scale = Vector2(2.75586, 1.76562)
+texture = ExtResource("1_yt7qt")

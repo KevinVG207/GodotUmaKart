@@ -1,0 +1,166 @@
+[gd_scene load_steps=21 format=3 uid="uid://b5o18sbk4ypar"]
+
+[ext_resource type="PackedScene" uid="uid://ddwe67q5fgedw" path="res://assets/ui/tracen/tracen_academy.tscn" id="1_2jrec"]
+[ext_resource type="Script" path="res://scenes/ui/academy/menu_academy.gd" id="1_ueiln"]
+[ext_resource type="Script" path="res://scenes/ui/academy/MenuCam.gd" id="3_w6f36"]
+[ext_resource type="PackedScene" uid="uid://d2pr13dqnvme2" path="res://scenes/ui/academy/cam_initial_menu.tscn" id="4_j2yy8"]
+[ext_resource type="PackedScene" uid="uid://doyxcgm8r6edh" path="res://scenes/ui/academy/cam_fountain_menu.tscn" id="5_dswq1"]
+[ext_resource type="PackedScene" uid="uid://dhi2e4527p0wh" path="res://scenes/ui/academy/cam_spica_menu.tscn" id="6_wc85s"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wyxeu"]
+sky_top_color = Color(5.77569e-07, 0.622787, 0.968066, 1)
+sky_horizon_color = Color(0.577675, 0.844434, 1, 1)
+ground_bottom_color = Color(0.318745, 0.516423, 0.932357, 1)
+ground_horizon_color = Color(0.2302, 0.55642, 0.867941, 1)
+
+[sub_resource type="Sky" id="Sky_d7v63"]
+sky_material = SubResource("ProceduralSkyMaterial_wyxeu")
+
+[sub_resource type="Environment" id="Environment_51inu"]
+background_mode = 2
+sky = SubResource("Sky_d7v63")
+ambient_light_source = 2
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.1
+reflected_light_source = 1
+ssao_enabled = true
+ssao_intensity = 1.0
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_oi12v"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gbc1q"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_oi12v")
+disable_receive_shadows = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_5u4un"]
+material = SubResource("StandardMaterial3D_gbc1q")
+size = Vector2(1, 1)
+orientation = 2
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_isl1y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fqnba"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_isl1y")
+disable_receive_shadows = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_73ltu"]
+material = SubResource("StandardMaterial3D_fqnba")
+size = Vector2(1, 1)
+orientation = 2
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_j8f75"]
+viewport_path = NodePath("CamInitial/SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yx3x4"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_j8f75")
+disable_receive_shadows = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_8n56p"]
+material = SubResource("StandardMaterial3D_yx3x4")
+size = Vector2(1, 1)
+orientation = 2
+
+[sub_resource type="Curve3D" id="Curve3D_iuq7k"]
+_data = {
+"points": PackedVector3Array(-14.9681, 22.1026, 2.46017, 14.9681, -22.1026, -2.46017, -31.392, 77.094, 133.588, -4.65008, 8.25408, 11.066, 4.65008, -8.25408, -11.066, 11.9328, 15.7281, 83.4031, -2.45918, -1.47195, 15.7749, 2.45918, 1.47195, -15.7749, 23.713, 1.694, 48.668),
+"tilts": PackedFloat32Array(0, 0, 0)
+}
+point_count = 3
+
+[sub_resource type="Curve3D" id="Curve3D_tkw6u"]
+_data = {
+"points": PackedVector3Array(-5.48965, -10.5998, -18.9156, 5.48965, 10.5998, 18.9156, 23.713, 1.694, 48.668, -10.3907, -7.49095, -10.0309, 10.3907, 7.49095, 10.0309, 41.8523, 33.0258, 89.4888, -19.6032, 9.10396, -4.0643, 19.6032, -9.10396, 4.0643, 95.6236, 29.1558, 123.504, -38.0823, 12.9552, -0.251068, 38.0823, -12.9552, 0.251068, 168.439, 1.024, 130.088),
+"tilts": PackedFloat32Array(0, 0, 0, 0)
+}
+point_count = 4
+
+[node name="MenuAcademy" type="Node3D"]
+script = ExtResource("1_ueiln")
+
+[node name="tracen-academy" parent="." instance=ExtResource("1_2jrec")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.798667, -0.355572, 0.485489, -0.268923, 0.510835, 0.816534, -0.538341, -0.782698, 0.312365, 0, 53.3748, 37.9698)
+shadow_enabled = true
+shadow_opacity = 0.23
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_51inu")
+
+[node name="ActiveCamera" type="Camera3D" parent="."]
+cull_mask = 1023
+
+[node name="CamInitial" type="Camera3D" parent="." node_paths=PackedStringArray("plane", "viewport")]
+transform = Transform3D(0.87462, 0.271102, -0.401925, 0, 0.829038, 0.559193, 0.48481, -0.489081, 0.725093, -31.392, 77.094, 133.588)
+script = ExtResource("3_w6f36")
+plane = NodePath("MeshInstance3D")
+viewport = NodePath("SubViewport")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CamInitial"]
+transform = Transform3D(1, 0, 0, 1.49012e-08, 1, -2.98023e-08, 2.98023e-08, 2.98023e-08, 1, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_5u4un")
+
+[node name="SubViewport" type="SubViewport" parent="CamInitial"]
+transparent_bg = true
+size = Vector2i(1280, 7820)
+
+[node name="CamInitialMenu" parent="CamInitial/SubViewport" instance=ExtResource("4_j2yy8")]
+
+[node name="CamFountain" type="Camera3D" parent="." node_paths=PackedStringArray("plane", "viewport")]
+transform = Transform3D(0.950516, 0.0367853, 0.308491, 0, 0.992966, -0.118404, -0.310676, 0.112545, 0.943829, 23.713, 1.694, 48.668)
+script = ExtResource("3_w6f36")
+plane = NodePath("MeshInstance3D")
+viewport = NodePath("SubViewport")
+distance = 10.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CamFountain"]
+transform = Transform3D(1, 0, 0, 1.49012e-08, 1, -2.98023e-08, 2.98023e-08, 2.98023e-08, 1, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_73ltu")
+
+[node name="SubViewport" type="SubViewport" parent="CamFountain"]
+transparent_bg = true
+size = Vector2i(1280, 720)
+
+[node name="CamFountainMenu" parent="CamFountain/SubViewport" instance=ExtResource("5_dswq1")]
+
+[node name="CamSpica" type="Camera3D" parent="." node_paths=PackedStringArray("plane", "viewport")]
+transform = Transform3D(0.761538, 0, -0.64812, 0, 1, 0, 0.64812, 0, 0.761538, 168.439, 1.024, 130.088)
+script = ExtResource("3_w6f36")
+plane = NodePath("MeshInstance3D")
+viewport = NodePath("MeshInstance3D/SubViewport")
+distance = 5.0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CamSpica"]
+transform = Transform3D(1, 0, 0, 1.49012e-08, 1, -2.98023e-08, 2.98023e-08, 2.98023e-08, 1, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_8n56p")
+
+[node name="SubViewport" type="SubViewport" parent="CamSpica/MeshInstance3D"]
+transparent_bg = true
+size = Vector2i(1280, 720)
+
+[node name="CamSpicaMenu" parent="CamSpica/MeshInstance3D/SubViewport" instance=ExtResource("6_wc85s")]
+
+[node name="PathInitialFountain" type="Path3D" parent="."]
+curve = SubResource("Curve3D_iuq7k")
+
+[node name="Follow" type="PathFollow3D" parent="PathInitialFountain"]
+transform = Transform3D(0.162185, 0.813588, -0.558363, 0, 0.565855, 0.824504, 0.986759, -0.133722, 0.0917732, -31.392, 77.094, 133.588)
+
+[node name="PathFountainSpica" type="Path3D" parent="."]
+curve = SubResource("Curve3D_tkw6u")
+
+[node name="Follow" type="PathFollow3D" parent="PathFountainSpica"]
+transform = Transform3D(-0.960372, -0.132084, -0.245433, 7.45057e-09, 0.880579, -0.473899, 0.278717, -0.45512, -0.845684, 23.713, 1.694, 48.668)

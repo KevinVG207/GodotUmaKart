@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://ddwe67q5fgedw"]
+
+[ext_resource type="PackedScene" uid="uid://bc2m1ye1saxq" path="res://assets/ui/tracen/tracen-academy.blend" id="1_pncf6"]
+
+[node name="tracen-academy" instance=ExtResource("1_pncf6")]
