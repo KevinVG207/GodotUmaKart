@@ -10,56 +10,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_1cqih")
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -415.0
-offset_right = 415.0
-offset_bottom = 264.0
-grow_horizontal = 2
-theme_override_constants/margin_top = 55
-
-[node name="GridContainer" type="GridContainer" parent="MarginContainer"]
-layout_mode = 2
-theme_override_constants/h_separation = 230
-columns = 2
-
-[node name="Control" type="VBoxContainer" parent="MarginContainer/GridContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/GridContainer/Control"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "HOME_1P_OFFLINE_VS"
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="VSButton" type="Button" parent="MarginContainer/GridContainer/Control"]
-custom_minimum_size = Vector2(300, 150)
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "OFFLINE"
-
-[node name="Control2" type="VBoxContainer" parent="MarginContainer/GridContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MarginContainer/GridContainer/Control2"]
-custom_minimum_size = Vector2(300, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "HOME_1P_ONLINE_VS"
-horizontal_alignment = 1
-autowrap_mode = 2
-
-[node name="OnlineButton" type="Button" parent="MarginContainer/GridContainer/Control2"]
-custom_minimum_size = Vector2(300, 150)
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "ONLINE"
+single_scene = "res://scenes/levels/race/Wicked_Woods/Wicked_Woods.tscn"
+online_scene = "res://scenes/ui/lobby/lobby.tscn"
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -80,9 +32,71 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -52.0
-offset_top = 34.0
+offset_top = 29.0
 offset_right = -7.0
-offset_bottom = 54.0
+offset_bottom = 49.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 20
 alignment = 2
+
+[node name="Label2" type="Label" parent="."]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -395.0
+offset_top = 83.0
+offset_right = -95.0
+offset_bottom = 138.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "HOME_1P_OFFLINE_VS"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="VSButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -395.0
+offset_top = 149.0
+offset_right = -95.0
+offset_bottom = 299.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "OFFLINE"
+
+[node name="Label3" type="Label" parent="."]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 95.0
+offset_top = 83.0
+offset_right = 395.0
+offset_bottom = 138.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "HOME_1P_ONLINE_VS"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OnlineButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 95.0
+offset_top = 149.0
+offset_right = 395.0
+offset_bottom = 299.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "ONLINE"

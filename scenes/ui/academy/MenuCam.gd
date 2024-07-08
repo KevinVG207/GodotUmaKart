@@ -6,6 +6,7 @@ class_name MenuCam
 @export var viewport: SubViewport
 @export var distance: float = 50
 var menu_container: Control
+var scale_multi: float = 1.0
 
 var opacity: float:
 	set(value):
@@ -27,6 +28,7 @@ func _process(_delta):
 	plane.scale = Vector3(width, height, 1.0)
 	
 	var true_scale_multi: float = get_viewport().size.x / view_rect.size.x
+	scale_multi = true_scale_multi
 	
 	viewport.size = get_viewport().size
 	viewport.size_2d_override = Vector2(view_rect.size.y * aspect, view_rect.size.y)
@@ -41,12 +43,8 @@ func _process(_delta):
 	#plane.translate(Vector3(0, 0, distance))
 
 
-func _on_area_3d_input_event(camera: Camera3D, event, _position, _normal, _shape_idx):
-	#print(event.position)
+func _on_area_3d_input_event(_camera, event: InputEvent, _position, _normal, _shape_idx):
 	viewport.handle_input_locally = true
-	Input.parse_input_event(event)
-	#print(get_viewport().is_input_handled())
-	#viewport.set_process_input(true)
-	#viewport.push_unhandled_input(event)
-	#print(get_viewport().is_input_handled())
-	viewport.handle_input_locally = false
+	event.position *= scale_multi
+	event.global_position = event.position
+	viewport.push_input(event, true)

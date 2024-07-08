@@ -1,9 +1,10 @@
-[gd_scene load_steps=22 format=3 uid="uid://b5o18sbk4ypar"]
+[gd_scene load_steps=23 format=3 uid="uid://b5o18sbk4ypar"]
 
 [ext_resource type="PackedScene" uid="uid://ddwe67q5fgedw" path="res://assets/ui/tracen/tracen_academy.tscn" id="1_2jrec"]
 [ext_resource type="Script" path="res://scenes/ui/academy/menu_academy.gd" id="1_ueiln"]
 [ext_resource type="Script" path="res://scenes/ui/academy/MenuCam.gd" id="3_w6f36"]
 [ext_resource type="PackedScene" uid="uid://d2pr13dqnvme2" path="res://scenes/ui/academy/cam_initial_menu.tscn" id="4_j2yy8"]
+[ext_resource type="Script" path="res://scenes/ui/academy/subviewport.tres.gd" id="5_6ym8v"]
 [ext_resource type="PackedScene" uid="uid://doyxcgm8r6edh" path="res://scenes/ui/academy/cam_fountain_menu.tscn" id="5_dswq1"]
 [ext_resource type="PackedScene" uid="uid://dhi2e4527p0wh" path="res://scenes/ui/academy/cam_spica_menu.tscn" id="6_wc85s"]
 
@@ -98,7 +99,10 @@ transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.798667, -0.355572, 0.485489, -0.268923, 0.510835, 0.816534, -0.538341, -0.782698, 0.312365, 0, 53.3748, 37.9698)
 shadow_enabled = true
-shadow_opacity = 0.23
+shadow_opacity = 0.43
+directional_shadow_mode = 1
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 200.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_51inu")
@@ -138,7 +142,6 @@ cast_shadow = 0
 mesh = SubResource("PlaneMesh_73ltu")
 
 [node name="Area3D" type="Area3D" parent="Menus/CamFountain/MeshInstance3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Menus/CamFountain/MeshInstance3D/Area3D"]
 transform = Transform3D(0.999999, 4.17233e-07, -5.06639e-07, 8.9407e-07, 0.999998, 2.68221e-07, 1.01328e-06, -1.49012e-07, 0.999999, 3.8147e-06, 3.8147e-06, -0.227478)
@@ -148,6 +151,7 @@ shape = SubResource("BoxShape3D_7oodl")
 transparent_bg = true
 size = Vector2i(1280, 720)
 render_target_update_mode = 4
+script = ExtResource("5_6ym8v")
 
 [node name="CamFountainMenu" parent="Menus/CamFountain/SubViewport" instance=ExtResource("5_dswq1")]
 
@@ -180,6 +184,6 @@ transform = Transform3D(0.162185, 0.813588, -0.558363, 0, 0.565855, 0.824504, 0.
 curve = SubResource("Curve3D_tkw6u")
 
 [node name="Follow" type="PathFollow3D" parent="PathFountainSpica"]
-transform = Transform3D(-0.996852, -0.0445939, -0.0655393, 0, 0.826767, -0.562543, 0.0792718, -0.560773, -0.824165, 23.713, 1.694, 48.668)
+transform = Transform3D(-0.996852, -0.0445939, -0.0655394, 0, 0.826767, -0.562543, 0.0792718, -0.560773, -0.824165, 23.713, 1.694, 48.668)
 
-[connection signal="input_event" from="Menus/CamFountain/MeshInstance3D/Area3D" to="Menus/CamInitial" method="_on_area_3d_input_event"]
+[connection signal="input_event" from="Menus/CamFountain/MeshInstance3D/Area3D" to="Menus/CamFountain" method="_on_area_3d_input_event"]
