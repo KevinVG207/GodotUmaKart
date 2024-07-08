@@ -5,16 +5,17 @@ var travel_time: float = 2.5
 @onready var cam: Camera3D = $ActiveCamera
 var cam_follow: PathFollow3D
 var from_cam: MenuCam
-var to_cam: MenuCam
+@onready var to_cam: MenuCam = %CamInitial
 
 func _ready():
 	hide_cams()
+	$EETimer.start()
 	
-	cam.rotation = %CamInitial.rotation
-	cam.global_position = %CamInitial.global_position
-	cam.fov = %CamInitial.fov
-	%CamInitial.opacity = 1.0
-	%CamInitial.visible = true
+	cam.rotation = to_cam.rotation
+	cam.global_position = to_cam.global_position
+	cam.fov = to_cam.fov
+	to_cam.opacity = 1.0
+	to_cam.visible = true
 
 func hide_cams():
 	for camera: MenuCam in $Menus.get_children():
@@ -25,9 +26,9 @@ func _process(delta):
 		cam.global_position = cam_follow.global_position
 	if not traveling:
 		if Input.is_action_just_pressed("F1"):
-			start_cam_travel(%CamInitial, %CamFountain, $PathInitialFountain/Follow, travel_time, false)
+			from_title()
 		elif Input.is_action_just_pressed("F2"):
-			start_cam_travel(%CamFountain, %CamInitial, $PathInitialFountain/Follow, travel_time, true)
+			to_title()
 		elif Input.is_action_just_pressed("F3"):
 			start_cam_travel(%CamFountain, %CamSpica, $PathFountainSpica/Follow, travel_time)
 		elif Input.is_action_just_pressed("F4"):
@@ -75,6 +76,23 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	from_cam = start_cam
 	to_cam = end_cam
 	
+func to_title():
+	start_cam_travel(%CamFountain, %CamInitial, $PathInitialFountain/Follow, travel_time, true)
+	$EETimer.start()
+	
+
+func from_title():
+	start_cam_travel(%CamInitial, %CamFountain, $PathInitialFountain/Follow, travel_time, false)
+	
 func _on_cam_tween_finished():
 	from_cam.visible = false
 	traveling = false
+
+func _input(event: InputEvent):
+	if to_cam == %CamInitial and !traveling:
+		if event is InputEventKey or event is InputEventMouseButton:
+			from_title()
+
+
+func _on_ee_timer_timeout():
+	$Menus/CamInitial/SubViewport/CamInitialMenu/PressKey.text = tr("PRESS_ANY2")

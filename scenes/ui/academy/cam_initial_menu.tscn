@@ -4,9 +4,13 @@
 
 [sub_resource type="LabelSettings" id="LabelSettings_oj0c4"]
 font_size = 100
+outline_size = 20
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_i61yk"]
 font_size = 50
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
 
 [node name="CamInitialMenu" type="Control"]
 layout_mode = 3
@@ -16,21 +20,21 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="."]
+[node name="Title" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -425.5
-offset_top = 105.0
-offset_right = 425.5
-offset_bottom = 242.0
+offset_left = -610.0
+offset_top = 33.0
+offset_right = 610.0
+offset_bottom = 170.0
 grow_horizontal = 2
-text = "LOGO GOES HERE"
+text = "GAME_TITLE"
 label_settings = SubResource("LabelSettings_oj0c4")
 horizontal_alignment = 1
 
-[node name="Label2" type="Label" parent="."]
+[node name="PressKey" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -43,7 +47,7 @@ offset_right = 206.0
 offset_bottom = 156.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Press any button"
+text = "PRESS_ANY"
 label_settings = SubResource("LabelSettings_i61yk")
 horizontal_alignment = 1
 
@@ -54,9 +58,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -510.0
+offset_left = -575.0
 offset_top = 10.0
-offset_right = -322.0
+offset_right = -387.0
 offset_bottom = 198.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -70,9 +74,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 348.0
+offset_left = 392.0
 offset_top = -40.0
-offset_right = 536.0
+offset_right = 580.0
 offset_bottom = 148.0
 grow_horizontal = 2
 grow_vertical = 2

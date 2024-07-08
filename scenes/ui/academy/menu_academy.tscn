@@ -100,7 +100,8 @@ shadow_enabled = true
 shadow_opacity = 0.43
 directional_shadow_mode = 1
 directional_shadow_blend_splits = true
-directional_shadow_max_distance = 200.0
+directional_shadow_max_distance = 300.0
+directional_shadow_pancake_size = 50.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_51inu")
@@ -112,7 +113,7 @@ cull_mask = 1023
 
 [node name="CamInitial" parent="Menus" instance=ExtResource("5_t5vkb")]
 unique_name_in_owner = true
-transform = Transform3D(0.87462, 0.271102, -0.401925, 0, 0.829038, 0.559193, 0.48481, -0.489081, 0.725093, -31.392, 77.094, 133.588)
+transform = Transform3D(0.87462, 0.246788, -0.417296, 0, 0.860742, 0.509041, 0.48481, -0.445218, 0.752822, -31.392, 77.094, 133.588)
 distance = 50.0
 
 [node name="Plane" parent="Menus/CamInitial" index="0"]
@@ -150,6 +151,12 @@ curve = SubResource("Curve3D_tkw6u")
 
 [node name="Follow" type="PathFollow3D" parent="PathFountainSpica"]
 transform = Transform3D(-0.996852, -0.0445939, -0.0655394, 0, 0.826767, -0.562543, 0.0792718, -0.560773, -0.824165, 23.713, 1.694, 48.668)
+
+[node name="EETimer" type="Timer" parent="."]
+wait_time = 60.0
+one_shot = true
+
+[connection signal="timeout" from="EETimer" to="." method="_on_ee_timer_timeout"]
 
 [editable path="Menus/CamInitial"]
 [editable path="Menus/CamFountain"]
