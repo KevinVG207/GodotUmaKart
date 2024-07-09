@@ -19,10 +19,9 @@ size = Vector2(1, 1)
 orientation = 2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_7oodl"]
-size = Vector3(1, 1, 0.545044)
+size = Vector3(1, 1, 0)
 
 [node name="MenuCamera" type="Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("1_w8mpw")
 
 [node name="Plane" type="MeshInstance3D" parent="."]
@@ -32,7 +31,7 @@ mesh = SubResource("PlaneMesh_73ltu")
 [node name="Area3D" type="Area3D" parent="Plane"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Plane/Area3D"]
-transform = Transform3D(0.999999, 4.17233e-07, -5.06639e-07, 8.9407e-07, 0.999998, 2.68221e-07, 1.01328e-06, -1.49012e-07, 0.999999, 3.8147e-06, 3.8147e-06, -0.227478)
+transform = Transform3D(0.999999, 4.17233e-07, -5.06639e-07, 8.9407e-07, 0.999998, 2.68221e-07, 1.01328e-06, -1.49012e-07, 0.999999, 0, 0, 0)
 shape = SubResource("BoxShape3D_7oodl")
 
 [node name="SubViewport" type="SubViewport" parent="."]

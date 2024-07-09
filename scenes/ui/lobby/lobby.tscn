@@ -3,8 +3,13 @@
 [ext_resource type="Script" path="res://scenes/ui/lobby/lobby.gd" id="1_5qmws"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_r5fd3"]
 
-[node name="Lobby" type="CanvasLayer"]
-layer = 11
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_5qmws")
 info_box = ExtResource("2_r5fd3")
 
@@ -18,6 +23,7 @@ text = "LOBBY_LOBBY"
 metadata/_edit_lock_ = true
 
 [node name="Status" type="Label" parent="."]
+layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -31,6 +37,7 @@ horizontal_alignment = 1
 metadata/_edit_lock_ = true
 
 [node name="TimeLeft" type="Label" parent="."]
+layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -44,6 +51,7 @@ horizontal_alignment = 2
 metadata/_edit_lock_ = true
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -65,6 +73,7 @@ metadata/_edit_lock_ = true
 
 [node name="MatchmakeButton" type="Button" parent="."]
 visible = false
+layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -82,6 +91,7 @@ metadata/_edit_lock_ = true
 
 [node name="VoteButton" type="Button" parent="."]
 visible = false
+layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -100,6 +110,7 @@ metadata/_edit_lock_ = true
 
 [node name="LeaveButton" type="Button" parent="."]
 visible = false
+layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -121,6 +132,7 @@ wait_time = 60.0
 one_shot = true
 
 [node name="PingBox" type="SpinBox" parent="."]
+layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -133,6 +145,7 @@ max_value = 1000.0
 step = 100.0
 
 [node name="UsernameContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0

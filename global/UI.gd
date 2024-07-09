@@ -92,9 +92,9 @@ func swap_scenes():
 	get_tree().change_scene_to_packed(ResourceLoader.load_threaded_get(_next_scene))
 	transition_instance.progress = 1.0
 	is_loading = false
+	_next_scene = ""
 
 func end_scene_change():
-	_next_scene = ""
 	if transition_instance:
 		transition_instance.end()
 		transition_instance = null

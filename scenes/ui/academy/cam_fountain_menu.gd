@@ -22,7 +22,8 @@ func _on_vs_button_pressed():
 
 
 func _on_online_button_pressed():
-	UI.change_scene(online_scene)
+	#UI.change_scene(online_scene)
+	Global.goto_lobby_screen.emit()
 
 func parse_input(event: InputEvent):
 	print(event)

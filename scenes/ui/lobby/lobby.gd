@@ -1,5 +1,6 @@
-extends CanvasLayer
+extends Control
 
+const STATE_IDLE = -99
 const STATE_RESET = -2
 const STATE_RESETTING = -1
 const STATE_INITIAL = 0
@@ -24,7 +25,7 @@ class lobbyOp:
 	const SERVER_ABORT = 4
 
 
-var state = STATE_RESETTING
+var state: int
 var vote_timeout_started = false
 
 var cur_vote = ""
@@ -36,8 +37,15 @@ var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
 
 func _ready():
+	state = STATE_IDLE
 	if Network.ready_match:
 		state = STATE_MATCHMAKING_COMLETE
+	Global.goto_lobby_screen.connect(start)
+
+func start():
+	if state != STATE_IDLE:
+		return
+	state = STATE_RESETTING
 
 func _process(_delta):
 	# Deal with displaying things
@@ -249,7 +257,7 @@ func handle_vote_data(data: Dictionary):
 			remove_player(user_id)
 	
 	for p in presences.values():
-		print(p.userId, " ", user_data)
+		#print(p.userId, " ", user_data)
 		if p.userId in cur_user_ids or !(p.userId in user_data):
 			continue
 		add_player(user_data[p.userId].displayName, p.userId)
@@ -325,10 +333,15 @@ func switch_scene():
 
 func reload():
 	await Network.leave_match()
-	await Network.reset()
-	get_tree().reload_current_scene()
+	#await Network.reset()
+	#var parent: Node = get_parent()
+	#parent.remove_child(self)
+	#parent.add_child(load("res://scenes/ui/lobby/lobby.tscn").instantiate())
+	#queue_free()
+	state = STATE_RESETTING
 
 func _on_leave_button_pressed():
+	$LeaveButton.visible = false
 	await reload()
 
 func _on_socket_closed():

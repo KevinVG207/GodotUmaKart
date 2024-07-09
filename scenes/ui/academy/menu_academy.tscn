@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://b5o18sbk4ypar"]
+[gd_scene load_steps=23 format=3 uid="uid://b5o18sbk4ypar"]
 
 [ext_resource type="PackedScene" uid="uid://ddwe67q5fgedw" path="res://assets/ui/tracen/tracen_academy.tscn" id="1_2jrec"]
 [ext_resource type="Script" path="res://scenes/ui/academy/menu_academy.gd" id="1_ueiln"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://doyxcgm8r6edh" path="res://scenes/ui/academy/cam_fountain_menu.tscn" id="5_dswq1"]
 [ext_resource type="PackedScene" uid="uid://b7pfkfsy5a05" path="res://scenes/ui/academy/menu_camera.tscn" id="5_t5vkb"]
 [ext_resource type="PackedScene" uid="uid://dhi2e4527p0wh" path="res://scenes/ui/academy/cam_spica_menu.tscn" id="6_wc85s"]
+[ext_resource type="PackedScene" uid="uid://dqhi3idf6syay" path="res://scenes/ui/lobby/lobby.tscn" id="7_dkyxa"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_wyxeu"]
 sky_top_color = Color(5.77569e-07, 0.622787, 0.968066, 1)
@@ -16,12 +17,12 @@ ground_horizon_color = Color(0.2302, 0.55642, 0.867941, 1)
 [sub_resource type="Sky" id="Sky_d7v63"]
 sky_material = SubResource("ProceduralSkyMaterial_wyxeu")
 
-[sub_resource type="Environment" id="Environment_51inu"]
+[sub_resource type="Environment" id="Environment_jffvp"]
 background_mode = 2
 sky = SubResource("Sky_d7v63")
 ambient_light_source = 2
 ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 0.1
+ambient_light_energy = 0.2
 reflected_light_source = 1
 ssao_enabled = true
 ssao_intensity = 1.0
@@ -88,6 +89,13 @@ _data = {
 }
 point_count = 2
 
+[sub_resource type="Curve3D" id="Curve3D_vhdx5"]
+_data = {
+"points": PackedVector3Array(10.717, -14.7231, 43.7189, -10.717, 14.7231, -43.7189, 23.713, 1.694, 48.668, -17.4016, 14.0056, -13.943, 17.4016, -14.0056, 13.943, 52.499, 1.364, 8.208),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
 [node name="MenuAcademy" type="Node3D"]
 script = ExtResource("1_ueiln")
 
@@ -95,7 +103,7 @@ script = ExtResource("1_ueiln")
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.798667, -0.355572, 0.485489, -0.268923, 0.510835, 0.816534, -0.538341, -0.782698, 0.312365, 0, 53.3748, 37.9698)
+transform = Transform3D(0.645698, 0.636256, -0.4222, 4.19095e-08, 0.552912, 0.83324, 0.763593, -0.538021, 0.357014, 4.93449, 60.2594, 35.6025)
 shadow_enabled = true
 shadow_opacity = 0.43
 directional_shadow_mode = 1
@@ -104,7 +112,7 @@ directional_shadow_max_distance = 300.0
 directional_shadow_pancake_size = 50.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_51inu")
+environment = SubResource("Environment_jffvp")
 
 [node name="ActiveCamera" type="Camera3D" parent="."]
 cull_mask = 1023
@@ -140,6 +148,17 @@ mesh = SubResource("PlaneMesh_2aa2i")
 
 [node name="CamSpicaMenu" parent="Menus/CamSpica/SubViewport" index="0" instance=ExtResource("6_wc85s")]
 
+[node name="CamTrunk" parent="Menus" instance=ExtResource("5_t5vkb")]
+unique_name_in_owner = true
+transform = Transform3D(-0.866897, 0, -0.498488, 0, 1, 0, 0.498488, 0, -0.866897, 52.499, 1.364, 8.208)
+fov = 40.5
+distance = 5.0
+
+[node name="Plane" parent="Menus/CamTrunk" index="0"]
+mesh = SubResource("PlaneMesh_2aa2i")
+
+[node name="Lobby" parent="Menus/CamTrunk/SubViewport" index="0" instance=ExtResource("7_dkyxa")]
+
 [node name="PathInitialFountain" type="Path3D" parent="."]
 curve = SubResource("Curve3D_iuq7k")
 
@@ -152,6 +171,12 @@ curve = SubResource("Curve3D_tkw6u")
 [node name="Follow" type="PathFollow3D" parent="PathFountainSpica"]
 transform = Transform3D(-0.996852, -0.0445939, -0.0655394, 0, 0.826767, -0.562543, 0.0792718, -0.560773, -0.824165, 23.713, 1.694, 48.668)
 
+[node name="PathFountainTrunk" type="Path3D" parent="."]
+curve = SubResource("Curve3D_vhdx5")
+
+[node name="Follow" type="PathFollow3D" parent="PathFountainTrunk"]
+transform = Transform3D(0.971243, 0.0740148, 0.226288, 0, 0.95045, -0.310875, -0.238085, 0.301936, 0.923119, 23.713, 1.694, 48.668)
+
 [node name="EETimer" type="Timer" parent="."]
 wait_time = 60.0
 one_shot = true
@@ -161,3 +186,4 @@ one_shot = true
 [editable path="Menus/CamInitial"]
 [editable path="Menus/CamFountain"]
 [editable path="Menus/CamSpica"]
+[editable path="Menus/CamTrunk"]

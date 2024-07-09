@@ -16,25 +16,31 @@ func _ready():
 	cam.fov = to_cam.fov
 	to_cam.opacity = 1.0
 	to_cam.visible = true
+	
+	Global.goto_lobby_screen.connect(fountain_to_trunk)
 
 func hide_cams():
 	for camera: MenuCam in $Menus.get_children():
 		camera.visible = false
+		camera.click_area.input_ray_pickable = false
 
 func _process(delta):
 	if traveling:
 		cam.global_position = cam_follow.global_position
 	if not traveling:
 		if Input.is_action_just_pressed("F1"):
-			from_title()
+			title_to_fountain()
 		elif Input.is_action_just_pressed("F2"):
-			to_title()
+			fountain_to_title()
 		elif Input.is_action_just_pressed("F3"):
 			start_cam_travel(%CamFountain, %CamSpica, $PathFountainSpica/Follow, travel_time)
 		elif Input.is_action_just_pressed("F4"):
 			start_cam_travel(%CamSpica, %CamFountain, $PathFountainSpica/Follow, travel_time, true)
 
 func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFollow3D, time: float, reverse: bool=false, fade_time: float=-1, wait_fade_start: bool=false, wait_fade_end: bool=false):
+	if traveling:
+		return
+
 	traveling = true
 	if fade_time < 0:
 		fade_time = time/2
@@ -62,6 +68,9 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	tween.tween_property(end_cam, "opacity", 1.0, fade_time).set_delay(fade_delay_end + wait_start).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(cam, "rotation", end_cam.rotation, time).set_delay(wait_start).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(cam, "fov", end_cam.fov, time).set_delay(wait_start).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
+	var callback = func():
+		end_cam.click_area.input_ray_pickable = true
+	tween.tween_callback(callback).set_delay(fade_delay_end + wait_start)
 	
 	var end_val = 1.0
 	if !reverse:
@@ -76,14 +85,19 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	from_cam = start_cam
 	to_cam = end_cam
 	
-func to_title():
+func fountain_to_title():
 	start_cam_travel(%CamFountain, %CamInitial, $PathInitialFountain/Follow, travel_time, true)
 	$EETimer.start()
-	
 
-func from_title():
-	start_cam_travel(%CamInitial, %CamFountain, $PathInitialFountain/Follow, travel_time, false)
-	
+func title_to_fountain():
+	start_cam_travel(%CamInitial, %CamFountain, $PathInitialFountain/Follow, travel_time)
+
+func fountain_to_trunk():
+	start_cam_travel(%CamFountain, %CamTrunk, $PathFountainTrunk/Follow, travel_time/2)
+
+func trunk_to_fountain():
+	start_cam_travel(%CamTrunk, %CamFountain, $PathFountainTrunk/Follow, travel_time/2, true)
+
 func _on_cam_tween_finished():
 	from_cam.visible = false
 	traveling = false
@@ -91,7 +105,7 @@ func _on_cam_tween_finished():
 func _input(event: InputEvent):
 	if to_cam == %CamInitial and !traveling:
 		if event is InputEventKey or event is InputEventMouseButton:
-			from_title()
+			title_to_fountain()
 
 
 func _on_ee_timer_timeout():

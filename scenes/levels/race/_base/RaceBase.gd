@@ -90,7 +90,7 @@ const UPDATE_STATES = [
 	STATE_RACE
 ]
 
-var state = STATE_INITIAL
+var state: int = STATE_INITIAL
 
 @onready var map_camera: Camera3D = $MapCamera
 
@@ -594,30 +594,39 @@ func get_starting_order():
 	return []
 
 func join():
+	print("a")
 	starting_order = get_starting_order()
+	print("b")
 	setup_vehicles()
+	print("c")
 	Network.next_match_data = {}
-	
+	print("d")
 	if Global.MODE1 == Global.MODE1_OFFLINE:
+		print("e")
 		state = STATE_COUNTDOWN
 		return
 
+	print("f")
 	var res: bool = await Network.join_match(Network.ready_match)
 	
 	Network.socket.received_match_state.connect(_on_match_state)
-
+	print("g")
 	if not res or not Network.cur_match:
 		# Disconnect functions
+		print("ERR: Could not connect to race")
+		Debug.print("Could not connect to race")
 		Network.socket.received_match_state.disconnect(_on_match_state)
 
 		state = STATE_DISCONNECT
 		return
-	
+	print("i")
 	if spectate:
+		print("j")
 		state = STATE_SPECTATING
 		return
-
+	print("k")
 	state = STATE_CAN_READY
+	print("l ", state)
 	return
 
 func send_ready():

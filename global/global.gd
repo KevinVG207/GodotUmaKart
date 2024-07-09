@@ -1,5 +1,7 @@
 extends Node
 
+signal goto_lobby_screen
+
 var player_count = 12
 
 var randPing = 0

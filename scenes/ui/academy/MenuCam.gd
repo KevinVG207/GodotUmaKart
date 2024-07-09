@@ -3,7 +3,9 @@ extends Camera3D
 class_name MenuCam
 
 @export var distance: float = 10
-var menu_container: Control
+var menu_container: Control:
+	get:
+		return viewport.get_children()[0]
 var scale_multi: float = 1.0
 
 @onready var plane: MeshInstance3D = $Plane
@@ -12,15 +14,12 @@ var scale_multi: float = 1.0
 
 var opacity: float:
 	set(value):
-		print(self, " ", value)
 		plane.transparency = 1.0 - value
 	get:
 		return 1.0 - plane.transparency
 
 func _ready():
-	print(self)
 	opacity = 0.0
-	menu_container = viewport.get_children()[0]
 	click_area.input_event.connect(_on_area_3d_input_event)
 
 func _process(_delta):

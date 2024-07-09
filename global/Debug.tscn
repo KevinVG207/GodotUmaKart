@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://global/Debug.gd" id="1_gxon6"]
 
 [node name="Debug" type="CanvasLayer"]
-layer = 10
+layer = 128
 script = ExtResource("1_gxon6")
 
 [node name="EraseTimer" type="Timer" parent="."]
