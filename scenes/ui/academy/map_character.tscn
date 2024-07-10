@@ -1,0 +1,46 @@
+[gd_scene load_steps=5 format=3 uid="uid://w4pcjmmn0rkr"]
+
+[ext_resource type="Script" path="res://scenes/ui/academy/map_character.gd" id="1_fp7q5"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_dc0rv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0w345"]
+resource_local_to_scene = true
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_tdh68"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_0w345")
+
+[node name="MapCharacter" type="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+collision_layer = 2
+script = ExtResource("1_fp7q5")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_dc0rv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_tdh68")
+
+[node name="NavAgent" type="NavigationAgent3D" parent="."]
+path_desired_distance = 3.0
+path_max_distance = 10.01
+path_postprocessing = 1
+simplify_path = true
+simplify_epsilon = 2.0
+height = 2.0
+radius = 1.0
+neighbor_distance = 10.0
+max_neighbors = 3
+debug_enabled = true
+
+[node name="IdleTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="StopTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="target_reached" from="NavAgent" to="." method="_on_nav_agent_target_reached"]
+[connection signal="waypoint_reached" from="NavAgent" to="." method="_on_nav_agent_waypoint_reached"]
+[connection signal="timeout" from="IdleTimer" to="." method="_on_idle_timer_timeout"]
+[connection signal="timeout" from="StopTimer" to="." method="_on_stop_timer_timeout"]

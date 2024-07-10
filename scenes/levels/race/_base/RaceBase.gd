@@ -95,6 +95,8 @@ var state: int = STATE_INITIAL
 @onready var map_camera: Camera3D = $MapCamera
 
 func _ready():
+	Engine.physics_ticks_per_second = 180
+	
 	UI.race_ui.set_max_laps(lap_count)
 	UI.race_ui.set_cur_lap(0)
 	
