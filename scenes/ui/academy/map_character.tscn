@@ -32,12 +32,15 @@ height = 2.0
 radius = 1.0
 neighbor_distance = 10.0
 max_neighbors = 3
-debug_enabled = true
 
 [node name="IdleTimer" type="Timer" parent="."]
 one_shot = true
 
 [node name="StopTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="MeetTimer" type="Timer" parent="."]
+wait_time = 3.0
 one_shot = true
 
 [connection signal="target_reached" from="NavAgent" to="." method="_on_nav_agent_target_reached"]

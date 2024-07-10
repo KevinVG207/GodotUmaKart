@@ -77,3 +77,11 @@ func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		await Network.on_exit_async()
 		get_tree().quit()
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("F11") and get_window().has_focus():
+		var cur_mode: int = DisplayServer.window_get_mode(0)
+		if cur_mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN or cur_mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		else:
+			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
