@@ -38,6 +38,17 @@ window/vsync/vsync_mode=2
 
 movie_writer/movie_file="E:/Dev/GodotArcadeRacerTest/_movie/movie.avi"
 
+[global_group]
+
+floor=""
+wall=""
+weak_offroad=""
+trick=""
+small_trick=""
+offroad=""
+map=""
+boost=""
+
 [input]
 
 accelerate={
@@ -168,6 +179,7 @@ locale/translations=PackedStringArray("res://loc/text.en.translation", "res://lo
 
 [physics]
 
+common/physics_ticks_per_second=180
 common/max_physics_steps_per_frame=18
 3d/default_gravity=20.0
 
