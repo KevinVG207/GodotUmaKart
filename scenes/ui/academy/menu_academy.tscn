@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://b5o18sbk4ypar"]
+[gd_scene load_steps=27 format=3 uid="uid://b5o18sbk4ypar"]
 
 [ext_resource type="PackedScene" uid="uid://ddwe67q5fgedw" path="res://assets/ui/tracen/tracen_academy.tscn" id="1_2jrec"]
 [ext_resource type="Script" path="res://scenes/ui/academy/menu_academy.gd" id="1_ueiln"]
@@ -70,6 +70,22 @@ material = SubResource("StandardMaterial3D_62v4g")
 size = Vector2(1, 1)
 orientation = 2
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_27bip"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fmg82"]
+resource_local_to_scene = true
+transparency = 1
+no_depth_test = true
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_27bip")
+disable_receive_shadows = true
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_12xkk"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_fmg82")
+size = Vector2(1, 1)
+orientation = 2
+
 [sub_resource type="ViewportTexture" id="ViewportTexture_iyfra"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_timay"]
@@ -135,7 +151,6 @@ cull_mask = 1023
 current = true
 
 [node name="Menus" type="Node3D" parent="."]
-visible = false
 
 [node name="CamInitial" parent="Menus" instance=ExtResource("5_t5vkb")]
 unique_name_in_owner = true
@@ -162,7 +177,7 @@ transform = Transform3D(0.761538, 0, -0.64812, 0, 1, 0, 0.64812, 0, 0.761538, 16
 distance = 5.0
 
 [node name="Plane" parent="Menus/CamSpica" index="0"]
-mesh = SubResource("PlaneMesh_2aa2i")
+mesh = SubResource("PlaneMesh_12xkk")
 
 [node name="CamSpicaMenu" parent="Menus/CamSpica/SubViewport" index="0" instance=ExtResource("6_wc85s")]
 

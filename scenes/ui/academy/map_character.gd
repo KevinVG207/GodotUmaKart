@@ -83,6 +83,7 @@ func do_meetup(other: MapCharacter):
 	$StopTimer.stop()
 	other.get_node("StopTimer").stop()
 	print("Meeting", " ", self, " ", other)
+	
 	#var cam: Camera3D = get_parent().get_parent().cam
 	#cam.global_position = ((global_position + other.global_position)/2) + Vector3.UP * 15
 	#cam.rotation_degrees.x = -90

@@ -1,10 +1,11 @@
-[gd_scene load_steps=31 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=32 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="2_b5ade"]
 [ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="2_v00a1"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="3_2njw6"]
+[ext_resource type="PackedScene" uid="uid://ds8vqrm05m0py" path="res://assets/vehicles/kart/kart.blend" id="5_ld07a"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -181,8 +182,8 @@ gravity_scale = 0.0
 can_sleep = false
 freeze_mode = 1
 continuous_cd = true
-max_contacts_reported = 20
 contact_monitor = true
+max_contacts_reported = 20
 script = ExtResource("1_lrmky")
 list_image = ExtResource("2_6jcjm")
 icon = ExtResource("3_2njw6")
@@ -191,6 +192,21 @@ icon = ExtResource("3_2njw6")
 root_node = NodePath("../Visual")
 tree_root = SubResource("AnimationNodeStateMachine_nguqk")
 anim_player = NodePath("../VehicleAnimationPlayer")
+parameters/current_length = 0.001
+parameters/current_position = 0.001
+parameters/current_delta = 0.0
+parameters/End/current_length = null
+parameters/End/current_position = null
+parameters/End/current_delta = null
+parameters/RESET/current_length = 0.001
+parameters/RESET/current_position = 0.001
+parameters/RESET/current_delta = 0.0
+parameters/Start/current_length = 0.0
+parameters/Start/current_position = 0.0
+parameters/Start/current_delta = 0.0
+parameters/dmg_spin/current_length = null
+parameters/dmg_spin/current_position = null
+parameters/dmg_spin/current_delta = null
 script = ExtResource("2_v00a1")
 
 [node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="."]
@@ -211,23 +227,30 @@ shape = SubResource("CapsuleShape3D_80jr0")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+visible = false
 mesh = SubResource("CapsuleMesh_h0c43")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
+visible = false
 mesh = SubResource("BoxMesh_tyxqj")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
+visible = false
 mesh = SubResource("CapsuleMesh_h0c43")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
+visible = false
 mesh = SubResource("CapsuleMesh_h0c43")
 skeleton = NodePath("../..")
+
+[node name="kart" parent="Visual" instance=ExtResource("5_ld07a")]
+transform = Transform3D(-5.02681e-09, 0, 0.115, 0, 0.115, 0, -0.115, 0, -5.02681e-09, -0.0278986, -0.340504, 0)
 
 [node name="PlayerCollision" type="Node3D" parent="."]
 
@@ -265,10 +288,11 @@ one_shot = true
 [node name="DriftParticles" type="Node3D" parent="."]
 
 [node name="CenterCharging" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/CenterCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -279,7 +303,7 @@ process_material = SubResource("ParticleProcessMaterial_43ekg")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/CenterCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -290,10 +314,11 @@ process_material = SubResource("ParticleProcessMaterial_43ekg")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="CenterCharged" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/CenterCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -304,7 +329,7 @@ process_material = SubResource("ParticleProcessMaterial_il5qp")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/CenterCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -315,10 +340,11 @@ process_material = SubResource("ParticleProcessMaterial_il5qp")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="LeftCharging" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/LeftCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -329,7 +355,7 @@ process_material = SubResource("ParticleProcessMaterial_su7a1")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/LeftCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -340,10 +366,11 @@ process_material = SubResource("ParticleProcessMaterial_su7a1")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="LeftCharged" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/LeftCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -354,7 +381,7 @@ process_material = SubResource("ParticleProcessMaterial_ndrdy")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/LeftCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -365,10 +392,11 @@ process_material = SubResource("ParticleProcessMaterial_ndrdy")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="RightCharging" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/RightCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -379,7 +407,7 @@ process_material = SubResource("ParticleProcessMaterial_7jsrh")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/RightCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -390,10 +418,11 @@ process_material = SubResource("ParticleProcessMaterial_7jsrh")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="RightCharged" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/RightCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.073, -0.369, -0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -404,7 +433,7 @@ process_material = SubResource("ParticleProcessMaterial_og57c")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/RightCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.6)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
