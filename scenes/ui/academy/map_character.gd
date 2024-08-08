@@ -27,13 +27,13 @@ func _ready():
 	$NavAgent.debug_use_custom = true
 	$NavAgent.debug_path_custom_color = col
 	$MeshInstance3D.mesh.material.albedo_color = col
-	if randf() <= 0.8:
+	if randf() <= 0.5:
 		start_idling()
 	else:
 		_on_idle_timer_timeout()
 
-func start_idling(min: float = 5):
-	$IdleTimer.start(max(0, randf_range(5, 60)))
+func start_idling(minimum: float = 5):
+	$IdleTimer.start(max(0, randf_range(minimum, 60)))
 
 func set_next_target():
 	# print("Requesting next path position")
@@ -71,7 +71,7 @@ func check_for_meetup():
 	
 	if should_start_timer:
 		$MeetTimer.start(10)
-		print("MeetTimer ", self)
+		#print("MeetTimer ", self)
 
 func do_meetup(other: MapCharacter):
 	meeting_up = true
@@ -82,7 +82,7 @@ func do_meetup(other: MapCharacter):
 	other.nav_agent.target_position = global_position
 	$StopTimer.stop()
 	other.get_node("StopTimer").stop()
-	print("Meeting", " ", self, " ", other)
+	#print("Meeting", " ", self, " ", other)
 	
 	#var cam: Camera3D = get_parent().get_parent().cam
 	#cam.global_position = ((global_position + other.global_position)/2) + Vector3.UP * 15
