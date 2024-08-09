@@ -6,3 +6,4 @@ rubberduck	50 free textures 5 - with normalmaps	CC0
 Cethiel	Tileable Brick Ground Textures - Set 2	CC0
 Keith333	Clocks & Watches - Old Clock - Seamless Texture with Normalmap	CC-BY 3.0
 Kenney	Particle Pack	CC0
+timlesch	Horse Shoe (openclipart)	CC0

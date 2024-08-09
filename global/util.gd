@@ -17,7 +17,9 @@ func sum(array: Array):
 		out += ele
 	return out
 
-func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group: String, ignore_array: Array = [], collision_mask=0xFFFFFFFF):
+func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group, ignore_array: Array = [], collision_mask=0xFFFFFFFF):
+	if typeof(group) == TYPE_STRING:
+		group = [group]
 	var space_state = obj.get_world_3d().direct_space_state
 	var out: Dictionary = {}
 	while true:
@@ -26,7 +28,7 @@ func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group:
 		if not result:
 			break
 		var collider = result["collider"] as Node
-		if collider.is_in_group(group):
+		if is_in_group_list(collider, group):
 			out = result
 			result["start"] = start_pos
 			result["end"] = end_pos
@@ -35,6 +37,12 @@ func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group:
 		ignore_array.append(collider)
 	ignore_array.clear()
 	return out
+
+func is_in_group_list(node: Node, group_list: Array) -> bool:
+	for group in group_list:
+		if node.is_in_group(group):
+			return true
+	return false
 
 func to_array(v: Vector3) -> Array:
 	return [v.x, v.y, v.z]
