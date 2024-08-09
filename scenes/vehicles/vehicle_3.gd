@@ -176,10 +176,6 @@ var bounce_frames = 0
 @export var prev_frame_pre_sim_vel: Vector3 = Vector3.ZERO
 @onready var min_bounce_speed: float = max_speed * 0.4
 
-@export var wheel_max_up: float = 0.2
-@export var wheel_max_down: float = 0.5
-var wheel_markers: Array = []
-
 #var colliding_vehicles: Dictionary = {}
 
 var respawn_time: float = 3.5
@@ -211,10 +207,6 @@ func _ready():
 	pass
 	#Network.should_setup = true
 	#transform = initial_transform
-	#for wheel in $Wheels.get_children():
-		#var wheel_marker = Marker3D.new()
-		#wheel_marker.transform = wheel.transform
-		#wheel_markers.append(wheel_marker)
 
 func make_player():
 	is_cpu = false
@@ -808,7 +800,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	handle_particles()
 	handle_item()
-	# handle_wheels()
 
 	# Limit rest_vel to terminal_velocity
 	if rest_vel.length() > terminal_velocity:
@@ -1154,26 +1145,6 @@ func _on_item_roulette_timer_timeout():
 func _on_roulette_stop():
 	can_use_item = true
 
-# func _physics_process(delta):
-# 	handle_wheels(delta)
-
-# func handle_wheels(delta):
-# 	for i in range(len($Wheels.get_children())):
-# 		var wheel = $Wheels.get_child(i) as RigidBody3D
-# 		var wheel_marker = wheel_markers[i]
-
-# 		var wheel_radius = wheel.get_node("CollisionShape3D").shape.radius
-
-# 		var ray_start = wheel_marker.transform.origin + wheel_marker.transform.basis.y * (wheel_max_up - wheel_radius)
-# 		var ray_end = wheel_marker.transform.origin + -wheel_marker.transform.basis.y * (wheel_max_down + wheel_radius)
-# 		var col_dict = Util.raycast_for_group(wheel_marker, ray_start, ray_end, "floor", [wheel])
-
-# 		var distance = wheel_max_down
-
-# 		if col_dict:
-# 			distance = col_dict["distance"]
-		
-# 		wheel.transform = wheel_marker.transform.translated(wheel_marker.transform.basis.y * (distance - wheel_radius))
 
 func _process(delta):
 	# UI Stuff

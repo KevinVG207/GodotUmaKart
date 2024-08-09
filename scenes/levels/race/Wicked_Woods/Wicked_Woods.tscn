@@ -36,6 +36,9 @@ transform = Transform3D(4.5, 0, 0, 0, -1.96701e-07, -4.5, 0, 4.5, -1.96701e-07, 
 visible = false
 mesh = ExtResource("8_torjd")
 
+[node name="DirectionalLight3D" parent="Course" index="3"]
+light_energy = 1.1
+
 [node name="Objects" parent="." index="1"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.78025, -0.250145, 0.157288)
 

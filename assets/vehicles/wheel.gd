@@ -2,12 +2,14 @@ extends Node3D
 
 # We assume the wheel model has a radius of 1m
 
-@onready var parent :Vehicle3 = self.get_parent().get_parent()
+@onready var parent: Vehicle3 = self.get_parent().get_parent().get_parent()
 @onready var radius := scale.x
 var anchor := Vector3.ZERO
 @onready var initial_rotation := rotation_degrees
 
 @export var steer := false
+var cur_steer_deg := 0.0
+var steer_multi := 300.0
 
 func _ready() -> void:
 	anchor = position
@@ -39,7 +41,11 @@ func _process(delta: float) -> void:
 	else:
 		position.y = point.y
 	
+	rotation_degrees = initial_rotation
+	
 	if steer:
-		var new_rotation = initial_rotation
-		new_rotation.y += parent.cur_turn_speed * 0.3
-		rotation_degrees = new_rotation 
+		var target_rot := parent.cur_turn_speed * 0.3
+		if parent.cur_speed < -1.0 and parent.grounded and parent.input_brake:
+			target_rot *= -1.0
+		cur_steer_deg = move_toward(cur_steer_deg, target_rot, delta * steer_multi)
+		rotation_degrees.y += cur_steer_deg
