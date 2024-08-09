@@ -25,6 +25,8 @@ var finish_time: float = 0
 var username: String = "Player"
 var world: RaceBase
 var prev_state: Dictionary = {}
+var reversing := false
+var steering := 0.0
 
 var cpu_target: EnemyPath = null
 var cpu_target_offset: Vector3 = get_random_target_offset()
@@ -446,9 +448,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	var is_accel = input_accel
 	var is_brake = input_brake
-	var steering: float = clamp(input_steer, -1.0, 1.0)
+	steering = clamp(input_steer, -1.0, 1.0)
 	#cur_grip = default_grip
 	grounded = false
+	reversing = false
 	
 	# Determine effective max speed
 	cur_max_speed = max_speed
@@ -752,6 +755,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var turn_target = adjusted_steering * adjusted_max_turn_speed
 
 	var cur_turn_accel = turn_accel
+	if reversing:
+		turn_target *= -0.75
+		cur_turn_accel *= 0.5
+		cur_turn_speed = clamp(cur_turn_speed, -max_turn_speed*0.75, max_turn_speed*0.75)
 	# if !grounded:
 	# 	cur_turn_accel *= air_turn_multiplier * air_turn_multiplier*5
 
@@ -899,6 +906,7 @@ func get_reverse_speed(delta: float) -> float:
 		return 0
 
 	# Reversing
+	reversing = true
 	return -Util.get_vehicle_accel(max_reverse_speed, -cur_speed, reverse_initial_accel, reverse_exponent) * delta
 
 
