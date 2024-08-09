@@ -11,7 +11,7 @@
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 287.263, 0, 0)
 mesh = ExtResource("2_wu7cg")
 
-[node name="barn_course" parent="Course" index="2" instance=ExtResource("2_i7jnl")]
+[node name="barn_course" type="Node3D" parent="Course" index="2" instance=ExtResource("2_i7jnl")]
 transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 0, 0, 0)
 
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_c8nyr")]

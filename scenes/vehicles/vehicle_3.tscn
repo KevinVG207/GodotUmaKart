@@ -1,10 +1,13 @@
-[gd_scene load_steps=31 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=33 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="2_b5ade"]
 [ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="2_v00a1"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="3_2njw6"]
+[ext_resource type="PackedScene" uid="uid://ds8vqrm05m0py" path="res://assets/vehicles/kart/kart.blend" id="5_ld07a"]
+[ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="7_2vipe"]
+[ext_resource type="Script" path="res://assets/vehicles/wheel.gd" id="8_4bboh"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -67,6 +70,10 @@ _data = {
 }
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_80jr0"]
+height = 2.74023
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ltuck"]
+height = 2.99241
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_h0c43"]
 
@@ -162,15 +169,6 @@ initial_velocity_max = 1.0
 radial_velocity_max = 1.0
 gravity = Vector3(0, 0, 0)
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_r0fog"]
-height = 0.1
-radius = 0.2
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_w6knp"]
-top_radius = 0.2
-bottom_radius = 0.2
-height = 0.1
-
 [node name="Vehicle3" type="RigidBody3D" groups=["vehicle"]]
 process_priority = 1000
 process_physics_priority = 1000
@@ -181,8 +179,8 @@ gravity_scale = 0.0
 can_sleep = false
 freeze_mode = 1
 continuous_cd = true
-max_contacts_reported = 20
 contact_monitor = true
+max_contacts_reported = 20
 script = ExtResource("1_lrmky")
 list_image = ExtResource("2_6jcjm")
 icon = ExtResource("3_2njw6")
@@ -191,6 +189,21 @@ icon = ExtResource("3_2njw6")
 root_node = NodePath("../Visual")
 tree_root = SubResource("AnimationNodeStateMachine_nguqk")
 anim_player = NodePath("../VehicleAnimationPlayer")
+parameters/current_length = 0.001
+parameters/current_position = 0.001
+parameters/current_delta = 0.0
+parameters/End/current_length = null
+parameters/End/current_position = null
+parameters/End/current_delta = null
+parameters/RESET/current_length = 0.001
+parameters/RESET/current_position = 0.001
+parameters/RESET/current_delta = 0.0
+parameters/Start/current_length = 0.0
+parameters/Start/current_position = 0.0
+parameters/Start/current_delta = 0.0
+parameters/dmg_spin/current_length = null
+parameters/dmg_spin/current_position = null
+parameters/dmg_spin/current_delta = null
 script = ExtResource("2_v00a1")
 
 [node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="."]
@@ -200,47 +213,65 @@ libraries = {
 }
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
+transform = Transform3D(-4.34799e-08, -0.994703, -0.102793, 1, -4.37114e-08, 0, -4.49321e-09, -0.102793, 0.994703, 0.0972483, 4.39723e-09, -0.340266)
 shape = SubResource("CapsuleShape3D_80jr0")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
+transform = Transform3D(-4.34798e-08, -0.994703, 0.102793, 1, -4.37114e-08, 0, 4.4932e-09, 0.102793, 0.994703, 0.097, 0, 0.34)
 shape = SubResource("CapsuleShape3D_80jr0")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.0250288, -5.33405e-09, 0)
+shape = SubResource("CapsuleShape3D_ltuck")
 
 [node name="Visual" type="Node3D" parent="."]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+visible = false
 mesh = SubResource("CapsuleMesh_h0c43")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.38, 0)
+visible = false
 mesh = SubResource("BoxMesh_tyxqj")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D3" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
+visible = false
 mesh = SubResource("CapsuleMesh_h0c43")
 skeleton = NodePath("../..")
 
 [node name="MeshInstance3D4" type="MeshInstance3D" parent="Visual"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
+visible = false
 mesh = SubResource("CapsuleMesh_h0c43")
 skeleton = NodePath("../..")
+
+[node name="kart" parent="Visual" instance=ExtResource("5_ld07a")]
+transform = Transform3D(-6.99382e-09, 0, 0.16, 0, 0.16, 0, -0.16, 0, -6.99382e-09, -0.0278986, -0.292819, 0)
 
 [node name="PlayerCollision" type="Node3D" parent="."]
 
 [node name="ShapeCast3D" type="ShapeCast3D" parent="PlayerCollision"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, -0.2)
+transform = Transform3D(-4.34798e-08, -0.994703, -0.102793, 1, -4.37114e-08, 0, -4.4932e-09, -0.102793, 0.994703, 0.0972483, 4.39723e-09, -0.340266)
 shape = SubResource("CapsuleShape3D_80jr0")
 target_position = Vector3(0, 0, 0)
 max_results = 10
 collision_mask = 6
 
 [node name="ShapeCast3D2" type="ShapeCast3D" parent="PlayerCollision"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0.2)
+transform = Transform3D(-4.34798e-08, -0.994703, 0.102793, 1, -4.37114e-08, 0, 4.4932e-09, 0.102793, 0.994703, 0.097, 0, 0.34)
 shape = SubResource("CapsuleShape3D_80jr0")
+target_position = Vector3(0, 0, 0)
+max_results = 10
+collision_mask = 6
+
+[node name="ShapeCast3D3" type="ShapeCast3D" parent="PlayerCollision"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.0250288, -5.33405e-09, 0)
+shape = SubResource("CapsuleShape3D_ltuck")
 target_position = Vector3(0, 0, 0)
 max_results = 10
 collision_mask = 6
@@ -265,10 +296,11 @@ one_shot = true
 [node name="DriftParticles" type="Node3D" parent="."]
 
 [node name="CenterCharging" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/CenterCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.7)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -279,7 +311,7 @@ process_material = SubResource("ParticleProcessMaterial_43ekg")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/CenterCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.7)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -290,10 +322,11 @@ process_material = SubResource("ParticleProcessMaterial_43ekg")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="CenterCharged" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/CenterCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.7)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -304,7 +337,7 @@ process_material = SubResource("ParticleProcessMaterial_il5qp")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/CenterCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.7)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -315,10 +348,11 @@ process_material = SubResource("ParticleProcessMaterial_il5qp")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="LeftCharging" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/LeftCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.85)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -329,7 +363,7 @@ process_material = SubResource("ParticleProcessMaterial_su7a1")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/LeftCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.55)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -340,10 +374,11 @@ process_material = SubResource("ParticleProcessMaterial_su7a1")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="LeftCharged" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/LeftCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.85)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -354,7 +389,7 @@ process_material = SubResource("ParticleProcessMaterial_ndrdy")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/LeftCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.55)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -365,10 +400,11 @@ process_material = SubResource("ParticleProcessMaterial_ndrdy")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="RightCharging" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/RightCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.55)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -379,7 +415,7 @@ process_material = SubResource("ParticleProcessMaterial_7jsrh")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/RightCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.85)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -390,10 +426,11 @@ process_material = SubResource("ParticleProcessMaterial_7jsrh")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
 [node name="RightCharged" type="Node3D" parent="DriftParticles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 visible = false
 
 [node name="Particles" type="GPUParticles3D" parent="DriftParticles/RightCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, -0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.55)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -404,7 +441,7 @@ process_material = SubResource("ParticleProcessMaterial_og57c")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="Particles2" type="GPUParticles3D" parent="DriftParticles/RightCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.07285, -0.368908, 0.3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.85)
 amount = 6
 lifetime = 0.01
 randomness = 0.1
@@ -415,26 +452,24 @@ process_material = SubResource("ParticleProcessMaterial_og57c")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="Wheels" type="Node3D" parent="."]
-visible = false
 
-[node name="Wheel" type="RigidBody3D" parent="Wheels"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
-axis_lock_linear_x = true
-axis_lock_linear_z = true
-axis_lock_angular_x = true
-axis_lock_angular_y = true
-axis_lock_angular_z = true
-mass = 5.0
-gravity_scale = 0.0
+[node name="wheel" parent="Wheels" instance=ExtResource("7_2vipe")]
+transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, -0.72)
+script = ExtResource("8_4bboh")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Wheels/Wheel"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
-shape = SubResource("CylinderShape3D_r0fog")
-disabled = true
+[node name="wheel2" parent="Wheels" instance=ExtResource("7_2vipe")]
+transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, 0.72)
+script = ExtResource("8_4bboh")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Wheels/Wheel"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
-mesh = SubResource("CylinderMesh_w6knp")
+[node name="wheel3" parent="Wheels" instance=ExtResource("7_2vipe")]
+transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, -0.624835)
+script = ExtResource("8_4bboh")
+steer = true
+
+[node name="wheel4" parent="Wheels" instance=ExtResource("7_2vipe")]
+transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, 0.625)
+script = ExtResource("8_4bboh")
+steer = true
 
 [node name="Front" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
