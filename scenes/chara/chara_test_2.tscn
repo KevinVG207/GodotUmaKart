@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bfop5mc1io3s1"]
+
+[ext_resource type="PackedScene" uid="uid://bloyvhvjxu7lt" path="res://assets/character/chara-test2.blend" id="1_a6v3f"]
+
+[node name="chara-test2" instance=ExtResource("1_a6v3f")]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
