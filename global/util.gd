@@ -17,10 +17,9 @@ func sum(array: Array):
 		out += ele
 	return out
 
-func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group, ignore_array: Array = [], collision_mask=0xFFFFFFFF):
+func raycast_for_group(space_state: PhysicsDirectSpaceState3D, start_pos: Vector3, end_pos: Vector3, group, ignore_array: Array = [], collision_mask=0xFFFFFFFF):
 	if typeof(group) == TYPE_STRING:
 		group = [group]
-	var space_state = obj.get_world_3d().direct_space_state
 	var out: Dictionary = {}
 	var idx := 0
 	while true:

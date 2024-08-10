@@ -131,6 +131,8 @@ var stick_ray_count: int = 4
 var hop_force: float = 3.5
 @export var can_hop: bool = true
 #var global_hop: Vector3 = Vector3.ZERO
+var is_stick: bool = false
+var keep_grav: bool = false
 
 @export var drift_gauge: float = 0.0
 @export var drift_gauge_max: float = 100.0
@@ -149,7 +151,11 @@ var terminal_velocity = 3000
 # var grav_vel: Vector3 = Vector3.ZERO  # Velocity due to gravity
 var prop_vel: Vector3 = Vector3.ZERO  # Velocity due to propulsion
 var rest_vel: Vector3 = Vector3.ZERO  # Other velocity
+var prev_prop_vel: Vector3 = Vector3.ZERO
+var prev_rest_vel: Vector3 = Vector3.ZERO
 var floor_normal = Vector3(0, 1, 0)
+var floor_normals: Array = []
+var wall_contacts: Array = []
 
 @export var grip_multiplier: float = 1.0
 @export var default_grip: float = 80.0
@@ -423,8 +429,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var prev_vel: Vector3 = linear_velocity
 	# var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
 	# var prev_grav_vel: Vector3 = grav_vel
-	var prev_prop_vel: Vector3 = prop_vel
-	var prev_rest_vel: Vector3 = rest_vel
 	
 	var tmp: Array = collided_with.keys()
 	for vehicle: Vehicle3 in tmp:
@@ -446,8 +450,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		transform = prev_transform
 		sleep = true
 	
-	var is_accel = input_accel
-	var is_brake = input_brake
+	# is_accel = input_accel
+	# is_brake = input_brake
 	steering = clamp(input_steer, -1.0, 1.0)
 	#cur_grip = default_grip
 	grounded = false
@@ -471,96 +475,17 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 				drift_dir = 1
 	if in_drift and !input_brake:
 		in_drift = false
-	if not is_brake:
+	if not input_brake:
 		can_hop = true
 		drift_dir = 0
 	
-	var wall_contacts: Array = []
+	wall_contacts = []
 	
 	#print("Contacts")
 	offroad = false
 	weak_offroad = false
-	var floor_normals: Array = []
-	for i in range(physics_state.get_contact_count()):
-		var collider = physics_state.get_contact_collider_object(i) as Node
-		if collider.is_in_group("floor"):
-			grounded = true
-			floor_normals.append(physics_state.get_contact_local_normal(i))
-			if in_bounce and bounce_frames > 9:
-				in_bounce = false
-				bounce_frames = 0
-			if in_hop:
-				grounded = false
-			if in_hop and in_hop_frames > 30:
-				grounded = true
-				# Switch from hop to drift
-				if is_brake:
-					# Block hopping
-					can_hop = false
-				in_hop = false
-				in_hop_frames = 0
-				if drift_dir == 0:
-					in_drift = false
-				else:
-					in_drift = true
-					if outside_drift:
-						cur_outside_drift_force = outside_drift_force * (cur_speed / cur_max_speed)
-			
-			if in_trick:
-				in_trick = false
-				trick_boost_timer.start(trick_boost_duration)
-				#if is_player:
-					#Debug.print(["Starting trick boost", trick_boost_timer])
-				
-		
-		if collider.is_in_group("boost"):
-			normal_boost_timer.start(normal_boost_duration)
-		
-		if collider.is_in_group("trick"):
-			$TrickTimer.start(trick_cooldown_time)
-			trick_boost_timer = normal_boost_timer
-			trick_boost_duration = normal_boost_duration
-		if collider.is_in_group("small_trick"):
-			$TrickTimer.start(trick_cooldown_time)
-			trick_boost_timer = small_boost_timer
-			trick_boost_duration = small_boost_duration
-		
-		if collider.is_in_group("offroad"):
-			offroad = true
-		
-		if collider.is_in_group("weak_offroad"):
-			weak_offroad = true
-		
-		if collider.is_in_group("wall"):
-			var point = global_position + (transform.basis.y * -vehicle_height_below)
-			# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
-			var dist_above_floor = Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
-
-			if dist_above_floor < 0.1:
-				continue
-
-			wall_contacts.append({
-				"normal": physics_state.get_contact_local_normal(i),
-				"position": physics_state.get_contact_local_position(i),
-				"object": collider
-			})
-		
-		if collider.is_in_group("out"):
-			if not respawn_stage:
-				respawn()
-	
-	if offroad or weak_offroad:
-		offroad_ticks += 1
-	else:
-		offroad_ticks = 0
-	
-	if floor_normals.size() > 0:
-		var avg_normal: Vector3 = Vector3.ZERO
-		for normal in floor_normals:
-			avg_normal += normal
-		avg_normal /= floor_normals.size()
-		floor_normal = avg_normal.normalized()
-
+	floor_normals = []
+	handle_contacts(physics_state)
 	
 	# Handle respawning
 	handle_respawn()
@@ -581,75 +506,16 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	max_reverse_speed = cur_max_speed * reverse_multi
 
 	# Handle walls
-	if wall_contacts.size() > 0:
-		var avg_normal: Vector3 = Vector3.ZERO
-		var avg_position: Vector3 = Vector3.ZERO
-		# print("===")
-		for wall in wall_contacts:
-			# print(wall["normal"])
-			avg_normal += wall["normal"]
-			avg_position += wall["position"]
-		avg_normal /= wall_contacts.size()
-		avg_position /= wall_contacts.size()
-		# var avg_normal = wall_contacts[-1]["normal"]
-
-		var bounce_ratio = 0.2
-		for wall in wall_contacts:
-			var col_obj = wall["object"]
-			if col_obj.get("physics_material_override") and col_obj.physics_material_override.get("bounce"):
-				var cur_bounce_ratio = col_obj.physics_material_override.bounce
-				if cur_bounce_ratio > bounce_ratio:
-					bounce_ratio = cur_bounce_ratio
-		
-		# If we are already moving away from the wall, don't bounce
-		var dp = avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
-		if dp < 0:
-			# Get the component of the linear velocity that is perpendicular to the wall
-			var perp_vel = prev_frame_pre_sim_vel.project(avg_normal).length()
-			#Debug.print(perp_vel)
-			var new_max_speed = (1 - abs(dp)) * cur_max_speed
-			if perp_vel > min_bounce_speed:
-				# print("Bounce ", bounce_ratio)
-				# prop_vel = prop_vel.bounce(avg_normal.normalized()) * bounce_ratio
-				rest_vel = (prop_vel + rest_vel).bounce(avg_normal.normalized()) * bounce_ratio
-				prop_vel = Vector3.ZERO
-				prev_prop_vel = prop_vel
-				rest_vel += -gravity.normalized() * bounce_force * bounce_ratio
-				# linear_velocity = prev_frame_pre_sim_vel.bounce(avg_normal.normalized()) * bounce_ratio
-				# if grounded:
-				# 	linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
-				grounded = false
-				# prev_vel = linear_velocity
-				in_bounce = true
-				wall_contacts = []
-				cur_speed *= -1 * bounce_ratio
-			else:
-				if prop_vel.length() > new_max_speed:
-					prop_vel = prop_vel.normalized() * new_max_speed
-					prev_prop_vel = prop_vel
-				cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
-			# print("cur_speed: ", cur_speed)
+	handle_walls()
 
 	
 	# Stick to ground.
 	# Perform raycast in local -y direction
-	var is_stick: bool = false
-	var keep_grav: bool = false
+	is_stick = false
+	keep_grav = false
 	#if is_player:
 		#print(in_hop, " ", grounded)
-	if air_frames < 15 and !in_hop and !in_bounce:
-		var space_state = get_world_3d().direct_space_state
-		var ray_origin = transform.origin
-		var ray_end = ray_origin + gravity.normalized() * 1.4
-		var ray_result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
-
-		if ray_result:
-			is_stick = true
-			if !grounded:
-				grounded = true
-				keep_grav = true
-			# var distance = ray_result.position.distance_to(ray_origin)
-			# Apply stick_speed to stick to ground
+	detect_stick()
 
 	
 	if not grounded and input_trick and !$TrickTimer.is_stopped() and !in_trick:
@@ -791,7 +657,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	#TODO: Make this dependent on gravity vector
 	if not sleep:
 		rotation_degrees.x = move_toward(rotation_degrees.x, 0, 6 * delta)
-	var floor_below = Util.raycast_for_group(self, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
+	var floor_below = Util.raycast_for_group(world.space_state, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
 	if not grounded and (!in_hop or !floor_below):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
 	if grounded:
@@ -827,16 +693,161 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# grounded = false
 	prev_transform = transform
 	prev_frame_pre_sim_vel = linear_velocity
+	prev_prop_vel = prop_vel
+	prev_rest_vel = rest_vel
 
+
+func detect_stick():
+	if air_frames < 15 and !in_hop and !in_bounce:
+		var ray_origin = transform.origin
+		var ray_end = ray_origin + gravity.normalized() * 1.4
+		var ray_result = world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
+
+		if ray_result:
+			is_stick = true
+			if !grounded:
+				grounded = true
+				keep_grav = true
+			# var distance = ray_result.position.distance_to(ray_origin)
+			# Apply stick_speed to stick to ground
+
+
+func handle_walls():
+	if wall_contacts.size() > 0:
+		var avg_normal: Vector3 = Vector3.ZERO
+		var avg_position: Vector3 = Vector3.ZERO
+		# print("===")
+		for wall in wall_contacts:
+			# print(wall["normal"])
+			avg_normal += wall["normal"]
+			avg_position += wall["position"]
+		avg_normal /= wall_contacts.size()
+		avg_position /= wall_contacts.size()
+		# var avg_normal = wall_contacts[-1]["normal"]
+
+		var bounce_ratio = 0.2
+		for wall in wall_contacts:
+			var col_obj = wall["object"]
+			if col_obj.get("physics_material_override") and col_obj.physics_material_override.get("bounce"):
+				var cur_bounce_ratio = col_obj.physics_material_override.bounce
+				if cur_bounce_ratio > bounce_ratio:
+					bounce_ratio = cur_bounce_ratio
+		
+		# If we are already moving away from the wall, don't bounce
+		var dp = avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
+		if dp < 0:
+			# Get the component of the linear velocity that is perpendicular to the wall
+			var perp_vel = prev_frame_pre_sim_vel.project(avg_normal).length()
+			#Debug.print(perp_vel)
+			var new_max_speed = (1 - abs(dp)) * cur_max_speed
+			if perp_vel > min_bounce_speed:
+				# print("Bounce ", bounce_ratio)
+				# prop_vel = prop_vel.bounce(avg_normal.normalized()) * bounce_ratio
+				rest_vel = (prop_vel + rest_vel).bounce(avg_normal.normalized()) * bounce_ratio
+				prop_vel = Vector3.ZERO
+				prev_prop_vel = prop_vel
+				rest_vel += -gravity.normalized() * bounce_force * bounce_ratio
+				# linear_velocity = prev_frame_pre_sim_vel.bounce(avg_normal.normalized()) * bounce_ratio
+				# if grounded:
+				# 	linear_velocity += -gravity.normalized() * bounce_force * bounce_ratio
+				grounded = false
+				# prev_vel = linear_velocity
+				in_bounce = true
+				wall_contacts = []
+				cur_speed *= -1 * bounce_ratio
+			else:
+				if prop_vel.length() > new_max_speed:
+					prop_vel = prop_vel.normalized() * new_max_speed
+					prev_prop_vel = prop_vel
+				cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
+			# print("cur_speed: ", cur_speed)
+
+func handle_contacts(physics_state: PhysicsDirectBodyState3D):
+	for i in range(physics_state.get_contact_count()):
+		var collider = physics_state.get_contact_collider_object(i) as Node
+		if collider.is_in_group("floor"):
+			grounded = true
+			floor_normals.append(physics_state.get_contact_local_normal(i))
+			if in_bounce and bounce_frames > 9:
+				in_bounce = false
+				bounce_frames = 0
+			if in_hop:
+				grounded = false
+			if in_hop and in_hop_frames > 30:
+				grounded = true
+				# Switch from hop to drift
+				if input_brake:
+					# Block hopping
+					can_hop = false
+				in_hop = false
+				in_hop_frames = 0
+				if drift_dir == 0:
+					in_drift = false
+				else:
+					in_drift = true
+					if outside_drift:
+						cur_outside_drift_force = outside_drift_force * (cur_speed / cur_max_speed)
+			
+			if in_trick:
+				in_trick = false
+				trick_boost_timer.start(trick_boost_duration)
+				#if is_player:
+					#Debug.print(["Starting trick boost", trick_boost_timer])
+				
+		
+		if collider.is_in_group("boost"):
+			normal_boost_timer.start(normal_boost_duration)
+		
+		if collider.is_in_group("trick"):
+			$TrickTimer.start(trick_cooldown_time)
+			trick_boost_timer = normal_boost_timer
+			trick_boost_duration = normal_boost_duration
+		if collider.is_in_group("small_trick"):
+			$TrickTimer.start(trick_cooldown_time)
+			trick_boost_timer = small_boost_timer
+			trick_boost_duration = small_boost_duration
+		
+		if collider.is_in_group("offroad"):
+			offroad = true
+		
+		if collider.is_in_group("weak_offroad"):
+			weak_offroad = true
+		
+		if collider.is_in_group("wall"):
+			var point = global_position + (transform.basis.y * -vehicle_height_below)
+			# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
+			var dist_above_floor = Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
+
+			if dist_above_floor < 0.1:
+				continue
+
+			wall_contacts.append({
+				"normal": physics_state.get_contact_local_normal(i),
+				"position": physics_state.get_contact_local_position(i),
+				"object": collider
+			})
+		
+		if collider.is_in_group("out"):
+			if not respawn_stage:
+				respawn()
+	
+	if offroad or weak_offroad:
+		offroad_ticks += 1
+	else:
+		offroad_ticks = 0
+	
+	if floor_normals.size() > 0:
+		var avg_normal: Vector3 = Vector3.ZERO
+		for normal in floor_normals:
+			avg_normal += normal
+		avg_normal /= floor_normals.size()
+		floor_normal = avg_normal.normalized()
 
 func get_grounded_vel(delta: float) -> Vector3:
-	var is_accel = input_accel
-	var is_brake = input_brake
-	
 	#print(is_accel, is_brake, steering)
 	var hop_vel = Vector3.ZERO
 	
-	if is_accel and is_brake:
+	if input_accel and input_brake:
 		if cur_speed > min_hop_speed:
 			if in_drift:
 				cur_speed += get_accel_speed(delta)
@@ -857,7 +868,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 					$StillTurboTimer.start()
 					#Debug.print("Start building up miniturbo")
 	else:
-		if is_accel:
+		if input_accel:
 			if still_turbo_ready:
 				still_turbo_ready = false
 				# Perform miniturbo.
@@ -865,7 +876,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 				small_boost_timer.start(small_boost_duration)
 				
 			cur_speed += get_accel_speed(delta)
-		elif is_brake and grounded:
+		elif input_brake and grounded:
 			in_drift = false
 			cur_speed += get_reverse_speed(delta)
 		else:

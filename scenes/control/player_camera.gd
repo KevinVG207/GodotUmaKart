@@ -60,7 +60,7 @@ func _physics_process(delta):
 	# Forward
 	var ray_start = target.global_transform.translated_local(Vector3(0, cur_offset.y, 0)).origin
 	var ray_end = new_pos
-	var result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
+	var result = target.world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
 	if result:
 		var cur_safe_distance = safe_distance
 		var dist_to_point = result.position.distance_to(ray_start)
@@ -72,7 +72,7 @@ func _physics_process(delta):
 	# Backwards
 	ray_start = target.global_transform.translated_local(Vector3(0, cur_offset_bw.y, 0)).origin
 	ray_end = new_pos_bw
-	result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
+	result = target.world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
 	if result:
 		var cur_safe_distance = safe_distance
 		var dist_to_point = result.position.distance_to(ray_start)

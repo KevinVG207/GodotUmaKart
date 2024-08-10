@@ -60,7 +60,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			var normal: Vector3 = physics_state.get_contact_local_normal(i)
 			var ray_start = global_position + normal.normalized() * 0.5
 			var ray_end = global_position - normal.normalized() * 1.0
-			var ray_res: Dictionary = Util.raycast_for_group(self, ray_start, ray_end, "floor", [self])
+			var ray_res: Dictionary = Util.raycast_for_group(world.space_state, ray_start, ray_end, "floor", [self])
 			var land_loc = physics_state.get_contact_local_position(i)
 			var land_normal = normal
 			if ray_res:

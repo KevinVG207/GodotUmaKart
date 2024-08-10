@@ -21,6 +21,7 @@ var physical_items: Dictionary = {}
 var deleted_physical_items: Array = []
 var all_path_points: Array = []
 var network_path_points: Dictionary = {}
+@onready var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 
 @export var start_offset_z: float = 2
 @export var start_offset_x: float = 3
@@ -196,6 +197,8 @@ func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false):
 	#return closest_pt
 
 func _process(delta):
+	update_ranks()
+
 	UI.race_ui.set_startline(checkpoints[0])
 	
 	if not $CountdownTimer.is_stopped() and $CountdownTimer.time_left <= 3.0:
@@ -268,7 +271,7 @@ func _process(delta):
 			
 			# Raycast between camera pos and nametag_pos. If anything is in-between, don't render the nametag.
 			if tag_visible:
-				var ray_result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(player_camera.global_position, nametag_pos, 0xFFFFFFFF, exclude_list))
+				var ray_result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(player_camera.global_position, nametag_pos, 0xFFFFFFFF, exclude_list))
 				if ray_result:
 					tag_visible = false
 			
@@ -405,6 +408,8 @@ func apply_item_state(data: Dictionary):
 
 
 func _physics_process(_delta):
+	space_state = get_world_3d().direct_space_state
+
 	match state:
 		STATE_INITIAL:
 			state = STATE_JOINING
@@ -445,7 +450,6 @@ func _physics_process(_delta):
 		# Player checkpoints
 		for vehicle: Vehicle3 in players_dict.values():
 			update_checkpoint(vehicle)
-			update_ranks()
 			if vehicle == player_camera.target:
 				UI.race_ui.set_cur_lap(vehicle.lap)
 		
@@ -685,76 +689,83 @@ func update_ranks():
 	# 	print(vehicle.rank, " ", vehicle.finish_time)
 	# print("===")
 
+func check_advance(player: Vehicle3) -> bool:
+	var next_idx = player.check_idx+1 % len(checkpoints)
+	if next_idx >= len(checkpoints):
+		next_idx -= len(checkpoints)
+	if dist_to_checkpoint(player, next_idx) < 0:
+		return false
+
+	var next_checkpoint: Checkpoint = checkpoints[next_idx]
+	
+	# Don't advance to next key checkpoint if the previous key checkpoint wasn't reached
+	if next_checkpoint.is_key:
+		var cur_key_idx = key_checkpoints[next_checkpoint]
+		var prev_key_idx = cur_key_idx - 1
+		if prev_key_idx < 0:
+			prev_key_idx = key_checkpoints.size()-1
+		if prev_key_idx != player.check_key_idx and player.check_key_idx != cur_key_idx:
+			return false
+		player.check_key_idx = cur_key_idx
+
+	player.check_idx = next_idx
+	if next_idx == 0:
+		# Crossed the finish line
+		player.lap += 1
+		if player.lap > lap_count:
+			var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
+			
+			var finish_plane_normal: Vector3 = checkpoints[0].transform.basis.z
+			var vehicle_vel: Vector3 = player.prev_frame_pre_sim_vel
+			var seconds_per_tick = 1.0/Engine.physics_ticks_per_second
+
+			# Determine the ratio of the vehicle_vel to the finish_plane_normal, and determine how much time it had taken to cross the finish line since the last frame
+			var final_time = time_after_finish - clamp(dist_to_checkpoint(player, 0) / vehicle_vel.project(finish_plane_normal).length(), 0, seconds_per_tick)
+			
+			player.set_finished(final_time)
+	
+	return true
+
+func check_reverse(player: Vehicle3) -> bool:
+	var prev_idx = (player.check_idx - 1) % len(checkpoints)
+	if prev_idx < 0:
+		prev_idx = len(checkpoints) + prev_idx
+	
+	if dist_to_checkpoint(player, prev_idx) > 0:
+		return false
+
+	var prev_checkpoint: Checkpoint = checkpoints[prev_idx]
+	if prev_checkpoint.is_key:
+		var cur_key = player.check_key_idx
+		
+		#Debug.print([cur_key, key_checkpoints[prev_checkpoint]])
+		var prev_key = key_checkpoints[prev_checkpoint]
+		var subtract = 0
+		if prev_key == 0:
+			subtract = key_checkpoints.size()
+			prev_key += subtract
+			cur_key += subtract
+		elif cur_key == 0:
+			cur_key += key_checkpoints.size()
+		
+		if prev_key != cur_key-1 and prev_key != cur_key:
+			return false
+		
+		if prev_key == cur_key-1:
+			player.check_key_idx = prev_key - subtract
+	
+	player.check_idx = prev_idx
+	if prev_idx == len(checkpoints)-1:
+		player.lap -= 1
+	
+	return true
 
 func update_checkpoint(player: Vehicle3):
 	if player.respawn_stage:
 		return
 	
-	while true:
-		var next_idx = player.check_idx+1 % len(checkpoints)
-		if next_idx >= len(checkpoints):
-			next_idx -= len(checkpoints)
-		if dist_to_checkpoint(player, next_idx) > 0:
-			var next_checkpoint: Checkpoint = checkpoints[next_idx]
-			
-			# Don't advance to next key checkpoint if the previous key checkpoint wasn't reached
-			if next_checkpoint.is_key:
-				var cur_key_idx = key_checkpoints[next_checkpoint]
-				var prev_key_idx = cur_key_idx - 1
-				if prev_key_idx < 0:
-					prev_key_idx = key_checkpoints.size()-1
-				if prev_key_idx != player.check_key_idx and player.check_key_idx != cur_key_idx:
-					break
-				player.check_key_idx = cur_key_idx
-
-			player.check_idx = next_idx
-			if next_idx == 0:
-				# Crossed the finish line
-				player.lap += 1
-				if player.lap > lap_count:
-					var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
-					
-					var finish_plane_normal: Vector3 = checkpoints[0].transform.basis.z
-					var vehicle_vel: Vector3 = player.prev_frame_pre_sim_vel
-					var seconds_per_tick = 1.0/Engine.physics_ticks_per_second
-
-					# Determine the ratio of the vehicle_vel to the finish_plane_normal, and determine how much time it had taken to cross the finish line since the last frame
-					var final_time = time_after_finish - clamp(dist_to_checkpoint(player, 0) / vehicle_vel.project(finish_plane_normal).length(), 0, seconds_per_tick)
-					
-					player.set_finished(final_time)
-		else:
-			break
-	
-	while true:
-		var prev_idx = (player.check_idx - 1) % len(checkpoints)
-		if prev_idx < 0:
-			prev_idx = len(checkpoints) + prev_idx
-		if dist_to_checkpoint(player, player.check_idx) < 0:
-			var prev_checkpoint: Checkpoint = checkpoints[prev_idx]
-			if prev_checkpoint.is_key:
-				var cur_key = player.check_key_idx
-				
-				#Debug.print([cur_key, key_checkpoints[prev_checkpoint]])
-				var prev_key = key_checkpoints[prev_checkpoint]
-				var subtract = 0
-				if prev_key == 0:
-					subtract = key_checkpoints.size()
-					prev_key += subtract
-					cur_key += subtract
-				elif cur_key == 0:
-					cur_key += key_checkpoints.size()
-				
-				if prev_key != cur_key-1 and prev_key != cur_key:
-					break
-				
-				if prev_key == cur_key-1:
-					player.check_key_idx = prev_key - subtract
-			
-			player.check_idx = prev_idx
-			if prev_idx == len(checkpoints)-1:
-				player.lap -= 1
-		else:
-			break
+	if not check_advance(player):
+		check_reverse(player)
 
 	player.check_progress = progress_in_cur_checkpoint(player)
 

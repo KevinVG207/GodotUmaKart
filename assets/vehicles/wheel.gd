@@ -38,7 +38,7 @@ func _process(delta: float) -> void:
 	#position = local_pos
 	
 	var param := PhysicsRayQueryParameters3D.create(start_pos, end_pos, 1, [self])
-	var result := get_world_3d().direct_space_state.intersect_ray(param)
+	var result := parent.world.space_state.intersect_ray(param)
 	var point := end_pos
 	if result:
 		point = result.position
