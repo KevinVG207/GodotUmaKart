@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_70vu5"]
 
 [node name="RaceBase" type="Node3D"]
+process_priority = 900
+process_physics_priority = 900
 script = ExtResource("1_2b6un")
 
 [node name="Course" type="Node3D" parent="."]

@@ -73,7 +73,6 @@ columns = 2
 metadata/_edit_lock_ = true
 
 [node name="MatchmakeButton" type="Button" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -86,6 +85,8 @@ offset_right = 102.0
 offset_bottom = -40.31
 grow_horizontal = 2
 grow_vertical = 0
+focus_neighbor_top = NodePath("../UsernameContainer/UsernameEdit")
+focus_neighbor_right = NodePath("../LeaveButton")
 theme_override_font_sizes/font_size = 25
 text = "LOBBY_BTN_SEARCH"
 metadata/_edit_lock_ = true
@@ -104,6 +105,7 @@ offset_right = 102.0
 offset_bottom = -40.31
 grow_horizontal = 2
 grow_vertical = 0
+focus_neighbor_right = NodePath("../LeaveButton")
 theme_override_font_sizes/font_size = 25
 disabled = true
 text = "LOBBY_BTN_VOTE"
@@ -122,6 +124,8 @@ offset_right = 550.0
 offset_bottom = -40.31
 grow_horizontal = 2
 grow_vertical = 0
+focus_neighbor_left = NodePath("../MatchmakeButton")
+focus_neighbor_top = NodePath("../UsernameContainer/UsernameEdit")
 theme_override_font_sizes/font_size = 25
 text = "LOBBY_BTN_BACK"
 
@@ -162,6 +166,7 @@ text = "LOBBY_USERNAME"
 [node name="UsernameEdit" type="LineEdit" parent="UsernameContainer"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+focus_neighbor_bottom = NodePath("../../MatchmakeButton")
 max_length = 16
 expand_to_text_length = true
 

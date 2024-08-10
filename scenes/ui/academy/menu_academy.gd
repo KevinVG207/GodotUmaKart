@@ -117,6 +117,7 @@ func trunk_to_fountain():
 
 func _on_cam_tween_finished():
 	from_cam.visible = false
+	to_cam.has_focus()
 	traveling = false
 
 func _input(event: InputEvent):

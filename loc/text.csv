@@ -38,9 +38,9 @@ RACE_SPECTATING,Spectating,待機中
 RACE_BTN_BACK,Back to Lobby,ロビーへ戻る
 RACE_LAP,Lap %d,Lap %d
 HOME_1P_OFFLINE_VS,1P Offline VS,シングルVS
-HOME_1P_ONLINE_VS,1P Online VS,1P Wi-Fi VS
+HOME_1P_ONLINE_VS,1P Online VS,1P オンライン VS
 OFFLINE,Offline,シングルプレイ
-ONLINE,Online,Wi-Fiプレイ
+ONLINE,Online,オンラインプレイ
 HOME_LANGUAGE,Language,言語
 LANG_EN,English,英語
 LANG_JA,Japanese,日本語

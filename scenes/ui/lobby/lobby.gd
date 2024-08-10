@@ -31,6 +31,7 @@ var vote_timeout_started = false
 var cur_vote = ""
 var cur_votes = {}
 var next_course = ""
+var given_focus := false
 
 signal back
 
@@ -59,7 +60,11 @@ func _process(_delta):
 		$TimeLeft.text = Util.format_time_minutes($VoteTimeout.time_left)
 	else:
 		$TimeLeft.text = ""
-
+	
+	if given_focus:
+		if Input.is_action_just_pressed("brake"):
+			$LeaveButton.pressed.emit()
+			$LeaveButton.grab_focus()
 
 func _physics_process(_delta):
 	match state:
@@ -95,6 +100,9 @@ func reset():
 	await Network.reset()
 	$LeaveButton.text = tr("LOBBY_BTN_BACK")
 	$LeaveButton.visible = true
+	$LeaveButton.focus_neighbor_left = "../MatchmakeButton"
+	$MatchmakeButton.visible = true
+	$MatchmakeButton.grab_focus()
 	state = STATE_INITIAL
 
 func setup():
@@ -167,6 +175,8 @@ func setup_voting():
 	$VoteButton.visible = true
 	$LeaveButton.disabled = false
 	$LeaveButton.visible = true
+	$VoteButton.grab_focus()
+	$LeaveButton.focus_neighbor_left = "../VoteButton"
 	return
 
 func add_player(username: String, user_id: String):
@@ -204,8 +214,7 @@ func _on_matchmake_button_pressed():
 		Global.randPing = $PingBox.value
 		$MatchmakeButton.disabled = true
 		$MatchmakeButton.visible = false
-		$LeaveButton.disabled = false
-		$LeaveButton.visible = true
+		$LeaveButton.grab_focus()
 		state = STATE_PRE_MATCHMAKING
 
 
@@ -216,7 +225,7 @@ func _on_matchmake_button_pressed():
 		#remove_player(p.user_id)
 
 func focus():
-	$LeaveButton.grab_focus()
+	$MatchmakeButton.grab_focus()
 
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
@@ -350,6 +359,7 @@ func reload():
 
 func _on_leave_button_pressed():
 	if state < STATE_MATCHMAKING:
+		given_focus = false
 		back.emit()
 		return
 	

@@ -57,3 +57,7 @@ func _on_area_3d_input_event(_camera, event: InputEvent, _position, _normal, _sh
 func focus():
 	if "focus" in viewport.get_child(0):
 		viewport.get_child(0).focus()
+
+func has_focus():
+	if "given_focus" in viewport.get_child(0):
+		viewport.get_child(0).given_focus = true
