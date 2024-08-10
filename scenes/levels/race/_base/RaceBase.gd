@@ -596,23 +596,16 @@ func get_starting_order():
 	return []
 
 func join():
-	print("a")
 	starting_order = get_starting_order()
-	print("b")
 	setup_vehicles()
-	print("c")
 	Network.next_match_data = {}
-	print("d")
 	if Global.MODE1 == Global.MODE1_OFFLINE:
-		print("e")
 		state = STATE_COUNTDOWN
 		return
 
-	print("f")
 	var res: bool = await Network.join_match(Network.ready_match)
 	
 	Network.socket.received_match_state.connect(_on_match_state)
-	print("g")
 	if not res or not Network.cur_match:
 		# Disconnect functions
 		print("ERR: Could not connect to race")
@@ -621,14 +614,10 @@ func join():
 
 		state = STATE_DISCONNECT
 		return
-	print("i")
 	if spectate:
-		print("j")
 		state = STATE_SPECTATING
 		return
-	print("k")
 	state = STATE_CAN_READY
-	print("l ", state)
 	return
 
 func send_ready():

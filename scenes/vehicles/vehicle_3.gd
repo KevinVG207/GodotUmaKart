@@ -58,7 +58,7 @@ var input_updown: float = 0
 @export var weight: float = 1.0
 @export var weak_offroad_multiplier: float = 0.7
 @export var offroad_multiplier: float = 0.5
-var push_force: float = 6.0
+var push_force: float = 12.0
 # var max_push_force: float = 2.75
 # var push_force_vert: float = 1.0
 var offroad_ticks: int = 0
@@ -152,9 +152,9 @@ var rest_vel: Vector3 = Vector3.ZERO  # Other velocity
 var floor_normal = Vector3(0, 1, 0)
 
 @export var grip_multiplier: float = 1.0
-@export var default_grip: float = 40.0
+@export var default_grip: float = 80.0
 @export var air_decel: float = default_grip * 0.2
-var ground_rot_multi: float = 1.0
+var ground_rot_multi: float = 2.0
 #@export var default_grip_rest: float = 30.0
 var test_force: float = 10.0
 #var cur_grip: float = 100.0
@@ -172,7 +172,7 @@ var extra_fov: float = 0.0
 var in_water = false
 var water_bodies: Dictionary = {}
 
-var bounce_force: float = 10.0
+var bounce_force: float = 20.0
 var in_bounce = false
 var bounce_frames = 0
 @export var prev_frame_pre_sim_vel: Vector3 = Vector3.ZERO
@@ -442,7 +442,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		grip_multiplier = 0.75
 
 	sleep = false
-	if !is_network and prev_origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
+	if !is_network and prev_prop_vel.length() < 0.01 and prev_origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
 		transform = prev_transform
 		sleep = true
 	
@@ -634,17 +634,20 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# Stick to ground.
 	# Perform raycast in local -y direction
 	var is_stick: bool = false
+	var keep_grav: bool = false
 	#if is_player:
 		#print(in_hop, " ", grounded)
 	if air_frames < 15 and !in_hop and !in_bounce:
 		var space_state = get_world_3d().direct_space_state
-		var ray_origin = transform.origin + transform.basis.y * -0.5
-		var ray_end = ray_origin + transform.basis.y * -0.9
+		var ray_origin = transform.origin
+		var ray_end = ray_origin + gravity.normalized() * 1.4
 		var ray_result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
 
 		if ray_result:
 			is_stick = true
-			grounded = true
+			if !grounded:
+				grounded = true
+				keep_grav = true
 			# var distance = ray_result.position.distance_to(ray_origin)
 			# Apply stick_speed to stick to ground
 
@@ -674,11 +677,15 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		# Remove gravity.
 		var vel_grav = rest_vel.project(gravity.normalized())
 		# print(vel_grav)
-		rest_vel -= vel_grav / 16
+		rest_vel -= vel_grav
 		
 		rest_vel = rest_vel.move_toward(Vector3.ZERO, default_grip * delta)
-		if rest_vel.length() < max_displacement_for_sleep:
-			rest_vel = Vector3.ZERO
+		
+		if keep_grav:
+			#print("stick")
+			rest_vel += vel_grav
+		#if rest_vel.length() < max_displacement_for_sleep:
+			#rest_vel = Vector3.ZERO
 
 		prop_vel = get_grounded_vel(delta)
 	else:

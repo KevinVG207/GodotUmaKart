@@ -120,7 +120,7 @@ func _on_cam_tween_finished():
 
 func _input(event: InputEvent):
 	if to_cam == %CamInitial and !traveling:
-		if event is InputEventKey or event is InputEventMouseButton:
+		if event is InputEventKey or event is InputEventMouseButton or event is InputEventJoypadButton:
 			title_to_fountain()
 			return
 

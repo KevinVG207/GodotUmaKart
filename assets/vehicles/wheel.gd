@@ -5,17 +5,28 @@ extends Node3D
 @onready var parent: Vehicle3 = self.get_parent().get_parent().get_parent()
 @onready var radius := scale.x
 var anchor := Vector3.ZERO
-@onready var initial_rotation := rotation_degrees
+@onready var initial_rotation = rotation_degrees
 
 @export var steer := false
 var cur_steer_deg := 0.0
 var steer_multi := 300.0
+var cur_rot := 0.0
 
 func _ready() -> void:
 	anchor = position
-	print(anchor)
 
 func _process(delta: float) -> void:
+	# Roll over the ground.
+	var new_rot = initial_rotation
+	
+	var dist_travelled := parent.cur_speed * delta
+	var circum := 2.0 * PI * radius
+	var degrees := 360 * (dist_travelled/circum)
+	
+	cur_rot += degrees
+	cur_rot = fmod(cur_rot, 360)
+	
+	new_rot.x -= cur_rot
 	# Do a raycast in the direction of the parent down.
 	var parent_up := parent.transform.basis.y
 	
@@ -42,11 +53,11 @@ func _process(delta: float) -> void:
 		#position.y = point.y
 	position.y = move_toward(position.y, point.y, abs(delta * parent.gravity.y * 0.03))
 	
-	rotation_degrees = initial_rotation
-	
 	if steer:
 		var target_rot : float = parent.cur_turn_speed * 0.3
 		if parent.reversing:
 			target_rot *= -1.0
 		cur_steer_deg = move_toward(cur_steer_deg, target_rot, delta * steer_multi)
-		rotation_degrees.y += cur_steer_deg
+		new_rot.y += cur_steer_deg
+	
+	rotation_degrees = new_rot

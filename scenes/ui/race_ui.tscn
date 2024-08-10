@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=18 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
@@ -67,6 +67,11 @@ _data = {
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_i2ab8"]
 viewport_path = NodePath("MapContainer/MapTexture/MapViewport")
+
+[sub_resource type="LabelSettings" id="LabelSettings_esb4h"]
+font_size = 100
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_pqt07"]
 font_size = 85
@@ -270,7 +275,8 @@ offset_right = 20.0
 offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 100
+text = "1"
+label_settings = SubResource("LabelSettings_esb4h")
 horizontal_alignment = 1
 vertical_alignment = 1
 
