@@ -127,7 +127,7 @@ var stick_ray_count: int = 4
 @export var in_hop_frames: int = 0
 @export var in_drift: bool = false
 @export var drift_dir: int = 0
-@onready var min_hop_speed: float = max_speed * 0.4
+@onready var min_hop_speed: float = max_speed * 0.5
 var hop_force: float = 3.5
 @export var can_hop: bool = true
 #var global_hop: Vector3 = Vector3.ZERO
@@ -842,6 +842,7 @@ func get_grounded_vel(delta: float) -> Vector3:
 				cur_speed += get_accel_speed(delta)
 		else:
 			in_drift = false
+			drift_gauge = 0.0
 			# Decelerate to standstill
 			cur_speed += get_brake_speed(delta)
 			
@@ -887,6 +888,10 @@ func get_grounded_vel(delta: float) -> Vector3:
 	
 	return vel
 
+func is_boost() -> bool:
+	if !small_boost_timer.is_stopped() or !normal_boost_timer.is_stopped() or !big_boost_timer.is_stopped():
+		return true
+	return false
 
 func get_accel_speed(delta: float) -> float:
 	if cur_speed < 0:
@@ -1056,31 +1061,41 @@ func handle_respawn():
 
 func handle_particles():
 	handle_drift_particles()
+	handle_exhaust_particles()
+
+func handle_exhaust_particles():
+	Util.multi_emit(%ExhaustIdle, false)
+	Util.multi_emit(%ExhaustBoost, false)
+	
+	if is_boost():
+		Util.multi_emit(%ExhaustBoost, true)
+		return
+	Util.multi_emit(%ExhaustIdle, true)
 
 
 func handle_drift_particles():
-	$DriftParticles/CenterCharging.visible = false
-	$DriftParticles/CenterCharged.visible = false
-	$DriftParticles/LeftCharging.visible = false
-	$DriftParticles/LeftCharged.visible = false
-	$DriftParticles/RightCharging.visible = false
-	$DriftParticles/RightCharged.visible = false
+	Util.multi_emit(%DriftCenterCharging, false)
+	Util.multi_emit(%DriftCenterCharged, false)
+	Util.multi_emit(%DriftLeftCharging, false)
+	Util.multi_emit(%DriftLeftCharged, false)
+	Util.multi_emit(%DriftRightCharging, false)
+	Util.multi_emit(%DriftRightCharged, false)
 	
 	if in_drift:
 		if drift_gauge >= drift_gauge_max:
 			if drift_dir > 0:
-				$DriftParticles/LeftCharged.visible = true
+				Util.multi_emit(%DriftLeftCharged, true)
 			else:
-				$DriftParticles/RightCharged.visible = true
+				Util.multi_emit(%DriftRightCharged, true)
 		else:
 			if drift_dir > 0:
-				$DriftParticles/LeftCharging.visible = true
+				Util.multi_emit(%DriftLeftCharging, true)
 			else:
-				$DriftParticles/RightCharging.visible = true
+				Util.multi_emit(%DriftRightCharging, true)
 	elif !$StillTurboTimer.is_stopped():
-		$DriftParticles/CenterCharging.visible = true
+		Util.multi_emit(%DriftCenterCharging, true)
 	elif still_turbo_ready:
-		$DriftParticles/CenterCharged.visible = true
+		Util.multi_emit(%DriftCenterCharged, true)
 
 func handle_item():
 	if not input_item_just:

@@ -36,16 +36,17 @@ func _process(delta: float) -> void:
 	point.y += radius
 	
 	# TODO: This does not work with other gravities than down!5
-	if point.y < position.y:
-		position.y = move_toward(position.y, point.y, abs(delta * parent.gravity.y * 0.05))
-	else:
-		position.y = point.y
+	#if point.y < position.y:
+		#position.y = move_toward(position.y, point.y, abs(delta * parent.gravity.y * 0.05))
+	#else:
+		#position.y = point.y
+	position.y = move_toward(position.y, point.y, abs(delta * parent.gravity.y * 0.03))
 	
 	rotation_degrees = initial_rotation
 	
 	if steer:
-		var target_rot : float = parent.steering * parent.max_turn_speed * 0.3
-		#if parent.reversing:
-			#target_rot *= -1.0
+		var target_rot : float = parent.cur_turn_speed * 0.3
+		if parent.reversing:
+			target_rot *= -1.0
 		cur_steer_deg = move_toward(cur_steer_deg, target_rot, delta * steer_multi)
 		rotation_degrees.y += cur_steer_deg

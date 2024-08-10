@@ -2,7 +2,7 @@ extends Camera3D
 
 @export var default_fov: float = 75
 @export var target: Vehicle3 = null
-var offset: Vector3 = Vector3(-5, 2.5, 0)
+var offset: Vector3 = Vector3(0, 1.0, -4.0) # Vector3(-5, 2.5, 0)
 var offset_finished: Vector3 = Vector3(5, 1.5, 3)
 var offset_bw: Vector3 = Vector3(5, 2.5, 0)
 #var offset: Vector3 = Vector3(0, 2, 5)

@@ -158,3 +158,7 @@ func get_path_point_ahead_of_player(world: RaceBase, player: Vehicle3):
 
 func dist_to_plane(plane_normal: Vector3, plane_pos: Vector3, point: Vector3) -> float:
 	return plane_normal.dot(point - plane_pos)
+
+func multi_emit(cont: Node3D, emitting: bool) -> void:
+	for child: GPUParticles3D in cont.get_children():
+		child.emitting = emitting
