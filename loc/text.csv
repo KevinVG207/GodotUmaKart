@@ -19,6 +19,7 @@ LOBBY_USERNAME,Username:,ユーザー名
 LOBBY_BTN_SEARCH,Search for room,ルームを探す
 LOBBY_BTN_VOTE,Vote,投票
 LOBBY_BTN_CANCEL,Cancel search,キャンセル
+LOBBY_BTN_BACK,Back,戻る
 ORD_1,1st,1位
 ORD_2,2nd,2位
 ORD_3,3rd,3位

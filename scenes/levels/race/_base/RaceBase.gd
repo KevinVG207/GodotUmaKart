@@ -443,7 +443,7 @@ func _physics_process(_delta):
 	
 	if state in UPDATE_STATES or Global.MODE1 == Global.MODE1_OFFLINE:
 		# Player checkpoints
-		for vehicle: Vehicle3 in $Vehicles.get_children():
+		for vehicle: Vehicle3 in players_dict.values():
 			update_checkpoint(vehicle)
 			update_ranks()
 			if vehicle == player_camera.target:
@@ -644,7 +644,7 @@ func update_ranks():
 
 	var finished_vehicles = []
 
-	for vehicle: Vehicle3 in $Vehicles.get_children():
+	for vehicle: Vehicle3 in players_dict.values():
 		if vehicle.finished:
 			finished_vehicles.append(vehicle)
 			continue
@@ -678,7 +678,7 @@ func update_ranks():
 	for i in range(finished_vehicles.size()):
 		finished_vehicles[i].set_rank(i)
 	
-	UI.update_ranks(finished_vehicles)
+	#UI.update_ranks(finished_vehicles)
 
 	# print("Ranks:")
 	# for vehicle: Vehicle3 in finished_vehicles.slice(0, 5):
@@ -865,7 +865,7 @@ func _on_start_timer_timeout():
 
 func _on_countdown_timer_timeout():
 	state = STATE_RACE
-	for vehicle: Vehicle3 in $Vehicles.get_children():
+	for vehicle: Vehicle3 in players_dict.values():
 		vehicle.axis_unlock()
 	#UI.race_ui.rank_label.visible = true
 

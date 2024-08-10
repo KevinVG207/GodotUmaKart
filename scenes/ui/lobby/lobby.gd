@@ -32,6 +32,8 @@ var cur_vote = ""
 var cur_votes = {}
 var next_course = ""
 
+signal back
+
 @export var info_box: PackedScene
 var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
@@ -91,6 +93,8 @@ func change_state(new_state: int, state_func: Callable = Callable()):
 func reset():
 	$Status.text = tr("LOBBY_RESET")
 	await Network.reset()
+	$LeaveButton.text = tr("LOBBY_BTN_BACK")
+	$LeaveButton.visible = true
 	state = STATE_INITIAL
 
 func setup():
@@ -210,6 +214,10 @@ func _on_matchmake_button_pressed():
 		#add_player(p.user_id.substr(0, 10), p.user_id)
 	#for p in p_presence.leaves:
 		#remove_player(p.user_id)
+
+func focus():
+	$LeaveButton.grab_focus()
+
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	if Global.randPing:
@@ -341,6 +349,10 @@ func reload():
 	state = STATE_RESETTING
 
 func _on_leave_button_pressed():
+	if state < STATE_MATCHMAKING:
+		back.emit()
+		return
+	
 	$LeaveButton.visible = false
 	await reload()
 

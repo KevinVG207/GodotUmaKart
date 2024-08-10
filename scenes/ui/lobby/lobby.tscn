@@ -110,7 +110,6 @@ text = "LOBBY_BTN_VOTE"
 metadata/_edit_lock_ = true
 
 [node name="LeaveButton" type="Button" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -124,8 +123,7 @@ offset_bottom = -40.31
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 25
-disabled = true
-text = "LOBBY_BTN_CANCEL"
+text = "LOBBY_BTN_BACK"
 
 [node name="VoteTimeout" type="Timer" parent="."]
 process_callback = 0

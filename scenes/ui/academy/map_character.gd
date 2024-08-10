@@ -61,8 +61,7 @@ func check_for_meetup():
 		var dist: float = character.global_position.distance_to(global_position)
 		var dp: float = velocity.normalized().dot(character.velocity.normalized())
 		if dp < 0.5 and dist < 15 and dist > 2:
-			var random = randi_range(0, 20)
-			if random > 1:
+			if randi_range(0, 20) > 1:
 				should_start_timer = true
 				continue
 			

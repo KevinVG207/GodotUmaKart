@@ -36,6 +36,8 @@ offset_top = 29.0
 offset_right = -7.0
 offset_bottom = 49.0
 grow_horizontal = 0
+focus_neighbor_left = NodePath("../OnlineButton")
+focus_neighbor_bottom = NodePath("../OnlineButton")
 theme_override_font_sizes/font_size = 20
 alignment = 2
 
@@ -67,6 +69,8 @@ offset_top = 149.0
 offset_right = -95.0
 offset_bottom = 299.0
 grow_horizontal = 2
+focus_neighbor_top = NodePath("../LangSelect")
+focus_neighbor_right = NodePath("../OnlineButton")
 theme_override_font_sizes/font_size = 40
 text = "OFFLINE"
 
@@ -98,5 +102,8 @@ offset_top = 149.0
 offset_right = 395.0
 offset_bottom = 299.0
 grow_horizontal = 2
+focus_neighbor_left = NodePath("../VSButton")
+focus_neighbor_top = NodePath("../LangSelect")
+focus_neighbor_right = NodePath("../LangSelect")
 theme_override_font_sizes/font_size = 40
 text = "ONLINE"

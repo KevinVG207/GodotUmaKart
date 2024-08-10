@@ -86,6 +86,7 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	tween.tween_property(cam, "fov", end_cam.fov, time).set_delay(wait_start).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 	var callback = func():
 		end_cam.click_area.input_ray_pickable = true
+		end_cam.focus()
 	tween.tween_callback(callback).set_delay(fade_delay_end + wait_start)
 	
 	var end_val = 1.0
@@ -123,7 +124,13 @@ func _input(event: InputEvent):
 		if event is InputEventKey or event is InputEventMouseButton or event is InputEventJoypadButton:
 			title_to_fountain()
 			return
+	#print(event)
+	to_cam.viewport.push_input(event)
 
 
 func _on_ee_timer_timeout():
 	$Menus/CamInitial/SubViewport/CamInitialMenu/PressKey.text = tr("PRESS_ANY2")
+
+
+func _on_lobby_back() -> void:
+	trunk_to_fountain()

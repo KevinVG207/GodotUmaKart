@@ -12,6 +12,7 @@ var scale_multi: float = 1.0
 @onready var viewport: SubViewport = $SubViewport
 @onready var click_area: Area3D = $Plane/Area3D
 
+
 var opacity: float:
 	set(value):
 		plane.transparency = 1.0 - value
@@ -52,3 +53,7 @@ func _on_area_3d_input_event(_camera, event: InputEvent, _position, _normal, _sh
 	event.position *= scale_multi
 	event.global_position = event.position
 	viewport.push_input(event, true)
+
+func focus():
+	if "focus" in viewport.get_child(0):
+		viewport.get_child(0).focus()

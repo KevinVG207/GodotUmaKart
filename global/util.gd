@@ -22,7 +22,9 @@ func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group,
 		group = [group]
 	var space_state = obj.get_world_3d().direct_space_state
 	var out: Dictionary = {}
+	var idx := 0
 	while true:
+		idx += 1
 		var result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(start_pos, end_pos, collision_mask, ignore_array))
 		# Debug.print(result)
 		if not result:
@@ -36,6 +38,8 @@ func raycast_for_group(obj: Node3D, start_pos: Vector3, end_pos: Vector3, group,
 			break
 		ignore_array.append(collider)
 	ignore_array.clear()
+	if idx > 1:
+		print("raycast loops: ", idx)
 	return out
 
 func is_in_group_list(node: Node, group_list: Array) -> bool:

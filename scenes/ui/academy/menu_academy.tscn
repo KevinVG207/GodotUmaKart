@@ -214,6 +214,7 @@ transform = Transform3D(0.971243, 0.0740151, 0.226288, 0, 0.95045, -0.310876, -0
 wait_time = 60.0
 one_shot = true
 
+[connection signal="back" from="Menus/CamTrunk/SubViewport/Lobby" to="." method="_on_lobby_back"]
 [connection signal="timeout" from="EETimer" to="." method="_on_ee_timer_timeout"]
 
 [editable path="Menus/CamInitial"]

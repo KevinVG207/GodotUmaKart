@@ -2,6 +2,7 @@ extends Control
 
 @export var single_scene: String
 @export var online_scene: String
+@onready var last_button: Control = %VSButton
 
 func _enter_tree():
 	for i in range(len(Global.locales)):
@@ -19,11 +20,15 @@ func _on_language_change(index: int):
 
 func _on_vs_button_pressed():
 	UI.change_scene(single_scene, true)
+	last_button = %VSButton
 
+func _input(event: InputEvent) -> void:
+	print(event)
 
 func _on_online_button_pressed():
 	#UI.change_scene(online_scene)
 	Global.goto_lobby_screen.emit()
+	last_button = %OnlineButton
 
-func parse_input(event: InputEvent):
-	print(event)
+func focus():
+	last_button.grab_focus()

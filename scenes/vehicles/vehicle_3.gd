@@ -812,9 +812,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	handle_vehicle_collisions()
 
-	handle_particles()
-	handle_item()
-
 	# Limit rest_vel to terminal_velocity
 	if rest_vel.length() > terminal_velocity:
 		rest_vel = rest_vel.normalized() * terminal_velocity
@@ -1180,6 +1177,9 @@ func _process(delta):
 	# UI Stuff
 	#if is_multiplayer_authority() and not is_cpu:
 		#is_player = true
+	handle_input()
+	handle_particles()
+	handle_item()
 	
 	if is_player:
 		# Update alerts
