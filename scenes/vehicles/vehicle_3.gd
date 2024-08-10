@@ -582,8 +582,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		#new_grav *= 2
 	rest_vel += _gravity * delta
 
-	angular_velocity = Vector3.ZERO
-
 	# var target_vel: Vector3 = prev_vel.move_toward(new_vel, delta * cur_grip * grip_multiplier) + (_gravity * delta)
 
 	# print(prop_vel, " ", rest_vel, " ", linear_velocity)
@@ -662,6 +660,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
 	if grounded:
 		rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * delta)
+		rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.x) * ground_rot_multi * delta)
 
 
 	# REFUSE TO GO UPSIDE DOWN (assuming we were at some point right side up)
@@ -686,11 +685,13 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	linear_velocity = prop_vel + rest_vel
 	prev_vel = linear_velocity
+	angular_velocity = Vector3.ZERO
 
 	# if is_player:
 	# 	print(grounded)
 
 	# grounded = false
+	
 	prev_transform = transform
 	prev_frame_pre_sim_vel = linear_velocity
 	prev_prop_vel = prop_vel
