@@ -50,6 +50,7 @@ var input_updown: float = 0
 @export var icon: CompressedTexture2D
 @export var max_speed: float = 25
 @onready var cur_max_speed = max_speed
+@onready var min_speed_for_detach := max_speed / 4
 @export var reverse_multi: float = 0.5
 @onready var max_reverse_speed: float = max_speed * reverse_multi
 @export var initial_accel: float = 10
@@ -143,7 +144,8 @@ var still_turbo_ready: bool = false
 
 @export var cur_speed: float = 0
 
-@export var grounded: bool = false
+var grounded: bool = false
+var prev_grounded: bool = false
 
 @export var gravity: Vector3 = Vector3.DOWN * 20
 var terminal_velocity = 3000
@@ -171,6 +173,7 @@ var max_degrees_change_for_sleep = 0.5
 var prev_vel: Vector3 = Vector3.ZERO
 
 var prev_transform: Transform3D = Transform3D.IDENTITY
+#@onready var prev_rotation: Vector3 = rotation
 
 var sleep = false
 var extra_fov: float = 0.0
@@ -209,6 +212,10 @@ var floor_check_distance: float = 1.0
 
 var wall_turn_multi: float = 1.0
 var max_wall_turn_multi: float = 2.0
+
+var along_ground_multi := 0.0
+var along_ground_dec := 10.0
+var min_angle_to_detach := 10.0
 
 
 #func _enter_tree():
@@ -318,7 +325,10 @@ func cpu_control(delta):
 	if !is_network and in_drift and drift_gauge >= 75:
 		input_brake = true
 	if !is_network and !$TrickTimer.is_stopped():
-		input_trick = true
+		if randf() < (0.25 / Engine.physics_ticks_per_second):
+			input_trick = true
+		if grounded and cur_speed > min_hop_speed and randf() < (1.0 / Engine.physics_ticks_per_second):
+			input_brake = true
 	
 	var cpu_target_pos = cpu_target.global_position + (cpu_target_offset * cpu_target.dist / 3)
 	if global_position.distance_to(cpu_target_pos) < cpu_target.dist or Util.dist_to_plane(cpu_target.normal, cpu_target.global_position, global_position) > 0:
@@ -458,8 +468,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			collided_with.erase(vehicle)
 
 
-	var prev_origin = prev_transform.origin
-	var prev_rotation = prev_transform.basis
+	var prev_origin := prev_transform.origin
+	var prev_basis := prev_transform.basis
 
 	grip_multiplier = 1.0
 	
@@ -644,14 +654,12 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var adjusted_max_turn_speed = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
 	#Debug.print(adjusted_max_turn_speed)
 	
+	# Hacky attempt to fix being "stuck" to a wall
 	if wall_contacts:
-		# Hacky attempt to fix being "stuck" to a wall
 		wall_turn_multi += delta * 2
 	else:
 		wall_turn_multi = 1.0
 	wall_turn_multi = clamp(wall_turn_multi, 1.0, max_wall_turn_multi)
-	if is_player:
-		print(wall_turn_multi)
 	
 	var turn_target = adjusted_steering * adjusted_max_turn_speed * wall_turn_multi
 
@@ -681,7 +689,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# 	linear_velocity = linear_velocity.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta)
 	#Debug.print(in_drift)
 	
-
+	prop_vel = prev_prop_vel.move_toward(prop_vel, delta * default_grip * grip_multiplier)
+	
 	idle_rotate(delta)
 
 	# REFUSE TO GO UPSIDE DOWN (assuming we were at some point right side up)
@@ -702,8 +711,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	if rest_vel.length() > terminal_velocity:
 		rest_vel = rest_vel.normalized() * terminal_velocity
 	
-	prop_vel = prev_prop_vel.move_toward(prop_vel, delta * default_grip * grip_multiplier)
-	
 	linear_velocity = prop_vel + rest_vel
 	prev_vel = linear_velocity
 	angular_velocity = Vector3.ZERO
@@ -717,6 +724,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	prev_frame_pre_sim_vel = linear_velocity
 	prev_prop_vel = prop_vel
 	prev_rest_vel = rest_vel
+	prev_grounded = grounded
+	#print("Grounded: ", grounded)
+	#prev_rotation = rotation
 
 
 func raycast_floor_below() -> Array:
@@ -753,9 +763,53 @@ func idle_rotate(delta: float) -> void:
 		else:
 			# Floor is not under the player!!
 			pass
+		
+		# Rotate the propulsion direction
+		if not prev_grounded and grounded:
+			# We were in the air and have now landed
+			along_ground_multi = 1.0
+		
+		var angle_z := prop_vel.normalized().angle_to(avg_normal)
+		var angle_to_ground := 90 - rad_to_deg(angle_z)
+		
+		var new_prop_vel := prop_vel.rotated(transform.basis.z, -deg_to_rad(angle_to_ground))
+		prop_vel = prop_vel.normalized().slerp(new_prop_vel.normalized(), along_ground_multi) * prop_vel.length()
+		along_ground_multi -= along_ground_dec * delta
+		along_ground_multi = clamp(along_ground_multi, 0.0, 1.0)
+		print(angle_to_ground, " ", along_ground_multi)
+			
+		#var prev_rot_y := prop_vel.y
+		#var new_prop_vel := prop_vel.rotated(transform.basis.z.normalized(), angle_z)
+		#new_prop_vel = new_prop_vel.rotated(transform.basis.x.normalized(), angle_x)
+		#new_prop_vel.y = prev_rot_y
+		#prop_vel = prop_vel.slerp(new_prop_vel.normalized() * prop_vel.length(), along_ground_multi)
+		#along_ground_multi -= delta * along_ground_dec
+		#along_ground_multi = clamp(along_ground_multi, 0.0, 1.0)
+		#print(along_ground_multi)
+		
+		#var snap_angle := avg_normal.signed_angle_to(prop_vel.normalized(), transform.basis.z.normalized())
+		#print(rad_to_deg(snap_angle))
+		#
+		#if not prev_grounded and grounded:
+			#print("Just landed")
+			#print(prop_vel.normalized())
+			#print(avg_normal)
+			#print(prop_vel.normalized().dot(avg_normal.normalized()))
+			#print("---")
+		
+		if cur_speed >= min_speed_for_detach and angle_to_ground >= min_angle_to_detach:
+			#if is_player:
+				#print("Steep snap!")
+			bounce_frames += 1
+			in_bounce = true
+			print("Detach")
+			return
+		
+		# Rotate the vehicle to match the ground.
+		var prev_y := rotation.y
 		rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(avg_normal, transform.basis.z) * ground_rot_multi * multi * delta)
 		rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(avg_normal, transform.basis.x) * ground_rot_multi * multi * delta)
-
+		rotation.y = prev_y
 
 func detect_stick():
 	if air_frames < 15 and !in_hop and !in_bounce:

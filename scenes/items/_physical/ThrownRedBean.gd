@@ -7,7 +7,8 @@ var world: RaceBase
 var no_updates: bool = false
 
 var gravity: Vector3
-var start_speed: float = 30.0
+var turn_speed: float = 4.0
+var start_speed: float = 40.0
 var target_speed: float = start_speed
 var despawn_time: float = 30.0
 var grace_frames: int = 30
@@ -122,14 +123,14 @@ func _physics_process(delta):
 			else:
 				angle += 10
 		
-		var turn_speed = 1.0
+		var cur_turn_speed: float = turn_speed
 		if angle < 0:
-			turn_speed *= -1
+			cur_turn_speed *= -1
 		
 		if dist_to_target_player < 10:
-			turn_speed *= 2
+			cur_turn_speed *= 2
 		
-		velocity = velocity.rotated(transform.basis.y, turn_speed * delta * 3)
+		velocity = velocity.rotated(transform.basis.y, cur_turn_speed * delta)
 	
 	var speed = velocity.length()
 	var new_speed = move_toward(speed, target_speed, delta * 30)
@@ -154,8 +155,10 @@ func _physics_process(delta):
 		var collider = col_data.get_collider(0)
 		if collider.is_in_group("wall"):
 			# Break on walls
-			if owner_id == world.player_user_id or Global.MODE1 == Global.MODE1_OFFLINE:
-				world.destroy_physical_item(item_id)
+			var col_pos: Vector3 = to_local(col_data.get_position())
+			if col_pos.y >= 0.1:
+				if owner_id == world.player_user_id or Global.MODE1 == Global.MODE1_OFFLINE:
+					world.destroy_physical_item(item_id)
 			
 			#var normal = col_data.get_normal(0)
 			#if velocity.length() > 0.1 and velocity.normalized().dot(normal) < 0:
