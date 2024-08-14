@@ -656,7 +656,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	
 	# Hacky attempt to fix being "stuck" to a wall
 	if wall_contacts:
-		wall_turn_multi += delta * 2
+		wall_turn_multi += delta * 3
 	else:
 		wall_turn_multi = 1.0
 	wall_turn_multi = clamp(wall_turn_multi, 1.0, max_wall_turn_multi)
@@ -776,7 +776,7 @@ func idle_rotate(delta: float) -> void:
 		prop_vel = prop_vel.normalized().slerp(new_prop_vel.normalized(), along_ground_multi) * prop_vel.length()
 		along_ground_multi -= along_ground_dec * delta
 		along_ground_multi = clamp(along_ground_multi, 0.0, 1.0)
-		print(angle_to_ground, " ", along_ground_multi)
+		# print(angle_to_ground, " ", along_ground_multi)
 			
 		#var prev_rot_y := prop_vel.y
 		#var new_prop_vel := prop_vel.rotated(transform.basis.z.normalized(), angle_z)
@@ -802,7 +802,7 @@ func idle_rotate(delta: float) -> void:
 				#print("Steep snap!")
 			bounce_frames += 1
 			in_bounce = true
-			print("Detach")
+			# print("Detach")
 			return
 		
 		# Rotate the vehicle to match the ground.
@@ -880,6 +880,9 @@ func handle_contacts(physics_state: PhysicsDirectBodyState3D):
 	for i in range(physics_state.get_contact_count()):
 		var collider = physics_state.get_contact_collider_object(i) as Node
 		if collider.is_in_group("floor"):
+			var col_pos: Vector3 = to_local(physics_state.get_contact_local_position(i))
+			if col_pos.y > 0.0:
+				continue
 			grounded = true
 			floor_normals.append(physics_state.get_contact_local_normal(i))
 			if in_bounce and bounce_frames > 9:
