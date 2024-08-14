@@ -160,7 +160,7 @@ var wall_contacts: Array = []
 @export var grip_multiplier: float = 1.0
 @export var default_grip: float = 80.0
 @export var air_decel: float = default_grip * 0.2
-var ground_rot_multi: float = 2.0
+var ground_rot_multi: float = 6.0
 #@export var default_grip_rest: float = 30.0
 var test_force: float = 10.0
 #var cur_grip: float = 100.0
@@ -204,6 +204,12 @@ const DamageType = {
 
 var collided_with: Dictionary = {}
 
+var floor_check_grid: Array = []
+var floor_check_distance: float = 1.0
+
+var wall_turn_multi: float = 1.0
+var max_wall_turn_multi: float = 2.0
+
 
 #func _enter_tree():
 	#set_multiplayer_authority(peer_id)
@@ -212,9 +218,24 @@ var collided_with: Dictionary = {}
 		#is_cpu = false
 
 func _ready():
+	setup_floor_check_grid()
 	pass
 	#Network.should_setup = true
 	#transform = initial_transform
+
+func setup_floor_check_grid() -> void:
+	var fl: Vector3 = %FrontLeft.position
+	var fr: Vector3 = %FrontRight.position
+	var bl: Vector3 = %BackLeft.position
+	var br: Vector3 = %BackRight.position
+	var ml: Vector3 = fl.lerp(bl, 0.5)
+	var mr: Vector3 = fr.lerp(br, 0.5)
+	
+	floor_check_grid = [
+		fl, fl.lerp(fr, 0.5), fr,
+		ml, ml.lerp(mr, 0.5), mr,
+		bl, bl.lerp(br, 0.5), br
+	]
 
 func make_player():
 	is_cpu = false
@@ -623,7 +644,16 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	var adjusted_max_turn_speed = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
 	#Debug.print(adjusted_max_turn_speed)
 	
-	var turn_target = adjusted_steering * adjusted_max_turn_speed
+	if wall_contacts:
+		# Hacky attempt to fix being "stuck" to a wall
+		wall_turn_multi += delta * 2
+	else:
+		wall_turn_multi = 1.0
+	wall_turn_multi = clamp(wall_turn_multi, 1.0, max_wall_turn_multi)
+	if is_player:
+		print(wall_turn_multi)
+	
+	var turn_target = adjusted_steering * adjusted_max_turn_speed * wall_turn_multi
 
 	var cur_turn_accel = turn_accel
 	if reversing:
@@ -652,16 +682,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	#Debug.print(in_drift)
 	
 
-	#TODO: Make this dependent on gravity vector
-	if not sleep:
-		rotation_degrees.x = move_toward(rotation_degrees.x, 0, 6 * delta)
-	var floor_below = Util.raycast_for_group(world.space_state, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
-	if not grounded and (!in_hop or !floor_below):
-		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
-	if grounded:
-		rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * delta)
-		rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.x) * ground_rot_multi * delta)
-
+	idle_rotate(delta)
 
 	# REFUSE TO GO UPSIDE DOWN (assuming we were at some point right side up)
 	# TODO: Actually implement rolling over
@@ -696,6 +717,44 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	prev_frame_pre_sim_vel = linear_velocity
 	prev_prop_vel = prop_vel
 	prev_rest_vel = rest_vel
+
+
+func raycast_floor_below() -> Array:
+	var normals: Array = []
+	
+	for loc_start_pos: Vector3 in floor_check_grid:
+		var start_pos := to_global(loc_start_pos)
+		var end_pos := start_pos + (transform.basis.y.normalized() * -floor_check_distance)
+		var result = Util.raycast_for_group(world.space_state, start_pos, end_pos, "floor", [self])
+		if result:
+			normals.append(result.normal)
+	
+	return normals
+
+func idle_rotate(delta: float) -> void:
+	#TODO: Make this dependent on gravity vector
+	if not sleep:
+		rotation_degrees.x = move_toward(rotation_degrees.x, 0, 6 * delta)
+	#var floor_below = Util.raycast_for_group(world.space_state, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
+	var floor_normals := raycast_floor_below()
+	#if is_player:
+		#print(len(floor_normals))
+	if not grounded and (!in_hop or !floor_normals):
+		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
+	#if grounded:
+		#rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * delta)
+		#rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.x) * ground_rot_multi * delta)
+	if grounded:
+		var avg_normal: Vector3 = floor_normal
+		var multi: float = 1.0
+		if floor_normals:
+			avg_normal = Util.sum(floor_normals) / len(floor_normals)
+			multi = float(len(floor_normals)) / len(floor_check_grid)
+		else:
+			# Floor is not under the player!!
+			pass
+		rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(avg_normal, transform.basis.z) * ground_rot_multi * multi * delta)
+		rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(avg_normal, transform.basis.x) * ground_rot_multi * multi * delta)
 
 
 func detect_stick():
@@ -981,7 +1040,7 @@ func _on_still_turbo_timer_timeout():
 
 func handle_vehicle_collisions():
 	var colliding_vehicles: Dictionary = {}
-	for shape: ShapeCast3D in $PlayerCollision.get_children():
+	for shape: ShapeCast3D in %PlayerCollision.get_children():
 		shape.force_shapecast_update()
 		for i in range(shape.get_collision_count()):
 			var collider: Node3D = shape.get_collider(i)
