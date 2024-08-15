@@ -751,9 +751,7 @@ func idle_rotate(delta: float) -> void:
 		#print(len(floor_normals))
 	if not grounded and (!in_hop or !floor_normals):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
-	#if grounded:
-		#rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * delta)
-		#rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.x) * ground_rot_multi * delta)
+
 	if grounded:
 		var avg_normal: Vector3 = floor_normal
 		var multi: float = 1.0
@@ -777,25 +775,6 @@ func idle_rotate(delta: float) -> void:
 		along_ground_multi -= along_ground_dec * delta
 		along_ground_multi = clamp(along_ground_multi, 0.0, 1.0)
 		# print(angle_to_ground, " ", along_ground_multi)
-			
-		#var prev_rot_y := prop_vel.y
-		#var new_prop_vel := prop_vel.rotated(transform.basis.z.normalized(), angle_z)
-		#new_prop_vel = new_prop_vel.rotated(transform.basis.x.normalized(), angle_x)
-		#new_prop_vel.y = prev_rot_y
-		#prop_vel = prop_vel.slerp(new_prop_vel.normalized() * prop_vel.length(), along_ground_multi)
-		#along_ground_multi -= delta * along_ground_dec
-		#along_ground_multi = clamp(along_ground_multi, 0.0, 1.0)
-		#print(along_ground_multi)
-		
-		#var snap_angle := avg_normal.signed_angle_to(prop_vel.normalized(), transform.basis.z.normalized())
-		#print(rad_to_deg(snap_angle))
-		#
-		#if not prev_grounded and grounded:
-			#print("Just landed")
-			#print(prop_vel.normalized())
-			#print(avg_normal)
-			#print(prop_vel.normalized().dot(avg_normal.normalized()))
-			#print("---")
 		
 		if cur_speed >= min_speed_for_detach and angle_to_ground >= min_angle_to_detach:
 			#if is_player:
