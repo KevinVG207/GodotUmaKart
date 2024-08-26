@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=4 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=49 format=4 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://ct47gwog3yv0h" path="res://assets/character/body.png" id="10_r0b6w"]
 [ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_hxerb"]
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_be71b"]
+[ext_resource type="PackedScene" uid="uid://b030ek8eo2e54" path="res://assets/character/head.tscn" id="13_132u2"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -508,7 +509,7 @@ bones/2/rest = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9515, 0)
 bones/2/position = Vector3(0, 1.9515, 0)
 bones/3/rest = Transform3D(-0.493239, -0.869894, -4.66584e-07, 0.869894, -0.493239, 2.68043e-07, -4.63307e-07, -2.7367e-07, 1, -4.14798e-07, 1.95149, -1.30496e-13)
 bones/3/position = Vector3(-4.14798e-07, 1.95149, -1.30496e-13)
-bones/3/rotation = Quaternion(-2.69043e-07, -1.62793e-09, 0.864071, 0.503369)
+bones/3/rotation = Quaternion(-2.69044e-07, -1.62797e-09, 0.864071, 0.503369)
 bones/3/scale = Vector3(1, 1, 1)
 bones/4/rest = Transform3D(0.866161, 0.499765, -7.59675e-08, -0.499765, 0.866161, -2.23075e-07, -4.56853e-08, 2.31185e-07, 1, 8.26035e-07, 2.30621, -1.43045e-13)
 bones/4/position = Vector3(8.26035e-07, 2.30621, -1.43045e-13)
@@ -519,7 +520,7 @@ bones/5/position = Vector3(3.01749e-07, 2.75079, 4.42313e-13)
 bones/5/rotation = Quaternion(0.0864098, -0.000254989, -0.120178, 0.988985)
 bones/6/rest = Transform3D(1, 0, -2.84217e-14, 0, 1, 0, 2.84217e-14, 0, 1, 0, 1.9515, 0)
 bones/6/position = Vector3(0, 1.9515, 0)
-bones/6/rotation = Quaternion(0, -1.42109e-14, 0, 1)
+bones/6/rotation = Quaternion(0, -1.42108e-14, 0, 1)
 bones/6/scale = Vector3(1, 1, 1)
 bones/7/rest = Transform3D(-0.493075, 0.869894, 0.012692, -0.869606, -0.493239, 0.0223845, 0.0257323, 1.38767e-07, 0.999669, 4.14419e-07, 1.95149, -2.97924e-08)
 bones/7/position = Vector3(4.14419e-07, 1.95149, -2.97924e-08)
@@ -559,7 +560,7 @@ bones/16/rotation = Quaternion(0.0919335, 0.0225546, 0.000366625, 0.99551)
 bones/16/scale = Vector3(1, 1, 1)
 bones/17/rest = Transform3D(-0.00224376, -0.998658, 0.0517337, 0.999392, -0.000439048, 0.0348706, -0.0348011, 0.0517805, 0.998052, -7.4405e-09, 4.06761, -3.17448e-08)
 bones/17/position = Vector3(-7.4405e-09, 4.06761, -3.17448e-08)
-bones/17/rotation = Quaternion(0.00598549, 0.0306301, 0.707237, 0.706288)
+bones/17/rotation = Quaternion(0.0059855, 0.0306302, 0.707237, 0.706288)
 bones/17/scale = Vector3(1, 1, 1)
 
 [node name="Cube" parent="Visual/Character/chara-test2/Armature/Skeleton3D" index="0"]
@@ -806,6 +807,11 @@ lifetime = 0.2
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_hs8oo")
 draw_pass_1 = SubResource("QuadMesh_ebj2w")
+
+[node name="HeadPivot" type="Node3D" parent="Visual"]
+transform = Transform3D(-9.61651e-09, 0, 0.22, 0, 0.22, 0, -0.22, 0, -9.61651e-09, -0.382285, 0.69158, 0)
+
+[node name="head" parent="Visual/HeadPivot" instance=ExtResource("13_132u2")]
 
 [node name="StillTurboTimer" type="Timer" parent="."]
 process_callback = 0
