@@ -15,7 +15,7 @@ var map_character_scene: PackedScene = preload("res://scenes/ui/academy/map_char
 func _ready():
 	Engine.physics_ticks_per_second = 60
 	hide_cams()
-	$EETimer.start()
+	%EETimer.start()
 	
 	cam.rotation = to_cam.rotation
 	cam.global_position = to_cam.global_position
@@ -104,7 +104,7 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	
 func fountain_to_title():
 	start_cam_travel(%CamFountain, %CamInitial, $PathInitialFountain/Follow, travel_time, true)
-	$EETimer.start()
+	%EETimer.start()
 
 func title_to_fountain():
 	start_cam_travel(%CamInitial, %CamFountain, $PathInitialFountain/Follow, travel_time)

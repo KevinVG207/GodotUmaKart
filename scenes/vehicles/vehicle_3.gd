@@ -818,9 +818,12 @@ func handle_walls():
 		avg_position /= wall_contacts.size()
 		# var avg_normal = wall_contacts[-1]["normal"]
 
+		var bonk := false
 		var bounce_ratio = 0.2
 		for wall in wall_contacts:
 			var col_obj = wall["object"]
+			if col_obj.is_in_group("bonk"):
+				bonk = true
 			if col_obj.get("physics_material_override") and col_obj.physics_material_override.get("bounce"):
 				var cur_bounce_ratio = col_obj.physics_material_override.bounce
 				if cur_bounce_ratio > bounce_ratio:
@@ -828,7 +831,9 @@ func handle_walls():
 		
 		# If we are already moving away from the wall, don't bounce
 		var dp = avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
-		if dp < 0:
+		if is_player:
+			print(dp)
+		if dp < 0.25 or (dp < 0 and bonk):
 			# Get the component of the linear velocity that is perpendicular to the wall
 			var perp_vel = prev_frame_pre_sim_vel.project(avg_normal).length()
 			#Debug.print(perp_vel)
@@ -914,7 +919,7 @@ func handle_contacts(physics_state: PhysicsDirectBodyState3D):
 			# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
 			var dist_above_floor = Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
 
-			if dist_above_floor < 0.1:
+			if dist_above_floor < 0.05 and not collider.is_in_group("bonk"):
 				continue
 
 			wall_contacts.append({

@@ -211,7 +211,8 @@ curve = SubResource("Curve3D_vhdx5")
 transform = Transform3D(0.971243, 0.0740151, 0.226288, 0, 0.95045, -0.310876, -0.238085, 0.301937, 0.923119, 23.713, 1.694, 48.668)
 
 [node name="EETimer" type="Timer" parent="."]
-wait_time = 60.0
+unique_name_in_owner = true
+wait_time = 564.0
 one_shot = true
 
 [connection signal="back" from="Menus/CamTrunk/SubViewport/Lobby" to="." method="_on_lobby_back"]

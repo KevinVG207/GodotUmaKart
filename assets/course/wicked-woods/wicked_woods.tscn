@@ -282,7 +282,7 @@ transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 0, 0, 0)
 
 [node name="StaticBody3D" parent="Course_boost-border" index="0" groups=["boost", "floor", "trick"]]
 
-[node name="StaticBody3D" parent="Course_wood-fence" index="0" groups=["wall"]]
+[node name="StaticBody3D" parent="Course_wood-fence" index="0" groups=["bonk", "wall"]]
 
 [node name="Course_ruins-road" parent="." index="7" groups=["map"]]
 
@@ -351,7 +351,7 @@ disabled = true
 [node name="CollisionShape3D" parent="Course_grass-offroad/StaticBody3D" index="0"]
 visible = false
 
-[node name="StaticBody3D" parent="Course_forest-wall" index="0" groups=["wall"]]
+[node name="StaticBody3D" parent="Course_forest-wall" index="0" groups=["bonk", "wall"]]
 
 [node name="Course_tree-wall" parent="." index="32"]
 surface_material_override/0 = ExtResource("2_alxyx")

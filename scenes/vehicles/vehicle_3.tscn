@@ -336,7 +336,7 @@ angle_max = 720.0
 direction = Vector3(-1, -0.25, 0)
 spread = 10.0
 initial_velocity_min = 1.5
-initial_velocity_max = 1.5
+initial_velocity_max = 2.0
 angular_velocity_min = -1.60933e-05
 angular_velocity_max = -1.60933e-05
 gravity = Vector3(0, 0, 0)
@@ -772,7 +772,7 @@ unique_name_in_owner = true
 [node name="GPUParticles3D" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustIdle"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.46145, 0.029854, -0.500729)
 amount = 3
-lifetime = 0.2
+lifetime = 0.15
 randomness = 0.1
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_dok70")
@@ -781,7 +781,7 @@ draw_pass_1 = SubResource("QuadMesh_beh0s")
 [node name="GPUParticles3D2" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustIdle"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.461, 0.0294046, 0.501)
 amount = 3
-lifetime = 0.2
+lifetime = 0.15
 randomness = 0.1
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_dok70")
