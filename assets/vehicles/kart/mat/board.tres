@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cm0khrxma2kb1"]
+
+[resource]
+resource_name = "board"
+cull_mode = 2
+diffuse_mode = 3
+albedo_color = Color(0.920487, 0.654182, 1, 1)
+metallic = 0.28
+metallic_specular = 1.0
+roughness = 0.5

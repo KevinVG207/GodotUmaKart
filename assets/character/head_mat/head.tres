@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://crqbvw8tsv430"]
+
+[ext_resource type="Texture2D" uid="uid://84rvlna8akqj" path="res://assets/character/head.png" id="1_8klvv"]
+
+[resource]
+resource_name = "head"
+diffuse_mode = 3
+albedo_texture = ExtResource("1_8klvv")
+metallic_specular = 0.0
+roughness = 0.1

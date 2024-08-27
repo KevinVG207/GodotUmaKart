@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://5tr6tshl1qd"]
+
+[resource]
+resource_name = "fall-boundary.001"
+cull_mode = 2
+albedo_color = Color(0.906332, 0.858319, 0, 1)
+roughness = 0.5

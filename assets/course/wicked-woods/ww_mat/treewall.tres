@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://d3lrywh3a6qng"]
+
+[ext_resource type="Texture2D" uid="uid://b0u8vske7m0kn" path="res://assets/course/wicked-woods/tex/treewall.png" id="1_g6h6g"]
+
+[resource]
+resource_name = "treewall"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_g6h6g")

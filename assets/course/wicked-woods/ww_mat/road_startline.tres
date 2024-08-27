@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://cysqn6e7nw1ne"]
+
+[ext_resource type="Texture2D" uid="uid://d1hs8icg4g7s0" path="res://assets/course/wicked-woods/tex/fence2.png" id="1_ijy78"]
+
+[resource]
+resource_name = "road_startline"
+albedo_texture = ExtResource("1_ijy78")

@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://xweu8r0f8dts"]
+
+[resource]
+resource_name = "wheel"
+cull_mode = 2
+diffuse_mode = 3
+albedo_color = Color(0, 0, 0, 1)
+roughness = 0.5

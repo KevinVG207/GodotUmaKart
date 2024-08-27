@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://i4x5yxqwdryh"]
+
+[ext_resource type="Texture2D" uid="uid://b2yo5a7c3fc4" path="res://assets/course/wicked-woods/tex/chevron_small.png" id="1_vkdyq"]
+
+[resource]
+resource_name = "small_trick"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_vkdyq")

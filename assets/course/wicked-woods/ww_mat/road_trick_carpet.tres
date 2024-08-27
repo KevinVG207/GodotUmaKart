@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://d277w4smf4cop"]
+
+[ext_resource type="Texture2D" uid="uid://d3pc5xe8m5sr" path="res://assets/course/wicked-woods/tex/carpet1.png" id="1_7alhm"]
+
+[resource]
+resource_name = "road_trick_carpet"
+albedo_texture = ExtResource("1_7alhm")

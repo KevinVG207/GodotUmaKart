@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://by3n3q154pm6a"]
+
+[ext_resource type="Texture2D" uid="uid://dc0s0yfvgj2rw" path="res://assets/course/wicked-woods/tex/rainbow.png" id="1_3g0i8"]
+
+[resource]
+resource_name = "boost_ramp"
+albedo_texture = ExtResource("1_3g0i8")

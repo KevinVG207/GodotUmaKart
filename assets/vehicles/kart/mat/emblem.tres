@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://buxn3nsk6427y"]
+
+[ext_resource type="Texture2D" uid="uid://ob18g686wm50" path="res://assets/vehicles/kart/emblem.png" id="1_08vgg"]
+
+[resource]
+resource_name = "emblem"
+transparency = 4
+cull_mode = 2
+diffuse_mode = 3
+albedo_texture = ExtResource("1_08vgg")
+roughness = 0.5

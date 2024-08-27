@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dotix6tyr712r"]
+
+[ext_resource type="Texture2D" uid="uid://d2e2nss7mlyda" path="res://assets/course/wicked-woods/tex/road_arrow.png" id="1_seiax"]
+
+[resource]
+resource_name = "road_arrows"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+albedo_texture = ExtResource("1_seiax")

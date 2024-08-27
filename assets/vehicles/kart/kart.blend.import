@@ -31,12 +31,30 @@ animation/trimming=false
 animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
 import_script/path=""
-_subresources={}
-fbx/importer=0
-fbx/allow_geometry_helper_nodes=false
-fbx/embedded_image_handling=1
-gltf/naming_version=1
-gltf/embedded_image_handling=1
+_subresources={
+"materials": {
+"board": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/vehicles/kart/mat/board.tres"
+},
+"board2": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/vehicles/kart/mat/board2.tres"
+},
+"emblem": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/vehicles/kart/mat/emblem.tres"
+},
+"metal": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/vehicles/kart/mat/metal.tres"
+},
+"wheel": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/vehicles/kart/mat/wheel.tres"
+}
+}
+}
 blender/nodes/visible=1
 blender/nodes/active_collection_only=false
 blender/nodes/punctual_lights=true

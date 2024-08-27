@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dwsnc176my08v"]
+
+[ext_resource type="Texture2D" uid="uid://cxjprbq68w024" path="res://assets/course/wicked-woods/tex/chain.png" id="1_6q1qr"]
+
+[resource]
+resource_name = "chain"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("1_6q1qr")

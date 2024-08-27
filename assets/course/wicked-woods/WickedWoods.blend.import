@@ -17,6 +17,7 @@ nodes/root_type=""
 nodes/root_name=""
 nodes/apply_root_scale=true
 nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
 meshes/ensure_tangents=true
 meshes/generate_lods=false
 meshes/create_shadow_meshes=true
@@ -28,140 +29,149 @@ animation/import=false
 animation/fps=30
 animation/trimming=false
 animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
 import_script/path=""
 _subresources={
 "materials": {
 "boost_ramp": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/boost_ramp.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/boost_ramp.tres"
 },
 "bridge_road": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/bridge_road.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/bridge_road.tres"
 },
 "bridge_trick": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/bridge_trick.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/bridge_trick.tres"
 },
 "bridge_wall": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/bridge_wall.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/bridge_wall.tres"
+},
+"cannon": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/cannon.tres"
 },
 "chain": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/chain.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/chain.tres"
 },
 "clock": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/clock.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/clock.tres"
 },
 "dirt_road": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/dirt_road.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/dirt_road.tres"
+},
+"fall-boundary.001": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/fall-boundary.001.tres"
 },
 "grass": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/grass.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/grass.tres"
 },
 "pumpkin": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/pumpkin.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/pumpkin.tres"
 },
 "road_arrows": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/road_arrows.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/road_arrows.tres"
 },
 "road_carpet": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/road_carpet.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/road_carpet.tres"
 },
 "road_carpet2": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/road_carpet2.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/road_carpet2.tres"
 },
 "road_startline": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/road_startline.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/road_startline.tres"
 },
 "road_trick_carpet": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/road_trick_carpet.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/road_trick_carpet.tres"
 },
 "ruins_ceiling": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/ruins_ceiling.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/ruins_ceiling.tres"
 },
 "ruins_road": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/ruins_road.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/ruins_road.tres"
 },
 "ruins_wall": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/ruins_wall.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/ruins_wall.tres"
 },
 "sand": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/sand.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/sand.tres"
 },
 "sand_offroad_underw": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/sand_offroad_underw.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/sand_offroad_underw.tres"
 },
 "sand_underw": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/sand_underw.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/sand_underw.tres"
 },
 "small_trick": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/small_trick.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/small_trick.tres"
 },
 "tower_roof": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/tower_roof.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/tower_roof.tres"
 },
 "treetops": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/treetops.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/treetops.tres"
 },
 "treewall": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/treewall.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/treewall.tres"
 },
 "trickable_road": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/trickable_road.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/trickable_road.tres"
 },
 "wall_fence": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/wall_fence.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/wall_fence.tres"
 },
 "wall_fence_outside": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/wall_fence_outside.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/wall_fence_outside.tres"
 },
 "wall_rock": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/wall_rock.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/wall_rock.tres"
 },
 "wall_wood": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/wall_wood.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/wall_wood.tres"
 },
 "water": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/water.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/water.tres"
 },
 "wood_road": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/wood_road.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/wood_road.tres"
 },
 "wood_trick": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/wood_trick.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/wood_trick.tres"
 },
 "wood_wall": {
-"use_external/enabled": false,
-"use_external/path": "res://assets/course/wicked-woods/mat/wood_wall.tres"
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/wicked-woods/ww_mat/wood_wall.tres"
 }
 },
 "meshes": {
@@ -172,7 +182,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_Pseatex.res"
 },
 "WickedWoods_Circle_Circle_Circle_boost-border": {
@@ -182,7 +191,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_boost-border.res"
 },
 "WickedWoods_Circle_Circle_Circle_bridge": {
@@ -192,7 +200,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_bridge.res"
 },
 "WickedWoods_Circle_Circle_Circle_bridge-trick": {
@@ -202,7 +209,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_bridge-trick.res"
 },
 "WickedWoods_Circle_Circle_Circle_bridge-wall": {
@@ -212,7 +218,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_bridge-wall.res"
 },
 "WickedWoods_Circle_Circle_Circle_cannon": {
@@ -222,7 +227,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_cannon.res"
 },
 "WickedWoods_Circle_Circle_Circle_castle-road": {
@@ -232,7 +236,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_castle-road.res"
 },
 "WickedWoods_Circle_Circle_Circle_castle-road-side": {
@@ -242,7 +245,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_castle-road-side.res"
 },
 "WickedWoods_Circle_Circle_Circle_castle-road-trick": {
@@ -252,7 +254,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_castle-road-trick.res"
 },
 "WickedWoods_Circle_Circle_Circle_castle-under-road": {
@@ -262,7 +263,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_castle-under-road.res"
 },
 "WickedWoods_Circle_Circle_Circle_chain": {
@@ -272,7 +272,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_chain.res"
 },
 "WickedWoods_Circle_Circle_Circle_dirt-road": {
@@ -282,7 +281,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_dirt-road.res"
 },
 "WickedWoods_Circle_Circle_Circle_dirt-road-nograss": {
@@ -292,7 +290,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_dirt-road-nograss.res"
 },
 "WickedWoods_Circle_Circle_Circle_dirt-road-trick": {
@@ -302,7 +299,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_dirt-road-trick.res"
 },
 "WickedWoods_Circle_Circle_Circle_dirt-road2": {
@@ -312,7 +308,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_dirt-road2.res"
 },
 "WickedWoods_Circle_Circle_Circle_fence-barrier": {
@@ -322,7 +317,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_fence-barrier.res"
 },
 "WickedWoods_Circle_Circle_Circle_floor-deco": {
@@ -332,7 +326,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_floor-deco.res"
 },
 "WickedWoods_Circle_Circle_Circle_floor-deco_001": {
@@ -342,7 +335,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_floor-deco_001.res"
 },
 "WickedWoods_Circle_Circle_Circle_forest-wall": {
@@ -352,7 +344,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_forest-wall.res"
 },
 "WickedWoods_Circle_Circle_Circle_grass-offroad": {
@@ -362,7 +353,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_grass-offroad.res"
 },
 "WickedWoods_Circle_Circle_Circle_kingboo": {
@@ -372,7 +362,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_kingboo.res"
 },
 "WickedWoods_Circle_Circle_Circle_pumpkin": {
@@ -382,7 +371,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_pumpkin.res"
 },
 "WickedWoods_Circle_Circle_Circle_rug-red": {
@@ -392,7 +380,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_rug-red.res"
 },
 "WickedWoods_Circle_Circle_Circle_ruins-rim": {
@@ -402,7 +389,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_ruins-rim.res"
 },
 "WickedWoods_Circle_Circle_Circle_ruins-road": {
@@ -412,7 +398,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_ruins-road.res"
 },
 "WickedWoods_Circle_Circle_Circle_ruins-road-trick": {
@@ -422,7 +407,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_ruins-road-trick.res"
 },
 "WickedWoods_Circle_Circle_Circle_ruins-wall": {
@@ -432,7 +416,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_ruins-wall.res"
 },
 "WickedWoods_Circle_Circle_Circle_sand-offroad": {
@@ -442,7 +425,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_sand-offroad.res"
 },
 "WickedWoods_Circle_Circle_Circle_sand-road": {
@@ -452,7 +434,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_sand-road.res"
 },
 "WickedWoods_Circle_Circle_Circle_startline": {
@@ -462,7 +443,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_startline.res"
 },
 "WickedWoods_Circle_Circle_Circle_tower": {
@@ -472,7 +452,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_tower.res"
 },
 "WickedWoods_Circle_Circle_Circle_tower-roof": {
@@ -482,7 +461,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_tower-roof.res"
 },
 "WickedWoods_Circle_Circle_Circle_tower-roof_001": {
@@ -492,7 +470,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_tower-roof_001.res"
 },
 "WickedWoods_Circle_Circle_Circle_tree": {
@@ -502,7 +479,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_tree.res"
 },
 "WickedWoods_Circle_Circle_Circle_tree-wall": {
@@ -512,7 +488,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_tree-wall.res"
 },
 "WickedWoods_Circle_Circle_Circle_tree_001": {
@@ -522,7 +497,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_tree_001.res"
 },
 "WickedWoods_Circle_Circle_Circle_treetops": {
@@ -532,7 +506,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_treetops.res"
 },
 "WickedWoods_Circle_Circle_Circle_trick-branch": {
@@ -542,7 +515,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_trick-branch.res"
 },
 "WickedWoods_Circle_Circle_Circle_wood-fence": {
@@ -552,7 +524,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_wood-fence.res"
 },
 "WickedWoods_Circle_Circle_Circle_wood-road": {
@@ -562,7 +533,6 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_wood-road.res"
 },
 "WickedWoods_Circle_Circle_Circle_wood-wall": {
@@ -572,14 +542,12 @@ _subresources={
 "lods/normal_merge_angle": 60.0,
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
-"save_to_file/make_streamable": "",
 "save_to_file/path": "res://assets/course/wicked-woods/mesh/WickedWoods_Circle_Circle_Circle_wood-wall.res"
 }
 }
 }
-gltf/naming_version=1
-gltf/embedded_image_handling=1
 blender/nodes/visible=1
+blender/nodes/active_collection_only=false
 blender/nodes/punctual_lights=true
 blender/nodes/cameras=true
 blender/nodes/custom_properties=true

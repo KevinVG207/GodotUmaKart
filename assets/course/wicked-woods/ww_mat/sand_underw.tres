@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dva5j0cgr1r53"]
+
+[ext_resource type="Texture2D" uid="uid://bdkxxrbg1jevx" path="res://assets/course/wicked-woods/tex/soil_underwater.png" id="1_r1tch"]
+
+[resource]
+resource_name = "sand_underw"
+albedo_texture = ExtResource("1_r1tch")

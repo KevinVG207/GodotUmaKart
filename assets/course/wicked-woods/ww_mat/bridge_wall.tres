@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://dfougyimtwmxo"]
+
+[ext_resource type="Texture2D" uid="uid://jcdum1nmjhmw" path="res://assets/course/wicked-woods/tex/wood-v2.png" id="1_ybort"]
+
+[resource]
+resource_name = "bridge_wall"
+albedo_texture = ExtResource("1_ybort")

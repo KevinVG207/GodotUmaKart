@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://xh886ryf1dmv"]
+
+[ext_resource type="Texture2D" uid="uid://bmgurxgnqp8rq" path="res://assets/course/wicked-woods/tex/grass2.png" id="1_lspgf"]
+
+[resource]
+resource_name = "grass"
+albedo_texture = ExtResource("1_lspgf")

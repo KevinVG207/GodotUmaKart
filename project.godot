@@ -37,6 +37,10 @@ window/stretch/aspect="expand"
 
 movie_writer/movie_file="E:/Dev/GodotArcadeRacerTest/_movie/movie.avi"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/material_modifier/plugin.cfg")
+
 [global_group]
 
 floor=""

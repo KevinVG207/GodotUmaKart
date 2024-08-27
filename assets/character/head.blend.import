@@ -31,7 +31,30 @@ animation/trimming=false
 animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
 import_script/path=""
-_subresources={}
+_subresources={
+"materials": {
+"eyebrows": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/character/head_mat/eyebrows.tres"
+},
+"face": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/character/head_mat/face.tres"
+},
+"hair": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/character/head_mat/hair.tres"
+},
+"head": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/character/head_mat/head.tres"
+},
+"ribbons": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/character/head_mat/ribbons.tres"
+}
+}
+}
 blender/nodes/visible=1
 blender/nodes/active_collection_only=false
 blender/nodes/punctual_lights=true

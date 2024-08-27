@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://b7lh4yc5hchty"]
+
+[ext_resource type="Texture2D" uid="uid://b75cfeorsvpfc" path="res://assets/course/wicked-woods/tex/clockface.png" id="1_web5t"]
+
+[resource]
+resource_name = "clock"
+albedo_texture = ExtResource("1_web5t")
