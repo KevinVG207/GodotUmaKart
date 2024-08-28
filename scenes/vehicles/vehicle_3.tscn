@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=47 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://bfop5mc1io3s1" path="res://scenes/chara/chara_test_2.tscn" id="9_5aihc"]
 [ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_hxerb"]
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_be71b"]
+[ext_resource type="PackedScene" uid="uid://cchc4yw6h5dme" path="res://assets/character/_nice-nature/head.blend" id="12_gwggj"]
 [ext_resource type="PackedScene" uid="uid://b030ek8eo2e54" path="res://assets/character/head.tscn" id="13_132u2"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
@@ -778,9 +779,12 @@ process_material = SubResource("ParticleProcessMaterial_hs8oo")
 draw_pass_1 = SubResource("QuadMesh_ebj2w")
 
 [node name="HeadPivot" type="Node3D" parent="Visual"]
-transform = Transform3D(-9.61651e-09, 0, 0.22, 0, 0.22, 0, -0.22, 0, -9.61651e-09, -0.382285, 0.69158, 0)
+transform = Transform3D(-9.61651e-09, 0, 0.22, 0, 0.22, 0, -0.22, 0, -9.61651e-09, -0.382285, 0.658169, 0)
+
+[node name="head2" parent="Visual/HeadPivot" instance=ExtResource("12_gwggj")]
 
 [node name="head" parent="Visual/HeadPivot" instance=ExtResource("13_132u2")]
+visible = false
 
 [node name="StillTurboTimer" type="Timer" parent="."]
 process_callback = 0

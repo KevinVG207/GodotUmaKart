@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bba4m3x7hmue2"]
+
+[ext_resource type="Texture2D" uid="uid://beulcmmf4iix5" path="res://assets/character/_nice-nature/head.png" id="1_jasag"]
+
+[resource]
+resource_name = "head"
+diffuse_mode = 3
+albedo_texture = ExtResource("1_jasag")
+metallic_specular = 0.0
+roughness = 0.1

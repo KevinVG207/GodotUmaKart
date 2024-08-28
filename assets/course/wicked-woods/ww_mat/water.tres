@@ -4,7 +4,8 @@
 
 [resource]
 resource_name = "water"
-transparency = 4
+render_priority = 100
+transparency = 1
 cull_mode = 2
 albedo_color = Color(1, 1, 1, 0.6)
 albedo_texture = ExtResource("1_hwxcs")

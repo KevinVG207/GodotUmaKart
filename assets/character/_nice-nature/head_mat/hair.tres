@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://d1phxu0gh3thk"]
+
+[ext_resource type="Texture2D" uid="uid://beulcmmf4iix5" path="res://assets/character/_nice-nature/head.png" id="1_bgonb"]
+
+[resource]
+resource_name = "hair"
+cull_mode = 2
+diffuse_mode = 3
+albedo_texture = ExtResource("1_bgonb")
+metallic_specular = 0.0
+roughness = 0.1

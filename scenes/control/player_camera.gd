@@ -30,6 +30,18 @@ var no_move = false
 var in_water = false
 var water_areas = {}
 
+var respawn_multi = 1.0
+var is_respawn = false
+var respawn_decel = 5.0
+
+func undo_respawn():
+	respawn_multi = 1.0
+	is_respawn = false
+
+func do_respawn():
+	respawn_multi = 1.0
+	is_respawn = true
+
 func _physics_process(delta):
 	if !target:
 		return
@@ -86,11 +98,14 @@ func _physics_process(delta):
 		
 		new_pos_bw = result.position + (ray_start - ray_end).normalized() * cur_safe_distance
 
-
-	cur_pos = cur_pos.lerp(new_pos, cur_lerp_speed * delta)
-	cur_pos.y = lerpf(prev_pos.y, new_pos.y, cur_lerp_speed * delta * 0.5)
-	cur_pos_bw = cur_pos_bw.lerp(new_pos_bw, cur_lerp_speed * delta)
-	cur_pos_bw.y = lerpf(prev_pos_bw.y, new_pos_bw.y, cur_lerp_speed * delta * 0.5)
+	# Slow down camera movement if respawning.
+	if is_respawn:
+		respawn_multi -= respawn_decel * respawn_multi * delta
+	
+	cur_pos = cur_pos.lerp(new_pos, cur_lerp_speed * delta * respawn_multi)
+	cur_pos.y = lerpf(prev_pos.y, new_pos.y, cur_lerp_speed * delta * 0.5 * respawn_multi)
+	cur_pos_bw = cur_pos_bw.lerp(new_pos_bw, cur_lerp_speed * delta * respawn_multi)
+	cur_pos_bw.y = lerpf(prev_pos_bw.y, new_pos_bw.y, cur_lerp_speed * delta * 0.5 * respawn_multi)
 
 
 

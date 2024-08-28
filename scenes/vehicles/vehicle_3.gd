@@ -275,6 +275,9 @@ func set_movement_zero():
 	prev_transform = transform
 	prev_frame_pre_sim_vel = Vector3.ZERO
 	prev_vel = Vector3.ZERO
+	prop_vel = Vector3.ZERO
+	rest_vel = Vector3.ZERO
+	prev_prop_vel = Vector3.ZERO
 	cur_speed = 0
 	cur_turn_speed = 0
 	linear_velocity = Vector3.ZERO
@@ -831,8 +834,7 @@ func handle_walls():
 		
 		# If we are already moving away from the wall, don't bounce
 		var dp = avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
-		if is_player:
-			print(dp)
+
 		if dp < 0.25 or (dp < 0 and bonk):
 			# Get the component of the linear velocity that is perpendicular to the wall
 			var perp_vel = prev_frame_pre_sim_vel.project(avg_normal).length()
@@ -1143,7 +1145,8 @@ func respawn():
 	respawn_stage = 1
 	remove_item()
 	$RespawnTimer.start(respawn_time)
-	world.player_camera.no_move = true
+	#world.player_camera.no_move = true
+	world.player_camera.do_respawn()
 	cur_progress = -100000
 
 func handle_respawn():
@@ -1166,13 +1169,12 @@ func handle_respawn():
 		freeze = true
 		if is_player:
 			world.player_camera.instant = true
-			world.player_camera.no_move = false
+			#world.player_camera.no_move = false
+			world.player_camera.undo_respawn()
 	
 	if respawn_stage == 2:
 		# Hold vehicle still at respawn point
 		set_movement_zero()
-		linear_velocity = Vector3.ZERO
-		angular_velocity = Vector3.ZERO
 		global_position = respawn_position
 		global_rotation = respawn_rotation
 

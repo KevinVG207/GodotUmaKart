@@ -108,7 +108,7 @@ transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
 visible = false
 
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_02dhb")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 83.2, 67)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 5.90238e-06, 83.3827, 67.5153)
 is_key = true
 
 [node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("3_02dhb")]
