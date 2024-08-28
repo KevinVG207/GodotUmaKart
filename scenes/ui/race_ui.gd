@@ -69,20 +69,22 @@ func set_map_camera(cam: Camera3D):
 	map_camera = cam
 
 func set_startline(checkpoint: Checkpoint):
-	var global_pos = checkpoint.to_global(checkpoint.position)
-	var global_forward = global_pos + checkpoint.transform.basis.z
-	var local_pos = map_camera.to_local(global_pos)
-	var local_forward = map_camera.to_local(global_forward)
+	var global_pos = checkpoint.global_position
+	var global_forward = global_pos + checkpoint.global_basis.z
+	var local_pos = map_camera.unproject_position(global_pos)
+	var local_forward = map_camera.unproject_position(global_forward)
 	var local_dir = local_forward - local_pos
-	var canvas_dir: Vector2 = Vector2(local_dir.x, -local_dir.y).normalized()
-	move_map_sprite(startline_marker, checkpoint.global_position, canvas_dir)
+	#var canvas_dir: Vector2 = Vector2(local_dir.x, -local_dir.y).normalized()
+	#local_dir = local_dir.rotated(1)
+	move_map_sprite(startline_marker, checkpoint.global_position, local_dir)
 
 func move_map_sprite(sprite: Sprite2D, global_pos: Vector3, direction: Vector2 = Vector2.RIGHT):
 	var viewport_pos: Vector2 = map_camera.unproject_position(global_pos)
 	var final_x = viewport_pos.x / map_viewport.size.x * map_texture.size.x + map_texture.position.x
 	var final_y = viewport_pos.y / map_viewport.size.y * map_texture.size.y + map_texture.position.y
 	sprite.position = Vector2(final_x, final_y)
-	sprite.look_at(sprite.position + direction.rotated(PI/2))
+	sprite.rotation = atan2(-direction.x, direction.y)
+	#sprite.look_at(sprite.position + direction.rotated(PI/2))
 
 func update_speed(speed):
 	$Speed.text = str(int(speed))

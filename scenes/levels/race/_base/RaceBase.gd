@@ -43,6 +43,9 @@ var rankings_timer: int = 0
 var rankings_delay: int = 30
 var stop_rankings: bool = false
 
+var debug_window: Window = null
+var debug_cam: Camera3D = null
+
 var pings: Dictionary
 
 
@@ -290,6 +293,25 @@ func _process(delta):
 			
 			UI.race_ui.update_nametag(user_id, vehicle.username, screen_pos, opacity, dist, tag_visible, force, delta)
 		UI.race_ui.sort_nametags()
+	
+	# Debug window
+	if Input.is_action_just_pressed("F12"):
+		if debug_window:
+			debug_window.queue_free()
+			debug_cam.queue_free()
+			debug_window = null
+			debug_cam = null
+		else:
+			debug_window = Window.new()
+			debug_window.size = Vector2(1280,720)
+			debug_cam = PlayerCam.new()
+			add_child(debug_window)
+			add_child(debug_cam)
+			RenderingServer.viewport_attach_camera(debug_window.get_viewport_rid(), debug_cam.get_camera_rid())
+			debug_cam.cull_mask = player_camera.cull_mask
+			debug_cam.global_position = player_camera.global_position
+			debug_cam.target = player_camera.target
+			debug_cam.no_move = true
 
 func minimap_recursive(node: Node):
 	for child in node.get_children():

@@ -1143,6 +1143,7 @@ func respawn():
 	respawn_stage = 1
 	remove_item()
 	$RespawnTimer.start(respawn_time)
+	world.player_camera.no_move = true
 	cur_progress = -100000
 
 func handle_respawn():
@@ -1165,6 +1166,7 @@ func handle_respawn():
 		freeze = true
 		if is_player:
 			world.player_camera.instant = true
+			world.player_camera.no_move = false
 	
 	if respawn_stage == 2:
 		# Hold vehicle still at respawn point

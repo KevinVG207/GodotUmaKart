@@ -2,7 +2,7 @@ extends Node
 
 signal goto_lobby_screen
 
-var player_count = 4
+var player_count = 1
 
 var randPing = 0
 var unique_string = OS.get_unique_id()

@@ -1,5 +1,7 @@
 extends Camera3D
 
+class_name PlayerCam
+
 @export var default_fov: float = 75
 @export var target: Vehicle3 = null
 var offset: Vector3 = Vector3(-5, 2.5, 0)
@@ -23,6 +25,7 @@ var prev_mirror: bool = false
 var forwards = true
 var instant = true
 var finished = false
+var no_move = false
 
 var in_water = false
 var water_areas = {}
@@ -30,7 +33,9 @@ var water_areas = {}
 func _physics_process(delta):
 	if !target:
 		return
-		
+	
+	var prev_glob_pos = global_position
+
 	var cur_offset = offset
 	var cur_offset_bw = offset_bw
 	var cur_lerp_speed = lerp_speed
@@ -110,6 +115,9 @@ func _physics_process(delta):
 	
 	var true_look_offset = target.global_transform.basis.x * cur_look_offset.x + target.global_transform.basis.y * cur_look_offset.y + target.global_transform.basis.z * cur_look_offset.z
 	var true_target: Vector3 = target.global_transform.origin + true_look_offset + target.global_transform.basis.z * -target.cur_turn_speed * 0.001
+
+	if no_move:
+		global_position = prev_glob_pos
 
 	if mirror != prev_mirror or instant:
 		look_at(true_target, -target.gravity.normalized())

@@ -7,5 +7,5 @@ resource_name = "wheel"
 cull_mode = 2
 diffuse_mode = 3
 albedo_texture = ExtResource("1_q7ac1")
-metallic_specular = 0.25
-roughness = 0.66
+metallic_specular = 0.53
+roughness = 0.52
