@@ -57,9 +57,9 @@ _subresources={
 }
 blender/nodes/visible=1
 blender/nodes/active_collection_only=false
-blender/nodes/punctual_lights=true
-blender/nodes/cameras=true
-blender/nodes/custom_properties=true
+blender/nodes/punctual_lights=false
+blender/nodes/cameras=false
+blender/nodes/custom_properties=false
 blender/nodes/modifiers=1
 blender/meshes/colors=false
 blender/meshes/uvs=true
