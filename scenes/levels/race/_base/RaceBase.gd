@@ -183,7 +183,7 @@ func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath):
 				return leaf
 			new_leaves += leaf.prev_points
 		cur_leaves = new_leaves
-	
+
 
 func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false):
 	var next_points: Array = cur_point.next_points
@@ -508,8 +508,9 @@ func handle_rankings():
 		var start_position = end_position
 		start_position.x = 800
 		var new_panel = rank_panel_scene.instantiate() as RankPanel
-		new_panel.get_node("Rank").text = tr("ORD_%d" % (cur_idx+1))  # Util.make_ordinal(cur_idx+1)
-		new_panel.get_node("PlayerName").text = cur_vehicle.username
+		new_panel.set_rank(cur_idx)  # Util.make_ordinal(cur_idx+1)
+		new_panel.set_username(cur_vehicle.username)
+		new_panel.set_time(cur_vehicle.finish_time)
 		new_panel.position = start_position
 		
 		if cur_vehicle == player_vehicle:
@@ -553,7 +554,6 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 			new_vehicle.is_cpu = true
 			new_vehicle.is_network = false
 			new_vehicle.username = "CPU"
-			new_vehicle.cpu_target = $EnemyPathPoints.get_child(0)
 		Global.MODE1_ONLINE:
 			new_vehicle.is_cpu = true
 			new_vehicle.is_network = true
@@ -562,6 +562,8 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 			network_path_points[new_vehicle] = path_point
 			path_point.visible = false
 			$NetworkPathPoints.add_child(path_point)
+	
+	new_vehicle.cpu_target = $EnemyPathPoints.get_child(0)
 	
 	if user_id == player_user_id:
 		new_vehicle.make_player()
@@ -608,13 +610,13 @@ func get_starting_order():
 			if !Network.next_match_data.get('startingIds'):
 				spectate = true
 				return []
-
+			
 			return Network.next_match_data.startingIds
 		Global.MODE1_OFFLINE:
 			player_user_id = "Player"
 			var player_array = []
 
-			for i in range(Global.player_count-1):
+			for i in range(Global.default_player_count-1):
 				player_array.append("CPU" + str(i))
 			player_array.append(player_user_id)
 			player_array.shuffle()
@@ -623,6 +625,7 @@ func get_starting_order():
 
 func join():
 	starting_order = get_starting_order()
+	Global.player_count = max(len(starting_order), 1)
 	setup_vehicles()
 	Network.next_match_data = {}
 	if Global.MODE1 == Global.MODE1_OFFLINE:

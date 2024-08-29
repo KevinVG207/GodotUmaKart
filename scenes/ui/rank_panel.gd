@@ -7,3 +7,15 @@ class_name RankPanel
 
 func set_border():
 	self["theme_override_styles/panel"] = style_border
+
+func set_username(name: String) -> void:
+	%PlayerName.text = name
+
+func set_rank(idx: int) -> void:
+	%Rank.text = tr("ORD_%d" % (idx+1))
+
+func set_time(seconds: float) -> void:
+	if seconds <= 0.0:
+		%Time.text = tr("RACE_DNF")
+	else:
+		%Time.text = Util.format_time_ms(seconds)

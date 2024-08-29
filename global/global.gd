@@ -2,7 +2,11 @@ extends Node
 
 signal goto_lobby_screen
 
-var player_count = 1
+var default_player_count: int = 12
+var player_count: int = default_player_count:
+	set(value):
+		player_count = value
+		setup_items()
 
 var randPing = 0
 var unique_string = OS.get_unique_id()
@@ -60,8 +64,8 @@ func _enter_tree():
 	TranslationServer.set_locale(locales[cur_locale])
 	return
 
-func _ready():
-	#item_dist.resize(12)
+func setup_items():
+	item_dist.clear()
 	for _i in range(player_count):
 		item_dist.append([])
 	
@@ -72,6 +76,10 @@ func _ready():
 			if i < player_count:
 				item_dist[i].append(item)
 		instance.queue_free()
+
+#func _ready():
+	#setup_items()
+
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:

@@ -447,7 +447,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	frame += 1
 	var delta: float = physics_state.step
 	
-	if finished:
+	if finished and !is_network:
 		is_cpu = true
 	
 	handle_input()
