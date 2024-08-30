@@ -1146,7 +1146,8 @@ func respawn():
 	remove_item()
 	$RespawnTimer.start(respawn_time)
 	#world.player_camera.no_move = true
-	world.player_camera.do_respawn()
+	if is_player:
+		world.player_camera.do_respawn()
 	cur_progress = -100000
 
 func handle_respawn():

@@ -7,8 +7,8 @@ var world: RaceBase
 var no_updates: bool = false
 
 var gravity: Vector3
-var turn_speed: float = 4.0
-var start_speed: float = 40.0
+var turn_speed: float = 4.5
+var start_speed: float = 50.0
 var target_speed: float = start_speed
 var despawn_time: float = 30.0
 var grace_frames: int = 30
