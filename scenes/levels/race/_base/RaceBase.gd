@@ -15,7 +15,8 @@ var player_user_id: String = ""
 var removed_player_ids: Array = []
 var starting_order: Array = []
 var spectate: bool = false
-var timer_tick: int = 0
+# var timer_tick: int = 0
+var race_start_time: float = 0
 var physical_item_counter = 0
 var physical_items: Dictionary = {}
 var deleted_physical_items: Array = []
@@ -91,7 +92,11 @@ const STATE_SPECTATING = 13
 const UPDATE_STATES = [
 	STATE_COUNTDOWN,
 	STATE_COUNTING_DOWN,
-	STATE_RACE
+	STATE_RACE,
+	STATE_RACE_OVER,
+	STATE_READY_FOR_RANKINGS,
+	STATE_SHOW_RANKINGS,
+	STATE_JOIN_NEXT
 ]
 
 var state: int = STATE_INITIAL
@@ -199,9 +204,17 @@ func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false):
 			#closest_pt = point
 	#return closest_pt
 
-func _process(delta):
-	update_ranks()
+func get_timer_seconds():
+	if race_start_time == 0:
+		return 0.0
+	return (Time.get_ticks_usec() - race_start_time) / 1000000.0
 
+func _process(delta):
+	if state == STATE_JOINING_NEXT:
+		return
+		
+	update_ranks()
+	
 	UI.race_ui.set_startline(checkpoints[0])
 	
 	if not $CountdownTimer.is_stopped() and $CountdownTimer.time_left <= 3.0:
@@ -210,7 +223,7 @@ func _process(delta):
 		UI.race_ui.update_countdown("")
 	
 	if state == STATE_RACE:
-		UI.race_ui.update_time(timer_tick * (1.0/Engine.physics_ticks_per_second))
+		UI.race_ui.update_time(get_timer_seconds())
 	
 	if state == STATE_SHOW_RANKINGS:
 		UI.race_ui.show_back_btn()
@@ -288,7 +301,7 @@ func _process(delta):
 				opacity = remap(dist, 60, 75, 1.0, 0.0)
 			
 			#if state == STATE_RACE_OVER or state in UPDATE_STATES and player_vehicle.finished:
-			if state != STATE_RACE or timer_tick < 2 * Engine.physics_ticks_per_second:
+			if state != STATE_RACE or get_timer_seconds() < 2.0:
 				tag_visible = false
 			
 			UI.race_ui.update_nametag(user_id, vehicle.username, screen_pos, opacity, dist, tag_visible, force, delta)
@@ -444,12 +457,12 @@ func _physics_process(_delta):
 				$CountdownTimer.start(3.0)
 			else:
 				$CountdownTimer.start(4.0)
-			timer_tick = -Engine.physics_ticks_per_second * $CountdownTimer.time_left
+			# timer_tick = -Engine.physics_ticks_per_second * $CountdownTimer.time_left
 			state = STATE_COUNTING_DOWN
-		STATE_COUNTING_DOWN:
-			timer_tick += 1
-		STATE_RACE:
-			timer_tick += 1
+		# STATE_COUNTING_DOWN:
+		# 	timer_tick += 1
+		# STATE_RACE:
+		# 	timer_tick += 1
 		STATE_RACE_OVER:
 			UI.race_ui.race_over()
 		STATE_READY_FOR_RANKINGS:
@@ -510,7 +523,7 @@ func handle_rankings():
 		var new_panel = rank_panel_scene.instantiate() as RankPanel
 		new_panel.set_rank(cur_idx)  # Util.make_ordinal(cur_idx+1)
 		new_panel.set_username(cur_vehicle.username)
-		new_panel.set_time(cur_vehicle.finish_time)
+		new_panel.set_time(cur_vehicle.finish_time, cur_vehicle.finished)
 		new_panel.position = start_position
 		
 		if cur_vehicle == player_vehicle:
@@ -737,8 +750,9 @@ func check_advance(player: Vehicle3) -> bool:
 	if next_idx == 0:
 		# Crossed the finish line
 		player.lap += 1
-		if player.lap > lap_count:
-			var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
+		if not player.finished and player.lap > lap_count and not player.is_network:
+			# var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
+			var time_after_finish = get_timer_seconds()
 			
 			var finish_plane_normal: Vector3 = checkpoints[0].transform.basis.z
 			var vehicle_vel: Vector3 = player.prev_frame_pre_sim_vel
@@ -746,7 +760,7 @@ func check_advance(player: Vehicle3) -> bool:
 
 			# Determine the ratio of the vehicle_vel to the finish_plane_normal, and determine how much time it had taken to cross the finish line since the last frame
 			var final_time = time_after_finish - clamp(dist_to_checkpoint(player, 0) / vehicle_vel.project(finish_plane_normal).length(), 0, seconds_per_tick)
-			
+			print("Finishing ", player.username, " with time ", final_time, " ", player.finish_time, " ", time_after_finish, " ", seconds_per_tick, " ", time_after_finish - final_time)
 			player.set_finished(final_time)
 	
 	return true
@@ -901,6 +915,7 @@ func _on_start_timer_timeout():
 
 func _on_countdown_timer_timeout():
 	state = STATE_RACE
+	race_start_time = Time.get_ticks_usec()
 	for vehicle: Vehicle3 in players_dict.values():
 		vehicle.axis_unlock()
 	#UI.race_ui.rank_label.visible = true

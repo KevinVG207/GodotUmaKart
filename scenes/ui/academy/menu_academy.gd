@@ -8,7 +8,7 @@ var from_cam: MenuCam
 @onready var to_cam: MenuCam = %CamInitial
 
 var charas_spawned := false
-var no_map_charas: int = 50
+var no_map_charas: int = 10 # 50
 
 var map_character_scene: PackedScene = preload("res://scenes/ui/academy/map_character.tscn")
 
@@ -116,6 +116,9 @@ func trunk_to_fountain():
 	start_cam_travel(%CamTrunk, %CamFountain, $PathFountainTrunk/Follow, travel_time/2, true)
 
 func _on_cam_tween_finished():
+	cam.global_position = cam_follow.global_position
+	cam.rotation = to_cam.rotation
+	cam.fov = to_cam.fov
 	from_cam.visible = false
 	to_cam.has_focus()
 	traveling = false

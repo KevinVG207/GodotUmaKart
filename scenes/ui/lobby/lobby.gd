@@ -175,6 +175,8 @@ func setup_voting():
 	$VoteButton.visible = true
 	$LeaveButton.disabled = false
 	$LeaveButton.visible = true
+	$MatchmakeButton.disabled = true
+	$MatchmakeButton.visible = false
 	$VoteButton.grab_focus()
 	$LeaveButton.focus_neighbor_left = "../VoteButton"
 	return

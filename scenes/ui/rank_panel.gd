@@ -14,8 +14,8 @@ func set_username(name: String) -> void:
 func set_rank(idx: int) -> void:
 	%Rank.text = tr("ORD_%d" % (idx+1))
 
-func set_time(seconds: float) -> void:
-	if seconds <= 0.0:
+func set_time(seconds: float, finished: bool = true) -> void:
+	if not finished:
 		%Time.text = tr("RACE_DNF")
 	else:
 		%Time.text = Util.format_time_ms(seconds)
