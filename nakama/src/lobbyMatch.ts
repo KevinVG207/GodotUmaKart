@@ -41,6 +41,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     let voteTimeout = 60 * tickRate;
     let joinTimeout = 45 * tickRate;
     let openTimeout = 30 * tickRate;
+    let ultimateTimeout = 600 * tickRate;
 
     if (!prevUserIds.length) {
         voteTimeout -= openTimeout;
@@ -63,6 +64,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
             joinTimeout: joinTimeout,
             openTimeout: openTimeout,
             expireTimeout: voteTimeout*2,
+            ultimateTimeout: ultimateTimeout,
             label: label,
             pingData: {},
             skipVote: false,
@@ -136,6 +138,7 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     // logger.info("Amount of presences: " + Object.keys(state.presences).length)
 
     // If there are less than 2 players, don't start the match
+    // TODO: A player can be "stuck" and the server keeps pinging them forever. Add some check for the last received ping and kick them.
     if (tick >= state.joinTimeout && Object.keys(state.presences).length == 1) {
         // Extend the timeouts.
         state.voteTimeout += 30 * ctx.matchTickRate;
@@ -175,6 +178,10 @@ const lobbyMatchLoop = function (ctx: nkruntime.Context, logger: nkruntime.Logge
 
 
     if (tick > state.expireTimeout) {
+        return null;
+    }
+
+    if (tick > state.ultimateTimeout) {
         return null;
     }
 
