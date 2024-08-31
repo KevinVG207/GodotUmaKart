@@ -33,6 +33,33 @@ animation/import_rest_as_RESET=false
 import_script/path=""
 _subresources={
 "meshes": {
+"barn_course_Circle_001": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"lods/normal_split_angle": 25.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/course/barn/mesh/barn_course_Circle_001.res"
+},
+"barn_course_Circle_002": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"lods/normal_split_angle": 25.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/course/barn/mesh/barn_course_Circle_002.res"
+},
+"barn_course_Cube": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"lods/normal_split_angle": 25.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/course/barn/mesh/barn_course_Cube.res"
+},
 "barn_course_Plane": {
 "generate/lightmap_uv": 0,
 "generate/lods": 0,
@@ -41,14 +68,18 @@ _subresources={
 "lods/normal_split_angle": 25.0,
 "save_to_file/enabled": true,
 "save_to_file/path": "res://assets/course/barn/mesh/barn_course_Plane.res"
+},
+"barn_course_Plane_001": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"lods/normal_split_angle": 25.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/course/barn/mesh/barn_course_Plane_001.res"
 }
 }
 }
-fbx/importer=0
-fbx/allow_geometry_helper_nodes=false
-fbx/embedded_image_handling=1
-gltf/naming_version=1
-gltf/embedded_image_handling=1
 blender/nodes/visible=0
 blender/nodes/active_collection_only=false
 blender/nodes/punctual_lights=true

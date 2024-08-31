@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=25 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://2ani3pyd27xg" path="res://scenes/ui/nametag.tscn" id="4_5a5qs"]
 [ext_resource type="Texture2D" uid="uid://cf2x8b1awq2b5" path="res://assets/race/startline.png" id="5_s54dk"]
 [ext_resource type="PackedScene" uid="uid://ttgvsua40ods" path="res://scenes/ui/race/alert.tscn" id="6_1cm01"]
+[ext_resource type="LabelSettings" uid="uid://dg8cn7dsip001" path="res://scenes/ui/_styles/basic_text.tres" id="7_fx38p"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_5eh43"]
 viewport_path = NodePath("ItemBox/Viewport")
@@ -68,14 +69,44 @@ _data = {
 [sub_resource type="ViewportTexture" id="ViewportTexture_i2ab8"]
 viewport_path = NodePath("MapContainer/MapTexture/MapViewport")
 
+[sub_resource type="LabelSettings" id="LabelSettings_11ql6"]
+font_size = 50
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
 [sub_resource type="LabelSettings" id="LabelSettings_esb4h"]
 font_size = 100
 outline_size = 15
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_ptjgw"]
+font_size = 50
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_gj5rm"]
+font_size = 40
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_t3q3l"]
+font_size = 40
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_saaky"]
+font_size = 30
+outline_size = 7
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_x4rd4"]
+font_size = 25
+outline_size = 6
+outline_color = Color(0, 0, 0, 1)
+
 [sub_resource type="LabelSettings" id="LabelSettings_pqt07"]
 font_size = 85
-outline_size = 8
+outline_size = 10
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="Animation" id="Animation_wlpck"]
@@ -238,7 +269,7 @@ offset_right = -27.0
 offset_bottom = -17.0
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_font_sizes/font_size = 50
+label_settings = SubResource("LabelSettings_11ql6")
 horizontal_alignment = 2
 vertical_alignment = 2
 
@@ -321,8 +352,8 @@ offset_right = 108.5
 offset_bottom = 6.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 50
 text = "RACE_FINISHED"
+label_settings = SubResource("LabelSettings_ptjgw")
 horizontal_alignment = 1
 
 [node name="RaceOver" type="Label" parent="."]
@@ -338,8 +369,8 @@ offset_right = 102.5
 offset_bottom = 72.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 40
 text = "RACE_OVER"
+label_settings = SubResource("LabelSettings_gj5rm")
 horizontal_alignment = 1
 
 [node name="Spectating" type="Label" parent="."]
@@ -352,8 +383,8 @@ offset_top = 2.0
 offset_right = 101.5
 offset_bottom = 57.0
 grow_horizontal = 2
-theme_override_font_sizes/font_size = 40
 text = "RACE_SPECTATING"
+label_settings = SubResource("LabelSettings_t3q3l")
 horizontal_alignment = 1
 
 [node name="Username" type="Label" parent="."]
@@ -370,6 +401,7 @@ offset_bottom = -29.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 30
+label_settings = SubResource("LabelSettings_saaky")
 horizontal_alignment = 1
 vertical_alignment = 2
 
@@ -382,7 +414,7 @@ offset_top = -4.0
 offset_right = -13.0
 offset_bottom = 51.0
 grow_horizontal = 0
-theme_override_font_sizes/font_size = 40
+label_settings = ExtResource("7_fx38p")
 horizontal_alignment = 2
 
 [node name="Rankings" type="Control" parent="."]
@@ -396,6 +428,7 @@ offset_bottom = 40.0
 grow_horizontal = 2
 
 [node name="TimeLeft" type="Label" parent="."]
+visible = false
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -403,7 +436,7 @@ offset_left = -60.0
 offset_right = -11.0
 offset_bottom = 35.0
 grow_horizontal = 0
-theme_override_font_sizes/font_size = 25
+label_settings = SubResource("LabelSettings_x4rd4")
 horizontal_alignment = 2
 metadata/_edit_lock_ = true
 

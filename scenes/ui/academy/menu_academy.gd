@@ -8,7 +8,7 @@ var from_cam: MenuCam
 @onready var to_cam: MenuCam = %CamInitial
 
 var charas_spawned := false
-var no_map_charas: int = 10 # 50
+var no_map_charas: int = 50
 
 var map_character_scene: PackedScene = preload("res://scenes/ui/academy/map_character.tscn")
 

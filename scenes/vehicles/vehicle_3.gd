@@ -325,8 +325,6 @@ func cpu_control(delta):
 	if !is_network:
 		set_all_input_zero()
 	
-	if !is_network and in_drift and drift_gauge >= 75:
-		input_brake = true
 	if !is_network and !$TrickTimer.is_stopped():
 		if randf() < (0.25 / Engine.physics_ticks_per_second):
 			input_trick = true
@@ -359,7 +357,10 @@ func cpu_control(delta):
 	if !is_network or prev_state and global_position.distance_to(Util.to_vector3(prev_state.pos)) > 3.0:
 		input_accel = true
 
-	if !is_network and abs(angle) > 0.4 and cur_speed > min_hop_speed:
+	if !is_network and abs(angle) > 0.5 and cur_speed > min_hop_speed and randf() < (2.0 / Engine.physics_ticks_per_second):
+		input_brake = true
+	
+	if !is_network and (in_drift or in_hop or air_frames > Engine.physics_ticks_per_second/4) and (drift_gauge >= 75 or abs(angle) > 0.2):
 		input_brake = true
 	
 	if abs(angle) > max_angle:
