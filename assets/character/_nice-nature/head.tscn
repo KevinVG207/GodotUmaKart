@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://2g11fjvs1kta"]
+
+[ext_resource type="PackedScene" uid="uid://cchc4yw6h5dme" path="res://assets/character/_nice-nature/head.blend" id="1_tipx0"]
+
+[node name="head" instance=ExtResource("1_tipx0")]

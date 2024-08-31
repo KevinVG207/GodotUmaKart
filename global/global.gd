@@ -11,6 +11,8 @@ var player_count: int = default_player_count:
 var randPing = 0
 var unique_string = OS.get_unique_id()
 
+var menu_start_cam: String = "%CamInitial"
+
 var locales = [
 	"en",
 	"ja"
@@ -58,6 +60,11 @@ var physical_items: Dictionary = {
 }
 
 var item_tex: Array = []
+
+var heads: Dictionary = {
+	"special-week": "res://assets/character/head.tscn",
+	"nice-nature": "res://assets/character/_nice-nature/head.tscn"
+}
 
 func _enter_tree():
 	#seed(1)

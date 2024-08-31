@@ -39,16 +39,19 @@ signal back
 var info_boxes: Dictionary = {}
 @onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
 
+
 func _ready():
 	state = STATE_IDLE
 	if Network.ready_match:
 		state = STATE_MATCHMAKING_COMLETE
 	Global.goto_lobby_screen.connect(start)
 
+
 func start():
 	if state != STATE_IDLE:
 		return
 	state = STATE_RESETTING
+
 
 func _process(_delta):
 	# Deal with displaying things
@@ -65,6 +68,7 @@ func _process(_delta):
 		if Input.is_action_just_pressed("brake"):
 			$LeaveButton.pressed.emit()
 			$LeaveButton.grab_focus()
+
 
 func _physics_process(_delta):
 	match state:
@@ -91,9 +95,11 @@ func _physics_process(_delta):
 		_:
 			pass
 
+
 func change_state(new_state: int, state_func: Callable = Callable()):
 	state = new_state
 	state_func.call()
+
 
 func reset():
 	$Status.text = tr("LOBBY_RESET")
@@ -103,7 +109,13 @@ func reset():
 	$LeaveButton.focus_neighbor_left = "../MatchmakeButton"
 	$MatchmakeButton.visible = true
 	$MatchmakeButton.grab_focus()
+	for child in box_container.get_children():
+		child.queue_free()
+	$VoteTimeout.stop()
+	vote_timeout_started = false
+	info_boxes.clear()
 	state = STATE_INITIAL
+
 
 func setup():
 	$Status.text = tr("LOBBY_SETUP")
@@ -122,6 +134,7 @@ func setup():
 	
 	state = STATE_SETUP_COMPLETE
 
+
 func matchmake():
 	$Status.text = tr("LOBBY_SEARCHING")
 	$PingBox.visible = false
@@ -136,6 +149,7 @@ func matchmake():
 	
 	state = STATE_MATCHMAKING_WAIT
 	return
+
 
 func join():
 	$Status.text = tr("LOBBY_JOINING")
@@ -167,6 +181,7 @@ func join():
 	state = STATE_START_VOTING
 	return
 
+
 func setup_voting():
 	$Status.text = tr("LOBBY_VOTING")
 	$LeaveButton.text = tr("LOBBY_BTN_LEAVE")
@@ -180,6 +195,7 @@ func setup_voting():
 	$VoteButton.grab_focus()
 	$LeaveButton.focus_neighbor_left = "../VoteButton"
 	return
+
 
 func add_player(username: String, user_id: String):
 	if user_id in info_boxes:
@@ -201,15 +217,18 @@ func remove_player(user_id: String):
 	info_boxes.erase(user_id)
 	cur_box.queue_free()
 
+
 func update_player_name(user_id: String, new_name: String):
 	if not user_id in info_boxes:
 		return
 	info_boxes[user_id].set_username(new_name)
 
+
 func update_player_pick(user_id: String, pick_text: String):
 	if not user_id in info_boxes:
 		return
 	info_boxes[user_id].set_pick(pick_text)
+
 
 func _on_matchmake_button_pressed():
 	if state == STATE_SETUP_COMPLETE:
@@ -247,6 +266,7 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			await reload()
 		_:
 			print("Unknown lobby op code: ", match_state.op_code)
+
 
 func handle_vote_data(data: Dictionary):
 	var presences = data.presences as Dictionary
@@ -296,6 +316,7 @@ func _on_vote_button_pressed():
 	var res = await vote()
 	return res
 
+
 func vote():
 	var payload = {
 		"course": cur_vote
@@ -311,6 +332,7 @@ func vote():
 	state = STATE_VOTED
 	return true
 
+
 func _on_vote_timeout_timeout():
 	$VoteButton.disabled = true
 	$VoteButton.visible = false
@@ -322,6 +344,7 @@ func _on_vote_timeout_timeout():
 	
 	var res = await vote()
 	return res
+
 
 func handle_match_data(data: Dictionary):
 	var match_id = data.matchId as String
@@ -344,11 +367,13 @@ func handle_match_data(data: Dictionary):
 	$Status.text = tr("LOBBY_COURSE_SELECT") % winning_vote['course']
 	state = STATE_MATCH_RECEIVED
 
+
 func switch_scene():
 	Global.MODE1 = Global.MODE1_ONLINE
 	Network.socket.received_match_state.disconnect(_on_match_state)
 	Network.socket.closed.disconnect(_on_socket_closed)
 	UI.change_scene(Util.get_race_course_path(next_course), true)
+
 
 func reload():
 	await Network.leave_match()
@@ -359,6 +384,7 @@ func reload():
 	#queue_free()
 	state = STATE_RESETTING
 
+
 func _on_leave_button_pressed():
 	if state < STATE_MATCHMAKING:
 		given_focus = false
@@ -367,6 +393,7 @@ func _on_leave_button_pressed():
 	
 	$LeaveButton.visible = false
 	await reload()
+
 
 func _on_socket_closed():
 	$Status.text = tr("LOBBY_CONNECTION_LOST")

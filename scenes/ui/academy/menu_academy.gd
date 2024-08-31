@@ -1,5 +1,7 @@
 extends Node3D
 
+class_name MenuAcademy
+
 var traveling: bool = false
 var travel_time: float = 2.5
 @onready var cam: Camera3D = $ActiveCamera
@@ -17,6 +19,11 @@ func _ready():
 	hide_cams()
 	%EETimer.start()
 	
+	to_cam = get_node(Global.menu_start_cam)
+	
+	if to_cam == %CamTrunk:
+		Global.goto_lobby_screen.emit()
+	
 	cam.rotation = to_cam.rotation
 	cam.global_position = to_cam.global_position
 	cam.fov = to_cam.fov
@@ -24,7 +31,6 @@ func _ready():
 	to_cam.visible = true
 	
 	Global.goto_lobby_screen.connect(fountain_to_trunk)
-	
 
 
 func hide_cams():

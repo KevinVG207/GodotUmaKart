@@ -4,16 +4,23 @@ class_name MapCharacter
 
 @onready var nav_agent: NavigationAgent3D = $NavAgent
 var gravity := Vector3.DOWN * 500.0
-var move_speed := 100.0
+var default_speed := 100.0
+var move_speed := default_speed
 var cur_speed := 0.0
 var accel := 300.0
+
+var default_anim_speed := 0.8
+var anim_speed := default_anim_speed
 
 var cur_dir := Vector3.ZERO
 var first := true
 var dir_smoothing := 0.6
-var target_pos:= Vector3.ZERO
+var target_pos := Vector3.ZERO
 var meeting_up := false
 var meeting_partner: MapCharacter
+var delta := 0.0
+
+var walking = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -22,7 +29,15 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _ready():
-	move_speed *= randf_range(0.8, 1.2)
+	cur_dir = Vector3.FORWARD.rotated(Vector3.UP, 2.0*PI*randf())
+	
+	var head_path: String = Global.heads.values().pick_random()
+	var head: Node3D = load(head_path).instantiate()
+	%Head.add_child(head)
+	
+	var speed_multi := randf_range(0.8, 1.2)
+	move_speed = default_speed * speed_multi
+	anim_speed = default_anim_speed * speed_multi
 	var col := Color(randf(), randf(), randf())
 	$NavAgent.debug_use_custom = true
 	$NavAgent.debug_path_custom_color = col
@@ -33,6 +48,7 @@ func _ready():
 		_on_idle_timer_timeout()
 
 func start_idling(minimum: float = 5):
+	#$NavAgent.avoidance_enabled = false
 	$IdleTimer.start(max(0, randf_range(minimum, 60)))
 
 func set_next_target():
@@ -81,6 +97,9 @@ func do_meetup(other: MapCharacter):
 	other.nav_agent.target_position = global_position
 	$StopTimer.stop()
 	other.get_node("StopTimer").stop()
+	
+	$NavAgent.set_avoidance_mask_value(1, false)
+	other.get_node("NavAgent").set_avoidance_mask_value(1, false)
 	#print("Meeting", " ", self, " ", other)
 	
 	#var cam: Camera3D = get_parent().get_parent().cam
@@ -90,7 +109,8 @@ func do_meetup(other: MapCharacter):
 	#cam.rotation_degrees.z = 0
 
 
-func _physics_process(delta):
+func _physics_process(dt):
+	delta = dt
 	var target_speed := 0.0
 	
 	if meeting_up:
@@ -119,9 +139,22 @@ func _physics_process(delta):
 		target_speed = move_speed
 	
 	cur_speed = move_toward(cur_speed, target_speed, delta * accel)
+	
+	rotation.y = atan2(-cur_dir.z, cur_dir.x)
+	
 	velocity = cur_dir * cur_speed
 	velocity += gravity
 	velocity *= delta
+	
+	if !walking and target_speed > 0:
+		walking = true
+		%Ani.play("walk", 0.5, anim_speed)
+		if randf() <= 0.5:
+			%Ani.seek(%Ani.current_animation_length/2, true)
+	
+	elif walking and target_speed <= 0.1:
+		walking = false
+		%Ani.play("RESET", 0.5)
 	
 	move_and_slide()
 
@@ -130,6 +163,8 @@ func _on_idle_timer_timeout() -> void:
 	# Choose a position to go to, and set the random stop timer.
 	nav_agent.target_position = NavigationServer3D.map_get_random_point(get_parent().get_parent().get_node("NavigationRegion3D").get_navigation_map(), 1, true)
 	$StopTimer.start(randf_range(10, 120))
+	#$NavAgent.avoidance_enabled = true
+	#$StopTimer.start(randf_range(3, 5))
 	set_next_target()
 
 
@@ -138,6 +173,7 @@ func _on_nav_agent_target_reached() -> void:
 	$StopTimer.stop()
 	start_idling()
 	meeting_up = false
+	$NavAgent.set_avoidance_mask_value(1, true)
 	meeting_partner = null
 
 
@@ -148,3 +184,9 @@ func _on_stop_timer_timeout() -> void:
 
 func _on_nav_agent_waypoint_reached(details: Dictionary) -> void:
 	call_deferred("set_next_target")
+
+
+func _on_nav_agent_velocity_computed(safe_velocity: Vector3) -> void:
+	#print("Safe velocity: ", safe_velocity)
+	velocity = safe_velocity
+	cur_dir = cur_dir.move_toward(Vector3(safe_velocity.x, 0, safe_velocity.z).normalized(), delta * dir_smoothing * 2).normalized()

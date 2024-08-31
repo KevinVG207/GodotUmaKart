@@ -428,7 +428,6 @@ offset_bottom = 40.0
 grow_horizontal = 2
 
 [node name="TimeLeft" type="Label" parent="."]
-visible = false
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0

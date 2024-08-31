@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://ds8yepq88e44b"]
+[gd_scene load_steps=9 format=3 uid="uid://ds8yepq88e44b"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_hobqc"]
 [ext_resource type="PackedScene" uid="uid://iebci4q5sshi" path="res://assets/course/barn/barn_course.tscn" id="2_i7jnl"]
@@ -6,11 +6,45 @@
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_c8nyr"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="5_13gyq"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5d70"]
+shading_mode = 0
+
+[sub_resource type="Shader" id="Shader_uhnwa"]
+code = "shader_type spatial;
+render_mode unshaded, cull_front;
+
+uniform bool enable = true; // on and off switsch to diesable/enable the outline
+// outline costumization
+uniform float outline_thickness = 0.05; // how thick is the outline?
+uniform vec4 color : source_color = vec4(0.0); // which color does the outline have?
+
+
+void vertex() {
+	if (enable) {
+	VERTEX += NORMAL*outline_thickness; // apply the outlines thickness	
+	}
+}
+
+void fragment() {
+	if (enable) {
+	ALBEDO = color.rgb; // apply the outlines color
+	}
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kbkix"]
+render_priority = 0
+next_pass = SubResource("StandardMaterial3D_i5d70")
+shader = SubResource("Shader_uhnwa")
+shader_parameter/enable = true
+shader_parameter/outline_thickness = 0.5
+shader_parameter/color = Color(0.377919, 0.377919, 0.377919, 1)
+
 [node name="RaceBase" instance=ExtResource("1_hobqc")]
 
 [node name="MapMesh" parent="Course" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -93.4476, 0, -63.5505)
 visible = false
+material_override = SubResource("ShaderMaterial_kbkix")
 mesh = ExtResource("2_u1ewi")
 
 [node name="barn_course" parent="Course" index="2" instance=ExtResource("2_i7jnl")]

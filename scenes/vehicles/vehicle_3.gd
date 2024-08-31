@@ -543,7 +543,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	# Handle walls
 	handle_walls()
 
-	
+
 	# Stick to ground.
 	# Perform raycast in local -y direction
 	is_stick = false

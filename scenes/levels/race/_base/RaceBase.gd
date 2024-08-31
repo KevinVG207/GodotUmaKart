@@ -32,7 +32,8 @@ var network_path_points: Dictionary = {}
 var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_3.tscn")
 var rank_panel_scene: PackedScene = preload("res://scenes/ui/rank_panel.tscn")
 
-var lobby_scene: String = "res://scenes/ui/lobby/lobby.tscn"
+var lobby_cam_str: String = "%CamTrunk"
+var lobby_scene: String = "res://scenes/ui/academy/menu_academy.tscn"
 
 @export var lap_count: int = 3
 var finished = false
@@ -904,6 +905,7 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 		raceOp.SERVER_ITEM_STATE:
 			apply_item_state(data)		
 		raceOp.SERVER_ABORT:
+			Global.menu_start_cam = lobby_cam_str
 			UI.change_scene(lobby_scene)
 		_:
 			print("Unknown match state op code: ", match_state.op_code)
@@ -924,6 +926,7 @@ func join_next():
 	UI.reset_race_ui()
 	UI.race_ui.visible = false
 	Network.socket.received_match_state.disconnect(_on_match_state)
+	Global.menu_start_cam = lobby_cam_str
 	UI.change_scene(lobby_scene)
 
 func _on_back_pressed():
