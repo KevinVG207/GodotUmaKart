@@ -1,10 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://bmq4y5xti5ibm"]
+[gd_scene load_steps=2 format=3 uid="uid://bmq4y5xti5ibm"]
 
 [ext_resource type="PackedScene" uid="uid://bloyvhvjxu7lt" path="res://assets/character/chara-test2.blend" id="1_lxosg"]
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_w0uj5"]
-radius = 1.1341
-height = 9.19066
 
 [node name="Body" instance=ExtResource("1_lxosg")]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
@@ -41,53 +37,3 @@ bone_idx = 6
 [node name="Head" type="Node3D" parent="Armature/Skeleton3D/HeadAttachment" index="0"]
 unique_name_in_owner = true
 transform = Transform3D(2, 0, 1.1967e-13, 0, 2, 0, -1.1967e-13, 0, 2, 1.02321e-07, 0.778253, -0.177305)
-
-[node name="LeftThighAttachment" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="3"]
-transform = Transform3D(2.82806e-08, 0.0240314, -0.999711, 2.21934e-07, -0.999711, -0.0240315, -1, -1.7206e-07, -9.03502e-08, 1.11683, 8.93133, 1.14427e-08)
-bone_name = "Bone.015"
-bone_idx = 15
-
-[node name="StaticBody3D" type="StaticBody3D" parent="Armature/Skeleton3D/LeftThighAttachment" index="0"]
-collision_layer = 256
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Armature/Skeleton3D/LeftThighAttachment/StaticBody3D" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.55271e-15, 3.6852, -2.06625e-15)
-shape = SubResource("CapsuleShape3D_w0uj5")
-
-[node name="RightThighAttachment" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="4"]
-transform = Transform3D(2.26506e-07, -0.0240315, -0.999711, 1.26204e-07, -0.999711, 0.0240315, -1, -3.58223e-09, -3.65246e-07, -1.11683, 8.93133, -2.54443e-07)
-bone_name = "Bone.008"
-bone_idx = 11
-
-[node name="StaticBody3D" type="StaticBody3D" parent="Armature/Skeleton3D/RightThighAttachment" index="0"]
-collision_layer = 256
-collision_mask = 0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Armature/Skeleton3D/RightThighAttachment/StaticBody3D" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.55271e-15, 3.6852, -2.06625e-15)
-shape = SubResource("CapsuleShape3D_w0uj5")
-
-[node name="Skeleton3D" parent="SkirtArmature" index="0"]
-bones/0/rotation = Quaternion(0.950941, -9.34e-15, -0.309373, -1.33325e-07)
-bones/0/scale = Vector3(1, 1, 1)
-bones/1/rotation = Quaternion(0.389441, -9.93922e-09, 0.535177, 0.749614)
-bones/2/rotation = Quaternion(-0.306609, 0.00217949, -0.417152, 0.855553)
-bones/3/rotation = Quaternion(-0.102183, -4.82702e-08, -0.146018, 0.983991)
-bones/3/scale = Vector3(1, 1, 1)
-bones/5/scale = Vector3(1, 1, 1)
-bones/6/rotation = Quaternion(0.107508, 8.32898e-08, 0.142143, 0.983991)
-bones/6/scale = Vector3(1, 1, 1)
-bones/7/rotation = Quaternion(-0.3663, 0.252133, 0.528198, 0.723367)
-bones/7/scale = Vector3(1, 1, 1)
-bones/8/rotation = Quaternion(0.395658, 0.0294122, -0.341533, 0.852024)
-bones/8/scale = Vector3(1, 1, 1)
-bones/9/rotation = Quaternion(0.150613, 1.4618e-08, -0.0461382, 0.987516)
-bones/11/rotation = Quaternion(0.446676, -0.0294124, -0.271422, 0.852024)
-bones/12/rotation = Quaternion(0.0902291, -5.42281e-08, -0.129119, 0.987516)
-bones/12/scale = Vector3(1, 1, 1)
-bones/13/scale = Vector3(1, 1, 1)
-bones/14/rotation = Quaternion(-0.409142, 0.0209286, 0.337125, 0.847651)
-bones/15/rotation = Quaternion(-0.139885, 3.34435e-08, 0.0558656, 0.98859)
-bones/17/rotation = Quaternion(-0.44663, -0.0209285, 0.285608, 0.847651)
-bones/18/rotation = Quaternion(-0.0961851, 7.86629e-08, 0.115919, 0.98859)
