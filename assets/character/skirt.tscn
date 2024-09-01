@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://own3wiwe62vx"]
+
+[ext_resource type="ArrayMesh" uid="uid://dq4swpr71w2gc" path="res://assets/character/skirt_mesh/skirt_Cube_002.res" id="1_aiae6"]
+[ext_resource type="Script" path="res://assets/character/skirt.gd" id="2_s6jjb"]
+
+[node name="Skirt" type="SoftBody3D"]
+mesh = ExtResource("1_aiae6")
+collision_layer = 0
+collision_mask = 256
+script = ExtResource("2_s6jjb")

@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bloyvhvjxu7lt"
-path="res://.godot/imported/chara-test2.blend-5c896e081cffa71a649708bcdcc0821d.scn"
+uid="uid://bj7eq3cgfwgk8"
+path="res://.godot/imported/skirt.blend-e3a88641d7d4e6715c6d042267162321.scn"
 
 [deps]
 
-source_file="res://assets/character/chara-test2.blend"
-dest_files=["res://.godot/imported/chara-test2.blend-5c896e081cffa71a649708bcdcc0821d.scn"]
+source_file="res://assets/character/skirt.blend"
+dest_files=["res://.godot/imported/skirt.blend-e3a88641d7d4e6715c6d042267162321.scn"]
 
 [params]
 
@@ -32,10 +32,15 @@ animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
 import_script/path=""
 _subresources={
-"materials": {
-"Material.001": {
-"use_external/enabled": true,
-"use_external/path": "res://assets/character/body_mat/Material.001.tres"
+"meshes": {
+"skirt_Cube_002": {
+"generate/lightmap_uv": 0,
+"generate/lods": 0,
+"generate/shadow_meshes": 0,
+"lods/normal_merge_angle": 60.0,
+"lods/normal_split_angle": 25.0,
+"save_to_file/enabled": true,
+"save_to_file/path": "res://assets/character/skirt_mesh/skirt_Cube_002.res"
 }
 }
 }

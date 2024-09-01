@@ -33,7 +33,7 @@ func _ready():
 	
 	var head_path: String = Global.heads.values().pick_random()
 	var head: Node3D = load(head_path).instantiate()
-	%Head.add_child(head)
+	$Body.get_node("%Head").add_child(head)
 	
 	var speed_multi := randf_range(0.8, 1.2)
 	move_speed = default_speed * speed_multi
