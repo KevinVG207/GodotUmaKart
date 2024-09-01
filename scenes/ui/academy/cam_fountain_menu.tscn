@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://doyxcgm8r6edh"]
+[gd_scene load_steps=2 format=3 uid="uid://doyxcgm8r6edh"]
 
 [ext_resource type="Script" path="res://scenes/ui/academy/cam_fountain_menu.gd" id="1_1cqih"]
-[ext_resource type="PackedScene" uid="uid://c0324msajig8q" path="res://scenes/ui/cycle_setting.tscn" id="2_4ir8m"]
 
 [node name="CamFountainMenu" type="Control"]
 layout_mode = 3
@@ -13,49 +12,6 @@ grow_vertical = 2
 script = ExtResource("1_1cqih")
 single_scene = "res://scenes/levels/race/Wicked_Woods/Wicked_Woods.tscn"
 online_scene = "res://scenes/ui/lobby/lobby.tscn"
-
-[node name="Label" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -184.0
-offset_right = -7.0
-offset_bottom = 28.0
-grow_horizontal = 0
-theme_override_font_sizes/font_size = 20
-text = "HOME_LANGUAGE"
-horizontal_alignment = 2
-
-[node name="LangSelect" parent="." instance=ExtResource("2_4ir8m")]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 0.0
-offset_left = -7.0
-offset_top = 33.0
-offset_right = -7.0
-offset_bottom = 33.0
-grow_horizontal = 0
-grow_vertical = 1
-
-[node name="PanelContainer" parent="LangSelect" index="0"]
-anchors_preset = 1
-anchor_left = 1.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 0.0
-offset_left = -220.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 33.0
-grow_horizontal = 0
-grow_vertical = 1
-
-[node name="Label" parent="LangSelect/PanelContainer/HBoxContainer" index="1"]
-custom_minimum_size = Vector2(200, 0)
 
 [node name="Label2" type="Label" parent="."]
 custom_minimum_size = Vector2(300, 0)
@@ -93,7 +49,8 @@ grow_horizontal = 2
 grow_vertical = 2
 focus_neighbor_right = NodePath("../OnlineButton")
 theme_override_font_sizes/font_size = 40
-text = "OFFLINE"
+text = "HOME_OFFLINE"
+clip_text = true
 
 [node name="Label3" type="Label" parent="."]
 custom_minimum_size = Vector2(300, 0)
@@ -130,7 +87,54 @@ offset_bottom = -61.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_neighbor_left = NodePath("../VSButton")
+focus_neighbor_bottom = NodePath("../SettingsButton")
 theme_override_font_sizes/font_size = 40
-text = "ONLINE"
+text = "HOME_ONLINE"
+clip_text = true
 
-[editable path="LangSelect"]
+[node name="SettingsButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 95.0
+offset_top = -43.0
+offset_right = 395.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_left = NodePath("../VSButton")
+focus_neighbor_top = NodePath("../OnlineButton")
+focus_neighbor_bottom = NodePath("../TitleButton")
+theme_override_font_sizes/font_size = 35
+text = "HOME_SETTINGS"
+clip_text = true
+
+[node name="TitleButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 95.0
+offset_top = -116.0
+offset_right = 395.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 0
+focus_neighbor_left = NodePath("../VSButton")
+focus_neighbor_top = NodePath("../SettingsButton")
+theme_override_font_sizes/font_size = 35
+text = "HOME_TITLE"
+clip_text = true
+
+[connection signal="pressed" from="OnlineButton" to="." method="_on_online_button_pressed"]
+[connection signal="pressed" from="SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="TitleButton" to="." method="_on_title_button_pressed"]

@@ -37,13 +37,20 @@ RACE_OVER,Race Over!,レース完了
 RACE_SPECTATING,Spectating,待機中
 RACE_BTN_BACK,Back to Lobby,ロビーへ戻る
 RACE_LAP,Lap %d,Lap %d
-HOME_1P_OFFLINE_VS,1P Offline VS,シングルVS
+HOME_1P_OFFLINE_VS,1P Offline VS,1P シングル VS
 HOME_1P_ONLINE_VS,1P Online VS,1P オンライン VS
-OFFLINE,Offline,シングルプレイ
-ONLINE,Online,オンラインプレイ
-HOME_LANGUAGE,Language,言語
+HOME_OFFLINE,Offline,シングルプレイ
+HOME_ONLINE,Online,オンラインプレイ
+HOME_SETTINGS,Settings,オプション
+HOME_TITLE,Back to Title,タイトルに戻る
 LANG_EN,English,英語
 LANG_JA,Japanese,日本語
 GAME_TITLE,Uma Kart Racer,ウマカート・レーシング
 PRESS_ANY,Press Any Button,Press Any Button
 PRESS_ANY2,"What's the ""Any Button""?",Any Buttonって何のボタン？
+SETTINGS_TAB_GENERAL,General,普段
+SETTINGS_APPLY,Apply,セーブ
+SETTINGS_CANCEL,Cancel,キャンセル
+SETTING_LANG,Language,言語
+SETTING_LANG_DESCR,Change the language of the game.,ゲームの言語を変更します
+SETTING_DESCR_PLACEHOLDER,Change the game settings.,ゲームの設定を変更します

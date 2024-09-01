@@ -1,16 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://dhi2e4527p0wh"]
+[gd_scene load_steps=4 format=3 uid="uid://dhi2e4527p0wh"]
 
 [ext_resource type="Script" path="res://scenes/ui/academy/cam_spica_menu.gd" id="1_f6hfk"]
-[ext_resource type="PackedScene" uid="uid://c0324msajig8q" path="res://scenes/ui/cycle_setting.tscn" id="2_5njoq"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kyy7q"]
 content_margin_left = 10.0
 content_margin_top = 10.0
 content_margin_right = 10.0
 content_margin_bottom = 10.0
-
-[sub_resource type="LabelSettings" id="LabelSettings_uctr5"]
-font_size = 25
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_32f6q"]
 content_margin_left = 5.0
@@ -50,40 +46,31 @@ size_flags_vertical = 3
 theme_override_font_sizes/font_size = 25
 current_tab = 0
 
-[node name="General" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
+[node name="SETTINGS_TAB_GENERAL" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/General"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/SETTINGS_TAB_GENERAL"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kyy7q")
+horizontal_scroll_mode = 0
 
-[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/TabContainer/General/ScrollContainer"]
+[node name="General" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/SETTINGS_TAB_GENERAL/ScrollContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-columns = 2
+theme_override_constants/separation = 16
 
-[node name="SettingLabel" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/General/ScrollContainer/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Setting text"
-label_settings = SubResource("LabelSettings_uctr5")
-horizontal_alignment = 1
-
-[node name="CycleSetting" parent="MarginContainer/VBoxContainer/TabContainer/General/ScrollContainer/GridContainer" instance=ExtResource("2_5njoq")]
-layout_mode = 2
-size_flags_horizontal = 3
-items = ["Value 0", "Value 1", "Value 2"]
-
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/TabContainer/General"]
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/TabContainer/SETTINGS_TAB_GENERAL"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_32f6q")
 
-[node name="Description" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/General/PanelContainer"]
+[node name="Description" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/SETTINGS_TAB_GENERAL/PanelContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Description goes here"
+text = "SETTING_DESCR_PLACEHOLDER"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -95,12 +82,16 @@ custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 25
-text = "Apply
-"
+text = "SETTINGS_APPLY"
+clip_text = true
 
 [node name="BtnCancel" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 25
-text = "Cancel"
+text = "SETTINGS_CANCEL"
+clip_text = true
+
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/BtnApply" to="." method="_on_btn_apply_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/BtnCancel" to="." method="_on_btn_cancel_pressed"]

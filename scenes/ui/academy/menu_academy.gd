@@ -17,7 +17,7 @@ var map_character_scene: PackedScene = preload("res://scenes/ui/academy/map_char
 func _ready():
 	Engine.physics_ticks_per_second = 120
 	hide_cams()
-	%EETimer.start()
+	%EETimer.start(564)
 	
 	to_cam = get_node(Global.menu_start_cam)
 	
@@ -29,8 +29,6 @@ func _ready():
 	cam.fov = to_cam.fov
 	to_cam.opacity = 1.0
 	to_cam.visible = true
-	
-	Global.goto_lobby_screen.connect(fountain_to_trunk)
 
 
 func hide_cams():
@@ -110,16 +108,24 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	
 func fountain_to_title():
 	start_cam_travel(%CamFountain, %CamInitial, $PathInitialFountain/Follow, travel_time, true)
-	%EETimer.start()
+	%EETimer.start(564)
 
 func title_to_fountain():
 	start_cam_travel(%CamInitial, %CamFountain, $PathInitialFountain/Follow, travel_time)
 
 func fountain_to_trunk():
+	Global.goto_lobby_screen.emit()
 	start_cam_travel(%CamFountain, %CamTrunk, $PathFountainTrunk/Follow, travel_time/2)
 
 func trunk_to_fountain():
 	start_cam_travel(%CamTrunk, %CamFountain, $PathFountainTrunk/Follow, travel_time/2, true)
+
+func fountain_to_spica():
+	start_cam_travel(%CamFountain, %CamSpica, $PathFountainSpica/Follow, travel_time)
+
+func spica_to_fountain():
+	start_cam_travel(%CamSpica, %CamFountain, $PathFountainSpica/Follow, travel_time, true)
+
 
 func _on_cam_tween_finished():
 	cam.global_position = cam_follow.global_position
@@ -145,8 +151,20 @@ func _input(event: InputEvent):
 
 
 func _on_ee_timer_timeout():
-	$Menus/CamInitial/SubViewport/CamInitialMenu/PressKey.text = tr("PRESS_ANY2")
+	$Menus/CamInitial/SubViewport/CamInitialMenu/PressKey.text = "PRESS_ANY2"
 
 
 func _on_lobby_back() -> void:
 	trunk_to_fountain()
+
+func _on_cam_fountain_menu_to_settings() -> void:
+	fountain_to_spica()
+
+func _on_cam_spica_menu_back() -> void:
+	spica_to_fountain()
+
+func _on_cam_fountain_menu_to_title() -> void:
+	fountain_to_title()
+
+func _on_cam_fountain_menu_to_lobby() -> void:
+	fountain_to_trunk()

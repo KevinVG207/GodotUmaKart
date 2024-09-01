@@ -5,15 +5,12 @@ extends Control
 @onready var last_button: Control = %VSButton
 var given_focus := false
 
+signal to_lobby
+signal to_settings
+signal to_title
+
 func _enter_tree():
-	for i in range(len(Global.locales)):
-		var lang: String = Global.locales[i]
-		$LangSelect.add_item("LANG_%s"%lang.to_upper())
-	$LangSelect.select(Global.cur_locale)
-	$LangSelect.item_selected.connect(_on_language_change)
-	
 	%VSButton.pressed.connect(_on_vs_button_pressed)
-	%OnlineButton.pressed.connect(_on_online_button_pressed)
 
 func _on_language_change(index: int, _text: String):
 	Global.cur_locale = index
@@ -29,11 +26,24 @@ func _on_vs_button_pressed():
 	#print(event)
 
 func _on_online_button_pressed():
-	#UI.change_scene(online_scene)
 	if not given_focus:
 		return
-	Global.goto_lobby_screen.emit()
+	to_lobby.emit()
 	last_button = %OnlineButton
 
 func focus():
 	last_button.grab_focus()
+
+
+func _on_settings_button_pressed() -> void:
+	if not given_focus:
+		return
+	to_settings.emit()
+	last_button = %SettingsButton
+
+
+func _on_title_button_pressed() -> void:
+	if not given_focus:
+		return
+	to_title.emit()
+	last_button = %VSButton

@@ -215,6 +215,10 @@ unique_name_in_owner = true
 wait_time = 564.0
 one_shot = true
 
+[connection signal="to_lobby" from="Menus/CamFountain/SubViewport/CamFountainMenu" to="." method="_on_cam_fountain_menu_to_lobby"]
+[connection signal="to_settings" from="Menus/CamFountain/SubViewport/CamFountainMenu" to="." method="_on_cam_fountain_menu_to_settings"]
+[connection signal="to_title" from="Menus/CamFountain/SubViewport/CamFountainMenu" to="." method="_on_cam_fountain_menu_to_title"]
+[connection signal="back" from="Menus/CamSpica/SubViewport/CamSpicaMenu" to="." method="_on_cam_spica_menu_back"]
 [connection signal="back" from="Menus/CamTrunk/SubViewport/Lobby" to="." method="_on_lobby_back"]
 [connection signal="timeout" from="EETimer" to="." method="_on_ee_timer_timeout"]
 
