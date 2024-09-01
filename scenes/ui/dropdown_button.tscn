@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://dq1sft53mtb5q"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_pgi47"]
+size = Vector2(16, 16)
+
+[node name="DropdownButton" type="Button"]
+mouse_filter = 1
+text = "English"
+icon = SubResource("PlaceholderTexture2D_pgi47")
+icon_alignment = 2

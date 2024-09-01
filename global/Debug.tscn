@@ -4,6 +4,7 @@
 
 [node name="Debug" type="CanvasLayer"]
 layer = 128
+visible = false
 script = ExtResource("1_gxon6")
 
 [node name="EraseTimer" type="Timer" parent="."]

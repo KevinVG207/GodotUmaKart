@@ -36,7 +36,7 @@ func _ready():
 func hide_cams():
 	for camera: MenuCam in $Menus.get_children():
 		camera.visible = false
-		camera.click_area.input_ray_pickable = false
+		#camera.click_area.input_ray_pickable = false
 
 func _process(delta):
 	if !charas_spawned:
@@ -91,7 +91,7 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	tween.tween_property(cam, "rotation", end_cam.rotation, time).set_delay(wait_start).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 	tween.tween_property(cam, "fov", end_cam.fov, time).set_delay(wait_start).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_CUBIC)
 	var callback = func():
-		end_cam.click_area.input_ray_pickable = true
+		#end_cam.click_area.input_ray_pickable = true
 		end_cam.focus()
 	tween.tween_callback(callback).set_delay(fade_delay_end + wait_start)
 	
@@ -135,7 +135,13 @@ func _input(event: InputEvent):
 			title_to_fountain()
 			return
 	#print(event)
-	to_cam.viewport.push_input(event)
+	
+	if !traveling:
+		if "position" in event:
+			event.position *= to_cam.scale_multi
+		if "global_position" in event:
+			event.global_position *= to_cam.scale_multi
+		to_cam.viewport.push_input(event)
 
 
 func _on_ee_timer_timeout():

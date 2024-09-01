@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://doyxcgm8r6edh"]
+[gd_scene load_steps=3 format=3 uid="uid://doyxcgm8r6edh"]
 
 [ext_resource type="Script" path="res://scenes/ui/academy/cam_fountain_menu.gd" id="1_1cqih"]
+[ext_resource type="PackedScene" uid="uid://c0324msajig8q" path="res://scenes/ui/cycle_setting.tscn" id="2_4ir8m"]
 
 [node name="CamFountainMenu" type="Control"]
 layout_mode = 3
@@ -26,20 +27,35 @@ theme_override_font_sizes/font_size = 20
 text = "HOME_LANGUAGE"
 horizontal_alignment = 2
 
-[node name="LangSelect" type="OptionButton" parent="."]
+[node name="LangSelect" parent="." instance=ExtResource("2_4ir8m")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
+anchor_top = 0.0
 anchor_right = 1.0
-offset_left = -52.0
-offset_top = 29.0
+anchor_bottom = 0.0
+offset_left = -7.0
+offset_top = 33.0
 offset_right = -7.0
-offset_bottom = 49.0
+offset_bottom = 33.0
 grow_horizontal = 0
-focus_neighbor_left = NodePath("../OnlineButton")
-focus_neighbor_bottom = NodePath("../OnlineButton")
-theme_override_font_sizes/font_size = 20
-alignment = 2
+grow_vertical = 1
+
+[node name="PanelContainer" parent="LangSelect" index="0"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -220.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 33.0
+grow_horizontal = 0
+grow_vertical = 1
+
+[node name="Label" parent="LangSelect/PanelContainer/HBoxContainer" index="1"]
+custom_minimum_size = Vector2(200, 0)
 
 [node name="Label2" type="Label" parent="."]
 custom_minimum_size = Vector2(300, 0)
@@ -69,7 +85,6 @@ offset_top = 149.0
 offset_right = -95.0
 offset_bottom = 299.0
 grow_horizontal = 2
-focus_neighbor_top = NodePath("../LangSelect")
 focus_neighbor_right = NodePath("../OnlineButton")
 theme_override_font_sizes/font_size = 40
 text = "OFFLINE"
@@ -103,7 +118,7 @@ offset_right = 395.0
 offset_bottom = 299.0
 grow_horizontal = 2
 focus_neighbor_left = NodePath("../VSButton")
-focus_neighbor_top = NodePath("../LangSelect")
-focus_neighbor_right = NodePath("../LangSelect")
 theme_override_font_sizes/font_size = 40
 text = "ONLINE"
+
+[editable path="LangSelect"]

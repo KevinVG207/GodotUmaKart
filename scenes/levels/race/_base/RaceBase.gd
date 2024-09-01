@@ -311,11 +311,13 @@ func _process(delta):
 	# Debug window
 	if Input.is_action_just_pressed("F12"):
 		if debug_window:
+			ProjectSettings.set_setting("display/window/subwindows/embed_subwindows", true)
 			debug_window.queue_free()
 			debug_cam.queue_free()
 			debug_window = null
 			debug_cam = null
 		else:
+			ProjectSettings.set_setting("display/window/subwindows/embed_subwindows", false)
 			debug_window = Window.new()
 			debug_window.size = Vector2(1280,720)
 			debug_cam = PlayerCam.new()

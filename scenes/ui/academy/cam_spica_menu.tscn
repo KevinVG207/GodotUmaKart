@@ -1,9 +1,23 @@
-[gd_scene load_steps=3 format=3 uid="uid://dhi2e4527p0wh"]
+[gd_scene load_steps=6 format=3 uid="uid://dhi2e4527p0wh"]
 
 [ext_resource type="Script" path="res://scenes/ui/academy/cam_spica_menu.gd" id="1_f6hfk"]
+[ext_resource type="PackedScene" uid="uid://c0324msajig8q" path="res://scenes/ui/cycle_setting.tscn" id="2_5njoq"]
 
-[sub_resource type="LabelSettings" id="LabelSettings_6q25j"]
-font_size = 60
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kyy7q"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_uctr5"]
+font_size = 25
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_32f6q"]
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.0846899, 0.0846899, 0.0846899, 1)
 
 [node name="CamSpicaMenu" type="Control"]
 layout_mode = 3
@@ -14,21 +28,79 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_f6hfk")
 
-[node name="Label" type="Label" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -114.5
-offset_top = -37.5
-offset_right = 114.5
-offset_bottom = 37.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Settings or something idk
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
 
-This text is just here as a test"
-label_settings = SubResource("LabelSettings_6q25j")
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 25
+current_tab = 0
+
+[node name="General" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/General"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_kyy7q")
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/TabContainer/General/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+
+[node name="SettingLabel" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/General/ScrollContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Setting text"
+label_settings = SubResource("LabelSettings_uctr5")
 horizontal_alignment = 1
+
+[node name="CycleSetting" parent="MarginContainer/VBoxContainer/TabContainer/General/ScrollContainer/GridContainer" instance=ExtResource("2_5njoq")]
+layout_mode = 2
+size_flags_horizontal = 3
+items = ["Value 0", "Value 1", "Value 2"]
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/TabContainer/General"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_32f6q")
+
+[node name="Description" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/General/PanelContainer"]
+layout_mode = 2
+text = "Description goes here"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 32
+
+[node name="BtnApply" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 25
+text = "Apply
+"
+
+[node name="BtnCancel" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 25
+text = "Cancel"

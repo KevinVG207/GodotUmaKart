@@ -151,7 +151,6 @@ cull_mask = 1023
 current = true
 
 [node name="Menus" type="Node3D" parent="."]
-visible = false
 
 [node name="CamInitial" parent="Menus" instance=ExtResource("5_t5vkb")]
 unique_name_in_owner = true

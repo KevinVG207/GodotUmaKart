@@ -21,7 +21,7 @@ var opacity: float:
 
 func _ready():
 	opacity = 0.0
-	click_area.input_event.connect(_on_area_3d_input_event)
+	#click_area.input_event.connect(_on_area_3d_input_event)
 
 func _process(_delta):
 	var view_rect: Rect2 = get_viewport().get_visible_rect()
@@ -50,8 +50,9 @@ func _process(_delta):
 
 func _on_area_3d_input_event(_camera, event: InputEvent, _position, _normal, _shape_idx):
 	viewport.handle_input_locally = true
-	event.position *= scale_multi
-	event.global_position = event.position
+	#event.position *= scale_multi
+	#event.global_position = event.position
+	print("aaaa")
 	viewport.push_input(event, true)
 
 func focus():
