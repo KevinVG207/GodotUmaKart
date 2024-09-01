@@ -1,28 +1,57 @@
-[gd_scene load_steps=3 format=3 uid="uid://cgubbv13lvah8"]
+[gd_scene load_steps=4 format=3 uid="uid://cgubbv13lvah8"]
 
 [ext_resource type="Script" path="res://scenes/ui/player_info_box.gd" id="1_udc87"]
 [ext_resource type="Texture2D" uid="uid://53pqjniwp6x1" path="res://icon.svg" id="2_yk4si"]
 
-[node name="PlayerInfoBox" type="HBoxContainer"]
-custom_minimum_size = Vector2(500, 0)
-theme_override_constants/separation = 5
-script = ExtResource("1_udc87")
-current_user_color = Color(1, 1, 0.576471, 1)
-picked_color = Color(1, 1, 0, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_673g6"]
+resource_local_to_scene = true
+content_margin_left = 5.0
+content_margin_top = 5.0
+content_margin_right = 5.0
+content_margin_bottom = 5.0
+bg_color = Color(0.162065, 0.162066, 0.162066, 0.435294)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="PlayerInfoBox" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -17.5
+offset_right = 250.0
+offset_bottom = 17.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_673g6")
+script = ExtResource("1_udc87")
+current_user_color = Color(1, 1, 0, 1)
+picked_color = Color(0.957889, 0.956623, 0, 0.435294)
+
+[node name="HboxContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="TextureRect" type="TextureRect" parent="HboxContainer"]
 layout_mode = 2
 texture = ExtResource("2_yk4si")
 expand_mode = 2
 stretch_mode = 4
 
-[node name="Name" type="Label" parent="."]
+[node name="Name" type="Label" parent="HboxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 25
 text = "PlayerName1"
 
-[node name="Pick" type="Label" parent="."]
+[node name="Pick" type="Label" parent="HboxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_colors/font_color = Color(1, 1, 1, 1)

@@ -1,15 +1,11 @@
 [gd_scene load_steps=5 format=3 uid="uid://c0324msajig8q"]
 
 [ext_resource type="Script" path="res://scenes/ui/cycle_setting.gd" id="1_8d5vq"]
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ei28m"]
-size = Vector2(20, 20)
+[ext_resource type="Texture2D" uid="uid://bv76ocvemosw2" path="res://assets/ui/arrow-left.png" id="2_1uw6o"]
+[ext_resource type="Texture2D" uid="uid://bgu8j2ky4khjf" path="res://assets/ui/arrow-right.png" id="3_casjg"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_vnp73"]
 font_size = 20
-
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_2gwf4"]
-size = Vector2(20, 20)
 
 [node name="CycleSetting" type="Control"]
 layout_mode = 3
@@ -43,8 +39,12 @@ theme_override_constants/separation = 7
 [node name="BtnLeft" type="Button" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-icon = SubResource("PlaceholderTexture2D_ei28m")
+theme_override_colors/icon_normal_color = Color(0.707967, 0.707967, 0.707967, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(0.60933, 0.60933, 0.60933, 1)
+icon = ExtResource("2_1uw6o")
 flat = true
+icon_alignment = 1
 
 [node name="Label" type="Label" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
@@ -59,8 +59,12 @@ vertical_alignment = 1
 [node name="BtnRight" type="Button" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-icon = SubResource("PlaceholderTexture2D_2gwf4")
+theme_override_colors/icon_normal_color = Color(0.707967, 0.707967, 0.707967, 1)
+theme_override_colors/icon_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(0.60933, 0.60933, 0.60933, 1)
+icon = ExtResource("3_casjg")
 flat = true
+icon_alignment = 1
 
 [connection signal="pressed" from="PanelContainer/HBoxContainer/BtnLeft" to="." method="_on_btn_left_pressed"]
 [connection signal="pressed" from="PanelContainer/HBoxContainer/BtnRight" to="." method="_on_btn_right_pressed"]

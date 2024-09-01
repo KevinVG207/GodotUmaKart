@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://dqhi3idf6syay"]
+[gd_scene load_steps=4 format=3 uid="uid://dqhi3idf6syay"]
 
 [ext_resource type="Script" path="res://scenes/ui/lobby/lobby.gd" id="1_5qmws"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_r5fd3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q0nkw"]
+content_margin_top = 75.0
 
 [node name="Lobby" type="Control"]
 layout_mode = 3
@@ -13,12 +16,40 @@ grow_vertical = 2
 script = ExtResource("1_5qmws")
 info_box = ExtResource("2_r5fd3")
 
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 100
+metadata/_edit_lock_ = true
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/PanelContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_q0nkw")
+
+[node name="PlayerInfoContainer" type="GridContainer" parent="MarginContainer/PanelContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 2
+theme_override_constants/h_separation = 25
+columns = 2
+
 [node name="LobbyName" type="Label" parent="."]
 layout_mode = 0
-offset_left = 111.0
-offset_top = 3.0
-offset_right = 199.0
-offset_bottom = 45.0
+offset_left = 34.0
+offset_top = 30.0
+offset_right = 241.0
+offset_bottom = 72.0
 theme_override_font_sizes/font_size = 30
 text = "LOBBY_LOBBY"
 metadata/_edit_lock_ = true
@@ -42,35 +73,14 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -60.0
-offset_right = -11.0
-offset_bottom = 35.0
+offset_left = -80.0
+offset_top = 26.0
+offset_right = -30.0
+offset_bottom = 61.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 25
 text = "1:00"
 horizontal_alignment = 2
-metadata/_edit_lock_ = true
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 25
-theme_override_constants/margin_top = 100
-theme_override_constants/margin_right = 25
-theme_override_constants/margin_bottom = 25
-metadata/_edit_lock_ = true
-
-[node name="PlayerInfoContainer" type="GridContainer" parent="MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 0
-theme_override_constants/h_separation = 25
-columns = 2
-metadata/_edit_lock_ = true
 
 [node name="MatchmakeButton" type="Button" parent="."]
 layout_mode = 1
@@ -135,6 +145,7 @@ wait_time = 60.0
 one_shot = true
 
 [node name="PingBox" type="SpinBox" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -148,6 +159,7 @@ max_value = 1000.0
 step = 100.0
 
 [node name="UsernameContainer" type="HBoxContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0

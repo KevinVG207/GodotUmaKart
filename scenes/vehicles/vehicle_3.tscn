@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=44 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
@@ -11,8 +11,6 @@
 [ext_resource type="Script" path="res://assets/vehicles/wheel.gd" id="8_4bboh"]
 [ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_hxerb"]
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_be71b"]
-[ext_resource type="PackedScene" uid="uid://cchc4yw6h5dme" path="res://assets/character/_nice-nature/head.blend" id="12_gwggj"]
-[ext_resource type="PackedScene" uid="uid://b030ek8eo2e54" path="res://assets/character/head.tscn" id="13_132u2"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -466,24 +464,14 @@ transform = Transform3D(-4.37114e-09, 0, 0.1, 0, 0.1, 0, -0.1, 0, -4.37114e-09, 
 [node name="Skeleton3D" parent="Visual/Character/Body/Armature" index="0"]
 bones/0/rotation = Quaternion(-0.130526, 1.18189e-07, -2.12654e-08, 0.991445)
 bones/1/rotation = Quaternion(0.130526, 1.56772e-15, 3.68254e-08, 0.991445)
-bones/3/rotation = Quaternion(-2.69043e-07, -1.62794e-09, 0.864071, 0.503369)
 bones/4/rotation = Quaternion(0.583633, -0.34876, -0.0153223, 0.733147)
 bones/5/rotation = Quaternion(0.0864098, -0.000254989, -0.120178, 0.988985)
-bones/7/scale = Vector3(1, 1, 1)
 bones/8/rotation = Quaternion(0.583834, 0.34876, 0.000299191, 0.733147)
 bones/9/rotation = Quaternion(0.0894735, 0.000254512, 0.117915, 0.988985)
-bones/10/rotation = Quaternion(0.566588, -0.423058, -0.566588, -0.423058)
-bones/10/scale = Vector3(1, 1, 1)
 bones/11/rotation = Quaternion(-0.484343, 0.328141, 0.377887, 0.717591)
 bones/12/rotation = Quaternion(-0.0915837, -0.0210522, 0.0875094, 0.991721)
-bones/12/scale = Vector3(1, 1, 1)
-bones/14/rotation = Quaternion(0.566588, 0.423058, -0.566588, 0.423058)
-bones/14/scale = Vector3(1, 1, 1)
 bones/15/rotation = Quaternion(0.484343, -0.328141, 0.377887, 0.717591)
 bones/16/rotation = Quaternion(0.0915837, 0.0210522, 0.0875095, 0.991721)
-bones/16/scale = Vector3(1, 1, 1)
-bones/17/rotation = Quaternion(0.00598546, 0.0306302, 0.707237, 0.706288)
-bones/17/scale = Vector3(1, 1, 1)
 bones/18/rotation = Quaternion(0.740318, -0.0235958, -0.460389, -0.4893)
 bones/18/scale = Vector3(1, 1, 1)
 bones/19/rotation = Quaternion(-0.310634, -0.0117922, 0.13795, 0.940392)
@@ -493,13 +481,13 @@ bones/21/rotation = Quaternion(-0.0846229, -1.35763e-08, 0.0586614, 0.994685)
 bones/21/scale = Vector3(1, 1, 1)
 bones/22/scale = Vector3(1, 1, 1)
 bones/23/rotation = Quaternion(-0.310634, 0.0117921, -0.13795, 0.940392)
-bones/24/rotation = Quaternion(-0.26837, -0.0582906, -0.482758, 0.83158)
+bones/24/rotation = Quaternion(-0.26837, -0.0582906, -0.482758, 0.831579)
 bones/24/scale = Vector3(1, 1, 1)
 bones/25/rotation = Quaternion(-0.084623, 3.46431e-08, -0.0586614, 0.994685)
 bones/25/scale = Vector3(1, 1, 1)
 bones/26/rotation = Quaternion(-0.00160188, -0.00242559, 0.846825, 0.531864)
 bones/26/scale = Vector3(1, 1, 1)
-bones/27/rotation = Quaternion(0.286837, 0.259508, 0.346019, 0.854781)
+bones/27/rotation = Quaternion(0.286837, 0.259508, 0.346018, 0.854782)
 bones/27/scale = Vector3(1, 1, 1)
 bones/28/rotation = Quaternion(-0.00331914, -2.22664e-08, 0.17687, 0.984229)
 bones/28/scale = Vector3(1, 1, 1)
@@ -524,11 +512,6 @@ transform = Transform3D(1, 1.13135e-08, 2.39907e-07, -7.30204e-08, 0.965926, 0.2
 
 [node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
 transform = Transform3D(1, -2.98428e-13, 2.38418e-07, 2.95763e-13, 1, -8.4061e-27, -2.38418e-07, 0, 1, 2.2077e-08, 15.0502, -0.505083)
-
-[node name="head2" parent="Visual/Character/Body/Armature/Skeleton3D/HeadAttachment/Head" index="0" instance=ExtResource("12_gwggj")]
-visible = false
-
-[node name="head" parent="Visual/Character/Body/Armature/Skeleton3D/HeadAttachment/Head" index="1" instance=ExtResource("13_132u2")]
 
 [node name="kart2" parent="Visual" instance=ExtResource("7_23hik")]
 transform = Transform3D(-6.99382e-09, 0, 0.16, 0, 0.16, 0, -0.16, 0, -6.99382e-09, -0.0278986, -0.292819, 0)

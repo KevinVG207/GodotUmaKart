@@ -37,7 +37,7 @@ signal back
 
 @export var info_box: PackedScene
 var info_boxes: Dictionary = {}
-@onready var box_container: GridContainer = $MarginContainer/PlayerInfoContainer
+@onready var box_container: GridContainer = %PlayerInfoContainer
 
 
 func _ready():

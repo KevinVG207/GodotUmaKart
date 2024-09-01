@@ -163,3 +163,8 @@ func dist_to_plane(plane_normal: Vector3, plane_pos: Vector3, point: Vector3) ->
 func multi_emit(cont: Node3D, emitting: bool) -> void:
 	for child: GPUParticles3D in cont.get_children():
 		child.emitting = emitting
+
+func get_random_head() -> Node3D:
+	var head_path: String = Global.heads.values().pick_random()
+	var head: Node3D = load(head_path).instantiate()
+	return head

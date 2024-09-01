@@ -226,9 +226,13 @@ var min_angle_to_detach := 10.0
 
 func _ready():
 	setup_floor_check_grid()
+	setup_head()
 	pass
 	#Network.should_setup = true
 	#transform = initial_transform
+
+func setup_head():
+	$Visual/Character/Body.get_node("%Head").add_child(Util.get_random_head())
 
 func setup_floor_check_grid() -> void:
 	var fl: Vector3 = %FrontLeft.position

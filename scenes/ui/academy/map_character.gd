@@ -31,9 +31,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _ready():
 	cur_dir = Vector3.FORWARD.rotated(Vector3.UP, 2.0*PI*randf())
 	
-	var head_path: String = Global.heads.values().pick_random()
-	var head: Node3D = load(head_path).instantiate()
-	$Body.get_node("%Head").add_child(head)
+	$Body.get_node("%Head").add_child(Util.get_random_head())
 	
 	var speed_multi := randf_range(0.8, 1.2)
 	move_speed = default_speed * speed_multi
