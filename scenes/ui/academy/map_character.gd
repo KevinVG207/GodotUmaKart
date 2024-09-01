@@ -1,20 +1,20 @@
-extends CharacterBody3D
+extends RigidBody3D
 
 class_name MapCharacter
 
 @onready var nav_agent: NavigationAgent3D = $NavAgent
-var gravity := Vector3.DOWN * 500.0
-var default_speed := 100.0
+var gravity := Vector3.DOWN * 400.0
+var default_speed := 200.0
 var move_speed := default_speed
 var cur_speed := 0.0
-var accel := 300.0
+var accel := 600.0
 
 var default_anim_speed := 0.8
 var anim_speed := default_anim_speed
 
 var cur_dir := Vector3.ZERO
 var first := true
-var dir_smoothing := 0.6
+var dir_smoothing := 0.3
 var target_pos := Vector3.ZERO
 var meeting_up := false
 var meeting_partner: MapCharacter
@@ -75,7 +75,7 @@ func check_for_meetup():
 			continue
 		
 		var dist: float = character.global_position.distance_to(global_position)
-		var dp: float = velocity.normalized().dot(character.velocity.normalized())
+		var dp: float = linear_velocity.normalized().dot(character.linear_velocity.normalized())
 		if dp < 0.5 and dist < 15 and dist > 2:
 			if randi_range(0, 20) > 1:
 				should_start_timer = true
@@ -95,8 +95,8 @@ func do_meetup(other: MapCharacter):
 	other.meeting_partner = self
 	nav_agent.target_position = other.global_position
 	other.nav_agent.target_position = global_position
-	$StopTimer.stop()
-	other.get_node("StopTimer").stop()
+	$StopTimer.start(15)
+	other.get_node("StopTimer").start(15)
 	
 	$NavAgent.set_avoidance_mask_value(1, false)
 	other.get_node("NavAgent").set_avoidance_mask_value(1, false)
@@ -116,7 +116,7 @@ func _physics_process(dt):
 	if meeting_up:
 		nav_agent.target_position = meeting_partner.global_position
 		set_next_target()
-		if global_position.distance_to(nav_agent.target_position) < 2:
+		if global_position.distance_to(nav_agent.target_position) < 1.5:
 			_on_nav_agent_target_reached()
 		nav_agent.path_postprocessing = 0
 	else:
@@ -142,9 +142,10 @@ func _physics_process(dt):
 	
 	rotation.y = atan2(-cur_dir.z, cur_dir.x)
 	
-	velocity = cur_dir * cur_speed
-	velocity += gravity
-	velocity *= delta
+	linear_velocity = cur_dir * cur_speed
+	linear_velocity += gravity
+	linear_velocity *= delta
+	angular_velocity = Vector3.ZERO
 	
 	if !walking and target_speed > 0:
 		walking = true
@@ -155,8 +156,8 @@ func _physics_process(dt):
 	elif walking and target_speed <= 0.1:
 		walking = false
 		%Ani.play("RESET", 0.5)
-	
-	move_and_slide()
+
+	#move_and_slide()
 
 
 func _on_idle_timer_timeout() -> void:
@@ -179,14 +180,14 @@ func _on_nav_agent_target_reached() -> void:
 
 func _on_stop_timer_timeout() -> void:
 	# Start idling
-	start_idling()
+	_on_nav_agent_target_reached()
 
 
 func _on_nav_agent_waypoint_reached(details: Dictionary) -> void:
 	call_deferred("set_next_target")
 
 
-func _on_nav_agent_velocity_computed(safe_velocity: Vector3) -> void:
-	#print("Safe velocity: ", safe_velocity)
-	velocity = safe_velocity
-	cur_dir = cur_dir.move_toward(Vector3(safe_velocity.x, 0, safe_velocity.z).normalized(), delta * dir_smoothing * 2).normalized()
+#func _on_nav_agent_velocity_computed(safe_velocity: Vector3) -> void:
+	##print("Safe velocity: ", safe_velocity)
+	#velocity = safe_velocity
+	#cur_dir = cur_dir.move_toward(Vector3(safe_velocity.x, 0, safe_velocity.z).normalized(), delta * dir_smoothing * 2).normalized()

@@ -15,7 +15,7 @@ var no_map_charas: int = 50
 var map_character_scene: PackedScene = preload("res://scenes/ui/academy/map_character.tscn")
 
 func _ready():
-	Engine.physics_ticks_per_second = 60
+	Engine.physics_ticks_per_second = 120
 	hide_cams()
 	%EETimer.start()
 	
@@ -44,8 +44,8 @@ func _process(delta):
 		for i in range(no_map_charas):
 			var instance: MapCharacter = map_character_scene.instantiate()
 			$Characters.add_child(instance)
-			instance.global_position = NavigationServer3D.map_get_random_point($NavigationRegion3D.get_navigation_map(), 1, false)
-			# instance.global_position += Vector3.UP * 5.0
+			instance.global_position = NavigationServer3D.map_get_random_point($NavigationRegion3D.get_navigation_map(), 1, true)
+			#instance.global_position += Vector3.UP * 100.0
 	
 	if traveling:
 		cam.global_position = cam_follow.global_position
