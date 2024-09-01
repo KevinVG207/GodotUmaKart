@@ -37,6 +37,7 @@ RACE_OVER,Race Over!,レース完了
 RACE_SPECTATING,Spectating,待機中
 RACE_BTN_BACK,Back to Lobby,ロビーへ戻る
 RACE_LAP,Lap %d,Lap %d
+RACE_DNF,DNF,DNF
 HOME_1P_OFFLINE_VS,1P Offline VS,1P シングル VS
 HOME_1P_ONLINE_VS,1P Online VS,1P オンライン VS
 HOME_OFFLINE,Offline,シングルプレイ

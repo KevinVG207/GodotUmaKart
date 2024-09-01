@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=27 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
@@ -77,6 +77,16 @@ outline_color = Color(0, 0, 0, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_esb4h"]
 font_size = 100
 outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_7j71x"]
+font_size = 45
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_80x08"]
+font_size = 25
+outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_ptjgw"]
@@ -326,6 +336,7 @@ alignment = 2
 layout_mode = 2
 size_flags_vertical = 1
 theme_override_font_sizes/font_size = 45
+label_settings = SubResource("LabelSettings_7j71x")
 vertical_alignment = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="LapCountContainer"]
@@ -337,6 +348,7 @@ layout_mode = 2
 size_flags_vertical = 1
 theme_override_font_sizes/font_size = 25
 text = "/3"
+label_settings = SubResource("LabelSettings_80x08")
 vertical_alignment = 2
 
 [node name="Finished" type="Label" parent="."]
