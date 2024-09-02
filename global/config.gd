@@ -1,8 +1,44 @@
 extends Node
 
+var default_config: Dictionary
+var current_config: Dictionary
+var config_path: String = "user://config.json"
+
 var default_bindings: Dictionary
 var current_bindings: Dictionary
 var keybinds_path: String = "user://keybinds.json"
+
+func make_config() -> Dictionary:
+	print("Making config")
+	var config: Dictionary = {}
+	
+	config.language = Global.locales[Global.cur_locale]
+	
+	return config
+
+func apply_config(config: Dictionary) -> void:
+	print("Applying config")
+	if "language" in config and config.language:
+		var loc_idx := Global.locales.find(config.language)
+		if loc_idx >= 0:
+			Global.cur_locale = loc_idx
+
+func save_config(config: Dictionary) -> void:
+	print("Saving config")
+	Util.save_json(config_path, config)
+
+func load_config() -> Dictionary:
+	print("Loading config")
+	var out: Dictionary = {}
+	var config: Variant = Util.load_json(config_path)
+	if config:
+		for setting: String in config.keys():
+			if setting not in default_config:
+				print("Removing setting ", setting)
+				config.erase(setting)
+		out = config
+	
+	return out
 
 func get_bindings() -> Dictionary:
 	# Turn InputMap bindings into editable/savable dictionary.
@@ -65,15 +101,12 @@ func make_event(type, bind) -> InputEvent:
 
 func save_bindings(actions: Dictionary) -> void:
 	print("Saving bindings")
-	var store_file: FileAccess = FileAccess.open(keybinds_path, FileAccess.WRITE)
-	store_file.store_string(JSON.stringify(actions))
-	store_file.close()
+	Util.save_json(keybinds_path, actions)
 
 func load_bindings() -> Dictionary:
 	print("Loading bindings")
 	var out: Dictionary = {}
-	var load_file: FileAccess = FileAccess.open(keybinds_path, FileAccess.READ)
-	var parsed_binds: Variant = JSON.parse_string(load_file.get_as_text(true))
+	var parsed_binds: Variant = Util.load_json(keybinds_path)
 	if parsed_binds:
 		for action: String in parsed_binds.keys():
 			if not InputMap.has_action(action):
@@ -84,6 +117,21 @@ func load_bindings() -> Dictionary:
 	return out
 
 func _ready():
+	default_config = make_config()
+	current_config = default_config
+	
+	# Ensure config file exists.
+	if not FileAccess.file_exists(config_path):
+		save_config(default_config)
+	
+	# Load current config and apply.
+	if FileAccess.file_exists(config_path):
+		var config := load_config()
+		if config:
+			current_config = config
+			apply_config(config)
+	
+	
 	default_bindings = get_bindings()
 	current_bindings = default_bindings
 	

@@ -121,6 +121,7 @@ func trunk_to_fountain():
 	start_cam_travel(%CamTrunk, %CamFountain, $PathFountainTrunk/Follow, travel_time/2, true)
 
 func fountain_to_spica():
+	Global.goto_settings_screen.emit()
 	start_cam_travel(%CamFountain, %CamSpica, $PathFountainSpica/Follow, travel_time)
 
 func spica_to_fountain():

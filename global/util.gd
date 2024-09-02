@@ -168,3 +168,18 @@ func get_random_head() -> Node3D:
 	var head_path: String = Global.heads.values().pick_random()
 	var head: Node3D = load(head_path).instantiate()
 	return head
+
+func remove_children(node: Node) -> void:
+	for child in node.get_children():
+		child.queue_free()
+
+func save_json(path: String, object: Variant) -> void:
+	var store_file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	store_file.store_string(JSON.stringify(object))
+	store_file.close()
+
+func load_json(path: String) -> Variant:
+	var load_file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	var object: Variant = JSON.parse_string(load_file.get_as_text(true))
+	load_file.close()
+	return object
