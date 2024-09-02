@@ -14,7 +14,7 @@ var no_map_charas: int = 50
 
 var map_character_scene: PackedScene = preload("res://scenes/ui/academy/map_character.tscn")
 
-func _ready():
+func _ready() -> void:
 	Engine.physics_ticks_per_second = 120
 	hide_cams()
 	%EETimer.start(564)
@@ -111,6 +111,7 @@ func fountain_to_title():
 	%EETimer.start(564)
 
 func title_to_fountain():
+	%EETimer.stop()
 	start_cam_travel(%CamInitial, %CamFountain, $PathInitialFountain/Follow, travel_time)
 
 func fountain_to_trunk():

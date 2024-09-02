@@ -133,7 +133,8 @@ func get_bindings() -> Dictionary:
 			if event is InputEventJoypadButton:
 				actions[action]["JOYPAD"] = event.button_index
 			if event is InputEventJoypadMotion:
-				actions[action]["JOYPAD_AXIS"] = event.axis
+				var _sign: int = 1 if event.axis_value >= 0 else -1
+				actions[action]["JOYPAD_AXIS"] = (event.axis + 1) * _sign
 			if event is InputEventKey:
 				actions[action]["KEYBOARD"] = event.physical_keycode
 			if event is InputEventMouseButton:
@@ -167,7 +168,9 @@ func make_event(type, bind) -> InputEvent:
 			event.button_index = bind
 		"JOYPAD_AXIS":
 			event = InputEventJoypadMotion.new()
-			event.axis = bind
+			var _sign: int = 1 if bind >= 0 else -1
+			event.axis = abs(bind) - 1
+			event.axis_value = _sign
 		"KEYBOARD":
 			event = InputEventKey.new()
 			event.physical_keycode = bind

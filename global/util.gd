@@ -17,7 +17,7 @@ func sum(array: Array):
 		out += ele
 	return out
 
-func raycast_for_group(space_state: PhysicsDirectSpaceState3D, start_pos: Vector3, end_pos: Vector3, group, ignore_array: Array = [], collision_mask=0xFFFFFFFF):
+func raycast_for_group(space_state: PhysicsDirectSpaceState3D, start_pos: Vector3, end_pos: Vector3, group, ignore_array: Array = [], collision_mask=0xFFFFFFFF) -> Dictionary:
 	if typeof(group) == TYPE_STRING:
 		group = [group]
 	var out: Dictionary = {}

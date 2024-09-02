@@ -6,7 +6,7 @@ signal updated
 
 var action := ""
 var type := ""
-var bind: int = -1
+var bind: int = -999999
 
 var rebind_popup: PackedScene = preload("res://assets/ui/rebind_popup.tscn")
 
@@ -14,14 +14,19 @@ func _ready():
 	pass
 
 func reload():
-	if bind < 0:
+	if bind <= -999999:
 		return
 	
 	var event := Config.make_event(type, bind)
 	if not event:
 		return
 	
-	var btn_text := event.as_text()
+	var btn_text := "Unknown Key"
+	
+	if event is InputEventKey:
+		btn_text = OS.get_keycode_string(DisplayServer.keyboard_get_keycode_from_physical(event.physical_keycode))
+	else:
+		btn_text = event.as_text()
 	
 	if btn_text.find("(") >= 0 and btn_text.find(")") >= 0:
 		btn_text = btn_text.substr(0, btn_text.find("(")-1)

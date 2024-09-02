@@ -49,7 +49,7 @@ var input_updown: float = 0
 @export var list_order: int = 0
 @export var icon: CompressedTexture2D
 @export var max_speed: float = 25
-@onready var cur_max_speed = max_speed
+@onready var cur_max_speed := max_speed
 @onready var min_speed_for_detach := max_speed / 4
 @export var reverse_multi: float = 0.5
 @onready var max_reverse_speed: float = max_speed * reverse_multi
@@ -63,8 +63,8 @@ var push_force: float = 12.0
 # var max_push_force: float = 2.75
 # var push_force_vert: float = 1.0
 var offroad_ticks: int = 0
-var offroad = false
-var weak_offroad = false
+var offroad := false
+var weak_offroad := false
 
 var network_teleport_distance: float = 25.0
 
@@ -102,11 +102,11 @@ var in_trick: bool = false
 
 @onready var small_boost_max_speed: float = max_speed * 1.2
 @onready var small_boost_initial_accel: float = initial_accel * 5
-@onready var small_boost_exponent = accel_exponent
+@onready var small_boost_exponent := accel_exponent
 
 @onready var normal_boost_max_speed: float = max_speed * 1.4
 @onready var normal_boost_initial_accel: float = initial_accel * 5
-@onready var normal_boost_exponent = accel_exponent
+@onready var normal_boost_exponent := accel_exponent
 
 @onready var big_boost_max_speed: float = max_speed * 1.6
 
@@ -114,7 +114,7 @@ var in_trick: bool = false
 @export var normal_boost_duration: float = 1.0
 @export var big_boost_duration: float = 1.5
 
-@onready var trick_boost_duration = normal_boost_duration
+@onready var trick_boost_duration := normal_boost_duration
 
 @export var vehicle_length_ahead: float = 1.0
 @export var vehicle_length_behind: float = 1.0
@@ -148,14 +148,14 @@ var grounded: bool = false
 var prev_grounded: bool = false
 
 @export var gravity: Vector3 = Vector3.DOWN * 20
-var terminal_velocity = 3000
+var terminal_velocity: float = 3000
 
 # var grav_vel: Vector3 = Vector3.ZERO  # Velocity due to gravity
 var prop_vel: Vector3 = Vector3.ZERO  # Velocity due to propulsion
 var rest_vel: Vector3 = Vector3.ZERO  # Other velocity
 var prev_prop_vel: Vector3 = Vector3.ZERO
 var prev_rest_vel: Vector3 = Vector3.ZERO
-var floor_normal = Vector3(0, 1, 0)
+var floor_normal := Vector3(0, 1, 0)
 var floor_normals: Array = []
 var wall_contacts: Array = []
 
@@ -167,23 +167,23 @@ var ground_rot_multi: float = 6.0
 var test_force: float = 10.0
 #var cur_grip: float = 100.0
 
-var max_displacement_for_sleep = 0.003
-var max_degrees_change_for_sleep = 0.5
+var max_displacement_for_sleep := 0.003
+var max_degrees_change_for_sleep := 0.5
 
 var prev_vel: Vector3 = Vector3.ZERO
 
 var prev_transform: Transform3D = Transform3D.IDENTITY
 #@onready var prev_rotation: Vector3 = rotation
 
-var sleep = false
+var sleep := false
 var extra_fov: float = 0.0
 
-var in_water = false
+var in_water := false
 var water_bodies: Dictionary = {}
 
 var bounce_force: float = 20.0
-var in_bounce = false
-var bounce_frames = 0
+var in_bounce := false
+var bounce_frames: int = 0
 @export var prev_frame_pre_sim_vel: Vector3 = Vector3.ZERO
 @onready var min_bounce_speed: float = max_speed * 0.4
 
@@ -224,14 +224,14 @@ var min_angle_to_detach := 10.0
 		#is_player = true
 		#is_cpu = false
 
-func _ready():
+func _ready() -> void:
 	setup_floor_check_grid()
 	setup_head()
 	pass
 	#Network.should_setup = true
 	#transform = initial_transform
 
-func setup_head():
+func setup_head() -> void:
 	$Visual/Character/Body.get_node("%Head").add_child(Util.get_random_head())
 
 func setup_floor_check_grid() -> void:
@@ -248,34 +248,34 @@ func setup_floor_check_grid() -> void:
 		bl, bl.lerp(br, 0.5), br
 	]
 
-func make_player():
+func make_player() -> void:
 	is_cpu = false
 	is_network = false
 	is_player = true
 	UI.race_ui.roulette_ended.connect(_on_roulette_stop)
 
-func set_finished(_finish_time: float):
+func set_finished(_finish_time: float) -> void:
 	finished = true
 	finish_time = _finish_time
 	if is_player:
 		UI.race_ui.hide_roulette()
 		UI.race_ui.finished()
 
-func axis_lock():
+func axis_lock() -> void:
 	axis_lock_linear_x = true
 	axis_lock_linear_z = true
 
-func axis_unlock():
+func axis_unlock() -> void:
 	started = true
 	axis_lock_linear_x = false
 	axis_lock_linear_z = false
 
-func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3):
+func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3) -> void:
 	global_position = new_pos
 	look_at_from_position(new_pos, new_pos + (look_dir.rotated(up_dir, deg_to_rad(-90))), up_dir, true)
 	set_movement_zero()
 
-func set_movement_zero():
+func set_movement_zero() -> void:
 	prev_transform = transform
 	prev_frame_pre_sim_vel = Vector3.ZERO
 	prev_vel = Vector3.ZERO
@@ -289,7 +289,7 @@ func set_movement_zero():
 	prop_vel = Vector3.ZERO
 	rest_vel = Vector3.ZERO
 
-func set_all_input_zero():
+func set_all_input_zero() -> void:
 	input_accel = false
 	input_brake = false
 	input_steer = 0.0
@@ -301,7 +301,7 @@ func set_all_input_zero():
 func get_random_target_offset() -> Vector3:
 	return Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))
 
-func handle_input():
+func handle_input() -> void:
 	if is_player and get_window().has_focus():
 		input_mirror = Input.is_action_pressed("mirror")
 
@@ -318,7 +318,7 @@ func handle_input():
 		input_item_just = Input.is_action_just_pressed("item")
 		input_updown = Input.get_axis("down", "up")
 
-func cpu_control(delta):
+func cpu_control(delta: float) -> void:
 	if !is_cpu or in_damage or !started:
 		return
 	
@@ -335,7 +335,7 @@ func cpu_control(delta):
 		if grounded and cur_speed > min_hop_speed and randf() < (1.0 / Engine.physics_ticks_per_second):
 			input_brake = true
 	
-	var cpu_target_pos = cpu_target.global_position + (cpu_target_offset * cpu_target.dist / 3)
+	var cpu_target_pos := cpu_target.global_position + (cpu_target_offset * cpu_target.dist / 3)
 	if global_position.distance_to(cpu_target_pos) < cpu_target.dist or Util.dist_to_plane(cpu_target.normal, cpu_target.global_position, global_position) > 0:
 		# Get next target
 		cpu_target = world.pick_next_path_point(cpu_target)
@@ -346,11 +346,11 @@ func cpu_control(delta):
 
 	
 	# Determine which side to steer
-	var target_dir = (cpu_target_pos - global_position).normalized()
-	var angle = transform.basis.z.angle_to(target_dir) - PI/2
-	var max_angle = cpu_target.dist/2 / global_position.distance_to(cpu_target_pos)
+	var target_dir := (cpu_target_pos - global_position).normalized()
+	var angle := transform.basis.z.angle_to(target_dir) - PI/2
+	var max_angle := cpu_target.dist/2 / global_position.distance_to(cpu_target_pos)
 
-	var is_behind = transform.basis.x.dot(target_dir) < 0
+	var is_behind := transform.basis.x.dot(target_dir) < 0
 
 	if is_behind:
 		if angle < 0:
@@ -364,7 +364,7 @@ func cpu_control(delta):
 	if !is_network and abs(angle) > 0.5 and cur_speed > min_hop_speed and randf() < (2.0 / Engine.physics_ticks_per_second):
 		input_brake = true
 	
-	if !is_network and (in_drift or in_hop or air_frames > Engine.physics_ticks_per_second/4) and (drift_gauge >= 75 or abs(angle) > 0.2):
+	if !is_network and (in_drift or in_hop or air_frames > Engine.physics_ticks_per_second/4.0) and (drift_gauge >= 75 or abs(angle) > 0.2):
 		input_brake = true
 	
 	if abs(angle) > max_angle:
@@ -388,8 +388,8 @@ func cpu_control(delta):
 	if is_network and prev_state:
 		var network_pos: Vector3 = cpu_target.global_position
 		var network_rot: Vector3 = Util.to_vector3(prev_state.rot)
-		var move_multi = 0.0
-		var rot_multi = 1.0
+		var move_multi := 0.0
+		var rot_multi := 1.0
 		
 		#if !moved_to_next and (catch_up or global_position.distance_to(network_pos) > (network_teleport_distance / 3) * 2):
 			##Debug.print("catch up!")
@@ -427,19 +427,19 @@ func cpu_control(delta):
 		if global_position.distance_to(network_pos) < 5.0:
 			catch_up = false
 		
-		var cur_quat = Quaternion.from_euler(rotation)
-		var target_quat = Quaternion.from_euler(network_rot)
+		var cur_quat := Quaternion.from_euler(rotation)
+		var target_quat := Quaternion.from_euler(network_rot)
 		rotation = cur_quat.slerp(target_quat, rot_multi * delta).get_euler()
 	
 	if !is_network:
-		var item_rand = randi_range(0, 900) == 0
+		var item_rand := randi_range(0, 900) == 0
 		# if item:
 		# 	print(can_use_item, " ", item, " ", item_rand)
 		if !finished and can_use_item and item and item_rand:
 			input_item = true
 			input_item_just = true
 		
-		var new_progress = world.get_vehicle_progress(self)
+		var new_progress := world.get_vehicle_progress(self)
 		if new_progress > cur_progress:
 			cur_progress = new_progress
 			$FailsafeTimer.stop()
@@ -448,7 +448,7 @@ func cpu_control(delta):
 			if $FailsafeTimer.is_stopped():
 				start_failsafe_timer()
 
-func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
+func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	frame += 1
 	var delta: float = physics_state.step
 	
@@ -465,19 +465,19 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		set_collision_layer_value(2, true)
 		set_collision_layer_value(3, false)
 		
-	var prev_vel: Vector3 = linear_velocity
+	#var prev_vel: Vector3 = linear_velocity
 	# var prev_gravity_vel: Vector3 = prev_vel.project(gravity.normalized())
 	# var prev_grav_vel: Vector3 = grav_vel
 	
 	var tmp: Array = collided_with.keys()
 	for vehicle: Vehicle3 in tmp:
-		var timeout_frame = collided_with[vehicle]
+		var timeout_frame: int = collided_with[vehicle]
 		if frame >= timeout_frame:
 			collided_with.erase(vehicle)
 
 
 	var prev_origin := prev_transform.origin
-	var prev_basis := prev_transform.basis
+	var _prev_basis := prev_transform.basis
 
 	grip_multiplier = 1.0
 	
@@ -580,7 +580,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		#rest_vel = rest_vel_ground
 		
 		# Remove gravity.
-		var vel_grav = rest_vel.project(gravity.normalized())
+		var vel_grav := rest_vel.project(gravity.normalized())
 		# print(vel_grav)
 		rest_vel -= vel_grav
 		
@@ -596,8 +596,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	else:
 		air_frames += 1
 		
-		var grav_component = rest_vel.project(gravity.normalized())
-		var other = rest_vel - grav_component
+		var grav_component := rest_vel.project(gravity.normalized())
+		var other := rest_vel - grav_component
 		other = other.move_toward(Vector3.ZERO, air_decel * delta)
 		
 		rest_vel = other + grav_component
@@ -632,12 +632,12 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 			#Debug.print(linear_velocity.y)
 
 	# Turning
-	var adjusted_steering = steering
+	var adjusted_steering := steering
 	if respawn_stage:
 		adjusted_steering = 0.0
 	
 	if in_drift:
-		var outside_drift_multi = clamp((prop_vel + rest_vel).length() / cur_max_speed, 0, 1)
+		var outside_drift_multi: float = clamp((prop_vel + rest_vel).length() / cur_max_speed, 0, 1)
 		if drift_dir > 0:
 			adjusted_steering = remap(adjusted_steering, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
 			if outside_drift and grounded:
@@ -659,7 +659,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		drift_gauge = 0.0
 	#Debug.print(drift_gauge)
 	
-	var adjusted_max_turn_speed = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
+	var adjusted_max_turn_speed: float = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
 	#Debug.print(adjusted_max_turn_speed)
 	
 	# Hacky attempt to fix being "stuck" to a wall
@@ -669,9 +669,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 		wall_turn_multi = 1.0
 	wall_turn_multi = clamp(wall_turn_multi, 1.0, max_wall_turn_multi)
 	
-	var turn_target = adjusted_steering * adjusted_max_turn_speed * wall_turn_multi
+	var turn_target := adjusted_steering * adjusted_max_turn_speed * wall_turn_multi
 
-	var cur_turn_accel = turn_accel
+	var cur_turn_accel := turn_accel
 	if reversing:
 		turn_target *= -0.75
 		cur_turn_accel *= 0.5
@@ -684,7 +684,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 	else:
 		cur_turn_speed = move_toward(cur_turn_speed, turn_target, cur_turn_accel * delta)
 	
-	var cur_multi = 1.0
+	var cur_multi := 1.0
 	if !grounded:
 		prop_vel = prop_vel.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta * air_turn_multiplier)
 		rest_vel = rest_vel.rotated(transform.basis.y, deg_to_rad(cur_turn_speed) * delta * air_turn_multiplier)
@@ -703,9 +703,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D):
 
 	# REFUSE TO GO UPSIDE DOWN (assuming we were at some point right side up)
 	# TODO: Actually implement rolling over
-	var angle_from_gravity = rad_to_deg(transform.basis.y.angle_to(-gravity))
+	var angle_from_gravity := rad_to_deg(transform.basis.y.angle_to(-gravity))
 	if angle_from_gravity >= 90:
-		var prev_angle_from_gravity = rad_to_deg(prev_transform.basis.y.angle_to(-gravity))
+		var prev_angle_from_gravity := rad_to_deg(prev_transform.basis.y.angle_to(-gravity))
 		if prev_angle_from_gravity < 90:
 			transform.basis = prev_transform.basis
 		else:
@@ -743,7 +743,7 @@ func raycast_floor_below() -> Array:
 	for loc_start_pos: Vector3 in floor_check_grid:
 		var start_pos := to_global(loc_start_pos)
 		var end_pos := start_pos + (transform.basis.y.normalized() * -floor_check_distance)
-		var result = Util.raycast_for_group(world.space_state, start_pos, end_pos, "floor", [self])
+		var result := Util.raycast_for_group(world.space_state, start_pos, end_pos, "floor", [self])
 		if result:
 			normals.append(result.normal)
 	
@@ -754,10 +754,10 @@ func idle_rotate(delta: float) -> void:
 	if not sleep:
 		rotation_degrees.x = move_toward(rotation_degrees.x, 0, 6 * delta)
 	#var floor_below = Util.raycast_for_group(world.space_state, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
-	var floor_normals := raycast_floor_below()
+	var idle_floor_normals := raycast_floor_below()
 	#if is_player:
 		#print(len(floor_normals))
-	if not grounded and (!in_hop or !floor_normals):
+	if not grounded and (!in_hop or !idle_floor_normals):  # TODO: Check if it's using the correct normals and not floor_normals
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
 
 	if grounded:
@@ -798,11 +798,11 @@ func idle_rotate(delta: float) -> void:
 		rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(avg_normal, transform.basis.x) * ground_rot_multi * multi * delta)
 		rotation.y = prev_y
 
-func detect_stick():
+func detect_stick() -> void:
 	if air_frames < 15 and !in_hop and !in_bounce:
-		var ray_origin = transform.origin
-		var ray_end = ray_origin + gravity.normalized() * 1.4
-		var ray_result = world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
+		var ray_origin := transform.origin
+		var ray_end := ray_origin + gravity.normalized() * 1.4
+		var ray_result := world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
 
 		if ray_result:
 			is_stick = true
@@ -813,38 +813,38 @@ func detect_stick():
 			# Apply stick_speed to stick to ground
 
 
-func handle_walls():
+func handle_walls() -> void:
 	if wall_contacts.size() > 0:
 		var avg_normal: Vector3 = Vector3.ZERO
-		var avg_position: Vector3 = Vector3.ZERO
+		#var avg_position: Vector3 = Vector3.ZERO
 		# print("===")
-		for wall in wall_contacts:
+		for wall: Dictionary in wall_contacts:
 			# print(wall["normal"])
 			avg_normal += wall["normal"]
-			avg_position += wall["position"]
+			#avg_position += wall["position"]
 		avg_normal /= wall_contacts.size()
-		avg_position /= wall_contacts.size()
+		#avg_position /= wall_contacts.size()
 		# var avg_normal = wall_contacts[-1]["normal"]
 
 		var bonk := false
-		var bounce_ratio = 0.2
-		for wall in wall_contacts:
-			var col_obj = wall["object"]
+		var bounce_ratio: float = 0.2
+		for wall: Dictionary in wall_contacts:
+			var col_obj: Node3D = wall["object"]
 			if col_obj.is_in_group("bonk"):
 				bonk = true
 			if col_obj.get("physics_material_override") and col_obj.physics_material_override.get("bounce"):
-				var cur_bounce_ratio = col_obj.physics_material_override.bounce
+				var cur_bounce_ratio: float = col_obj.physics_material_override.bounce
 				if cur_bounce_ratio > bounce_ratio:
 					bounce_ratio = cur_bounce_ratio
 		
 		# If we are already moving away from the wall, don't bounce
-		var dp = avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
+		var dp := avg_normal.normalized().dot(prev_frame_pre_sim_vel.normalized())
 
 		if dp < 0.25 or (dp < 0 and bonk):
 			# Get the component of the linear velocity that is perpendicular to the wall
-			var perp_vel = prev_frame_pre_sim_vel.project(avg_normal).length()
+			var perp_vel := prev_frame_pre_sim_vel.project(avg_normal).length()
 			#Debug.print(perp_vel)
-			var new_max_speed = (1 - abs(dp)) * cur_max_speed
+			var new_max_speed: float = (1 - abs(dp)) * cur_max_speed
 			if perp_vel > min_bounce_speed:
 				# print("Bounce ", bounce_ratio)
 				# prop_vel = prop_vel.bounce(avg_normal.normalized()) * bounce_ratio
@@ -867,9 +867,9 @@ func handle_walls():
 				cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
 			# print("cur_speed: ", cur_speed)
 
-func handle_contacts(physics_state: PhysicsDirectBodyState3D):
+func handle_contacts(physics_state: PhysicsDirectBodyState3D) -> void:
 	for i in range(physics_state.get_contact_count()):
-		var collider = physics_state.get_contact_collider_object(i) as Node
+		var collider := physics_state.get_contact_collider_object(i) as Node
 		if collider.is_in_group("floor"):
 			var col_pos: Vector3 = to_local(physics_state.get_contact_local_position(i))
 			if col_pos.y > 0.0:
@@ -922,9 +922,9 @@ func handle_contacts(physics_state: PhysicsDirectBodyState3D):
 			weak_offroad = true
 		
 		if collider.is_in_group("wall"):
-			var point = global_position + (transform.basis.y * -vehicle_height_below)
+			var point := global_position + (transform.basis.y * -vehicle_height_below)
 			# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
-			var dist_above_floor = Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
+			var dist_above_floor := Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
 
 			if dist_above_floor < 0.05 and not collider.is_in_group("bonk"):
 				continue
@@ -946,14 +946,14 @@ func handle_contacts(physics_state: PhysicsDirectBodyState3D):
 	
 	if floor_normals.size() > 0:
 		var avg_normal: Vector3 = Vector3.ZERO
-		for normal in floor_normals:
+		for normal: Vector3 in floor_normals:
 			avg_normal += normal
 		avg_normal /= floor_normals.size()
 		floor_normal = avg_normal.normalized()
 
 func get_grounded_vel(delta: float) -> Vector3:
 	#print(is_accel, is_brake, steering)
-	var hop_vel = Vector3.ZERO
+	var hop_vel := Vector3.ZERO
 	
 	if input_accel and input_brake:
 		if cur_speed > min_hop_speed:
@@ -1005,9 +1005,9 @@ func get_grounded_vel(delta: float) -> Vector3:
 	# 	in_hop = true
 	# 	hop_vel = transform.basis.y * hop_force / (in_hop_frames+1)
 	
-	var speed_vel = transform.basis.x.normalized() * cur_speed
+	var speed_vel := transform.basis.x.normalized() * cur_speed
 	
-	var vel = speed_vel + hop_vel;
+	var vel := speed_vel + hop_vel;
 	
 	return vel
 
@@ -1039,7 +1039,7 @@ func get_reverse_speed(delta: float) -> float:
 
 
 func get_brake_speed(delta: float) -> float:
-	var mult = -1.0
+	var mult := -1.0
 
 	if cur_speed < 0:
 		mult = 1.0
@@ -1048,7 +1048,7 @@ func get_brake_speed(delta: float) -> float:
 
 
 func get_friction_speed(delta: float) -> float:
-	var mult = -1.0
+	var mult := -1.0
 
 	if cur_speed < 0:
 		mult = 1.0
@@ -1069,24 +1069,24 @@ func get_boost_speed(delta: float) -> float:
 
 	if not small_boost_timer.is_stopped() and not offroad:
 		# Small boost is active. Does not work on offroad
-		var cur_boost_max_speed = small_boost_max_speed
+		var cur_boost_max_speed := small_boost_max_speed
 		if weak_offroad:
 			cur_boost_max_speed = max_speed
 		grip_multiplier = 2.0
 		return Util.get_vehicle_accel(cur_boost_max_speed, cur_speed, small_boost_initial_accel, small_boost_exponent) * delta
 	
 	if cur_speed > cur_max_speed:
-		var speed_range = big_boost_max_speed - cur_max_speed
-		var ratio = big_boost_max_speed - cur_speed
+		var speed_range := big_boost_max_speed - cur_max_speed
+		var ratio := big_boost_max_speed - cur_speed
 		grip_multiplier = 2.0
 		return -Util.get_vehicle_accel(speed_range, ratio, friction_initial_accel, friction_exponent) * delta
 	return 0
 
-func _on_still_turbo_timer_timeout():
+func _on_still_turbo_timer_timeout() -> void:
 	#Debug.print("Miniturbo ready")
 	still_turbo_ready = true
 
-func handle_vehicle_collisions():
+func handle_vehicle_collisions() -> void:
 	var colliding_vehicles: Dictionary = {}
 	for shape: ShapeCast3D in %PlayerCollision.get_children():
 		shape.force_shapecast_update()
@@ -1130,7 +1130,7 @@ func handle_vehicle_collisions():
 		apply_push(my_force * my_dir, col_vehicle)
 		col_vehicle.apply_push(their_force * their_dir, self)
 
-func apply_push(force: Vector3, vehicle: Vehicle3):
+func apply_push(force: Vector3, vehicle: Vehicle3) -> void:
 	if vehicle in collided_with:
 		return
 	
@@ -1140,7 +1140,7 @@ func apply_push(force: Vector3, vehicle: Vehicle3):
 
 
 
-func respawn():
+func respawn() -> void:
 	if respawn_stage:
 		return
 	
@@ -1155,7 +1155,7 @@ func respawn():
 		world.player_camera.do_respawn()
 	cur_progress = -100000
 
-func handle_respawn():
+func handle_respawn() -> void:
 	freeze = false
 	if not respawn_stage:
 		return
@@ -1185,11 +1185,11 @@ func handle_respawn():
 		global_rotation = respawn_rotation
 
 
-func handle_particles():
+func handle_particles() -> void:
 	handle_drift_particles()
 	handle_exhaust_particles()
 
-func handle_exhaust_particles():
+func handle_exhaust_particles() -> void:
 	Util.multi_emit(%ExhaustIdle, false)
 	Util.multi_emit(%ExhaustBoost, false)
 	
@@ -1199,7 +1199,7 @@ func handle_exhaust_particles():
 	Util.multi_emit(%ExhaustIdle, true)
 
 
-func handle_drift_particles():
+func handle_drift_particles() -> void:
 	Util.multi_emit(%DriftCenterCharging, false)
 	Util.multi_emit(%DriftCenterCharged, false)
 	Util.multi_emit(%DriftLeftCharging, false)
@@ -1223,14 +1223,14 @@ func handle_drift_particles():
 	elif still_turbo_ready:
 		Util.multi_emit(%DriftCenterCharged, true)
 
-func handle_item():
+func handle_item() -> void:
 	if not input_item_just:
 		return
 	
 	if not can_use_item:
 		if not $ItemRouletteTimer.is_stopped():
 			# User pressed item button while roulette is running.
-			var new_time = $ItemRouletteTimer.time_left - 0.5
+			var new_time: float = $ItemRouletteTimer.time_left - 0.5
 			if new_time < 0:
 				$ItemRouletteTimer.stop()
 				_on_item_roulette_timer_timeout()
@@ -1251,7 +1251,7 @@ func handle_item():
 		if is_player and !is_cpu:
 			UI.race_ui.set_item_texture(item.texture)
 
-func remove_item():
+func remove_item() -> void:
 	if item:
 		item.queue_free()
 		item = null
@@ -1259,7 +1259,7 @@ func remove_item():
 	if is_player:
 		UI.race_ui.hide_roulette()
 
-func get_item(guaranteed_item: PackedScene = null):
+func get_item(guaranteed_item: PackedScene = null) -> void:
 	if is_network:
 		return
 	
@@ -1272,7 +1272,7 @@ func get_item(guaranteed_item: PackedScene = null):
 	if guaranteed_item:
 		item = guaranteed_item.instantiate()
 	else:
-		var item_rank = round(remap(rank, 0, world.players_dict.size(), 0, Global.player_count))
+		var item_rank: int = round(remap(rank, 0, world.players_dict.size(), 0, Global.player_count))
 		item = Global.item_dist[item_rank].pick_random().instantiate()
 	world.add_child(item)
 	$ItemRouletteTimer.start(4)
@@ -1280,7 +1280,7 @@ func get_item(guaranteed_item: PackedScene = null):
 		UI.race_ui.start_roulette()
 
 
-func _on_item_roulette_timer_timeout():
+func _on_item_roulette_timer_timeout() -> void:
 	if not item:
 		print("Error: Roulette stopped but no item assigned!")
 		return
@@ -1291,11 +1291,11 @@ func _on_item_roulette_timer_timeout():
 	
 	UI.race_ui.stop_roulette(item.texture)
 
-func _on_roulette_stop():
+func _on_roulette_stop() -> void:
 	can_use_item = true
 
 
-func _process(delta):
+func _process(delta: float) -> void:
 	# UI Stuff
 	#if is_multiplayer_authority() and not is_cpu:
 		#is_player = true
@@ -1306,10 +1306,10 @@ func _process(delta):
 	if is_player:
 		# Update alerts
 		for alert_object: Node3D in targeted_by_dict:
-			var tex = targeted_by_dict[alert_object]
+			var tex: CompressedTexture2D = targeted_by_dict[alert_object]
 			UI.race_ui.update_alert(alert_object, tex, self, world.player_camera, delta)
 		
-		var spd = linear_velocity.length()
+		var spd := linear_velocity.length()
 		UI.race_ui.update_speed(spd)
 		
 		if cur_speed > max_speed:
@@ -1322,12 +1322,12 @@ func _process(delta):
 			#Debug.print([lap, check_idx, "%.2f" % check_progress, check_key_idx])
 
 
-func water_entered(area):
+func water_entered(area: Area3D) -> void:
 	in_water = true
 	water_bodies[area] = true
 
 
-func water_exited(area):
+func water_exited(area: Area3D) -> void:
 	water_bodies.erase(area)
 	if water_bodies.size() == 0:
 		in_water = false
@@ -1391,15 +1391,15 @@ func get_state() -> Dictionary:
 		"username": username
 	}
 
-func apply_state(state: Dictionary):
-	var a = [update_idx, state.idx]
+func apply_state(state: Dictionary) -> void:
+	#var a := [update_idx, state.idx]
 	if update_idx > state.idx:
 		return
 		
 	prev_state = state
 	
 	# Fix up network path point
-	var network_path = world.network_path_points[self] as EnemyPath
+	var network_path := world.network_path_points[self] as EnemyPath
 	cpu_target = network_path
 	network_path.global_position = Util.to_vector3(state.pos)
 	network_path.rotation = Util.to_vector3(state.rot)
@@ -1457,16 +1457,16 @@ func apply_state(state: Dictionary):
 		#Debug.print("TELEPORT!")
 
 
-func _on_failsafe_timer_timeout():
+func _on_failsafe_timer_timeout() -> void:
 	if not finished:
 		respawn()
 
-func start_failsafe_timer():
+func start_failsafe_timer() -> void:
 	if is_player:
 		return
 	$FailsafeTimer.start()
 
-func damage(damage_type: int):
+func damage(damage_type: int) -> void:
 	start_failsafe_timer()
 
 	if in_damage:
@@ -1480,24 +1480,24 @@ func damage(damage_type: int):
 			vani.animation = vani.Type.dmg_spin
 
 
-func _on_damage_timer_timeout():
+func _on_damage_timer_timeout() -> void:
 	in_damage = DamageType.none
 
-func set_rank(new_rank: int):
+func set_rank(new_rank: int) -> void:
 	if is_player and new_rank != rank:
 		UI.race_ui.update_rank(new_rank)
 	rank = new_rank
 
-func add_targeted(object: Node3D, tex: CompressedTexture2D):
+func add_targeted(object: Node3D, tex: CompressedTexture2D) -> void:
 	if not object in targeted_by_dict:
 		targeted_by_dict[object] = tex
 
-func remove_targeted(object: Node3D):
+func remove_targeted(object: Node3D) -> void:
 	if object in targeted_by_dict:
 		targeted_by_dict.erase(object)
 		UI.race_ui.remove_alert(object)
 
-func do_hop():
+func do_hop() -> void:
 	# Perform hop for drift
 	if in_hop or in_drift:
 		return

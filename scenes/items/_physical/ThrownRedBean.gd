@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-var physical_item = true
+var physical_item := true
 var item_id: String
 var owner_id: String
 var world: RaceBase
@@ -33,18 +33,18 @@ var target_pos: Vector3
 var dist_to_homing: float = 20.0
 var new_owner: String = ""
 
-func _enter_tree():
+func _enter_tree() -> void:
 	if Global.MODE1 == Global.MODE1_ONLINE:
 		$Area3D.set_collision_mask_value(3, false)
-	var thrower = world.players_dict[owner_id] as Vehicle3
+	var thrower := world.players_dict[owner_id] as Vehicle3
 	gravity = thrower.gravity
-	var offset = thrower.transform.basis.x * (thrower.vehicle_length_ahead * 2)
-	var dir_multi = 1.0
+	var offset := thrower.transform.basis.x * (thrower.vehicle_length_ahead * 2)
+	var dir_multi: float = 1.0
 	if thrower.input_updown < 0:
 		target_mode = TargetMode.none
 		dir_multi = -1.0
 		offset = -thrower.transform.basis.x * (thrower.vehicle_length_behind * 2)
-	var direction = thrower.transform.basis.x * dir_multi
+	var direction := thrower.transform.basis.x * dir_multi
 	
 	global_position = thrower.global_position + offset
 
@@ -52,13 +52,13 @@ func _enter_tree():
 	direction = direction - direction.project(gravity.normalized())
 	direction = direction.normalized()
 
-	var speed = max(thrower.max_speed / 4, thrower.linear_velocity.project(direction).length()) + 3
+	var speed: float = max(thrower.max_speed / 4, thrower.linear_velocity.project(direction).length()) + 3
 	
 	look_at(global_position + direction, -gravity)
 	velocity = direction * speed
 	
 	# Find the target player
-	var target_rank = thrower.rank - 1
+	var target_rank: int = thrower.rank - 1
 	if target_rank < 0:
 		target_rank = world.players_dict.size() - 1
 	
@@ -67,10 +67,10 @@ func _enter_tree():
 			target_player = v
 			break
 
-func _ready():
+func _ready() -> void:
 	$DespawnTimer.start(despawn_time)
 
-func _physics_process(delta):
+func _physics_process(delta: float) -> void:
 	if item_id in world.deleted_physical_items:
 		self.queue_free()
 		return
@@ -102,10 +102,10 @@ func _physics_process(delta):
 			targets.erase(world.players_dict[owner_id])
 			
 			if targets:
-				targets.sort_custom(func(a,b): return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position))
+				targets.sort_custom(func(a: Vehicle3, b: Vehicle3) -> bool: return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position))
 				target_player = targets[0]
 				
-				var dist_to_target = global_position.distance_to(target_point.global_position)
+				var dist_to_target := global_position.distance_to(target_point.global_position)
 				if dist_to_target < target_point.dist:
 					target_point = world.pick_next_point_to_target(target_point, Util.get_path_point_ahead_of_player(world, target_player))
 				
@@ -113,9 +113,9 @@ func _physics_process(delta):
 	
 	if target_pos:
 		# Determine which side to steer
-		var target_dir = (target_pos - global_position).normalized()
-		var angle = transform.basis.x.angle_to(target_dir) - PI/2
-		var is_behind = transform.basis.z.dot(target_dir) < 0
+		var target_dir := (target_pos - global_position).normalized()
+		var angle := transform.basis.x.angle_to(target_dir) - PI/2
+		var is_behind := transform.basis.z.dot(target_dir) < 0
 
 		if is_behind:
 			if angle < 0:
@@ -132,9 +132,9 @@ func _physics_process(delta):
 		
 		velocity = velocity.rotated(transform.basis.y, cur_turn_speed * delta)
 	
-	var speed = velocity.length()
-	var new_speed = move_toward(speed, target_speed, delta * 30)
-	var ratio = new_speed / speed
+	var speed := velocity.length()
+	var new_speed := move_toward(speed, target_speed, delta * 30)
+	var ratio := new_speed / speed
 	velocity *= ratio
 	
 	velocity += gravity * delta * 2
@@ -151,8 +151,8 @@ func _physics_process(delta):
 	look_at(global_position + velocity.normalized(), -gravity.normalized())
 
 	for i in get_slide_collision_count():
-		var col_data = get_slide_collision(i)
-		var collider = col_data.get_collider(0)
+		var col_data := get_slide_collision(i)
+		var collider := col_data.get_collider(0)
 		if collider.is_in_group("wall"):
 			# Break on walls
 			var col_pos: Vector3 = to_local(col_data.get_position())
@@ -169,7 +169,7 @@ func _physics_process(delta):
 
 
 func get_state() -> Dictionary:
-	var _owner_id = owner_id
+	var _owner_id := owner_id
 	if new_owner:
 		_owner_id = new_owner
 		new_owner = ""
@@ -183,7 +183,7 @@ func get_state() -> Dictionary:
 		"owner_id": _owner_id
 	}
 	
-func set_state(state: Dictionary):
+func set_state(state: Dictionary) -> void:
 	global_position = Util.to_vector3(state.pos)
 	global_rotation = Util.to_vector3(state.rot)
 	velocity = Util.to_vector3(state.velocity)
@@ -192,16 +192,16 @@ func set_state(state: Dictionary):
 	owner_id = state.owner_id
 	return
 
-func _exit_tree():
+func _exit_tree() -> void:
 	# Remove target indicator
 	if target_player:
 		target_player.remove_targeted(self)
 
-func _on_despawn_timer_timeout():
+func _on_despawn_timer_timeout() -> void:
 	world.destroy_physical_item(item_id)
 
 
-func _on_area_3d_body_entered(body):
+func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body == self:
 		return
 	if "physical_item" in body:

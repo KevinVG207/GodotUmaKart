@@ -34,7 +34,7 @@ func setup() -> void:
 	
 	# Language setting
 	var lang_ele: CycleSetting = SETTING_CYCLE.instantiate()
-	for lang in Config.locales:
+	for lang: String in Config.locales:
 		lang_ele.add_item("LANG_%s"%lang.to_upper())
 	lang_ele.select(Config.cur_locale)
 	lang_ele.item_selected.connect(_on_language_change)
@@ -59,10 +59,10 @@ func add_config_cyclesetting(container: VBoxContainer, config_array: Array, defa
 		ele.add_item(label_str + "_%d"%i)
 	ele.select(default)
 	ele.item_selected.connect(change_func)
-	add_setting(%Graphics, ele, label_str)
+	add_setting(container, ele, label_str)
 
 
-func add_bindings():
+func add_bindings() -> void:
 	var actions := Config.current_bindings
 	var actions_list: Array = actions.keys()
 	actions_list.sort()
@@ -97,7 +97,7 @@ func add_bindings():
 			
 			add_setting(tab, bind_ele, label_str)
 
-func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String):
+func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String) -> void:
 	var cont: SettingsElement = settings_element.instantiate() as SettingsElement
 	var label: Label = cont.get_node("%Label")
 	
@@ -110,7 +110,7 @@ func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String):
 	
 	grid.add_child(cont)
 	
-	var on_hover := func(): %Description.text = label_str + "_DESCR"
+	var on_hover := func() -> void: %Description.text = label_str + "_DESCR"
 	cont.focus_entered.connect(on_hover)
 	cont.mouse_entered.connect(on_hover)
 
@@ -126,16 +126,16 @@ func _on_btn_cancel_pressed() -> void:
 	setup()
 	back.emit()
 
-func _on_language_change(index: int, _text: String):
+func _on_language_change(index: int, _text: String) -> void:
 	Config.cur_locale = index
 
-func _on_windowmode_change(index: int, _text: String):
+func _on_windowmode_change(index: int, _text: String) -> void:
 	Config.window_mode = index
 
-func _on_maxfps_change(index: int, _text: String):
+func _on_maxfps_change(index: int, _text: String) -> void:
 	Config.max_fps_mode = index
 
-func _on_vsync_change(index: int, _text: String):
+func _on_vsync_change(index: int, _text: String) -> void:
 	Config.vsync_mode = index
 
 func _on_tab_container_tab_changed(tab: int) -> void:
@@ -156,12 +156,12 @@ func disable_reset_button() -> void:
 	%BtnResetBinds.disabled = true
 
 func _on_bind_update() -> void:
-	for ele in setting_elements:
+	for ele: Control in setting_elements:
 		if ele is BindSetting:
 			Config.current_bindings[ele.action][ele.type] = ele.bind
 	Config.apply_bindings(Config.current_bindings)
 
-func _input(event: InputEvent) -> void:
+func _input(_event: InputEvent) -> void:
 	if Global.rebind_popup:
 		get_viewport().set_input_as_handled()
 		return

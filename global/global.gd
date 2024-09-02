@@ -82,6 +82,9 @@ func _notification(what):
 		get_tree().quit()
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventJoypadMotion:
+		print(event)
+		print(event.device)
 	if event.is_action_pressed("_F11") and get_window().has_focus():
 		if Config.window_mode > 0:
 			Config.window_mode = 0

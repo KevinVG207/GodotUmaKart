@@ -29,12 +29,17 @@ Debug="*res://global/Debug.tscn"
 Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
 Network="*res://global/network.gd"
 
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/vsync/vsync_mode=2
 
 [editor]
 
