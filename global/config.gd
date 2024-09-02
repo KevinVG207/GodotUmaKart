@@ -8,20 +8,97 @@ var default_bindings: Dictionary
 var current_bindings: Dictionary
 var keybinds_path: String = "user://keybinds.json"
 
+
+##### Settings #####
+
+var locales = [
+	"en",
+	"ja"
+]
+
+var cur_locale: int = 0:
+	set(value):
+		if value < 0 or value >= len(locales):
+			return
+		TranslationServer.set_locale(locales[value])
+		cur_locale = value
+
+var window_modes := [
+	DisplayServer.WINDOW_MODE_WINDOWED,
+	DisplayServer.WINDOW_MODE_FULLSCREEN,
+	DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN
+]
+
+var window_mode: int = 0:
+	set(value):
+		if value < 0 or value >= len(window_modes):
+			return
+		window_mode = value
+		DisplayServer.window_set_mode(window_modes[value])
+
+
+var max_fps_modes := [
+	60,
+	120,
+	144,
+	240,
+	0
+]
+
+var max_fps_mode: int = 4:
+	set(value):
+		if value < 0 or value >= len(max_fps_modes):
+			return
+		Engine.max_fps = max_fps_modes[value]
+		max_fps_mode = value
+
+
+var vsync_modes := [
+	DisplayServer.VSYNC_DISABLED,
+	DisplayServer.VSYNC_ENABLED,
+	DisplayServer.VSYNC_ADAPTIVE
+]
+
+var vsync_mode: int = 2:
+	set(value):
+		if value < 0 or value >= len(vsync_modes):
+			return
+		DisplayServer.window_set_vsync_mode(vsync_modes[value])
+		vsync_mode = value
+
+
+##### End Settings #####
+
+
+func _enter_tree():
+	#seed(1)
+	TranslationServer.set_locale(locales[cur_locale])
+	return
+	
+
 func make_config() -> Dictionary:
 	print("Making config")
 	var config: Dictionary = {}
 	
-	config.language = Global.locales[Global.cur_locale]
+	config.language = locales[cur_locale]
+	config.window_mode = window_mode
+	config.max_fps_mode = max_fps_mode
+	config.vsync_mode = vsync_mode
 	
 	return config
 
 func apply_config(config: Dictionary) -> void:
 	print("Applying config")
-	if "language" in config and config.language:
-		var loc_idx := Global.locales.find(config.language)
+	if "language" in config:
+		var loc_idx := locales.find(config.language)
 		if loc_idx >= 0:
-			Global.cur_locale = loc_idx
+			cur_locale = loc_idx
+	if "window_mode" in config:
+		window_mode = config.window_mode
+	if "max_fps_mode" in config:
+		max_fps_mode = config.max_fps_mode
+	if "vsync_mode" in config:
+		vsync_mode = config.vsync_mode
 
 func save_config(config: Dictionary) -> void:
 	print("Saving config")
@@ -115,6 +192,14 @@ func load_bindings() -> Dictionary:
 		out = parsed_binds
 	
 	return out
+
+func update_config() -> void:
+	current_config = make_config()
+	save_config(current_config)
+
+func update_bindings() -> void:
+	current_bindings = get_bindings()
+	save_bindings(current_bindings)
 
 func _ready():
 	default_config = make_config()

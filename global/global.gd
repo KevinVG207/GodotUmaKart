@@ -14,16 +14,6 @@ var unique_string = OS.get_unique_id()
 
 var menu_start_cam: String = "%CamInitial"
 
-var locales = [
-	"en",
-	"ja"
-]
-
-var cur_locale: int = 0:
-	set(value):
-		TranslationServer.set_locale(locales[value])
-		cur_locale = value
-
 const MODE1_OFFLINE = 0
 const MODE1_ONLINE = 1
 
@@ -67,11 +57,6 @@ var heads: Dictionary = {
 	"nice-nature": "res://assets/character/_nice-nature/head.tscn"
 }
 
-func _enter_tree():
-	#seed(1)
-	TranslationServer.set_locale(locales[cur_locale])
-	return
-
 func setup_items():
 	item_dist.clear()
 	for _i in range(player_count):
@@ -96,8 +81,13 @@ func _notification(what):
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("_F11") and get_window().has_focus():
-		var cur_mode: int = DisplayServer.window_get_mode(0)
-		if cur_mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN or cur_mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		if Config.window_mode > 0:
+			Config.window_mode = 0
 		else:
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+			Config.window_mode = 2
+		Config.update_config()
+		#var cur_mode: int = DisplayServer.window_get_mode(0)
+		#if cur_mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN or cur_mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
+			#DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		#else:
+			#DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)

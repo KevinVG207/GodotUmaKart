@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://d2pr13dqnvme2" path="res://scenes/ui/academy/cam_initial_menu.tscn" id="4_j2yy8"]
 [ext_resource type="PackedScene" uid="uid://doyxcgm8r6edh" path="res://scenes/ui/academy/cam_fountain_menu.tscn" id="5_dswq1"]
 [ext_resource type="PackedScene" uid="uid://b7pfkfsy5a05" path="res://scenes/ui/academy/menu_camera.tscn" id="5_t5vkb"]
-[ext_resource type="PackedScene" uid="uid://dhi2e4527p0wh" path="res://scenes/ui/academy/cam_spica_menu.tscn" id="6_wc85s"]
+[ext_resource type="PackedScene" uid="uid://dhi2e4527p0wh" path="res://scenes/ui/academy/settings_menu.tscn" id="6_wc85s"]
 [ext_resource type="PackedScene" uid="uid://dqhi3idf6syay" path="res://scenes/ui/lobby/lobby.tscn" id="7_dkyxa"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_svgn6"]

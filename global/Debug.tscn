@@ -4,7 +4,6 @@
 
 [node name="Debug" type="CanvasLayer"]
 layer = 128
-visible = false
 script = ExtResource("1_gxon6")
 
 [node name="EraseTimer" type="Timer" parent="."]
@@ -12,6 +11,7 @@ wait_time = 5.0
 one_shot = true
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

@@ -20,7 +20,7 @@ func _ready() -> void:
 
 func setup() -> void:
 	# Clear containers
-	Util.remove_children(%General)
+	Util.remove_children(%Graphics)
 	Util.remove_children(%Keyboard)
 	Util.remove_children(%Joypad)
 	
@@ -29,16 +29,35 @@ func setup() -> void:
 	
 	# Language setting
 	var lang_ele: CycleSetting = SETTING_CYCLE.instantiate()
-	for lang in Global.locales:
+	for lang in Config.locales:
 		lang_ele.add_item("LANG_%s"%lang.to_upper())
-	lang_ele.select(Global.cur_locale)
+	lang_ele.select(Config.cur_locale)
 	lang_ele.item_selected.connect(_on_language_change)
-	add_setting(%General, lang_ele, "SETTING_LANG", "SETTING_LANG_DESCR")
+	add_setting(%Graphics, lang_ele, "SETTING_LANG")
 	
+	# Window/fullscreen setting
+	add_config_cyclesetting(%Graphics, Config.window_modes, Config.window_mode, "SETTING_WINDOWMODE", _on_windowmode_change)
+	
+	# Vsync mode
+	add_config_cyclesetting(%Graphics, Config.vsync_modes, Config.vsync_mode, "SETTING_VSYNC", _on_vsync_change)
+	
+	# Max FPS
+	add_config_cyclesetting(%Graphics, Config.max_fps_modes, Config.max_fps_mode, "SETTING_MAXFPS", _on_maxfps_change)
+
 	# Key bindings
 	add_bindings()
 	
 	%TabContainer.current_tab = 0
+
+
+func add_config_cyclesetting(container: VBoxContainer, config_array: Array, default: int, label_str: String, change_func: Callable) -> void:
+	var ele: CycleSetting = SETTING_CYCLE.instantiate()
+	for i in range(len(config_array)):
+		ele.add_item(label_str + "_%d"%i)
+	ele.select(default)
+	ele.item_selected.connect(change_func)
+	add_setting(%Graphics, ele, label_str)
+
 
 func add_bindings():
 	var actions := Config.current_bindings
@@ -63,7 +82,6 @@ func add_bindings():
 					tab = %Keyboard
 			
 			var label_str: String = "SETTING_" + action.to_upper()
-			var descr_str = label_str + "_DESCR"
 			
 			var bind_ele: BindSetting = SETTING_BIND.instantiate()
 			bind_ele.action = action
@@ -71,15 +89,15 @@ func add_bindings():
 			bind_ele.bind = bind
 			bind_ele.reload()
 			
-			add_setting(tab, bind_ele, label_str, descr_str)
+			add_setting(tab, bind_ele, label_str)
 
-func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String, descr_str: String):
+func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String):
 	var cont: SettingsElement = settings_element.instantiate() as SettingsElement
 	var label: Label = cont.get_node("%Label")
 	
 	label.text = label_str
 	
-	descriptions[setting_ele] = descr_str
+	descriptions[setting_ele] = label_str + "_DESCR"
 	
 	setting_ele.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	cont.add_child(setting_ele)
@@ -91,10 +109,8 @@ func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String, d
 	cont.mouse_entered.connect(on_hover)
 
 func _on_btn_apply_pressed() -> void:
-	Config.current_config = Config.make_config()
-	Config.current_bindings = Config.get_bindings()
-	Config.save_config(Config.current_config)
-	Config.save_bindings(Config.current_bindings)
+	Config.update_config()
+	Config.update_bindings()
 	back.emit()
 
 
@@ -105,8 +121,16 @@ func _on_btn_cancel_pressed() -> void:
 	back.emit()
 
 func _on_language_change(index: int, _text: String):
-	Global.cur_locale = index
+	Config.cur_locale = index
 
+func _on_windowmode_change(index: int, _text: String):
+	Config.window_mode = index
+
+func _on_maxfps_change(index: int, _text: String):
+	Config.max_fps_mode = index
+
+func _on_vsync_change(index: int, _text: String):
+	Config.vsync_mode = index
 
 func _on_tab_container_tab_changed(tab: int) -> void:
 	var tab_ele: VBoxContainer = %TabContainer.get_child(tab)

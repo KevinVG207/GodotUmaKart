@@ -13,7 +13,7 @@ func _enter_tree():
 	%VSButton.pressed.connect(_on_vs_button_pressed)
 
 func _on_language_change(index: int, _text: String):
-	Global.cur_locale = index
+	Config.cur_locale = index
 	#get_tree().reload_current_scene()
 
 func _on_vs_button_pressed():
