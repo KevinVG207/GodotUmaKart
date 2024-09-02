@@ -24,7 +24,7 @@ var walking = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("F12"):
+	if event.is_action_pressed("_F12"):
 		_on_idle_timer_timeout()
 
 

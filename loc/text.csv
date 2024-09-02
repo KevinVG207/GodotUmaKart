@@ -50,6 +50,8 @@ GAME_TITLE,Uma Kart Racer,ウマカート・レーシング
 PRESS_ANY,Press Any Button,Press Any Button
 PRESS_ANY2,"What's the ""Any Button""?",Any Buttonって何のボタン？
 SETTINGS_TAB_GENERAL,General,普段
+SETTINGS_TAB_KEYBOARD,Keyboard,キーボード
+SETTINGS_TAB_JOYPAD,Gamepad,ゲームパッド
 SETTINGS_APPLY,Apply,セーブ
 SETTINGS_CANCEL,Cancel,キャンセル
 SETTING_LANG,Language,言語

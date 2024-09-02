@@ -48,13 +48,13 @@ func _process(delta):
 	if traveling:
 		cam.global_position = cam_follow.global_position
 	if not traveling:
-		if Input.is_action_just_pressed("F1"):
+		if Input.is_action_just_pressed("_F1"):
 			title_to_fountain()
-		elif Input.is_action_just_pressed("F2"):
+		elif Input.is_action_just_pressed("_F2"):
 			fountain_to_title()
-		elif Input.is_action_just_pressed("F3"):
+		elif Input.is_action_just_pressed("_F3"):
 			start_cam_travel(%CamFountain, %CamSpica, $PathFountainSpica/Follow, travel_time)
-		elif Input.is_action_just_pressed("F4"):
+		elif Input.is_action_just_pressed("_F4"):
 			start_cam_travel(%CamSpica, %CamFountain, $PathFountainSpica/Follow, travel_time, true)
 
 func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFollow3D, time: float, reverse: bool=false, fade_time: float=-1, wait_fade_start: bool=false, wait_fade_end: bool=false):

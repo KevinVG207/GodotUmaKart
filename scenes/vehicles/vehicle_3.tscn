@@ -511,7 +511,7 @@ bones/37/rotation = Quaternion(0.0711162, -1.64815e-08, -0.130662, 0.988873)
 transform = Transform3D(1, 1.13135e-08, 2.39907e-07, -7.30204e-08, 0.965926, 0.258819, -2.28804e-07, -0.258819, 0.965926, 0, 9.26224, 0)
 
 [node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
-transform = Transform3D(1, -2.98428e-13, 2.38418e-07, 2.95763e-13, 1, -8.4061e-27, -2.38418e-07, 0, 1, 2.2077e-08, 15.0502, -0.505083)
+transform = Transform3D(1, -2.98428e-13, 2.38418e-07, 3.02869e-13, 1, -8.60805e-27, -2.38418e-07, 0, 1, 2.2077e-08, 15.0502, -0.505083)
 
 [node name="kart2" parent="Visual" instance=ExtResource("7_23hik")]
 transform = Transform3D(-6.99382e-09, 0, 0.16, 0, 0.16, 0, -0.16, 0, -6.99382e-09, -0.0278986, -0.292819, 0)

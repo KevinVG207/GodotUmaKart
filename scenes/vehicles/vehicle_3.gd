@@ -311,7 +311,7 @@ func handle_input():
 	
 	if is_player and get_window().has_focus():
 		input_accel = Input.is_action_pressed("accelerate")
-		input_brake = Input.is_action_pressed("brake")
+		input_brake = Input.is_action_pressed("brake") or Input.is_action_pressed("brake2")
 		input_steer = Input.get_axis("right", "left")
 		input_trick = Input.is_action_just_pressed("trick")
 		input_item = Input.is_action_pressed("item")

@@ -309,7 +309,7 @@ func _process(delta):
 		UI.race_ui.sort_nametags()
 	
 	# Debug window
-	if Input.is_action_just_pressed("F12"):
+	if Input.is_action_just_pressed("_F12"):
 		if debug_window:
 			ProjectSettings.set_setting("display/window/subwindows/embed_subwindows", true)
 			debug_window.queue_free()
