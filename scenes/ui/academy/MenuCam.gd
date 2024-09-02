@@ -10,7 +10,6 @@ var scale_multi: float = 1.0
 
 @onready var plane: MeshInstance3D = $Plane
 @onready var viewport: SubViewport = $SubViewport
-@onready var click_area: Area3D = $Plane/Area3D
 
 
 var opacity: float:
@@ -21,7 +20,6 @@ var opacity: float:
 
 func _ready():
 	opacity = 0.0
-	#click_area.input_event.connect(_on_area_3d_input_event)
 
 func _process(_delta):
 	var view_rect: Rect2 = get_viewport().get_visible_rect()

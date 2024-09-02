@@ -124,7 +124,6 @@ func _on_btn_cancel_pressed() -> void:
 	Config.apply_config(prev_config)
 	Config.apply_bindings(prev_bindings)
 	setup()
-	back.emit()
 
 func _on_language_change(index: int, _text: String) -> void:
 	Config.cur_locale = index

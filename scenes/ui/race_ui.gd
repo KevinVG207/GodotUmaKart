@@ -29,11 +29,11 @@ var player_icons: Dictionary = {}
 var alert_dict: Dictionary = {}
 var alert_max_dist: float = 50
 
-func _ready():
+
+func setup() -> void:
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item2").texture = Global.item_tex.pick_random()
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = Global.item_tex.pick_random()
 	rank_label.text = ""
-	#rank_label.visible = false
 
 func update_icons(players: Array):
 	for icon: Sprite2D in player_icons.values():

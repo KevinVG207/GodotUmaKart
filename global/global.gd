@@ -71,6 +71,8 @@ func setup_items():
 			if i < player_count:
 				item_dist[i].append(item)
 		instance.queue_free()
+	
+	UI.race_ui.setup()
 
 #func _ready():
 	#setup_items()
