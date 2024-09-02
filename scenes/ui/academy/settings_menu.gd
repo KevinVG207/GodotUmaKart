@@ -7,7 +7,7 @@ signal back
 var SETTING_CYCLE: PackedScene = preload("res://scenes/ui/cycle_setting.tscn")
 var SETTING_BIND: PackedScene = preload("res://scenes/ui/bind_setting.tscn")
 
-var descriptions: Dictionary = {}
+var setting_elements: Array = []
 
 var prev_config: Dictionary
 var prev_bindings: Dictionary
@@ -15,11 +15,15 @@ var prev_bindings: Dictionary
 @onready var settings_element: PackedScene = preload("res://scenes/ui/academy/settings_element.tscn")
 
 func _ready() -> void:
+	Global.goto_settings_screen.connect(first_time_setup)
+
+func first_time_setup() -> void:
 	setup()
-	Global.goto_settings_screen.connect(setup)
+	%TabContainer.current_tab = 0
 
 func setup() -> void:
 	# Clear containers
+	setting_elements.clear()
 	Util.remove_children(%Graphics)
 	Util.remove_children(%Keyboard)
 	Util.remove_children(%Joypad)
@@ -46,8 +50,6 @@ func setup() -> void:
 
 	# Key bindings
 	add_bindings()
-	
-	%TabContainer.current_tab = 0
 
 
 func add_config_cyclesetting(container: VBoxContainer, config_array: Array, default: int, label_str: String, change_func: Callable) -> void:
@@ -88,6 +90,7 @@ func add_bindings():
 			bind_ele.type = type
 			bind_ele.bind = bind
 			bind_ele.reload()
+			bind_ele.updated.connect(_on_bind_update)
 			
 			add_setting(tab, bind_ele, label_str)
 
@@ -97,14 +100,14 @@ func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String):
 	
 	label.text = label_str
 	
-	descriptions[setting_ele] = label_str + "_DESCR"
+	setting_elements.append(setting_ele)
 	
 	setting_ele.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	cont.add_child(setting_ele)
 	
 	grid.add_child(cont)
 	
-	var on_hover := func(): %Description.text = descriptions[setting_ele]
+	var on_hover := func(): %Description.text = label_str + "_DESCR"
 	cont.focus_entered.connect(on_hover)
 	cont.mouse_entered.connect(on_hover)
 
@@ -135,3 +138,14 @@ func _on_vsync_change(index: int, _text: String):
 func _on_tab_container_tab_changed(tab: int) -> void:
 	var tab_ele: VBoxContainer = %TabContainer.get_child(tab)
 	%Description.text = tab_ele.name + "_DESCR"
+
+func _on_bind_update() -> void:
+	for ele in setting_elements:
+		if ele is BindSetting:
+			Config.current_bindings[ele.action][ele.type] = ele.bind
+	Config.apply_bindings(Config.current_bindings)
+
+func _input(event: InputEvent) -> void:
+	if Global.rebind_popup:
+		get_viewport().set_input_as_handled()
+		return

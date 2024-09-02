@@ -146,6 +146,7 @@ func apply_bindings(actions: Dictionary) -> void:
 	for action: String in actions:
 		if not InputMap.has_action(action):
 			continue
+		InputMap.action_erase_events(action)
 		for type: String in actions[action]:
 			if actions[action][type] == null:
 				continue

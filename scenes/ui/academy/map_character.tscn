@@ -48,24 +48,14 @@ transform = Transform3D(-4.37114e-09, 0, 0.1, 0, 0.1, 0, -0.1, 0, -4.37114e-09, 
 
 [node name="Skeleton3D" parent="Body/Armature" index="0"]
 bones/0/position = Vector3(0, 9.26224, 0)
-bones/3/rotation = Quaternion(-2.69043e-07, -1.62794e-09, 0.864071, 0.503369)
 bones/4/rotation = Quaternion(0.0132695, 0.00549842, 0.382769, 0.923732)
 bones/5/rotation = Quaternion(-4.75167e-09, 7.46895e-09, 0.0104701, 0.999945)
-bones/7/scale = Vector3(1, 1, 1)
 bones/8/rotation = Quaternion(0.00528111, 0.00405236, -0.382876, 0.923776)
 bones/9/rotation = Quaternion(-0.000269429, -5.14544e-07, -0.0104667, 0.999945)
-bones/10/rotation = Quaternion(0.566588, -0.423058, -0.566588, -0.423058)
-bones/10/scale = Vector3(1, 1, 1)
 bones/11/rotation = Quaternion(-0.588622, 6.33547e-09, -8.20301e-08, 0.808408)
 bones/12/rotation = Quaternion(-0.00777966, 1.00328e-08, -1.15478e-09, 0.99997)
-bones/12/scale = Vector3(1, 1, 1)
-bones/14/rotation = Quaternion(0.566588, 0.423058, -0.566588, 0.423058)
-bones/14/scale = Vector3(1, 1, 1)
 bones/15/rotation = Quaternion(0.588622, 1.52756e-08, 3.30823e-09, 0.808408)
 bones/16/rotation = Quaternion(0.00777966, -1.04308e-08, 1.46498e-11, 0.99997)
-bones/16/scale = Vector3(1, 1, 1)
-bones/17/rotation = Quaternion(0.00598546, 0.0306302, 0.707237, 0.706288)
-bones/17/scale = Vector3(1, 1, 1)
 bones/18/rotation = Quaternion(0.740318, -0.0235958, -0.460389, -0.4893)
 bones/18/scale = Vector3(1, 1, 1)
 bones/19/rotation = Quaternion(-0.310634, -0.0117922, 0.13795, 0.940392)
@@ -109,12 +99,6 @@ transform = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, 9.262
 
 [node name="HeadAttachment" parent="Body/Armature/Skeleton3D" index="2"]
 transform = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, 15.1167, 0)
-
-[node name="LeftThighAttachment" parent="Body/Armature/Skeleton3D" index="3"]
-transform = Transform3D(0.00621914, 0.0232116, -0.999711, -0.258743, -0.965647, -0.0240305, -0.965926, 0.258818, 2.9587e-07, 1.11683, 8.93133, 1.14427e-08)
-
-[node name="RightThighAttachment" parent="Body/Armature/Skeleton3D" index="4"]
-transform = Transform3D(2.0396e-07, -0.0240317, -0.999711, 1.49012e-07, -0.999711, 0.0240317, -1, -2.58415e-08, -3.42158e-07, -1.11683, 8.93133, -2.54443e-07)
 
 [node name="Ani" type="AnimationPlayer" parent="."]
 unique_name_in_owner = true

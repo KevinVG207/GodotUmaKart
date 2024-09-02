@@ -14,6 +14,8 @@ var unique_string = OS.get_unique_id()
 
 var menu_start_cam: String = "%CamInitial"
 
+var rebind_popup: RebindPopup = null
+
 const MODE1_OFFLINE = 0
 const MODE1_ONLINE = 1
 
@@ -86,8 +88,9 @@ func _input(event: InputEvent) -> void:
 		else:
 			Config.window_mode = 2
 		Config.update_config()
-		#var cur_mode: int = DisplayServer.window_get_mode(0)
-		#if cur_mode == DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN or cur_mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
-			#DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-		#else:
-			#DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+	
+	# If a rebind popup is active, reroute all relevant input there.
+	if rebind_popup:
+		if event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion:
+			rebind_popup.handle_input(event)
+		return

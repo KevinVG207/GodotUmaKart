@@ -55,8 +55,13 @@ SETTINGS_TAB_KEYBOARD,Keyboard,キーボード
 SETTINGS_TAB_KEYBOARD_DESCR,Change keyboard inputs.,キーボードの設定を変更します
 SETTINGS_TAB_JOYPAD,Gamepad,ゲームパッド
 SETTINGS_TAB_JOYPAD_DESCR,Change controller inputs.,ゲームパッドの設定を変更します
-SETTINGS_APPLY,Apply,セーブ
+SETTINGS_APPLY,Save,セーブ
 SETTINGS_CANCEL,Cancel,キャンセル
+SETTINGS_REBIND_TOP,Press a button to rebind,
+SETTINGS_REBIND_BOTTOM,Press [Esc] to cancel.,
+SETTINGS_TYPE_KEYBOARD,Keyboard,キーボード
+SETTINGS_TYPE_JOYPAD,Gamepad,ゲームパッド
+SETTINGS_TYPE_JOYPAD_AXIS,Gamepad Stick,ゲームパッドスティック
 SETTING_LANG,Language,言語
 SETTING_LANG_DESCR,Change the language of the game.,ゲームの言語を変更します
 SETTING_WINDOWMODE,Window mode,ウィンドウモード

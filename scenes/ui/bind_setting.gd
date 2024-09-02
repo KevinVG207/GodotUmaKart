@@ -2,9 +2,13 @@ extends Control
 
 class_name BindSetting
 
+signal updated
+
 var action := ""
 var type := ""
 var bind: int = -1
+
+var rebind_popup: PackedScene = preload("res://assets/ui/rebind_popup.tscn")
 
 func _ready():
 	pass
@@ -25,4 +29,14 @@ func reload():
 	%Button.text = btn_text
 
 func _on_button_pressed() -> void:
-	pass # Replace with function body.
+	var popup: RebindPopup = rebind_popup.instantiate() as RebindPopup
+	popup.type = type
+	popup.action = action
+	popup.parent = self
+	popup.prev_key = bind
+	UI.add_child(popup)
+
+func update(key: int) -> void:
+	bind = key
+	reload()
+	updated.emit()
