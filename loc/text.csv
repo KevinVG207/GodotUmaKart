@@ -57,6 +57,7 @@ SETTINGS_TAB_JOYPAD,Gamepad,ゲームパッド
 SETTINGS_TAB_JOYPAD_DESCR,Change controller inputs.,ゲームパッドの設定を変更します
 SETTINGS_APPLY,Save,セーブ
 SETTINGS_CANCEL,Cancel,キャンセル
+SETTINGS_RESET_BINDS,Reset Keybinds,
 SETTINGS_REBIND_TOP,Press a button to rebind,
 SETTINGS_REBIND_BOTTOM,Press [Esc] to cancel.,
 SETTINGS_TYPE_KEYBOARD,Keyboard,キーボード

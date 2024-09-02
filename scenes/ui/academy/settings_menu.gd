@@ -15,6 +15,7 @@ var prev_bindings: Dictionary
 @onready var settings_element: PackedScene = preload("res://scenes/ui/academy/settings_element.tscn")
 
 func _ready() -> void:
+	disable_reset_button()
 	Global.goto_settings_screen.connect(first_time_setup)
 
 func first_time_setup() -> void:
@@ -63,7 +64,9 @@ func add_config_cyclesetting(container: VBoxContainer, config_array: Array, defa
 
 func add_bindings():
 	var actions := Config.current_bindings
-	for action: String in actions:
+	var actions_list: Array = actions.keys()
+	actions_list.sort()
+	for action: String in actions_list:
 		if action.begins_with("_") or action.to_upper().begins_with("UI_"):
 			continue
 		
@@ -138,6 +141,19 @@ func _on_vsync_change(index: int, _text: String):
 func _on_tab_container_tab_changed(tab: int) -> void:
 	var tab_ele: VBoxContainer = %TabContainer.get_child(tab)
 	%Description.text = tab_ele.name + "_DESCR"
+	
+	if tab == 1 or tab == 2:
+		enable_reset_button()
+	else:
+		disable_reset_button()
+
+func enable_reset_button() -> void:
+	%BtnResetBinds.visible = true
+	%BtnResetBinds.disabled = false
+
+func disable_reset_button() -> void:
+	%BtnResetBinds.visible = false
+	%BtnResetBinds.disabled = true
 
 func _on_bind_update() -> void:
 	for ele in setting_elements:
@@ -149,3 +165,9 @@ func _input(event: InputEvent) -> void:
 	if Global.rebind_popup:
 		get_viewport().set_input_as_handled()
 		return
+
+
+func _on_btn_reset_binds_pressed() -> void:
+	Config.current_bindings = Config.default_bindings.duplicate(true)
+	Config.apply_bindings(Config.current_bindings)
+	setup()

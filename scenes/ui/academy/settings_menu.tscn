@@ -131,6 +131,17 @@ theme_override_font_sizes/font_size = 25
 text = "SETTINGS_CANCEL"
 clip_text = true
 
+[node name="BtnResetBinds" type="Button" parent="MarginContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme_override_font_sizes/font_size = 25
+text = "SETTINGS_RESET_BINDS"
+clip_text = true
+
 [connection signal="tab_changed" from="MarginContainer/VBoxContainer/TabContainer" to="." method="_on_tab_container_tab_changed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/BtnApply" to="." method="_on_btn_apply_pressed"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/BtnCancel" to="." method="_on_btn_cancel_pressed"]
+[connection signal="pressed" from="MarginContainer/BtnResetBinds" to="." method="_on_btn_reset_binds_pressed"]

@@ -6,7 +6,7 @@ var action: String = ""
 var type: String = ""
 var parent: BindSetting = null
 var is_joypad: bool = false
-var prev_key: int
+var prev_key: int = -1
 
 func _ready() -> void:
 	# Avoid multiple popups.
@@ -25,7 +25,7 @@ func _ready() -> void:
 		queue_free()
 		return
 	
-	if not prev_key:
+	if prev_key == -1:
 		print("ERR: No prev_key in rebind_popup")
 		queue_free()
 		return
@@ -44,12 +44,12 @@ func handle_input(event: InputEvent) -> void:
 		exit(prev_key)
 		return
 	
-	if is_joypad and event is InputEventJoypadButton and parent.type == "JOYPAD":
+	if event is InputEventJoypadButton and parent.type == "JOYPAD":
 		exit(event.button_index)
 		return
-	if is_joypad and event is InputEventJoypadMotion and parent.type == "JOYPAD_AXIS":
+	if event is InputEventJoypadMotion and parent.type == "JOYPAD_AXIS":
 		exit(event.axis)
 		return
-	if !is_joypad and event is InputEventKey and parent.type == "KEYBOARD":
+	if event is InputEventKey and parent.type == "KEYBOARD":
 		exit(event.physical_keycode)
 		return
