@@ -50,6 +50,9 @@ var debug_cam: Camera3D = null
 
 var pings: Dictionary
 
+var pause_cooldown: int = 0
+var pause_start: int = -1
+
 
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
@@ -210,10 +213,25 @@ func get_timer_seconds():
 		return 0.0
 	return (Time.get_ticks_usec() - race_start_time) / 1000000.0
 
-func _process(delta):
+func _process(delta: float) -> void:
 	if state == STATE_JOINING_NEXT:
 		return
-		
+	
+	# TODO: Check if this is truly accurate!
+	# Adjust timer after pausing
+	if pause_start != -1:
+		var pause_delta: int = Time.get_ticks_usec() - pause_start
+		race_start_time += pause_delta
+		pause_start = -1
+	
+	if state == STATE_RACE and Global.MODE1 == Global.MODE1_OFFLINE and Input.is_action_just_pressed("_pause") and pause_cooldown <= 0:
+		# Start pause
+		pause_cooldown = round(Engine.physics_ticks_per_second / 4.0)
+		get_tree().paused = true
+		UI.race_ui.pause_menu.enable()
+		pause_start = Time.get_ticks_usec()
+		return
+	
 	update_ranks()
 	
 	UI.race_ui.set_startline(checkpoints[0])
@@ -447,6 +465,8 @@ func apply_item_state(data: Dictionary):
 
 func _physics_process(_delta):
 	space_state = get_world_3d().direct_space_state
+	
+	pause_cooldown = max(0, pause_cooldown - 1)
 
 	match state:
 		STATE_INITIAL:

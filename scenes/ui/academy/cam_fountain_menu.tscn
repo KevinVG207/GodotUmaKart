@@ -48,6 +48,7 @@ offset_bottom = -61.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_neighbor_right = NodePath("../OnlineButton")
+focus_neighbor_bottom = NodePath("../SettingsButton")
 theme_override_font_sizes/font_size = 40
 text = "HOME_OFFLINE"
 clip_text = true

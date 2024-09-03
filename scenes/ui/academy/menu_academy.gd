@@ -29,6 +29,8 @@ func _ready() -> void:
 	cam.fov = to_cam.fov
 	to_cam.opacity = 1.0
 	to_cam.visible = true
+	to_cam.focus()
+	to_cam.has_focus()
 
 
 func hide_cams():

@@ -11,7 +11,7 @@ var keybinds_path: String = "user://keybinds.json"
 
 ##### Settings #####
 
-var locales = [
+var locales := [
 	"en",
 	"ja"
 ]
@@ -70,10 +70,9 @@ var vsync_mode: int = 2:
 ##### End Settings #####
 
 
-func _enter_tree():
-	#seed(1)
+func _enter_tree() -> void:
+	process_mode = PROCESS_MODE_ALWAYS
 	TranslationServer.set_locale(locales[cur_locale])
-	return
 	
 
 func make_config() -> Dictionary:
@@ -159,7 +158,7 @@ func apply_bindings(actions: Dictionary) -> void:
 			
 			InputMap.action_add_event(action, event)
 
-func make_event(type, bind) -> InputEvent:
+func make_event(type: String, bind: int) -> InputEvent:
 	var event: InputEvent = null
 	
 	match type:
@@ -205,7 +204,7 @@ func update_bindings() -> void:
 	current_bindings = get_bindings()
 	save_bindings(current_bindings)
 
-func _ready():
+func _ready() -> void:
 	default_config = make_config()
 	current_config = default_config
 	

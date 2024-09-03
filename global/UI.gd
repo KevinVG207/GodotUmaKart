@@ -29,6 +29,10 @@ func _process(_delta):
 
 func show_race_ui():
 	race_ui.visible = true
+
+func hide_race_ui():
+	race_ui.pause_menu.disable()
+	race_ui.visible = false
 	
 func reset_race_ui():
 	race_ui.visible = false
@@ -90,6 +94,7 @@ func swap_scenes():
 	
 	# Fetch the scene and change.
 	get_tree().change_scene_to_packed(ResourceLoader.load_threaded_get(_next_scene))
+	hide_race_ui()
 	transition_instance.progress = 1.0
 	is_loading = false
 	_next_scene = ""

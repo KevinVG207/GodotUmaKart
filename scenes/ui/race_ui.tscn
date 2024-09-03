@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=30 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cf2x8b1awq2b5" path="res://assets/race/startline.png" id="5_s54dk"]
 [ext_resource type="PackedScene" uid="uid://ttgvsua40ods" path="res://scenes/ui/race/alert.tscn" id="6_1cm01"]
 [ext_resource type="LabelSettings" uid="uid://dg8cn7dsip001" path="res://scenes/ui/_styles/basic_text.tres" id="7_fx38p"]
+[ext_resource type="Script" path="res://scenes/ui/pause_menu.gd" id="8_getyi"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_5eh43"]
 viewport_path = NodePath("ItemBox/Viewport")
@@ -177,6 +178,16 @@ _data = {
 "change": SubResource("Animation_eman3")
 }
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_13nhv"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.162066, 0.162066, 0.162066, 0.815686)
+
+[sub_resource type="LabelSettings" id="LabelSettings_pt0yc"]
+font_size = 40
+
 [node name="RaceUI" type="CanvasLayer"]
 layer = 10
 script = ExtResource("1_23b1w")
@@ -191,6 +202,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ItemBox" type="TextureRect" parent="."]
+process_mode = 1
 visible = false
 offset_right = 215.0
 offset_bottom = 210.0
@@ -494,3 +506,88 @@ label_settings = SubResource("LabelSettings_pqt07")
 libraries = {
 "": SubResource("AnimationLibrary_k88iy")
 }
+
+[node name="PauseMenu" type="Control" parent="."]
+unique_name_in_owner = true
+process_mode = 2
+z_index = 100
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_getyi")
+
+[node name="ColorRect" type="ColorRect" parent="PauseMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.262745)
+
+[node name="PanelContainer" type="PanelContainer" parent="PauseMenu/ColorRect"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_13nhv")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu/ColorRect/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LblPauseHeader" type="Label" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "RACE_PAUSE_HEADER"
+label_settings = SubResource("LabelSettings_pt0yc")
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="BtnPauseContinue" type="Button" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_top = NodePath("../BtnPauseExit")
+theme_override_font_sizes/font_size = 30
+text = "RACE_PAUSE_CONTINUE"
+
+[node name="BtnPauseRestart" type="Button" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "RACE_PAUSE_RESTART"
+
+[node name="BtnPauseVehicle" type="Button" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "RACE_PAUSE_VEHICLE"
+
+[node name="BtnPauseCharacter" type="Button" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "RACE_PAUSE_CHARACTER"
+
+[node name="BtnPauseExit" type="Button" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_neighbor_bottom = NodePath("../BtnPauseContinue")
+theme_override_font_sizes/font_size = 30
+text = "RACE_PAUSE_EXIT"
+
+[connection signal="button_down" from="PauseMenu/ColorRect/PanelContainer/VBoxContainer/BtnPauseContinue" to="PauseMenu" method="_on_btn_pause_continue_button_down"]
+[connection signal="button_down" from="PauseMenu/ColorRect/PanelContainer/VBoxContainer/BtnPauseExit" to="PauseMenu" method="_on_btn_pause_exit_button_down"]

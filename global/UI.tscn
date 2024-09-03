@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://b62d811jwymmd" path="res://scenes/ui/race_ui.tscn" id="2_xaqxf"]
 
 [node name="Ui" type="Control"]
+process_mode = 3
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,4 +18,5 @@ underwater_color = Color(0, 0.619608, 0.745098, 0.188235)
 visible = false
 
 [node name="Transition" type="CanvasLayer" parent="."]
+process_mode = 3
 layer = 128

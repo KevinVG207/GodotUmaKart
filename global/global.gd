@@ -3,7 +3,7 @@ extends Node
 signal goto_lobby_screen
 signal goto_settings_screen
 
-var default_player_count: int = 12
+var default_player_count: int = 5
 var player_count: int = default_player_count:
 	set(value):
 		player_count = value
@@ -59,7 +59,10 @@ var heads: Dictionary = {
 	"nice-nature": "res://assets/character/_nice-nature/head.tscn"
 }
 
-func setup_items():
+func _enter_tree() -> void:
+	process_mode = PROCESS_MODE_ALWAYS
+
+func setup_items() -> void:
 	item_dist.clear()
 	for _i in range(player_count):
 		item_dist.append([])
@@ -84,9 +87,6 @@ func _notification(what):
 		get_tree().quit()
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventJoypadMotion:
-		print(event)
-		print(event.device)
 	if event.is_action_pressed("_F11") and get_window().has_focus():
 		if Config.window_mode > 0:
 			Config.window_mode = 0

@@ -29,6 +29,8 @@ var player_icons: Dictionary = {}
 var alert_dict: Dictionary = {}
 var alert_max_dist: float = 50
 
+@onready var pause_menu: PauseMenu = %PauseMenu
+
 
 func setup() -> void:
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item2").texture = Global.item_tex.pick_random()
