@@ -17,6 +17,7 @@ var prev_bindings: Dictionary
 func _ready() -> void:
 	disable_reset_button()
 	Global.goto_settings_screen.connect(first_time_setup)
+	setup()
 
 func first_time_setup() -> void:
 	setup()

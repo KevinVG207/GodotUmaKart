@@ -754,18 +754,18 @@ func idle_rotate(delta: float) -> void:
 	if not sleep:
 		rotation_degrees.x = move_toward(rotation_degrees.x, 0, 6 * delta)
 	#var floor_below = Util.raycast_for_group(world.space_state, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
-	var idle_floor_normals := raycast_floor_below()
+	var below_normals := raycast_floor_below()
 	#if is_player:
 		#print(len(floor_normals))
-	if not grounded and (!in_hop or !idle_floor_normals):  # TODO: Check if it's using the correct normals and not floor_normals
+	if not grounded and (!in_hop or !below_normals):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
 
 	if grounded:
 		var avg_normal: Vector3 = floor_normal
 		var multi: float = 1.0
-		if floor_normals:
-			avg_normal = Util.sum(floor_normals) / len(floor_normals)
-			multi = float(len(floor_normals)) / len(floor_check_grid)
+		if below_normals:
+			avg_normal = Util.sum(below_normals) / len(below_normals)
+			multi = float(len(below_normals)) / len(floor_check_grid)
 		else:
 			# Floor is not under the player!!
 			pass
