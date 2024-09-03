@@ -22,6 +22,9 @@ func first_time_setup() -> void:
 	setup()
 	%TabContainer.current_tab = 0
 
+func focus():
+	%BtnApply.grab_focus()
+
 func setup() -> void:
 	# Clear containers
 	setting_elements.clear()
@@ -117,6 +120,7 @@ func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String) -
 func _on_btn_apply_pressed() -> void:
 	Config.update_config()
 	Config.update_bindings()
+	given_focus = false
 	back.emit()
 
 
@@ -160,10 +164,19 @@ func _on_bind_update() -> void:
 			Config.current_bindings[ele.action][ele.type] = ele.bind
 	Config.apply_bindings(Config.current_bindings)
 
-func _input(_event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if Global.rebind_popup:
 		get_viewport().set_input_as_handled()
 		return
+	
+	if event.is_action_pressed("brake"):
+		_on_btn_cancel_pressed()
+		_on_btn_apply_pressed()
+	
+	if event.is_action_pressed("ui_up"):
+		if %BtnApply.has_focus() or %BtnCancel.has_focus() or %BtnResetBinds.has_focus():
+			%TabContainer.get_tab_bar().grab_focus()
+			get_viewport().set_input_as_handled()
 
 
 func _on_btn_reset_binds_pressed() -> void:

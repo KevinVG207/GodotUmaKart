@@ -19,15 +19,18 @@ func _on_language_change(index: int, _text: String):
 func _on_vs_button_pressed():
 	if not given_focus:
 		return
+	given_focus = false
 	UI.change_scene(single_scene, true)
 	last_button = %VSButton
 
-#func _input(event: InputEvent) -> void:
-	#print(event)
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("brake"):
+		_on_title_button_pressed()
 
 func _on_online_button_pressed():
 	if not given_focus:
 		return
+	given_focus = false
 	to_lobby.emit()
 	last_button = %OnlineButton
 
@@ -38,6 +41,7 @@ func focus():
 func _on_settings_button_pressed() -> void:
 	if not given_focus:
 		return
+	given_focus = false
 	to_settings.emit()
 	last_button = %SettingsButton
 
@@ -45,5 +49,6 @@ func _on_settings_button_pressed() -> void:
 func _on_title_button_pressed() -> void:
 	if not given_focus:
 		return
+	given_focus = false
 	to_title.emit()
 	last_button = %VSButton
