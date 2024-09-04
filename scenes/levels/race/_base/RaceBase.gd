@@ -320,7 +320,7 @@ func _process(delta: float) -> void:
 				opacity = remap(dist, 60, 75, 1.0, 0.0)
 			
 			#if state == STATE_RACE_OVER or state in UPDATE_STATES and player_vehicle.finished:
-			if state != STATE_RACE or get_timer_seconds() < 2.0:
+			if (state != STATE_RACE and state != STATE_SPECTATING) or get_timer_seconds() < 2.0:
 				tag_visible = false
 			
 			UI.race_ui.update_nametag(user_id, vehicle.username, screen_pos, opacity, dist, tag_visible, force, delta)
