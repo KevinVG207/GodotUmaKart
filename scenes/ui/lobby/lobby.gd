@@ -114,6 +114,7 @@ func reset():
 	$VoteTimeout.stop()
 	vote_timeout_started = false
 	info_boxes.clear()
+	$VoteButton.visible = false
 	state = STATE_INITIAL
 
 
