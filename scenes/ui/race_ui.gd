@@ -134,6 +134,7 @@ func update_rank(rank):
 func show_back_btn():
 	$BackToLobby.disabled = false
 	$BackToLobby.visible = true
+	$BackToLobby.grab_focus()
 
 func start_roulette():
 	roulette_stop = false
