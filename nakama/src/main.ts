@@ -33,9 +33,8 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
     let version = envelope.matchmakerAdd.stringProperties["version"];
 
     if (!version) {
-        // Panic! We cannot proceed without a version.
-        logger.error("Matchmaker add request does not contain a version.");
-        return;
+        version = "0.0.0";
+        envelope.matchmakerAdd.stringProperties["version"] = version;
     }
 
     let query = envelope.matchmakerAdd.query;
@@ -61,7 +60,7 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
 const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, matches: nkruntime.MatchmakerResult[]): string {
     let matchType: string = matches[0].properties["matchType"];
     let nextMatchType: string = matches[0].properties["nextMatchType"] || "race";
-    let version: string = matches[0].properties["version"];
+    let version: string = matches[0].properties["version"] || "0.0.0";
 
     const matchId = nk.matchCreate(matchType, {matchType: matchType, nextMatchType: nextMatchType, version: version});
     return matchId;
