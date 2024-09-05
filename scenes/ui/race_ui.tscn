@@ -491,6 +491,7 @@ libraries = {
 }
 
 [node name="BackToLobby" type="Button" parent="."]
+visible = false
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -503,6 +504,7 @@ offset_bottom = -23.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 25
+disabled = true
 text = "RACE_BTN_BACK"
 
 [node name="PauseMenu" type="Control" parent="."]
