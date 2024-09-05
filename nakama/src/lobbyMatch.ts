@@ -31,6 +31,7 @@ const lobbyMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logge
     }
 
     let label: label = {
+        version: params.version,
         matchType: params.matchType,
         joinable: joinable,
         players: players,
@@ -291,7 +292,7 @@ function startNextMatch(state: nkruntime.MatchState, dispatcher: nkruntime.Match
     let startingIds = Object.keys(state.presences);  // This will indicate the starting order.
 
     // Create a race match using this course
-    let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, winningVote: JSON.stringify(randomVote), startingIds: JSON.stringify(startingIds) });
+    let matchId = nk.matchCreate(state.nextMatchType, { matchType: state.nextMatchType, version: state.label.version, winningVote: JSON.stringify(randomVote), startingIds: JSON.stringify(startingIds) });
 
     let payload = {
         matchId: matchId,
