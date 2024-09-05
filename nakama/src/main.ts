@@ -48,6 +48,7 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
     }
 
     query += " +matchType:" + matchType;
+    query += " +version:" + version;
     // Strip whitespace
     query = query.trim();
     envelope.matchmakerAdd.query = query;
