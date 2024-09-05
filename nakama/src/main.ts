@@ -2,6 +2,8 @@ function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkrunt
     initializer.registerRpc("healthcheck", rpcHealthCheck);
     initializer.registerRpc("updateDisplayName", rpcUpdateDisplayName);
     initializer.registerRpc("getDisplayName", rpcGetDisplayName);
+    initializer.registerRtBefore("MatchmakerAdd", beforeMatchmakerAdd);
+    initializer.registerBeforeListMatches(beforeListMatches);
 
     initializer.registerMatchmakerMatched(onMatchmakerMatched);
 
@@ -26,6 +28,16 @@ function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkrunt
     });
 
     logger.info("Hello, World!");
+}
+
+const beforeListMatches: nkruntime.BeforeHookFunction<nkruntime.ListMatchesRequest> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, request: nkruntime.ListMatchesRequest): nkruntime.ListMatchesRequest | void {
+    let query = request.query;
+
+    if (query?.indexOf("+properties.version:") == -1) {
+        query += " +properties.version:Unknown";
+    }
+
+    return request;
 }
 
 const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatchmakerAdd> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, envelope: nkruntime.EnvelopeMatchmakerAdd): nkruntime.EnvelopeMatchmakerAdd | void {
