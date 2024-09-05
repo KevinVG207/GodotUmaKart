@@ -51,6 +51,8 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         course: course
     }
 
+    let userData = {} as { [key: string]: any };
+
     logger.info("Starting IDs: " + params.startingIds)
 
     return {
@@ -58,6 +60,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             stop: 0,
             course: course,
             presences: {},
+            userData: {},
             emptyTicks: 0,
             tickRate: tickRate,
             emptyTimeout: emptyTimeout,
@@ -113,6 +116,9 @@ const raceMatchJoin = function (ctx: nkruntime.Context, logger: nkruntime.Logger
         if (!state.started){
             state.vehicles[p.userId] = {};
         }
+
+        state.userData[p.userId] = nk.accountGetId(p.userId).user.metadata;
+        
         updateLabel(state, dispatcher)
     });
 
