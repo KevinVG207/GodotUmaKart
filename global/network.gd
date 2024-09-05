@@ -187,13 +187,7 @@ func get_matchmake_ticket(max_players: int = 12):
 		"version": Util.version
 	}
 	
-	print("A")
-	print(string_props)
-	
-	var query: String = "+properties.version:" + Util.version
-	print(query)
-	
-	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async(query, 2, max_players, string_props, {}, 0)
+	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, max_players, string_props, {}, 0)
 
 	if ticket.is_exception():
 		print("Error adding matchmaker: ", ticket)

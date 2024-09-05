@@ -37,18 +37,18 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
         envelope.matchmakerAdd.stringProperties["version"] = version;
     }
 
-    let query = envelope.matchmakerAdd.query;
     if (!matchType) {
         matchType = "lobby";
         envelope.matchmakerAdd.stringProperties["matchType"] = matchType;
     }
 
+    let query = envelope.matchmakerAdd.query;
     if (query == "*") {
         query = "";
     }
 
-    query += " +matchType:" + matchType;
-    query += " +version:" + version;
+    query += " +properties.matchType:" + matchType;
+    query += " +properties.version:" + version;
     // Strip whitespace
     query = query.trim();
     envelope.matchmakerAdd.query = query;
