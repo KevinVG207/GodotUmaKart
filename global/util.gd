@@ -1,5 +1,12 @@
 extends Node3D
 
+var version: String:
+	get():
+		var tmp: String = ProjectSettings.get_setting("application/config/version")
+		if OS.is_debug_build():
+			return tmp + "-dev"
+		return tmp
+
 func get_vehicle_accel(max_speed: float, cur_speed: float, initial_accel: float, exponent: float) -> float:
 	var speed_ratio = clamp(cur_speed / max_speed, 0, 1)
 	return max(-initial_accel * speed_ratio ** exponent + initial_accel, 0)

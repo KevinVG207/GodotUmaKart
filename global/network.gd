@@ -19,6 +19,7 @@ var next_match_data: Dictionary = {}
 var frames_per_update: int = 6
 var frame_count: int = 0
 
+#var escaped_version: String = ProjectSettings.get_setting("application/config/version").replace(".", "-")
 
 func reset():
 	if mm_tickets:
@@ -139,7 +140,7 @@ func matchmake_list():
 	var limit = 10
 	var authoritative = true
 	var label = ""
-	var query = "+label.joinable:1 +label.matchType:lobby +label.version:" + ProjectSettings.get_setting("application/config/version")
+	var query = "+label.joinable:1 +label.matchType:lobby +label.version:" + Util.version
 	var match_type = "lobby"
 
 	var res: NakamaAPI.ApiMatchList = await client.list_matches_async(session, min_players, max_players, limit, authoritative, label, query)
@@ -150,7 +151,7 @@ func matchmake_list():
 	print("Match list received: ", res.matches.size())
 	
 	if res.matches.size() == 0:
-		query = "+label.joinable:1 +label.matchType:race +label.version:" + ProjectSettings.get_setting("application/config/version")
+		query = "+label.joinable:1 +label.matchType:race +label.version:" + Util.version
 		match_type = "race"
 		res = await client.list_matches_async(session, min_players, max_players, limit, authoritative, label, query)
 		if res.is_exception():
@@ -183,10 +184,14 @@ func matchmake_matchmaker():
 func get_matchmake_ticket(max_players: int = 12):
 	var string_props: Dictionary = {
 		"matchType": "lobby",
-		"version": ProjectSettings.get_setting("application/config/version")
+		"version": Util.version
 	}
 	
-	var query: String = "+label.version:" + ProjectSettings.get_setting("application/config/version")
+	print("A")
+	print(string_props)
+	
+	var query: String = "+properties.version:" + Util.version
+	print(query)
 	
 	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async(query, 2, max_players, string_props, {}, 0)
 

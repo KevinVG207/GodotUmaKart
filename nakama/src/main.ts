@@ -33,7 +33,7 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
     let version = envelope.matchmakerAdd.stringProperties["version"];
 
     if (!version) {
-        version = "0.0.0";
+        version = "Unknown";
         envelope.matchmakerAdd.stringProperties["version"] = version;
     }
 
@@ -60,7 +60,7 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
 const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, matches: nkruntime.MatchmakerResult[]): string {
     let matchType: string = matches[0].properties["matchType"];
     let nextMatchType: string = matches[0].properties["nextMatchType"] || "race";
-    let version: string = matches[0].properties["version"] || "0.0.0";
+    let version: string = matches[0].properties["version"] || "Unknown";
 
     const matchId = nk.matchCreate(matchType, {matchType: matchType, nextMatchType: nextMatchType, version: version});
     return matchId;
