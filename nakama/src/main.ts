@@ -41,7 +41,7 @@ const beforeListMatches: nkruntime.BeforeHookFunction<nkruntime.ListMatchesReque
         query += " +properties.version:Unknown";
     }
 
-    request.query = query;
+    request.query = query.trim();
 
     return request;
 }
