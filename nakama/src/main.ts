@@ -30,6 +30,14 @@ function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkrunt
 
 const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatchmakerAdd> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, envelope: nkruntime.EnvelopeMatchmakerAdd): nkruntime.EnvelopeMatchmakerAdd | void {
     let matchType = envelope.matchmakerAdd.stringProperties["matchType"];
+    let version = envelope.matchmakerAdd.stringProperties["version"];
+
+    if (!version) {
+        // Panic! We cannot proceed without a version.
+        logger.error("Matchmaker add request does not contain a version.");
+        return;
+    }
+
     let query = envelope.matchmakerAdd.query;
     if (!matchType) {
         matchType = "lobby";
@@ -53,7 +61,8 @@ const beforeMatchmakerAdd: nkruntime.RtBeforeHookFunction<nkruntime.EnvelopeMatc
 const onMatchmakerMatched: nkruntime.MatchmakerMatchedFunction = function (context: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, matches: nkruntime.MatchmakerResult[]): string {
     let matchType: string = matches[0].properties["matchType"];
     let nextMatchType: string = matches[0].properties["nextMatchType"] || "race";
+    let version: string = matches[0].properties["version"];
 
-    const matchId = nk.matchCreate(matchType, {matchType: matchType, nextMatchType: nextMatchType});
+    const matchId = nk.matchCreate(matchType, {matchType: matchType, nextMatchType: nextMatchType, version: version});
     return matchId;
 };

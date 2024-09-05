@@ -139,7 +139,7 @@ func matchmake_list():
 	var limit = 10
 	var authoritative = true
 	var label = ""
-	var query = "+label.joinable:1 +label.matchType:lobby"
+	var query = "+label.joinable:1 +label.matchType:lobby +label.version:" + ProjectSettings.get_setting("application/config/version")
 	var match_type = "lobby"
 
 	var res: NakamaAPI.ApiMatchList = await client.list_matches_async(session, min_players, max_players, limit, authoritative, label, query)
@@ -150,7 +150,7 @@ func matchmake_list():
 	print("Match list received: ", res.matches.size())
 	
 	if res.matches.size() == 0:
-		query = "+label.joinable:1 +label.matchType:race"
+		query = "+label.joinable:1 +label.matchType:race +label.version:" + ProjectSettings.get_setting("application/config/version")
 		match_type = "race"
 		res = await client.list_matches_async(session, min_players, max_players, limit, authoritative, label, query)
 		if res.is_exception():
@@ -182,9 +182,13 @@ func matchmake_matchmaker():
 
 func get_matchmake_ticket(max_players: int = 12):
 	var string_props: Dictionary = {
-		"matchType": "lobby"
+		"matchType": "lobby",
+		"version": ProjectSettings.get_setting("application/config/version")
 	}
-	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async("*", 2, max_players, string_props, {}, 0)
+	
+	var query: String = "+label.version:" + ProjectSettings.get_setting("application/config/version")
+	
+	var ticket: NakamaRTAPI.MatchmakerTicket = await socket.add_matchmaker_async(query, 2, max_players, string_props, {}, 0)
 
 	if ticket.is_exception():
 		print("Error adding matchmaker: ", ticket)

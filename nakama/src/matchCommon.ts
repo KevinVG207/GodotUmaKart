@@ -1,4 +1,5 @@
 interface label {
+    version: string;
     matchType: string;
     joinable: number;
     players: number;

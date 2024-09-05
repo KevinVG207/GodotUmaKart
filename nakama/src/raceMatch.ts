@@ -44,6 +44,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
     var course: string = JSON.parse(params.winningVote).course;
 
     let label: label = {
+        version: params.version,
         matchType: params.matchType,
         joinable: 0,
         players: 0,
@@ -60,7 +61,7 @@ const raceMatchInit = function (ctx: nkruntime.Context, logger: nkruntime.Logger
             stop: 0,
             course: course,
             presences: {},
-            userData: {},
+            userData: userData,
             emptyTicks: 0,
             tickRate: tickRate,
             emptyTimeout: emptyTimeout,
