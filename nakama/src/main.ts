@@ -31,11 +31,17 @@ function InitModule(ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkrunt
 }
 
 const beforeListMatches: nkruntime.BeforeHookFunction<nkruntime.ListMatchesRequest> = function (ctx: nkruntime.Context, logger: nkruntime.Logger, nk: nkruntime.Nakama, request: nkruntime.ListMatchesRequest): nkruntime.ListMatchesRequest | void {
-    let query = request.query;
+    let query = "*";
+
+    if (request?.query) {
+        query = request.query;
+    }
 
     if (query?.indexOf("+properties.version:") == -1) {
         query += " +properties.version:Unknown";
     }
+
+    request.query = query;
 
     return request;
 }
