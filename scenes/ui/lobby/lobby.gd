@@ -65,7 +65,7 @@ func _process(_delta):
 		$TimeLeft.text = ""
 	
 	if given_focus:
-		if Input.is_action_just_pressed("brake"):
+		if Input.is_action_just_pressed("brake") and %UsernameEdit.countdown == 0:
 			$LeaveButton.pressed.emit()
 			$LeaveButton.grab_focus()
 
@@ -115,6 +115,8 @@ func reset():
 	vote_timeout_started = false
 	info_boxes.clear()
 	$VoteButton.visible = false
+	$UsernameContainer.visible = true
+	%UsernameEdit.focus_mode = 2
 	state = STATE_INITIAL
 
 
@@ -127,11 +129,15 @@ func setup():
 		$Status.text = tr("LOBBY_CONNECTION_FAIL")
 		state = STATE_INITIAL
 		return
-		
-	var display_name: String = await Network.get_display_name()
+	
+	var display_name: String = Config.online_username
+	if not display_name:
+		display_name = await Network.get_display_name()
 	if not display_name:
 		display_name = "Player" + str(randi_range(100000,999999))
-	$UsernameContainer/UsernameEdit.text = display_name
+	Config.online_username = display_name
+	Config.update_config()
+	%UsernameEdit.text = display_name
 	
 	state = STATE_SETUP_COMPLETE
 
@@ -140,8 +146,9 @@ func matchmake():
 	$Status.text = tr("LOBBY_SEARCHING")
 	$PingBox.visible = false
 	$UsernameContainer.visible = false
+	%UsernameEdit.focus_mode = 0
 	
-	var res: bool = await Network.matchmake($UsernameContainer/UsernameEdit.text)
+	var res: bool = await Network.matchmake(%UsernameEdit.text)
 	
 	if not res:
 		$Status.text = tr("LOBBY_SEARCH_FAIL")
@@ -156,6 +163,7 @@ func join():
 	$Status.text = tr("LOBBY_JOINING")
 	$PingBox.visible = false
 	$UsernameContainer.visible = false
+	%UsernameEdit.focus_mode = 0
 
 	if Network.ready_match_type == "race":
 		next_course = Network.ready_match_label['course']
@@ -399,3 +407,6 @@ func _on_leave_button_pressed():
 func _on_socket_closed():
 	$Status.text = tr("LOBBY_CONNECTION_LOST")
 	reload()
+
+func _gui_input(event: InputEvent) -> void:
+	$LeaveButton.grab_focus()

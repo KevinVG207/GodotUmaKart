@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://dqhi3idf6syay"]
+[gd_scene load_steps=5 format=3 uid="uid://dqhi3idf6syay"]
 
 [ext_resource type="Script" path="res://scenes/ui/lobby/lobby.gd" id="1_5qmws"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_r5fd3"]
+[ext_resource type="PackedScene" uid="uid://cy2up81bu68aj" path="res://scenes/ui/_elements/CustomLineEdit/custom_line_edit.tscn" id="3_l6cub"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q0nkw"]
 content_margin_top = 75.0
@@ -159,14 +160,13 @@ max_value = 1000.0
 step = 100.0
 
 [node name="UsernameContainer" type="HBoxContainer" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -175.0
+offset_left = -287.0
 offset_top = 121.0
-offset_right = -19.0
+offset_right = -37.0
 offset_bottom = 161.0
 grow_horizontal = 0
 alignment = 2
@@ -175,12 +175,13 @@ alignment = 2
 layout_mode = 2
 text = "LOBBY_USERNAME"
 
-[node name="UsernameEdit" type="LineEdit" parent="UsernameContainer"]
-custom_minimum_size = Vector2(100, 0)
+[node name="UsernameEdit" parent="UsernameContainer" instance=ExtResource("3_l6cub")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-focus_neighbor_bottom = NodePath("../../MatchmakeButton")
-max_length = 16
-expand_to_text_length = true
+focus_neighbor_bottom = NodePath("../../LeaveButton")
+theme_override_font_sizes/font_size = 20
+max_chars = 16
 
 [connection signal="pressed" from="MatchmakeButton" to="." method="_on_matchmake_button_pressed"]
 [connection signal="pressed" from="VoteButton" to="." method="_on_vote_button_pressed"]

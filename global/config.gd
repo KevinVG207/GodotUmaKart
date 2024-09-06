@@ -66,6 +66,7 @@ var vsync_mode: int = 2:
 		DisplayServer.window_set_vsync_mode(vsync_modes[value])
 		vsync_mode = value
 
+var online_username: String = ""
 
 ##### End Settings #####
 
@@ -83,6 +84,7 @@ func make_config() -> Dictionary:
 	config.window_mode = window_mode
 	config.max_fps_mode = max_fps_mode
 	config.vsync_mode = vsync_mode
+	config.online_username = online_username
 	
 	return config
 
@@ -98,6 +100,8 @@ func apply_config(config: Dictionary) -> void:
 		max_fps_mode = config.max_fps_mode
 	if "vsync_mode" in config:
 		vsync_mode = config.vsync_mode
+	if "online_username" in config:
+		online_username = config.online_username
 
 func save_config(config: Dictionary) -> void:
 	print("Saving config")

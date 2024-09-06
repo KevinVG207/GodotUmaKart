@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://e07p6iw4dudo"]
+
+[ext_resource type="Script" path="res://scenes/ui/_elements/CustomLineEdit/line_edit_popup.gd" id="1_tgsju"]
+
+[node name="LineEditPopup" type="CanvasLayer"]
+layer = 50
+script = ExtResource("1_tgsju")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.101961, 0.101961, 0.101961, 0.54902)
+
+[node name="LineEdit" type="LineEdit" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(750, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -375.0
+offset_top = -35.5
+offset_right = 375.0
+offset_bottom = 35.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 45
+alignment = 1
+expand_to_text_length = true
+context_menu_enabled = false
+select_all_on_focus = true
+
+[connection signal="gui_input" from="ColorRect" to="." method="_on_color_rect_gui_input"]
