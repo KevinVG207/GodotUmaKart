@@ -309,6 +309,10 @@ func handle_input() -> void:
 		set_all_input_zero()
 		return
 	
+	if !started:
+		set_all_input_zero()
+		return
+	
 	if is_player and get_window().has_focus():
 		input_accel = Input.is_action_pressed("accelerate")
 		input_brake = Input.is_action_pressed("brake") or Input.is_action_pressed("brake2")

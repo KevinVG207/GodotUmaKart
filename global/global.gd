@@ -3,7 +3,7 @@ extends Node
 signal goto_lobby_screen
 signal goto_settings_screen
 
-var default_player_count: int = 5
+var default_player_count: int = 1
 var player_count: int = default_player_count:
 	set(value):
 		player_count = value

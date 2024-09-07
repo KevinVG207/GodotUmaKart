@@ -236,7 +236,7 @@ func _process(delta: float) -> void:
 		pause_cooldown = round(Engine.physics_ticks_per_second / 4.0)
 		get_tree().paused = true
 		UI.race_ui.pause_menu.enable()
-		pause_start = Time.get_ticks_usec()
+		pause_start = Time.get_ticks_usec() + (delta * 1000000.0)
 		return
 	
 	update_ranks()
@@ -253,7 +253,8 @@ func _process(delta: float) -> void:
 	
 	if state == STATE_SHOW_RANKINGS:
 		UI.race_ui.show_back_btn()
-		UI.race_ui.update_timeleft($NextRaceTimer.time_left)
+		if !$NextRaceTimer.is_stopped():
+			UI.race_ui.update_timeleft($NextRaceTimer.time_left)
 	
 	if spectate:
 		if !player_camera.target and players_dict:
@@ -1015,6 +1016,7 @@ func _on_start_timer_timeout():
 func _on_countdown_timer_timeout():
 	state = STATE_RACE
 	race_start_time = Time.get_ticks_usec()
+	print("START: ", race_start_time)
 	for vehicle: Vehicle3 in players_dict.values():
 		vehicle.axis_unlock()
 	#UI.race_ui.rank_label.visible = true
