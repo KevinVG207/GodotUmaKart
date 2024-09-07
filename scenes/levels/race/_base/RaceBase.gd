@@ -279,6 +279,9 @@ func _process(delta: float) -> void:
 			
 			player_camera.target = players_dict.values()[spectator_index]
 	
+	if player_camera.target.finished:
+		UI.race_ui.update_time(player_camera.target.finish_time)
+	
 	# Minimap icons
 	UI.race_ui.update_icons(players_dict.values())
 	
@@ -509,6 +512,8 @@ func _physics_process(_delta):
 				state = STATE_SHOW_RANKINGS
 		STATE_SHOW_RANKINGS:
 			UI.race_ui.hide_time()
+			UI.race_ui.hide_finished()
+			UI.race_ui.hide_race_over()
 			handle_rankings()
 		STATE_JOIN_NEXT:
 			if Global.MODE1 == Global.MODE1_ONLINE:
@@ -552,10 +557,11 @@ func get_vehicle_distance_to_finish(vehicle: Vehicle3) -> float:
 	
 func set_course_length() -> void:
 	var length: float = 0.0
+	var initial_length: float = -1
 	for i in range(checkpoints.size()):
-		checkpoints[i-1].length_until = length
-		checkpoints[i-1].length = checkpoints[i-1].global_position.distance_to(checkpoints[i].global_position)
-		length += checkpoints[i-1].length
+		checkpoints[i].length_until = length
+		checkpoints[i].length = checkpoints[(i+1)%checkpoints.size()].global_position.distance_to(checkpoints[i].global_position)
+		length += checkpoints[i].length
 	course_length = length
 
 func finish_cpus() -> void:
@@ -567,11 +573,12 @@ func finish_cpus() -> void:
 			continue
 		
 		var distance_left: float = get_vehicle_distance_to_finish(vehicle)
+		print(vehicle.username, " dist left: ", distance_left, " ")
 		var time_left: float = distance_left / cpu_avg_speed
 		time_left *= randf_range(1.0, 1.4)
 		
 		# Add random unluckiness
-		if randf() < 0.2:
+		if time_left > 6 and randf() < 0.2:
 			time_left += randf_range(2, 10)
 		
 		vehicle.set_finished(cur_seconds + time_left)

@@ -37,6 +37,8 @@ func setup() -> void:
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = Global.item_tex.pick_random()
 	rank_label.text = ""
 	$BackToLobby.text = "RACE_BTN_BACK" if Global.MODE1 == Global.MODE1_OFFLINE else "RACE_BTN_LOBBY"
+	$TimeLeft.text = ""
+	$Time.text = ""
 
 func update_icons(players: Array):
 	for icon: Sprite2D in player_icons.values():
@@ -104,8 +106,14 @@ func set_cur_lap(lap):
 func finished():
 	$Finished.visible = true
 
+func hide_finished():
+	$Finished.visible = false
+
 func race_over():
 	$RaceOver.visible = true
+
+func hide_race_over():
+	$RaceOver.visible = false
 
 func enable_spectating():
 	$Spectating.visible = true
