@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="7_gntdf"]
 
 [node name="1test" instance=ExtResource("1_2vsv6")]
-lap_count = 0
+lap_count = 1
 
 [node name="Course" parent="." index="0"]
 metadata/_edit_group_ = true
@@ -82,5 +82,5 @@ transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 14.0165, -
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)
 guaranteed_item = ExtResource("7_gntdf")
 
-[node name="CountdownTimer" parent="." index="13"]
+[node name="CountdownTimer" parent="." index="14"]
 process_callback = 1

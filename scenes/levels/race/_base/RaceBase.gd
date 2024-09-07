@@ -59,6 +59,8 @@ var course_length: float = 1.0
 
 var cpu_avg_speed: float = 20
 
+var course_name: String = "default"
+
 
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
@@ -113,8 +115,25 @@ var state: int = STATE_INITIAL
 
 @onready var map_camera: Camera3D = $MapCamera
 
+var replay: Array = []
+var replay_tick_interval: float = 3
+var replay_cur_tick: int = 0
+var replay_last_time: float = -1
+var replay_tick_max_time: float = 0
+
+var loaded_replay: Array = []
+var loaded_replay_idx: int = 0
+var loaded_replay_vehicle: Vehicle3 = null
+
 func _ready():
+	course_name = Util.get_race_course_name_from_path(scene_file_path)
+	
+	# Setup ticks
 	Engine.physics_ticks_per_second = 180
+	replay_tick_interval = 6
+	replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
+	
+	#load_replay("user://replays/Wicked_Woods/1725734007.sav")
 	
 	UI.race_ui.set_max_laps(lap_count)
 	UI.race_ui.set_cur_lap(0)
@@ -247,9 +266,13 @@ func _process(delta: float) -> void:
 		UI.race_ui.update_countdown(str(ceil($CountdownTimer.time_left)))
 	else:
 		UI.race_ui.update_countdown("")
+		
+	if state == STATE_COUNTING_DOWN:
+		advance_replay()
 	
 	if state == STATE_RACE:
 		UI.race_ui.update_time(get_timer_seconds())
+		advance_replay()
 	
 	if state == STATE_SHOW_RANKINGS:
 		UI.race_ui.show_back_btn()
@@ -493,11 +516,11 @@ func _physics_process(_delta):
 				$CountdownTimer.start(4.0)
 			# timer_tick = -Engine.physics_ticks_per_second * $CountdownTimer.time_left
 			state = STATE_COUNTING_DOWN
-		# STATE_COUNTING_DOWN:
-		# 	timer_tick += 1
-		# STATE_RACE:
-		# 	timer_tick += 1
+		STATE_RACE:
+			save_replay()
 		STATE_RACE_OVER:
+			save_replay(true)
+			write_replay()
 			UI.race_ui.race_over()
 			if Global.MODE1 == Global.MODE1_OFFLINE:
 				# Race is over in offline mode.
@@ -544,6 +567,79 @@ func _physics_process(_delta):
 						send_item_state(item)
 		
 		check_finished()
+
+func save_replay(force: bool=false) -> void:
+	# TODO: Save all vehicles.
+	# TODO: Include items.
+	var cur_time: float = get_timer_seconds()
+	if cur_time - replay_last_time < replay_tick_max_time and !force:
+		return
+	
+	replay_last_time = cur_time
+	
+	var frame := {
+		"time": cur_time,
+		"vehicle": {
+			"pos": Util.to_array(player_vehicle.global_position),
+			"rot": Util.quat_to_array(player_vehicle.quaternion)
+		}
+	}
+	
+	replay.append(frame)
+
+func advance_replay() -> void:
+	if loaded_replay_idx+1 >= len(loaded_replay):
+		return
+	
+	# Load frame
+	var cur_time: float = get_timer_seconds()
+	
+	if cur_time >= loaded_replay[loaded_replay_idx+1].time:
+		loaded_replay_idx += 1
+	
+	var cur_frame: Dictionary = loaded_replay[loaded_replay_idx]
+	var next_frame = cur_frame
+	
+	if loaded_replay_idx+1 < len(loaded_replay):
+		next_frame = loaded_replay[loaded_replay_idx+1]
+	
+	#if loaded_replay_idx+1 < len(loaded_replay) and cur_time >= loaded_replay[loaded_replay_idx+1].time:
+		#next_frame = loaded_replay[loaded_replay_idx+1]
+		#loaded_replay_idx += 1
+	
+	# Create new vehicle if needed
+	if loaded_replay_vehicle == null:
+		loaded_replay_vehicle = player_scene.instantiate() as Vehicle3
+		loaded_replay_vehicle.world = self
+		loaded_replay_vehicle.setup_replay()
+		$ReplayVehicles.add_child(loaded_replay_vehicle)
+	
+	# Apply frame
+	var frame_time: float = next_frame.time - cur_frame.time
+	var factor: float
+	if abs(frame_time) < 0.000001:
+		factor = 1.0
+	else:
+		factor = clamp((cur_time - cur_frame.time) / frame_time, 0, 1)
+		#print(factor, " ", cur_time, " ", cur_frame.time, " ", next_frame.time, " ", frame_time)
+		
+	loaded_replay_vehicle.global_position = Util.to_vector3(cur_frame.vehicle.pos).lerp(Util.to_vector3(next_frame.vehicle.pos), factor)
+	loaded_replay_vehicle.quaternion = Util.array_to_quat(cur_frame.vehicle.rot).slerp(Util.array_to_quat(next_frame.vehicle.rot), factor)
+
+func write_replay() -> void:
+	if not replay:
+		return
+	
+	# TODO: Include course name
+	var file: String = str(round(Time.get_unix_time_from_system()))
+	var dir: String = "user://replays/" + course_name
+	var path = dir + "/" + file + ".sav"
+	
+	DirAccess.make_dir_recursive_absolute(dir)
+	Util.save_var(path, replay)
+
+func load_replay(path: String) -> void:
+	loaded_replay = Util.load_var(path)
 
 func get_vehicle_distance_from_start(vehicle: Vehicle3) -> float:
 	var cur_check: Checkpoint = checkpoints[vehicle.check_idx]

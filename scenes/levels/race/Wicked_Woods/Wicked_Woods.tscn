@@ -15,6 +15,7 @@ size = Vector3(300, 33.77, 141.27)
 
 [node name="RaceBase" instance=ExtResource("1_ecs37")]
 start_offset_x = 2.5
+lap_count = 2
 
 [node name="Course" parent="." index="0"]
 metadata/_edit_group_ = true
@@ -459,10 +460,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.3551, 74.0337, 105.531)
 [node name="EnemyPath49" parent="EnemyPathPoints" index="44" instance=ExtResource("6_x6qyg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.03516, 74.1702, 83.0981)
 
-[node name="PlayerCamera" parent="." index="6"]
+[node name="PlayerCamera" parent="." index="7"]
 cull_mask = 1023
 
-[node name="MapCamera" parent="." index="11"]
+[node name="MapCamera" parent="." index="12"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -73.326, 1000, -109.108)
 
 [connection signal="body_entered" from="Course/Water" to="Course/Water" method="_on_body_entered"]

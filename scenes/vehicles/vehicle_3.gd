@@ -14,6 +14,7 @@ var started: bool = false
 var is_player: bool = false
 var is_cpu: bool = true
 var is_network: bool = false
+var is_replay: bool = false
 var user_id: String = ""
 var check_idx: int = -1
 var check_key_idx: int = 0
@@ -217,6 +218,7 @@ var along_ground_multi := 0.0
 var along_ground_dec := 10.0
 var min_angle_to_detach := 10.0
 
+var replay_transparency := 0.75
 
 #func _enter_tree():
 	#set_multiplayer_authority(peer_id)
@@ -227,9 +229,30 @@ var min_angle_to_detach := 10.0
 func _ready() -> void:
 	setup_floor_check_grid()
 	setup_head()
-	pass
+	
+	if is_replay:
+		recursive_set_transparency($Visual)
+
 	#Network.should_setup = true
 	#transform = initial_transform
+
+func setup_replay() -> void:
+	is_player = false
+	is_network = false
+	is_cpu = false
+	is_replay = true
+	freeze_mode = FREEZE_MODE_STATIC
+	freeze = true
+	collision_layer = 0
+	collision_mask = 0
+
+func recursive_set_transparency(n: Node):
+	if n is GeometryInstance3D:
+		n.transparency = replay_transparency
+		n.cast_shadow = false
+	
+	for c: Node in n.get_children():
+		recursive_set_transparency(c)
 
 func setup_head() -> void:
 	$Visual/Character/Body.get_node("%Head").add_child(Util.get_random_head())

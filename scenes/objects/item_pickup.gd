@@ -5,6 +5,11 @@ class_name ItemPickup
 @export var guaranteed_item: PackedScene = null
 
 func _ready():
+	if Global.MODE2 == Global.MODE2_TIMETRIALS:
+		visible = false
+		monitoring = false
+		return
+	
 	$AnimationPlayer.play("hover")
 	$AnimationPlayer.advance($AnimationPlayer.current_animation_length * randf())
 

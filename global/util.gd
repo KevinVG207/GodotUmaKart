@@ -58,6 +58,12 @@ func to_array(v: Vector3) -> Array:
 func to_vector3(a: Array) -> Vector3:
 	return Vector3(a[0], a[1], a[2])
 
+func quat_to_array(q: Quaternion) -> Array:
+	return [q.x, q.y, q.z, q.w]
+
+func array_to_quat(a: Array) -> Quaternion:
+	return Quaternion(a[0], a[1], a[2], a[3])
+
 func sec_to_ticks(sec: float) -> int:
 	# Turns seconds into physics ticks
 	return int(sec * Engine.physics_ticks_per_second)
@@ -93,6 +99,9 @@ func get_race_courses() -> Array:
 
 func get_race_course_path(course_name: String):
 	return "res://scenes/levels/race/" + course_name + "/" + course_name + ".tscn"
+
+func get_race_course_name_from_path(path: String) -> String:
+	return path.rsplit("/", true, 1)[1].replace(".tscn", "")
 
 func get_vehicles() -> Array:
 	# All vehicles are stored as scenes/vehicles/list/NAME.tscn
@@ -188,5 +197,16 @@ func save_json(path: String, object: Variant) -> void:
 func load_json(path: String) -> Variant:
 	var load_file: FileAccess = FileAccess.open(path, FileAccess.READ)
 	var object: Variant = JSON.parse_string(load_file.get_as_text(true))
+	load_file.close()
+	return object
+
+func save_var(path: String, object: Variant) -> void:
+	var store_file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	store_file.store_var(object)
+	store_file.close()
+	
+func load_var(path: String) -> Variant:
+	var load_file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	var object: Variant = load_file.get_var()
 	load_file.close()
 	return object
