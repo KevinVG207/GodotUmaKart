@@ -133,7 +133,7 @@ func _ready():
 	replay_tick_interval = 6
 	replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
 	
-	#load_replay("user://replays/Wicked_Woods/1725734007.sav")
+	#load_replay("user://replays/1test/1725744856.sav")
 	
 	UI.race_ui.set_max_laps(lap_count)
 	UI.race_ui.set_cur_lap(0)
@@ -579,10 +579,7 @@ func save_replay(force: bool=false) -> void:
 	
 	var frame := {
 		"time": cur_time,
-		"vehicle": {
-			"pos": Util.to_array(player_vehicle.global_position),
-			"rot": Util.quat_to_array(player_vehicle.quaternion)
-		}
+		"vehicle": player_vehicle.get_replay_state()
 	}
 	
 	replay.append(frame)
@@ -622,7 +619,8 @@ func advance_replay() -> void:
 	else:
 		factor = clamp((cur_time - cur_frame.time) / frame_time, 0, 1)
 		#print(factor, " ", cur_time, " ", cur_frame.time, " ", next_frame.time, " ", frame_time)
-		
+	
+	loaded_replay_vehicle.apply_replay_state(cur_frame.vehicle)
 	loaded_replay_vehicle.global_position = Util.to_vector3(cur_frame.vehicle.pos).lerp(Util.to_vector3(next_frame.vehicle.pos), factor)
 	loaded_replay_vehicle.quaternion = Util.array_to_quat(cur_frame.vehicle.rot).slerp(Util.array_to_quat(next_frame.vehicle.rot), factor)
 

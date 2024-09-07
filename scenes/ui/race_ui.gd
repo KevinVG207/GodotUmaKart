@@ -39,6 +39,13 @@ func setup() -> void:
 	$BackToLobby.text = "RACE_BTN_BACK" if Global.MODE1 == Global.MODE1_OFFLINE else "RACE_BTN_LOBBY"
 	$TimeLeft.text = ""
 	$Time.text = ""
+	hide_finished()
+	hide_race_over()
+	hide_roulette()
+	hide_time()
+	for c: Control in $Rankings.get_children():
+		c.queue_free()
+	back_btn.visible = false
 
 func update_icons(players: Array):
 	for icon: Sprite2D in player_icons.values():

@@ -414,7 +414,7 @@ func cpu_control(delta: float) -> void:
 	
 	if is_network and prev_state:
 		var network_pos: Vector3 = cpu_target.global_position
-		var network_rot: Vector3 = Util.to_vector3(prev_state.rot)
+		var network_rot: Quaternion = Util.array_to_quat(prev_state.rot)
 		var move_multi := 0.0
 		var rot_multi := 1.0
 		
@@ -455,7 +455,7 @@ func cpu_control(delta: float) -> void:
 			catch_up = false
 		
 		var cur_quat := Quaternion.from_euler(rotation)
-		var target_quat := Quaternion.from_euler(network_rot)
+		var target_quat := network_rot
 		rotation = cur_quat.slerp(target_quat, rot_multi * delta).get_euler()
 	
 	if !is_network:
@@ -1360,24 +1360,48 @@ func water_exited(area: Area3D) -> void:
 		in_water = false
 
 
-#func _on_player_collision_area_entered(area: Area3D):
-	#var area_parent = area.get_parent()
-	#if not area_parent is Vehicle3:
-		#return
-	##Debug.print([self, "collided with", area_parent])
-	#colliding_vehicles[area_parent] = true
-#
-#
-#func _on_player_collision_area_exited(area):
-	#var area_parent = area.get_parent()
-	#if not area_parent is Vehicle3:
-		#return
-	##Debug.print([self, "uncollided with", area_parent])
-	#colliding_vehicles.erase(area_parent)
-	
-#func upload_data():
-	#var state: Dictionary = get_state()
-	#Network.
+func get_replay_state() -> Dictionary:
+	return {
+		"pos": Util.to_array(global_position),
+		"rot": Util.quat_to_array(quaternion),
+		"input_accel": input_accel,
+		"input_brake": input_brake,
+		"input_steer": input_steer,
+		"input_trick": input_trick,
+		"in_trick": in_trick,
+		"in_hop": in_hop,
+		"in_hop_frames": in_hop_frames,
+		"in_drift": in_drift,
+		"drift_dir": drift_dir,
+		"drift_gauge": drift_gauge,
+		"drift_gauge_max": drift_gauge_max,
+		"sbt": $SmallBoostTimer.time_left,
+		"nbt": $NormalBoostTimer.time_left,
+		"bbt": $BigBoostTimer.time_left
+	}
+
+
+func apply_replay_state(state: Dictionary) -> void:
+	# global_position = Util.to_vector3(state.pos)
+	# quaternion = Util.array_to_quat(state.rot)
+	input_accel = state.input_accel
+	input_brake = state.input_brake
+	input_steer = state.input_steer
+	input_trick = state.input_trick
+	in_trick = state.in_trick
+	in_hop = state.in_hop
+	in_hop_frames = state.in_hop_frames
+	in_drift = state.in_drift
+	drift_dir = state.drift_dir
+	drift_gauge = state.drift_gauge
+	drift_gauge_max = state.drift_gauge_max
+	if state.sbt:
+		$SmallBoostTimer.start(state.sbt)
+	if state.nbt:
+		$NormalBoostTimer.start(state.nbt)
+	if state.bbt:
+		$BigBoostTimer.start(state.bbt)
+
 
 func get_state() -> Dictionary:
 	update_idx += 1
@@ -1385,7 +1409,7 @@ func get_state() -> Dictionary:
 		"idx": update_idx,
 		"vani": vani.animation,
 		"pos": Util.to_array(global_position),
-		"rot": Util.to_array(rotation),
+		"rot": Util.quat_to_array(quaternion),
 		"lin_vel": Util.to_array(linear_velocity),
 		"input_accel": input_accel,
 		"input_brake": input_brake,
@@ -1415,7 +1439,10 @@ func get_state() -> Dictionary:
 		"lap": lap,
 		"finished": finished,
 		"finish_time": finish_time,
-		"username": username
+		"username": username,
+		"sbt": $SmallBoostTimer.time_left,
+		"nbt": $NormalBoostTimer.time_left,
+		"bbt": $BigBoostTimer.time_left
 	}
 
 func apply_state(state: Dictionary) -> void:
@@ -1429,7 +1456,7 @@ func apply_state(state: Dictionary) -> void:
 	var network_path := world.network_path_points[self] as EnemyPath
 	cpu_target = network_path
 	network_path.global_position = Util.to_vector3(state.pos)
-	network_path.rotation = Util.to_vector3(state.rot)
+	network_path.quaternion = Util.array_to_quat(state.rot)
 	network_path.normal = network_path.transform.basis.x
 	if user_id in world.pings:
 		network_path.global_position += network_path.transform.basis.x * state.cur_speed * (1 + ((world.pings[user_id] + world.pings[world.player_user_id])/1000)) * 0.35
@@ -1467,10 +1494,16 @@ func apply_state(state: Dictionary) -> void:
 	respawn_stage = state.respawn_stage
 	if state.respawn_time:
 		$RespawnTimer.start(state.respawn_time)
+	if state.sbt:
+		$SmallBoostTimer.start(state.sbt)
+	if state.nbt:
+		$SmallBoostTimer.start(state.nbt)
+	if state.bbt:
+		$BigBoostTimer.start(state.bbt)
 	
 	if global_position.distance_to(Util.to_vector3(state.pos)) > network_teleport_distance:
 		global_position = Util.to_vector3(state.pos)
-		rotation = Util.to_vector3(state.rot)
+		quaternion = Util.array_to_quat(state.rot)
 		linear_velocity = Util.to_vector3(state.lin_vel)
 		prev_frame_pre_sim_vel = Util.to_vector3(state.prev_frame_pre_sim_vel)
 		in_water = state.in_water

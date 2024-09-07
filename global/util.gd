@@ -210,3 +210,23 @@ func load_var(path: String) -> Variant:
 	var object: Variant = load_file.get_var()
 	load_file.close()
 	return object
+
+# These don't work!
+#func save_var_gz(path: String, object: Variant) -> void:
+	#var gzip := StreamPeerGZIP.new()
+	#gzip.start_compression()
+	#gzip.put_data(var_to_bytes(object))
+	#gzip.finish()
+	#var store_file := FileAccess.open(path, FileAccess.WRITE)
+	#store_file.store_buffer(gzip.get_data(gzip.get_available_bytes())[1])
+	#store_file.close()
+#
+#func load_var_gz(path: String) -> Variant:
+	#var load_file := FileAccess.open(path, FileAccess.READ)
+	#var gzip := StreamPeerGZIP.new()
+	#gzip.start_decompression()
+	#gzip.put_data(load_file.get_buffer(load_file.get_length()))
+	#gzip.finish()
+	#var object: Variant = bytes_to_var(gzip.get_data(gzip.get_available_bytes())[1])
+	#load_file.close()
+	#return object
