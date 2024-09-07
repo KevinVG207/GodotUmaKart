@@ -36,6 +36,7 @@ func setup() -> void:
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item2").texture = Global.item_tex.pick_random()
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = Global.item_tex.pick_random()
 	rank_label.text = ""
+	$BackToLobby.text = "RACE_BTN_BACK" if Global.MODE1 == Global.MODE1_OFFLINE else "RACE_BTN_LOBBY"
 
 func update_icons(players: Array):
 	for icon: Sprite2D in player_icons.values():

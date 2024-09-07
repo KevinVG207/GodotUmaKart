@@ -32,6 +32,8 @@ var network_path_points: Dictionary = {}
 var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_3.tscn")
 var rank_panel_scene: PackedScene = preload("res://scenes/ui/rank_panel.tscn")
 
+var menu_cam_str: String = "%CamFountain"
+var menu_scene: String = "res://scenes/ui/academy/menu_academy.tscn"
 var lobby_cam_str: String = "%CamTrunk"
 var lobby_scene: String = "res://scenes/ui/academy/menu_academy.tscn"
 
@@ -52,6 +54,10 @@ var pings: Dictionary
 
 var pause_cooldown: int = 0
 var pause_start: int = -1
+
+var course_length: float = 1.0
+
+var cpu_avg_speed: float = 20
 
 
 class raceOp:
@@ -125,6 +131,7 @@ func _ready():
 		checkpoints.append(checkpoint)
 		if checkpoint.is_key:
 			key_checkpoints[checkpoint] = key_checkpoints.size()
+	set_course_length()  # This also sets up checkpoint lengths.
 	
 	setup_enemy_path()
 	
@@ -488,6 +495,11 @@ func _physics_process(_delta):
 		# 	timer_tick += 1
 		STATE_RACE_OVER:
 			UI.race_ui.race_over()
+			if Global.MODE1 == Global.MODE1_OFFLINE:
+				# Race is over in offline mode.
+				# Here we prepare the finishing times for all the CPUs and then show the rankings.
+				setup_finish_order()
+				state = STATE_SHOW_RANKINGS
 		STATE_READY_FOR_RANKINGS:
 			if spectate:
 				change_state(STATE_JOINING_NEXT, join_next)
@@ -526,6 +538,62 @@ func _physics_process(_delta):
 						send_item_state(item)
 		
 		check_finished()
+
+func get_vehicle_distance_from_start(vehicle: Vehicle3) -> float:
+	var cur_check: Checkpoint = checkpoints[vehicle.check_idx]
+	var distance: float = (vehicle.lap - 1) * course_length
+	distance += cur_check.length_until
+	distance += cur_check.length * vehicle.check_progress
+	return distance
+
+func get_vehicle_distance_to_finish(vehicle: Vehicle3) -> float:
+	var course_distance: float = course_length * lap_count
+	return course_distance - get_vehicle_distance_from_start(vehicle)
+	
+func set_course_length() -> void:
+	var length: float = 0.0
+	for i in range(checkpoints.size()):
+		checkpoints[i-1].length_until = length
+		checkpoints[i-1].length = checkpoints[i-1].global_position.distance_to(checkpoints[i].global_position)
+		length += checkpoints[i-1].length
+	course_length = length
+
+func finish_cpus() -> void:
+	var cur_seconds: float = get_timer_seconds()
+	for vehicle: Vehicle3 in players_dict.values():
+		if vehicle.is_player:
+			continue
+		if not vehicle.is_cpu or vehicle.finished:
+			continue
+		
+		var distance_left: float = get_vehicle_distance_to_finish(vehicle)
+		var time_left: float = distance_left / cpu_avg_speed
+		time_left *= randf_range(1.0, 1.4)
+		
+		# Add random unluckiness
+		if randf() < 0.2:
+			time_left += randf_range(2, 10)
+		
+		vehicle.set_finished(cur_seconds + time_left)
+
+func setup_finish_order() -> void:
+	finish_cpus()  # Ensure CPUs are finished
+	
+	var finished_vehicles: Array = []
+	var unfinished_vehicles: Array = []
+	
+	for user_id: String in players_dict.keys():
+		if players_dict[user_id].finished:
+			finished_vehicles.append(user_id)
+		else:
+			unfinished_vehicles.append(user_id)
+	
+	finished_vehicles.sort_custom(func(a: String, b: String) -> bool: return players_dict[a].finish_time < players_dict[b].finish_time)
+	unfinished_vehicles.sort_custom(func(a: String, b: String) -> bool: return get_vehicle_progress(players_dict[a]) > get_vehicle_progress(players_dict[b]))
+	
+	finished_vehicles += unfinished_vehicles
+	finish_order = finished_vehicles
+	
 
 func handle_rankings():
 	if stop_rankings:
@@ -589,7 +657,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 		Global.MODE1_OFFLINE:
 			new_vehicle.is_cpu = true
 			new_vehicle.is_network = false
-			new_vehicle.username = "CPU"
+			new_vehicle.username = "CPU_" + str(players_dict.size())
 		Global.MODE1_ONLINE:
 			new_vehicle.is_cpu = true
 			new_vehicle.is_network = true
@@ -700,7 +768,7 @@ func get_vehicle_progress(vehicle: Vehicle3) -> float:
 	var check_idx = vehicle.check_idx
 	if check_idx < 0:
 		check_idx = checkpoints.size() - check_idx - 2
-	var cur_progress = 10000 * vehicle.lap + check_idx + vehicle.check_progress
+	var cur_progress: float = 10000 * vehicle.lap + check_idx + vehicle.check_progress
 	return cur_progress
 
 func update_ranks():
@@ -952,7 +1020,12 @@ func join_next():
 	UI.change_scene(lobby_scene)
 
 func _on_back_pressed():
-	state = STATE_JOIN_NEXT
+	if Global.MODE1 == Global.MODE1_ONLINE:
+		state = STATE_JOIN_NEXT
+	else:
+		Global.menu_start_cam = menu_cam_str
+		UI.change_scene(menu_scene)
+		state = STATE_JOINING_NEXT
 
 func _on_next_race_timer_timeout():
 	state = STATE_JOIN_NEXT
