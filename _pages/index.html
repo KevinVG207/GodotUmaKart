@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Uma Kart Rooms Viewer</title>
+        <meta name="description" content="description"/>
+        <meta name="author" content="author" />
+        <meta name="keywords" content="keywords" />
+        <!-- <link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon" /> -->
+        <link rel="stylesheet" href="./index.css" type="text/css" />
+    </head>
+    <body>
+        <table>
+            <tbody id="tablebody"></tbody>
+        </table>
+
+        <script type="text/javascript">
+            let cur_rooms = [];
+            const RELOAD_TIME = 1000 * 10; // 10 seconds
+            let RELOAD_TIMER = null;
+
+            function autorun() {
+                fetch_rooms();
+            }
+
+            function seconds_to_hms(tot_sec) {
+                let hours = String(Math.floor(tot_sec / 3600));
+                let minutes = String(Math.floor((tot_sec % 3600) / 60)).padStart(2, "0");
+                let seconds = String(Math.floor(tot_sec % 60)).padStart(2, "0");
+
+                return `${hours}:${minutes}:${seconds}`;
+            }
+
+            async function fetch_rooms() {
+                console.log("Loading data...");
+
+                const response = await fetch("https://umapyoi.net/api/v1/umakart/rooms");
+
+                if (!response.ok){
+                    console.log("Error fetching room data");
+                    return;
+                }
+
+                let rooms = await response.json();
+
+                cur_rooms = rooms;
+                reload_rooms();
+            }
+
+            async function reload_rooms(){
+                let rooms = cur_rooms;
+                let no_players = 0;
+                // console.log(rooms);
+
+                const tbody = document.getElementById("tablebody");
+                // Clear table
+                tbody.innerHTML = "";
+
+                // rooms = filter_fc(rooms);
+
+
+                for (const room of rooms) {
+                    room_not_found = false;
+
+                    // Room Info
+                    let tr = document.createElement("tr");
+                    let room_header = document.createElement("th");
+                    room_header.colSpan = 100;
+                    room_header.classList.add("room-header");
+                    let room_type = room.label.matchType == "lobby" ? "Lobby" : "Race";
+                    let uptime = room.tick / room.tick_rate;
+                    uptime = seconds_to_hms(uptime);
+
+                    // let joinable = room.suspend ? "Not joinable" : "Joinable";
+                    // if (room.split) {
+                    //     joinable = "Split room";
+                    // }
+
+                    // let joinable_class = room.suspend ? "not-joinable" : "joinable";
+                    // if (room.split) {
+                    //     joinable_class = "split-room";
+                    // }
+
+                    tr.appendChild(room_header);
+                    tbody.appendChild(tr);
+
+                    // Data Headers
+                    tr = document.createElement("tr");
+                    tr.classList.add("data-header");
+                    tbody.appendChild(tr);
+                    
+                    // Username
+                    th = document.createElement("th");
+                    th.textContent = "Username";
+                    th.colSpan = 2;
+                    tr.appendChild(th);
+
+                    // Character
+                    // th = document.createElement("th");
+                    // th.textContent = "Character";
+                    // th.classList.add("chara-header");
+                    // tr.appendChild(th);
+
+                    // User ID
+                    th = document.createElement("th");
+                    th.textContent = "ID";
+                    tr.appendChild(th);
+
+
+                    // Players
+                    for (const player_idx of Object.keys(room.players)) {
+                        tr = document.createElement("tr");
+                        tbody.appendChild(tr);
+
+                        const player = room.players[player_idx];
+
+                        // Mii Name
+                        let td = document.createElement("td");
+                        td.colSpan = 2;
+                        let name_ele = td;
+
+                        name_ele.classList.add("username");
+                        name_ele.textContent = player.username;
+                        tr.appendChild(td);
+
+                        // Character
+
+                        // ID
+                        td = document.createElement("td");
+                        td.textContent = player.id;
+
+                        if (player.fc == localStorage.getItem("highlight-fc")){
+                            tr.classList.add("highlighted");
+                        }
+
+                        tr.appendChild(td);
+                    }
+
+                    // Apply the room header text.
+                    room_header.innerHTML = `${room_type} - Uptime: ${uptime}\r\n${room.players.length} player${room.players.length == 1 ? "" : "s"}`;
+
+                }
+            }
+
+            if (document.addEventListener)
+                document.addEventListener('DOMContentLoaded', autorun, false)
+            else window.onload = autorun
+        </script>
+    </body>
+</html>
