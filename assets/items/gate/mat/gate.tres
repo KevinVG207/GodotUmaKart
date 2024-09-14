@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://b6g72o5xtlev6"]
+
+[ext_resource type="Texture2D" uid="uid://bki4dmkrqdryw" path="res://assets/items/gate/gate.png" id="1_qqjwb"]
+
+[resource]
+resource_name = "gate"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+diffuse_mode = 3
+albedo_texture = ExtResource("1_qqjwb")
+metallic_specular = 0.0
+roughness = 0.7
