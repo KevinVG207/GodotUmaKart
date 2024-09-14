@@ -81,7 +81,7 @@ func _physics_process(delta: float) -> void:
 		
 	if not target_point:
 		# Determine the target point currently in front of the thrower.
-		target_point = Util.get_path_point_ahead_of_player(world, world.players_dict[owner_id])
+		target_point = Util.get_path_point_ahead_of_player(world.players_dict[owner_id])
 	
 	var dist_to_target_player: float = 10000
 	if target_player:
@@ -107,7 +107,7 @@ func _physics_process(delta: float) -> void:
 				
 				var dist_to_target := global_position.distance_to(target_point.global_position)
 				if dist_to_target < target_point.dist:
-					target_point = world.pick_next_point_to_target(target_point, Util.get_path_point_ahead_of_player(world, target_player))
+					target_point = world.pick_next_point_to_target(target_point, Util.get_path_point_ahead_of_player(target_player))
 				
 			target_pos = target_point.global_position
 	

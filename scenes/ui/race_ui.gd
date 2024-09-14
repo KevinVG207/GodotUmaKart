@@ -130,6 +130,7 @@ func set_username(usr: String):
 	$Username.text = usr
 
 func update_time(time: float):
+	$Time.visible = true
 	$Time.text = Util.format_time_ms(time)
 
 func hide_time():

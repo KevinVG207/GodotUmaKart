@@ -4,10 +4,12 @@ class_name Vehicle3
 
 #var peer_id: int
 #var initial_transform: Transform3D
+signal before_update(delta: float)
+signal after_update(delta: float)
 
 var update_idx: int = 0
 @onready var vani: VehicleAnimationTree = $VehicleAnimationTree
-@onready var cani: AnimationPlayer # TODO: Character animation player
+@onready var cani: AnimationPlayer = %CharacterAnimationPlayer # TODO: Character animation player
 
 var frame: int = 0
 var started: bool = false
@@ -15,6 +17,7 @@ var is_player: bool = false
 var is_cpu: bool = true
 var is_network: bool = false
 var is_replay: bool = false
+var is_being_controlled: bool = false
 var user_id: String = ""
 var check_idx: int = -1
 var check_key_idx: int = 0
@@ -219,6 +222,7 @@ var along_ground_dec := 10.0
 var min_angle_to_detach := 10.0
 
 var replay_transparency := 0.75
+var standard_colliders: Array = []
 
 #func _enter_tree():
 	#set_multiplayer_authority(peer_id)
@@ -229,12 +233,18 @@ var replay_transparency := 0.75
 func _ready() -> void:
 	setup_floor_check_grid()
 	setup_head()
+	setup_colliders()
 	
 	if is_replay:
 		recursive_set_transparency($Visual)
 
 	#Network.should_setup = true
 	#transform = initial_transform
+
+func setup_colliders() -> void:
+	for child: Node in get_children():
+		if child is CollisionShape3D:
+			standard_colliders.append(child)
 
 func setup_replay() -> void:
 	is_player = false
@@ -482,6 +492,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	if finished and !is_network:
 		is_cpu = true
 	
+	before_update.emit(delta)
 	handle_input()
 	cpu_control(delta)
 	
@@ -628,6 +639,9 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 		other = other.move_toward(Vector3.ZERO, air_decel * delta)
 		
 		rest_vel = other + grav_component
+		
+		if is_being_controlled:
+			rest_vel = grav_component
 		# new_vel = get_air_vel(delta)
 		#print("airborne ", new_vel)
 	
@@ -755,6 +769,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 
 	# grounded = false
 	
+	after_update.emit(delta)
+	
 	prev_transform = transform
 	prev_frame_pre_sim_vel = linear_velocity
 	prev_prop_vel = prop_vel
@@ -762,7 +778,6 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	prev_grounded = grounded
 	#print("Grounded: ", grounded)
 	#prev_rotation = rotation
-
 
 func raycast_floor_below() -> Array:
 	var normals: Array = []
@@ -1116,6 +1131,8 @@ func _on_still_turbo_timer_timeout() -> void:
 func handle_vehicle_collisions() -> void:
 	var colliding_vehicles: Dictionary = {}
 	for shape: ShapeCast3D in %PlayerCollision.get_children():
+		if !shape.enabled:
+			continue
 		shape.force_shapecast_update()
 		for i in range(shape.get_collision_count()):
 			var collider: Node3D = shape.get_collider(i)
@@ -1323,6 +1340,14 @@ func _on_roulette_stop() -> void:
 
 
 func _process(delta: float) -> void:
+	if Input.is_action_just_pressed("_F9"):
+		if %Items.get_children():
+			%Items.get_child(0).queue_free()
+		else:
+			var rs: RunningShoes = load("res://scenes/items/RunningShoes/running_shoes.tscn").instantiate()
+			rs.parent = self
+			%Items.add_child(rs)
+	
 	# UI Stuff
 	#if is_multiplayer_authority() and not is_cpu:
 		#is_player = true
@@ -1358,6 +1383,18 @@ func water_exited(area: Area3D) -> void:
 	water_bodies.erase(area)
 	if water_bodies.size() == 0:
 		in_water = false
+
+func hide_kart() -> void:
+	%Kart.visible = false
+	%Wheels.visible = false
+	%DriftParticles.visible = false
+	%ExhaustParticles.visible = false
+
+func show_kart() -> void:
+	%Kart.visible = true
+	%Wheels.visible = true
+	%DriftParticles.visible = true
+	%ExhaustParticles.visible = true
 
 
 func get_replay_state() -> Dictionary:
@@ -1460,7 +1497,7 @@ func apply_state(state: Dictionary) -> void:
 	network_path.normal = network_path.transform.basis.x
 	if user_id in world.pings:
 		network_path.global_position += network_path.transform.basis.x * state.cur_speed * (1 + ((world.pings[user_id] + world.pings[world.player_user_id])/1000)) * 0.35
-	network_path.next_points = [Util.get_path_point_ahead_of_player(world, self)]
+	network_path.next_points = [Util.get_path_point_ahead_of_player(self)]
 	network_path.prev_points = network_path.next_points[0].prev_points
 	cpu_target_offset = Vector3.ZERO
 	moved_to_next = false
