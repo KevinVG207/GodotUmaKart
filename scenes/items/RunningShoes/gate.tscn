@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://btigadr63ls26"]
+
+[ext_resource type="PackedScene" uid="uid://cwws1emkikujg" path="res://assets/items/gate/gate.blend" id="1_qhyc4"]
+
+[node name="Gate" instance=ExtResource("1_qhyc4")]

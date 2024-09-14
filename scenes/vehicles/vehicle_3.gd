@@ -52,7 +52,8 @@ var input_updown: float = 0
 @export var list_image: CompressedTexture2D
 @export var list_order: int = 0
 @export var icon: CompressedTexture2D
-@export var max_speed: float = 25
+@export var default_max_speed: float = 25
+@onready var max_speed: float = default_max_speed
 @onready var cur_max_speed := max_speed
 @onready var min_speed_for_detach := max_speed / 4
 @export var reverse_multi: float = 0.5
@@ -1342,7 +1343,7 @@ func _on_roulette_stop() -> void:
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("_F9"):
 		if %Items.get_children():
-			%Items.get_child(0).queue_free()
+			%Items.get_child(0).remove()
 		else:
 			var rs: RunningShoes = load("res://scenes/items/RunningShoes/running_shoes.tscn").instantiate()
 			rs.parent = self
@@ -1364,7 +1365,7 @@ func _process(delta: float) -> void:
 		var spd := linear_velocity.length()
 		UI.race_ui.update_speed(spd)
 		
-		if cur_speed > max_speed:
+		if cur_speed > default_max_speed:
 			extra_fov = (cur_speed - max_speed) * 0.3
 		else:
 			extra_fov = 0.0

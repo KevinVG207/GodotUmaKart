@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=46 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
@@ -12,7 +12,6 @@
 [ext_resource type="Script" path="res://assets/vehicles/wheel.gd" id="8_4bboh"]
 [ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_hxerb"]
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_be71b"]
-[ext_resource type="PackedScene" uid="uid://bhpncku0ylcxx" path="res://scenes/items/RunningShoes/running_shoes.tscn" id="13_6jmvf"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -1249,8 +1248,6 @@ draw_pass_1 = SubResource("QuadMesh_ebj2w")
 
 [node name="Items" type="Node3D" parent="."]
 unique_name_in_owner = true
-
-[node name="RunningShoes" parent="Items" instance=ExtResource("13_6jmvf")]
 
 [node name="StillTurboTimer" type="Timer" parent="."]
 process_callback = 0

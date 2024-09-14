@@ -1,12 +1,263 @@
-[gd_scene load_steps=3 format=3 uid="uid://bhpncku0ylcxx"]
+[gd_scene load_steps=14 format=3 uid="uid://bhpncku0ylcxx"]
 
 [ext_resource type="Script" path="res://scenes/items/RunningShoes/running_shoes.gd" id="1_8no7a"]
+[ext_resource type="PackedScene" uid="uid://cwws1emkikujg" path="res://assets/items/gate/gate.blend" id="2_fv2r1"]
+[ext_resource type="Texture2D" uid="uid://c66bdprwoihkr" path="res://assets/particles/kenney/smoke_07_strong.png" id="3_q0mvr"]
+
+[sub_resource type="Curve" id="Curve_slbu8"]
+_data = [Vector2(0, 1), 0.0, -2.10057, 0, 0, Vector2(1, 0), -0.0526204, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_c6lmt"]
+curve = SubResource("Curve_slbu8")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_oscfy"]
+emission_shape = 2
+emission_sphere_radius = 2.0
+angle_min = 1.07288e-05
+angle_max = 360.0
+direction = Vector3(0, 1, 0)
+spread = 90.0
+initial_velocity_min = 0.5
+initial_velocity_max = 1.5
+gravity = Vector3(0, 0, 0)
+scale_curve = SubResource("CurveTexture_c6lmt")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ugt0v"]
+transparency = 1
+shading_mode = 0
+diffuse_mode = 3
+specular_mode = 2
+albedo_texture = ExtResource("3_q0mvr")
+disable_receive_shadows = true
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_7v8tw"]
+material = SubResource("StandardMaterial3D_ugt0v")
+size = Vector2(4, 4)
+
+[sub_resource type="Animation" id="Animation_ksinb"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1.38045, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1.5708, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Flap:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Flap2:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_jqhg0"]
+resource_name = "disappear"
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.2, 0.3, 0.4, 0.7, 0.8, 0.9, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(1.38045, 0, 0), Vector3(0.819406, 0, 0), Vector3(0.0226495, 0, 0), Vector3(-3, 0, 0), Vector3(-4.05199, 0, 0), Vector3(-5.05811, 0, 0), Vector3(-6, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.2, 0.4, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(0.9, 0.9, 0.9), Vector3(0.75, 0.75, 0.75), Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.2),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1.5708, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Flap:rotation")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, -1.5708, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Flap2:rotation")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 1.5708, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_c485k"]
+resource_name = "fall"
+length = 1.1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.4, 0.6, 0.8, 0.9, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(6, 6, 0), Vector3(5.002, 0, 0), Vector3(4.516, 0.5, 0), Vector3(3.471, 0, 0), Vector3(2.09395, 0, 0), Vector3(1.63977, 0, 0), Vector3(1.38045, 0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.3, 0.4, 0.6, 0.7, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 1.5708, 0), Vector3(0.0550651, 1.5708, -0.0274191), Vector3(0.00803027, 1.63731, 0.0468041), Vector3(0, 1.5708, 0), Vector3(0, 1.5708, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0.5, 0.5, 0.5), Vector3(0.9, 0.9, 0.9), Vector3(1, 1, 1), Vector3(1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_crjtl"]
+_data = {
+"RESET": SubResource("Animation_ksinb"),
+"disappear": SubResource("Animation_jqhg0"),
+"fall": SubResource("Animation_c485k")
+}
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8i6yf"]
 radius = 0.421514
 
 [node name="RunningShoes" type="Node3D"]
 script = ExtResource("1_8no7a")
+
+[node name="SwapTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+process_callback = 0
+one_shot = true
+
+[node name="OpenTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+process_callback = 0
+wait_time = 0.25
+one_shot = true
+
+[node name="Poof" type="GPUParticles3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.414999, 0)
+emitting = false
+amount = 32
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_oscfy")
+draw_pass_1 = SubResource("QuadMesh_7v8tw")
+
+[node name="GateContainer" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.543773, 0)
+
+[node name="gate" parent="GateContainer" instance=ExtResource("2_fv2r1")]
+transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 1.38045, 0, 0)
+
+[node name="Ani" type="AnimationPlayer" parent="GateContainer/gate"]
+unique_name_in_owner = true
+libraries = {
+"": SubResource("AnimationLibrary_crjtl")
+}
+autoplay = "fall"
 
 [node name="Colliders" type="Node3D" parent="."]
 
@@ -33,3 +284,8 @@ shape = SubResource("CapsuleShape3D_8i6yf")
 [node name="Collider6" type="CollisionShape3D" parent="Colliders"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -1.09278e-08, 0.5, 0.25)
 shape = SubResource("CapsuleShape3D_8i6yf")
+
+[connection signal="timeout" from="SwapTimer" to="." method="_on_swap_timer_timeout"]
+[connection signal="timeout" from="OpenTimer" to="." method="_on_open_timer_timeout"]
+
+[editable path="GateContainer/gate"]

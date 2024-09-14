@@ -2,6 +2,7 @@ extends Node3D
 class_name RunningShoes
 
 var parent: Vehicle3 = null
+@onready var poof: GPUParticles3D = %Poof
 
 var ani_multi := 2.0
 
@@ -18,6 +19,8 @@ var gravity := Vector3.DOWN
 
 var colliders: Array = []
 
+var open: bool = false
+
 func _ready() -> void:
 	if parent == null:
 		print("ERR: RunningShoes has no parent vehicle!")
@@ -33,8 +36,8 @@ func _ready() -> void:
 		colliders.append(col)
 		col.reparent(parent)
 	
-	parent.cani.play("running_shoes_run")
-	parent.hide_kart()
+	%Ani.play("fall")
+	%SwapTimer.start()
 	
 	if parent.is_player:
 		parent.cpu_target = Util.get_path_point_ahead_of_player(parent)
@@ -42,7 +45,7 @@ func _ready() -> void:
 	parent.is_being_controlled = true
 	
 	max_speed = parent.max_speed
-	parent.max_speed = 45
+	parent.max_speed = 0
 	
 	initial_accel = parent.initial_accel
 	parent.initial_accel *= 1.5
@@ -75,7 +78,7 @@ func before_update(_delta: float) -> void:
 	if parent.is_player:
 		parent.is_cpu = true
 	
-	parent.max_speed = 45
+	parent.max_speed = 40 if open else 0
 	parent.initial_accel = initial_accel * 1.5
 	parent.max_turn_speed = max_turn_speed * 2
 	parent.turn_accel = turn_accel * 4
@@ -86,8 +89,9 @@ func before_update(_delta: float) -> void:
 	return
 
 func after_update(_delta: float):
-	parent.cani.speed_scale = (parent.cur_speed / parent.max_speed) * ani_multi
-	parent.hide_kart()
+	if open:
+		parent.cani.speed_scale = (parent.cur_speed / parent.max_speed) * ani_multi
+		parent.hide_kart()
 
 func _exit_tree() -> void:
 	if parent == null:
@@ -116,3 +120,28 @@ func _exit_tree() -> void:
 	parent.air_decel = air_decel
 	parent.default_grip = default_grip
 	parent.gravity = gravity
+
+func remove() -> void:
+	poof.finished.connect(func() -> void: poof.queue_free())
+	poof.reparent(parent, true)
+	poof.emitting = true
+	call_deferred("queue_free")
+
+
+func _on_open_timer_timeout() -> void:
+	open = true
+	%Ani.play("disappear")
+	%Ani.animation_finished.connect(_on_disappeared)
+
+func _on_disappeared(_anim_name: String) -> void:
+	%GateContainer.visible = false
+
+
+func _on_swap_timer_timeout() -> void:
+	poof.emitting = true
+	call_deferred("swap")
+
+func swap() -> void:
+	parent.cani.play("running_shoes_run")
+	parent.hide_kart()
+	%OpenTimer.start()
