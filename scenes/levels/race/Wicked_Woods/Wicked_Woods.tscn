@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_02dhb"]
 [ext_resource type="Script" path="res://scenes/control/Water.gd" id="3_6mpm6"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_6gkg7"]
+[ext_resource type="PackedScene" uid="uid://bhpncku0ylcxx" path="res://scenes/items/RunningShoes/running_shoes.tscn" id="6_7pr3j"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="6_x6qyg"]
-[ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="7_0b1q8"]
 [ext_resource type="ArrayMesh" uid="uid://dtyvvgshfl4xh" path="res://assets/course/wicked-woods/map_mesh.tres" id="8_torjd"]
 [ext_resource type="PackedScene" uid="uid://b70opqruhfce3" path="res://scenes/control/path/Split.tscn" id="9_nmbxv"]
 
@@ -102,7 +102,7 @@ transform = Transform3D(-0.736003, 0, -0.676979, 0, 1, 0, 0.676979, 0, -0.736003
 
 [node name="ItemPickup2" parent="Objects" index="19" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.29563, 76.6755, 51.9035)
-guaranteed_item = ExtResource("7_0b1q8")
+guaranteed_item = ExtResource("6_7pr3j")
 
 [node name="Checkpoints" parent="." index="2"]
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)

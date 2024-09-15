@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="7_gntdf"]
 
 [node name="1test" instance=ExtResource("1_2vsv6")]
-lap_count = 1
+lap_count = 10
 
 [node name="Course" parent="." index="0"]
 metadata/_edit_group_ = true
@@ -47,23 +47,29 @@ is_key = true
 [node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_864dc")]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)
 
-[node name="EnemyPathPoints" parent="." index="3"]
-visible = false
-
 [node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 25.6578, 0.00012207, -1.62639)
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 24.4533, 0.00012207, -1.62639)
 
 [node name="EnemyPath4" parent="EnemyPathPoints" index="1" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 4.23475, -0.00012207, -24.0745)
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 16.8846, -0.00012207, -16.6743)
 
 [node name="EnemyPath7" parent="EnemyPathPoints" index="2" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -23.5435, 0.00012207, -7.67405)
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0.378935, 0.00012207, -23.835)
 
 [node name="EnemyPath10" parent="EnemyPathPoints" index="3" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -11.6532, -0.000244141, 21.8467)
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -17.6754, -0.000244141, -15.973)
 
 [node name="EnemyPath13" parent="EnemyPathPoints" index="4" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 20.1752, 0.00012207, 15.6837)
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -24.1485, 0.00012207, -0.0945807)
+
+[node name="EnemyPath2" parent="EnemyPathPoints" index="5" instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -17.2244, 0, 15.5187)
+
+[node name="EnemyPath3" parent="EnemyPathPoints" index="6" instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -0.121189, 0.000244141, 23.9498)
+
+[node name="EnemyPath5" parent="EnemyPathPoints" index="7" instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 18.7887, 0.000244141, 14.5551)
 
 [node name="ItemPickup" parent="." index="8" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.7305, 1.90735e-06, -19.2348)

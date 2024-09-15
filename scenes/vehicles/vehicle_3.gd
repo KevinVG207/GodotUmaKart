@@ -36,7 +36,7 @@ var cpu_target: EnemyPath = null
 var cpu_target_offset: Vector3 = get_random_target_offset()
 var cur_progress: float = -100000
 
-var item: ItemBase = null
+var item: Node = null
 var can_use_item: bool = false
 var moved_to_next: bool = false
 var catch_up: bool = false
@@ -469,6 +469,9 @@ func cpu_control(delta: float) -> void:
 		var target_quat := network_rot
 		rotation = cur_quat.slerp(target_quat, rot_multi * delta).get_euler()
 	
+	if is_being_controlled:
+		input_brake = false
+	
 	if !is_network:
 		var item_rand := randi_range(0, 900) == 0
 		# if item:
@@ -564,6 +567,10 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	weak_offroad = false
 	floor_normals = []
 	handle_contacts(physics_state)
+	
+	if is_being_controlled:
+		offroad = false
+		weak_offroad = false
 	
 	# Handle respawning
 	handle_respawn()
@@ -857,6 +864,9 @@ func detect_stick() -> void:
 
 
 func handle_walls() -> void:
+	if is_being_controlled:
+		return
+	
 	if wall_contacts.size() > 0:
 		var avg_normal: Vector3 = Vector3.ZERO
 		#var avg_position: Vector3 = Vector3.ZERO
@@ -1193,7 +1203,10 @@ func respawn() -> void:
 		return
 	
 	respawn_stage = 1
-	remove_item()
+	if "remove" in item:
+		item.remove()
+	else:
+		remove_item()
 	$RespawnTimer.start(respawn_time)
 	#world.player_camera.no_move = true
 	if is_player:
@@ -1286,14 +1299,14 @@ func handle_item() -> void:
 	if not item:
 		return
 
-	var new_item: ItemBase = item.use(self, world)
+	var new_item = item.use(self, world)
 	item = new_item
 	
 	if not item:
 		remove_item()
 	else:
 		can_use_item = true
-		if is_player and !is_cpu:
+		if is_player and !finished:
 			UI.race_ui.set_item_texture(item.texture)
 
 func remove_item() -> void:
@@ -1319,9 +1332,15 @@ func get_item(guaranteed_item: PackedScene = null) -> void:
 	else:
 		var item_rank: int = round(remap(rank, 0, world.players_dict.size(), 0, Global.player_count))
 		item = Global.item_dist[item_rank].pick_random().instantiate()
-	world.add_child(item)
+	if "parent" in item:
+		item.parent = self
+	if not "local" in item or not item.local:
+		world.add_child(item)
+	else:
+		%Items.add_child(item)
+	
 	$ItemRouletteTimer.start(4)
-	if is_player and !is_cpu:
+	if is_player and !finished:
 		UI.race_ui.start_roulette()
 
 
@@ -1330,7 +1349,7 @@ func _on_item_roulette_timer_timeout() -> void:
 		print("Error: Roulette stopped but no item assigned!")
 		return
 	
-	if is_cpu or is_network:
+	if !is_player or is_network:
 		can_use_item = true
 		return
 	
@@ -1342,12 +1361,7 @@ func _on_roulette_stop() -> void:
 
 func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("_F9"):
-		if %Items.get_children():
-			%Items.get_child(0).remove()
-		else:
-			var rs: RunningShoes = load("res://scenes/items/RunningShoes/running_shoes.tscn").instantiate()
-			rs.parent = self
-			%Items.add_child(rs)
+		get_item(Global.items[-1])
 	
 	# UI Stuff
 	#if is_multiplayer_authority() and not is_cpu:

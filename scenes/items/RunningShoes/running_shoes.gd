@@ -1,10 +1,21 @@
 extends Node3D
 class_name RunningShoes
 
+@export var texture: CompressedTexture2D
+@export var from_pos: int = 1
+@export var to_pos: int = 12
+var local = true
+
 var parent: Vehicle3 = null
 @onready var poof: GPUParticles3D = %Poof
 
+var started := false
+
 var ani_multi := 2.0
+var running_speed: float = 40
+var use_time: float = 15
+var decel_time: float = 3.5
+var decel_safe: float = 0.5
 
 var max_speed := 0.0
 var initial_accel := 0.0
@@ -21,11 +32,23 @@ var colliders: Array = []
 
 var open: bool = false
 
+func use(player: Vehicle3, world: RaceBase) -> RunningShoes:
+	if parent == null:
+		return null
+	if started:
+		return self
+	start()
+	return self
+
 func _ready() -> void:
+	%GateContainer.visible = false
+	
 	if parent == null:
 		print("ERR: RunningShoes has no parent vehicle!")
 		return
-	
+
+func start() -> void:
+	started = true
 	parent.before_update.connect(before_update)
 	parent.after_update.connect(after_update)
 	
@@ -38,6 +61,7 @@ func _ready() -> void:
 	
 	%Ani.play("fall")
 	%SwapTimer.start()
+	%GateContainer.visible = true
 	
 	if parent.is_player:
 		parent.cpu_target = Util.get_path_point_ahead_of_player(parent)
@@ -78,7 +102,7 @@ func before_update(_delta: float) -> void:
 	if parent.is_player:
 		parent.is_cpu = true
 	
-	parent.max_speed = 40 if open else 0
+	parent.max_speed = get_max_speed() if open else 0
 	parent.initial_accel = initial_accel * 1.5
 	parent.max_turn_speed = max_turn_speed * 2
 	parent.turn_accel = turn_accel * 4
@@ -86,11 +110,25 @@ func before_update(_delta: float) -> void:
 	parent.stick_distance = stick_distance * 3
 	parent.stick_speed = stick_speed * 3
 	parent.gravity = gravity * 1.5
+	parent.cpu_target_offset = Vector3.ZERO
 	return
+
+func get_max_speed() -> float:
+	if %UseTimer.is_stopped():
+		return max_speed
+	
+	# running_speed until the decel_time, where it slows down towards max_speed
+	var runtime: float = use_time - %UseTimer.time_left
+	return _get_max_speed(runtime, max_speed, running_speed, use_time, decel_time, decel_safe)
+
+func _get_max_speed(x, a, b, c, d, e) -> float:
+	# Return b until the final d seconds, when it linearly decreases towards a
+	# e is a little safezone at the end where we are guaranteed to be at a
+	return clamp((-(b-a)/(d-e))*(x-c+e)+a, a, b)
 
 func after_update(_delta: float):
 	if open:
-		parent.cani.speed_scale = (parent.cur_speed / parent.max_speed) * ani_multi
+		parent.cani.speed_scale = (parent.cur_speed / running_speed) * ani_multi
 		parent.hide_kart()
 
 func _exit_tree() -> void:
@@ -120,16 +158,19 @@ func _exit_tree() -> void:
 	parent.air_decel = air_decel
 	parent.default_grip = default_grip
 	parent.gravity = gravity
+	parent.cpu_target_offset = parent.get_random_target_offset()
 
 func remove() -> void:
 	poof.finished.connect(func() -> void: poof.queue_free())
 	poof.reparent(parent, true)
 	poof.emitting = true
-	call_deferred("queue_free")
+	if parent != null:
+		parent.call_deferred("remove_item")
 
 
 func _on_open_timer_timeout() -> void:
 	open = true
+	%UseTimer.start(use_time)
 	%Ani.play("disappear")
 	%Ani.animation_finished.connect(_on_disappeared)
 
@@ -145,3 +186,7 @@ func swap() -> void:
 	parent.cani.play("running_shoes_run")
 	parent.hide_kart()
 	%OpenTimer.start()
+
+
+func _on_use_timer_timeout() -> void:
+	remove()

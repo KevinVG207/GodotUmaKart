@@ -38,7 +38,8 @@ var items: Array = [
 	load("res://scenes/items/3carrots.tscn"),
 	load("res://scenes/items/GreenBean.tscn"),
 	load("res://scenes/items/RedBean.tscn"),
-	load("res://scenes/items/Book.tscn")
+	load("res://scenes/items/Book.tscn"),
+	load("res://scenes/items/RunningShoes/running_shoes.tscn")
 ]
 
 var item_dist: Array = []

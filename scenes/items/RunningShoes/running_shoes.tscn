@@ -1,6 +1,7 @@
-[gd_scene load_steps=14 format=3 uid="uid://bhpncku0ylcxx"]
+[gd_scene load_steps=16 format=3 uid="uid://bhpncku0ylcxx"]
 
 [ext_resource type="Script" path="res://scenes/items/RunningShoes/running_shoes.gd" id="1_8no7a"]
+[ext_resource type="Texture2D" uid="uid://3vkb0ad3d77u" path="res://assets/items/2carrots.png" id="2_0sa5c"]
 [ext_resource type="PackedScene" uid="uid://cwws1emkikujg" path="res://assets/items/gate/gate.blend" id="2_fv2r1"]
 [ext_resource type="Texture2D" uid="uid://c66bdprwoihkr" path="res://assets/particles/kenney/smoke_07_strong.png" id="3_q0mvr"]
 
@@ -208,11 +209,53 @@ tracks/2/keys = {
 "values": [Vector3(0, 0, 0), Vector3(0.5, 0.5, 0.5), Vector3(0.9, 0.9, 0.9), Vector3(1, 1, 1), Vector3(1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_he87j"]
+resource_name = "invisible"
+length = 0.001
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(6, 6, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 0,
+"values": []
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_crjtl"]
 _data = {
 "RESET": SubResource("Animation_ksinb"),
 "disappear": SubResource("Animation_jqhg0"),
-"fall": SubResource("Animation_c485k")
+"fall": SubResource("Animation_c485k"),
+"invisible": SubResource("Animation_he87j")
 }
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8i6yf"]
@@ -220,6 +263,8 @@ radius = 0.421514
 
 [node name="RunningShoes" type="Node3D"]
 script = ExtResource("1_8no7a")
+texture = ExtResource("2_0sa5c")
+from_pos = 8
 
 [node name="SwapTimer" type="Timer" parent="."]
 unique_name_in_owner = true
@@ -230,6 +275,11 @@ one_shot = true
 unique_name_in_owner = true
 process_callback = 0
 wait_time = 0.25
+one_shot = true
+
+[node name="UseTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 20.0
 one_shot = true
 
 [node name="Poof" type="GPUParticles3D" parent="."]
@@ -257,7 +307,7 @@ unique_name_in_owner = true
 libraries = {
 "": SubResource("AnimationLibrary_crjtl")
 }
-autoplay = "fall"
+autoplay = "invisible"
 
 [node name="Colliders" type="Node3D" parent="."]
 
@@ -287,5 +337,6 @@ shape = SubResource("CapsuleShape3D_8i6yf")
 
 [connection signal="timeout" from="SwapTimer" to="." method="_on_swap_timer_timeout"]
 [connection signal="timeout" from="OpenTimer" to="." method="_on_open_timer_timeout"]
+[connection signal="timeout" from="UseTimer" to="." method="_on_use_timer_timeout"]
 
 [editable path="GateContainer/gate"]
