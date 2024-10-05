@@ -1203,7 +1203,7 @@ func respawn() -> void:
 		return
 	
 	respawn_stage = 1
-	if "remove" in item:
+	if item and "remove" in item:
 		item.remove()
 	else:
 		remove_item()

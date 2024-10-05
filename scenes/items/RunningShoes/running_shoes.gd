@@ -13,7 +13,7 @@ var started := false
 
 var ani_multi := 2.0
 var running_speed: float = 40
-var use_time: float = 15
+var use_time: float = 10
 var decel_time: float = 3.5
 var decel_safe: float = 0.5
 
