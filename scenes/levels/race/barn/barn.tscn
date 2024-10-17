@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://ds8yepq88e44b"]
+[gd_scene load_steps=10 format=3 uid="uid://ds8yepq88e44b"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_hobqc"]
 [ext_resource type="PackedScene" uid="uid://iebci4q5sshi" path="res://assets/course/barn/barn_course.tscn" id="2_i7jnl"]
 [ext_resource type="ArrayMesh" uid="uid://dssoxbbgik20b" path="res://assets/course/barn/mesh/barn_course_Plane.res" id="2_u1ewi"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_c8nyr"]
+[ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="4_fov4x"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="5_13gyq"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i5d70"]
@@ -47,144 +48,204 @@ visible = false
 material_override = SubResource("ShaderMaterial_kbkix")
 mesh = ExtResource("2_u1ewi")
 
+[node name="DirectionalLight3D" parent="Course" index="1"]
+transform = Transform3D(0.383887, -0.899908, -0.206875, 0.294369, -0.0930809, 0.951148, -0.875201, -0.426031, 0.229172, -15.5561, 248.104, 15.5561)
+
 [node name="barn_course" parent="Course" index="2" instance=ExtResource("2_i7jnl")]
 
+[node name="ItemPickup" parent="Objects" index="0" instance=ExtResource("4_fov4x")]
+transform = Transform3D(0.820282, 0, -0.57196, 0, 1, 0, 0.57196, 0, 0.820282, -14.299, 3.06825, -86.427)
+
+[node name="ItemPickup2" parent="Objects" index="1" instance=ExtResource("4_fov4x")]
+transform = Transform3D(0.820282, 0, -0.57196, 0, 1, 0, 0.57196, 0, 0.820282, -11.6643, 3.06418, -84.2815)
+
+[node name="ItemPickup3" parent="Objects" index="2" instance=ExtResource("4_fov4x")]
+transform = Transform3D(0.820282, 0, -0.57196, 0, 1, 0, 0.57196, 0, 0.820282, -8.85491, 3.0601, -82.2454)
+
+[node name="ItemPickup4" parent="Objects" index="3" instance=ExtResource("4_fov4x")]
+transform = Transform3D(0.820282, 0, -0.57196, 0, 1, 0, 0.57196, 0, 0.820282, -5.98649, 3.0601, -80.3631)
+
+[node name="ItemPickup5" parent="Objects" index="4" instance=ExtResource("4_fov4x")]
+transform = Transform3D(0.820282, 0, -0.57196, 0, 1, 0, 0.57196, 0, 0.820282, -10.4022, 3.15133, -88.1611)
+
+[node name="ItemPickup6" parent="Objects" index="5" instance=ExtResource("4_fov4x")]
+transform = Transform3D(0.820282, 0, -0.57196, 0, 1, 0, 0.57196, 0, 0.820282, -7.54443, 3.18526, -86.4185)
+
+[node name="ItemPickup7" parent="Objects" index="6" instance=ExtResource("4_fov4x")]
+transform = Transform3D(0.820282, 0, -0.57196, 0, 1, 0, 0.57196, 0, 0.820282, -4.61693, 3.21761, -84.6411)
+
+[node name="ItemPickup8" parent="Objects" index="7" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.885572, 0, 0.464502, 0, 1, 0, -0.464502, 0, -0.885572, -146.271, 2.29049, -185.99)
+
+[node name="ItemPickup9" parent="Objects" index="8" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.885572, 0, 0.464502, 0, 1, 0, -0.464502, 0, -0.885572, -142.723, 2.20418, -184.764)
+
+[node name="ItemPickup10" parent="Objects" index="9" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.885572, 0, 0.464502, 0, 1, 0, -0.464502, 0, -0.885572, -138.917, 2.11251, -183.216)
+
+[node name="ItemPickup11" parent="Objects" index="10" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.885572, 0, 0.464502, 0, 1, 0, -0.464502, 0, -0.885572, -146.013, 2.31698, -182.7)
+
+[node name="ItemPickup12" parent="Objects" index="11" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.885572, 0, 0.464502, 0, 1, 0, -0.464502, 0, -0.885572, -141.755, 2.21261, -181.216)
+
+[node name="ItemPickup13" parent="Objects" index="12" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.885572, 0, 0.464502, 0, 1, 0, -0.464502, 0, -0.885572, -137.691, 2.12667, -179.797)
+
+[node name="ItemPickup14" parent="Objects" index="13" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.134263, 0, -0.990946, 0, 1, 0, 0.990946, 0, -0.134263, -95.4697, 2.29305, 60.9128)
+
+[node name="ItemPickup15" parent="Objects" index="14" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.134263, 0, -0.990946, 0, 1, 0, 0.990946, 0, -0.134263, -96.1353, 2.3005, 64.3202)
+
+[node name="ItemPickup16" parent="Objects" index="15" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.134263, 0, -0.990946, 0, 1, 0, 0.990946, 0, -0.134263, -96.4198, 2.29781, 68.0186)
+
+[node name="ItemPickup17" parent="Objects" index="16" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.134263, 0, -0.990946, 0, 1, 0, 0.990946, 0, -0.134263, -101.209, 2.44344, 62.0917)
+
+[node name="ItemPickup18" parent="Objects" index="17" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.134263, 0, -0.990946, 0, 1, 0, 0.990946, 0, -0.134263, -101.73, 2.44796, 65.6953)
+
+[node name="ItemPickup19" parent="Objects" index="18" instance=ExtResource("4_fov4x")]
+transform = Transform3D(-0.134263, 0, -0.990946, 0, 1, 0, 0.990946, 0, -0.134263, -102.536, 2.46029, 69.6307)
+
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(-0.864941, 0, -0.501873, 0, 1, 0, 0.501873, 0, -0.864941, -12.8888, 0.129162, -26.4862)
+transform = Transform3D(-0.886761, 0, -0.462229, 0, 1, 0, 0.462229, 0, -0.886761, -10.1789, 4.1096, -20.4027)
 is_key = true
 
 [node name="Checkpoint11" parent="Checkpoints" index="1" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(-0.995197, 0, 0.0978956, 0, 1, 0, -0.0978956, 0, -0.995197, -22.1639, 0.129162, -54.9014)
+transform = Transform3D(-0.995197, 0, 0.0978956, 0, 1, 0, -0.0978956, 0, -0.995197, -22.1639, 4.1096, -54.9014)
 is_key = true
 
 [node name="Checkpoint2" parent="Checkpoints" index="2" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(-0.982041, 0, -0.188667, 0, 1, 0, 0.188667, 0, -0.982041, 8.96171, 0.578618, -132.114)
+transform = Transform3D(-0.982041, 0, -0.188667, 0, 1, 0, 0.188667, 0, -0.982041, 8.96171, 4.55906, -132.114)
 
 [node name="Checkpoint3" parent="Checkpoints" index="3" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(0.46376, 0, -0.885961, 0, 1, 0, 0.885961, 0, 0.46376, -111.211, 0.578618, -207.497)
+transform = Transform3D(0.46376, 0, -0.885961, 0, 1, 0, 0.885961, 0, 0.46376, -111.211, 4.55906, -207.497)
 is_key = true
 
 [node name="Checkpoint4" parent="Checkpoints" index="4" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(0.996078, 0, 0.0884772, 0, 1, 0, -0.0884772, 0, 0.996078, -152.641, 0.578618, -150.104)
+transform = Transform3D(0.996078, 0, 0.0884772, 0, 1, 0, -0.0884772, 0, 0.996078, -152.641, 4.55906, -150.104)
 
 [node name="Checkpoint5" parent="Checkpoints" index="5" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(0.88685, 0, -0.462058, 0, 1, 0, 0.462058, 0, 0.88685, -171.831, 0.578618, -70.0781)
+transform = Transform3D(0.88685, 0, -0.462058, 0, 1, 0, 0.462058, 0, 0.88685, -171.831, 4.55906, -70.0781)
 
 [node name="Checkpoint6" parent="Checkpoints" index="6" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(0.991806, 0, -0.127757, 0, 1, 0, 0.127757, 0, 0.991806, -221.235, 0.578618, -12.0999)
+transform = Transform3D(0.991806, 0, -0.127757, 0, 1, 0, 0.127757, 0, 0.991806, -221.235, 4.55906, -12.0999)
 
 [node name="Checkpoint7" parent="Checkpoints" index="7" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(0.519981, 0, 0.854178, 0, 1, 0, -0.854178, 0, 0.519981, -187.754, 0.578618, 43.0202)
+transform = Transform3D(0.519981, 0, 0.854178, 0, 1, 0, -0.854178, 0, 0.519981, -187.754, 4.55906, 43.0202)
 is_key = true
 
 [node name="Checkpoint8" parent="Checkpoints" index="8" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(0.073064, 0, 0.997327, 0, 1, 0, -0.997327, 0, 0.073064, -118.752, 0.578618, 63.0267)
+transform = Transform3D(0.073064, 0, 0.997327, 0, 1, 0, -0.997327, 0, 0.073064, -118.752, 4.55906, 63.0267)
 
 [node name="Checkpoint9" parent="Checkpoints" index="9" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(0.073064, 0, 0.997327, 0, 1, 0, -0.997327, 0, 0.073064, -24.4354, 0.578618, 72.0092)
+transform = Transform3D(0.073064, 0, 0.997327, 0, 1, 0, -0.997327, 0, 0.073064, -24.4354, 4.55906, 72.0092)
 
 [node name="Checkpoint10" parent="Checkpoints" index="10" instance=ExtResource("3_c8nyr")]
-transform = Transform3D(-0.961016, 0, -0.276493, 0, 1, 0, 0.276493, 0, -0.961016, 15.986, 0.578618, 37.304)
+transform = Transform3D(-0.961016, 0, -0.276493, 0, 1, 0, 0.276493, 0, -0.961016, 15.986, 4.55906, 37.304)
 is_key = true
 
 [node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.1185, -0.0789011, -37.5155)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.1185, 3.58883, -37.5155)
 
 [node name="EnemyPath2" parent="EnemyPathPoints" index="1" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.6645, 0.758303, -61.3906)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.6645, 4.42604, -61.3906)
 
 [node name="EnemyPath3" parent="EnemyPathPoints" index="2" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.87569, 0.269533, -88.2085)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.87569, 3.93727, -88.2085)
 
 [node name="EnemyPath4" parent="EnemyPathPoints" index="3" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67638, 1.09107, -109.05)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.67638, 4.7588, -109.05)
 
 [node name="EnemyPath5" parent="EnemyPathPoints" index="4" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.13992, 0.437136, -132.459)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.13992, 4.10487, -132.459)
 
 [node name="EnemyPath6" parent="EnemyPathPoints" index="5" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.50448, -0.0786112, -153.55)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.50448, 3.58912, -153.55)
 
 [node name="EnemyPath7" parent="EnemyPathPoints" index="6" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.1458, 1.56774, -167.977)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.1458, 5.23547, -167.977)
 
 [node name="EnemyPath8" parent="EnemyPathPoints" index="7" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.2602, 6.1816, -175.938)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.2602, 9.84933, -175.938)
 
 [node name="EnemyPath9" parent="EnemyPathPoints" index="8" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75.4244, -1.07953, -196.722)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -75.4244, 2.5882, -196.722)
 
 [node name="EnemyPath10" parent="EnemyPathPoints" index="9" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -102.487, -1.42785, -207.109)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -102.766, 2.23988, -206.83)
 
 [node name="EnemyPath11" parent="EnemyPathPoints" index="10" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -125.161, -1.40796, -201.662)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -125.579, 2.25977, -201.941)
 
 [node name="EnemyPath12" parent="EnemyPathPoints" index="11" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -143.467, -0.707472, -179.199)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -143.467, 2.96026, -179.199)
 
 [node name="EnemyPath13" parent="EnemyPathPoints" index="12" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -153.09, -1.08829, -147.973)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -153.09, 2.57944, -147.973)
 
 [node name="EnemyPath14" parent="EnemyPathPoints" index="13" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -152.479, -1.30623, -124.642)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -147.513, 2.3615, -125.695)
 
 [node name="EnemyPath15" parent="EnemyPathPoints" index="14" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -153.236, -1.16443, -105.075)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -149.415, 2.5033, -103.403)
 
 [node name="EnemyPath16" parent="EnemyPathPoints" index="15" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -161.738, -0.595053, -87.25)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -158.753, 3.07268, -84.5038)
 
 [node name="EnemyPath17" parent="EnemyPathPoints" index="16" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -173.892, -0.0824717, -65.8108)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -173.892, 3.58526, -65.8108)
 
 [node name="EnemyPath18" parent="EnemyPathPoints" index="17" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185.349, -0.0788935, -48.6619)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185.349, 3.58884, -48.6619)
 
 [node name="EnemyPath19" parent="EnemyPathPoints" index="18" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -197.544, -0.208502, -30.6093)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -197.544, 3.45923, -30.6093)
 
 [node name="EnemyPath20" parent="EnemyPathPoints" index="19" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -212.631, -1.03213, -19.5049)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -212.631, 2.6356, -19.5049)
 
 [node name="EnemyPath21" parent="EnemyPathPoints" index="20" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -220.885, -1.47436, -6.7742)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -220.885, 2.19337, -6.7742)
 
 [node name="EnemyPath22" parent="EnemyPathPoints" index="21" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -216.432, -1.55589, 10.8589)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -216.432, 2.11184, 10.8589)
 
 [node name="EnemyPath23" parent="EnemyPathPoints" index="22" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -206.557, -1.84192, 27.6741)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -206.557, 1.82581, 27.6741)
 
 [node name="EnemyPath24" parent="EnemyPathPoints" index="23" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -190.607, -1.94543, 40.9208)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -190.607, 1.7223, 40.9208)
 
 [node name="EnemyPath25" parent="EnemyPathPoints" index="24" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -164.384, -0.0382059, 51.1937)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -164.384, 3.62953, 51.1937)
 
 [node name="EnemyPath26" parent="EnemyPathPoints" index="25" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114.838, -0.144407, 62.3547)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -114.838, 3.52333, 62.3547)
 
 [node name="EnemyPath27" parent="EnemyPathPoints" index="26" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -92.4002, -0.769651, 66.1394)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -92.4002, 2.89808, 66.1394)
 
 [node name="EnemyPath28" parent="EnemyPathPoints" index="27" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.5817, -0.782427, 68.9519)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.5817, 2.88531, 68.9519)
 
 [node name="EnemyPath29" parent="EnemyPathPoints" index="28" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5455, -0.782437, 71.3079)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.5455, 2.8853, 71.3079)
 
 [node name="EnemyPath30" parent="EnemyPathPoints" index="29" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.03706, -0.0723856, 66.0106)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.03706, 3.59535, 66.0106)
 
 [node name="EnemyPath31" parent="EnemyPathPoints" index="30" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.6574, 1.69678, 47.578)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.6574, 5.36451, 47.578)
 
 [node name="EnemyPath32" parent="EnemyPathPoints" index="31" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.45, 0.620192, 26.6778)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.45, 4.28792, 26.6778)
 
 [node name="EnemyPath33" parent="EnemyPathPoints" index="32" instance=ExtResource("5_13gyq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.514328, -0.0788782, 2.03068)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.514328, 3.58885, 2.03068)
 
-[node name="MapCamera" parent="." index="11"]
+[node name="MapCamera" parent="." index="12"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -147.708, 1000, -85.2142)

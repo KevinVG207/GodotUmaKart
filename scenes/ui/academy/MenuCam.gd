@@ -20,6 +20,7 @@ var opacity: float:
 
 func _ready():
 	opacity = 0.0
+	plane.mesh.material.albedo_texture = viewport.get_texture()
 
 func _process(_delta):
 	var view_rect: Rect2 = get_viewport().get_visible_rect()
@@ -38,9 +39,9 @@ func _process(_delta):
 	
 	menu_container.scale = Vector2(true_scale_multi, true_scale_multi)
 	
-	plane.mesh.material.albedo_texture = viewport.get_texture()
-
-	plane.global_position = global_position + transform.basis.z * -distance
+	plane.global_position = global_position - transform.basis.z * distance
+	
+	#plane.mesh.material.albedo_texture = viewport.get_texture()
 	
 	#plane.transform = transform
 	#plane.translate(Vector3(0, 0, distance))
@@ -48,9 +49,6 @@ func _process(_delta):
 
 func _on_area_3d_input_event(_camera, event: InputEvent, _position, _normal, _shape_idx):
 	viewport.handle_input_locally = true
-	#event.position *= scale_multi
-	#event.global_position = event.position
-	print("aaaa")
 	viewport.push_input(event, true)
 
 func focus():

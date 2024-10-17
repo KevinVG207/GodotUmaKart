@@ -13,9 +13,10 @@ var started := false
 
 var ani_multi := 2.0
 var running_speed: float = 40
-var use_time: float = 10
+var use_time: float = 15
 var decel_time: float = 3.5
 var decel_safe: float = 0.5
+var start_speed: float = 5.0
 
 var max_speed := 0.0
 var initial_accel := 0.0
@@ -27,6 +28,7 @@ var stick_speed := 0.0
 var default_grip := 0.0
 var air_decel := 0.0
 var gravity := Vector3.DOWN
+var weight := 0.0
 
 var colliders: Array = []
 
@@ -69,7 +71,7 @@ func start() -> void:
 	parent.is_being_controlled = true
 	
 	max_speed = parent.max_speed
-	parent.max_speed = 0
+	parent.max_speed = start_speed
 	
 	initial_accel = parent.initial_accel
 	parent.initial_accel *= 1.5
@@ -97,12 +99,15 @@ func start() -> void:
 	
 	gravity = parent.gravity
 	parent.gravity *= 1.5
+	
+	weight = parent.weight;
+	parent.weight *= 3
 
 func before_update(_delta: float) -> void:
 	if parent.is_player:
 		parent.is_cpu = true
 	
-	parent.max_speed = get_max_speed() if open else 0
+	parent.max_speed = get_max_speed() if open else start_speed
 	parent.initial_accel = initial_accel * 1.5
 	parent.max_turn_speed = max_turn_speed * 2
 	parent.turn_accel = turn_accel * 4
@@ -110,6 +115,7 @@ func before_update(_delta: float) -> void:
 	parent.stick_distance = stick_distance * 3
 	parent.stick_speed = stick_speed * 3
 	parent.gravity = gravity * 1.5
+	parent.weight = weight * 3
 	parent.cpu_target_offset = Vector3.ZERO
 	return
 
@@ -159,6 +165,7 @@ func _exit_tree() -> void:
 	parent.default_grip = default_grip
 	parent.gravity = gravity
 	parent.cpu_target_offset = parent.get_random_target_offset()
+	parent.weight = weight
 
 func remove() -> void:
 	poof.finished.connect(func() -> void: poof.queue_free())

@@ -283,7 +283,6 @@ func _process(delta: float) -> void:
 		if !player_camera.target and players_dict:
 			player_camera.target = players_dict.values()[0]
 			player_camera.instant = true
-			UI.end_scene_change()
 		
 		var spectator_index = players_dict.values().find(player_camera.target)
 		if spectator_index > -1:
@@ -509,7 +508,6 @@ func _physics_process(_delta):
 		STATE_CAN_READY:
 			change_state(STATE_READY_FOR_START, send_ready)
 		STATE_COUNTDOWN:
-			UI.end_scene_change()
 			if Global.MODE1 == Global.MODE1_ONLINE:
 				$CountdownTimer.start(3.0)
 			else:
@@ -835,12 +833,15 @@ func join():
 	setup_vehicles()
 	Network.next_match_data = {}
 	if Global.MODE1 == Global.MODE1_OFFLINE:
+		UI.end_scene_change()
 		state = STATE_COUNTDOWN
 		return
 
 	var res: bool = await Network.join_match(Network.ready_match)
 	
 	Network.socket.received_match_state.connect(_on_match_state)
+	UI.end_scene_change()
+	
 	if not res or not Network.cur_match:
 		# Disconnect functions
 		print("ERR: Could not connect to race")
@@ -857,7 +858,6 @@ func join():
 
 func send_ready():
 	var res: bool = await Network.send_match_state(raceOp.CLIENT_READY, {})
-	UI.end_scene_change()
 	
 	if not res:
 		state = STATE_DISCONNECT

@@ -64,6 +64,7 @@ func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
 
 func setup_items() -> void:
+	print("Setting up items...")
 	item_dist.clear()
 	for _i in range(player_count):
 		item_dist.append([])
@@ -71,11 +72,14 @@ func setup_items() -> void:
 	for item: PackedScene in items:
 		var instance = item.instantiate()
 		item_tex.append(instance.texture)
-		for i in range(instance.from_pos-1, instance.to_pos):
+		var new_from: int = ceil(remap(instance.from_pos, 1, 12, 1, player_count))
+		var new_to: int = ceil(remap(instance.to_pos, 1, 12, 1, player_count))
+		print(instance.name, " ", new_from, " ", new_to)
+		for i in range(new_from-1, new_to):
 			if i < player_count:
 				item_dist[i].append(item)
 		instance.queue_free()
-	
+
 	UI.race_ui.setup()
 
 #func _ready():
