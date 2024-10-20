@@ -141,6 +141,9 @@ func _exit_tree() -> void:
 	if parent == null:
 		return
 	
+	if !started:
+		return
+	
 	if parent.is_player:
 		parent.is_cpu = false
 	

@@ -473,9 +473,7 @@ func cpu_control(delta: float) -> void:
 		input_brake = false
 	
 	if !is_network:
-		var item_rand := randi_range(0, 900) == 0
-		# if item:
-		# 	print(can_use_item, " ", item, " ", item_rand)
+		var item_rand: bool = randi_range(0, 900) == 0
 		if !finished and can_use_item and item and item_rand:
 			input_item = true
 			input_item_just = true
@@ -768,14 +766,24 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	if rest_vel.length() > terminal_velocity:
 		rest_vel = rest_vel.normalized() * terminal_velocity
 	
+	# TODO: Debug the causes of infinite velocity
+	if !prop_vel.is_finite():
+		print("PANIC: " + username + " Prop vel infinite! Setting to 0")
+		prop_vel = Vector3.ZERO
+	if !rest_vel.is_finite():
+		print("PANIC: " + username + " Rest vel is infinite! Setting to 0")
+		rest_vel = Vector3.ZERO
+	
 	linear_velocity = prop_vel + rest_vel
+	
+	if !linear_velocity.is_finite():
+		print("PANIC: " + username + " Lin_vel is infinite! Setting to 0")
+		linear_velocity = Vector3.ZERO
+	
 	prev_vel = linear_velocity
 	angular_velocity = Vector3.ZERO
-
-	# if is_player:
-	# 	print(grounded)
-
-	# grounded = false
+	
+	handle_item()
 	
 	after_update.emit(delta)
 	
@@ -784,8 +792,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	prev_prop_vel = prop_vel
 	prev_rest_vel = rest_vel
 	prev_grounded = grounded
-	#print("Grounded: ", grounded)
-	#prev_rotation = rotation
+
 
 func raycast_floor_below() -> Array:
 	var normals: Array = []
@@ -805,8 +812,7 @@ func idle_rotate(delta: float) -> void:
 		rotation_degrees.x = move_toward(rotation_degrees.x, 0, 6 * delta)
 	#var floor_below = Util.raycast_for_group(world.space_state, transform.origin, transform.origin + transform.basis.y * -1, "floor", [self])
 	var below_normals := raycast_floor_below()
-	#if is_player:
-		#print(len(floor_normals))
+	
 	if not grounded and (!in_hop or !below_normals):
 		rotation_degrees.z = move_toward(rotation_degrees.z, 0, 30 * delta)
 
@@ -832,14 +838,11 @@ func idle_rotate(delta: float) -> void:
 		prop_vel = prop_vel.normalized().slerp(new_prop_vel.normalized(), along_ground_multi) * prop_vel.length()
 		along_ground_multi -= along_ground_dec * delta
 		along_ground_multi = clamp(along_ground_multi, 0.0, 1.0)
-		# print(angle_to_ground, " ", along_ground_multi)
+
 		
 		if cur_speed >= min_speed_for_detach and angle_to_ground >= min_angle_to_detach:
-			#if is_player:
-				#print("Steep snap!")
 			bounce_frames += 1
 			in_bounce = true
-			# print("Detach")
 			return
 		
 		# Rotate the vehicle to match the ground.
@@ -870,9 +873,7 @@ func handle_walls() -> void:
 	if wall_contacts.size() > 0:
 		var avg_normal: Vector3 = Vector3.ZERO
 		#var avg_position: Vector3 = Vector3.ZERO
-		# print("===")
 		for wall: Dictionary in wall_contacts:
-			# print(wall["normal"])
 			avg_normal += wall["normal"]
 			#avg_position += wall["position"]
 		avg_normal /= wall_contacts.size()
@@ -896,10 +897,8 @@ func handle_walls() -> void:
 		if dp < 0.25 or (dp < 0 and bonk):
 			# Get the component of the linear velocity that is perpendicular to the wall
 			var perp_vel := prev_frame_pre_sim_vel.project(avg_normal).length()
-			#Debug.print(perp_vel)
 			var new_max_speed: float = (1 - abs(dp)) * cur_max_speed
 			if perp_vel > min_bounce_speed:
-				# print("Bounce ", bounce_ratio)
 				# prop_vel = prop_vel.bounce(avg_normal.normalized()) * bounce_ratio
 				rest_vel = (prop_vel + rest_vel).bounce(avg_normal.normalized()) * bounce_ratio
 				prop_vel = Vector3.ZERO
@@ -918,7 +917,6 @@ func handle_walls() -> void:
 					prop_vel = prop_vel.normalized() * new_max_speed
 					prev_prop_vel = prop_vel
 				cur_speed = clamp(cur_speed, -new_max_speed, new_max_speed)
-			# print("cur_speed: ", cur_speed)
 
 func handle_contacts(physics_state: PhysicsDirectBodyState3D) -> void:
 	for i in range(physics_state.get_contact_count()):
@@ -952,8 +950,6 @@ func handle_contacts(physics_state: PhysicsDirectBodyState3D) -> void:
 			if in_trick:
 				in_trick = false
 				trick_boost_timer.start(trick_boost_duration)
-				#if is_player:
-					#Debug.print(["Starting trick boost", trick_boost_timer])
 				
 		
 		if collider.is_in_group("boost"):
@@ -1005,7 +1001,6 @@ func handle_contacts(physics_state: PhysicsDirectBodyState3D) -> void:
 		floor_normal = avg_normal.normalized()
 
 func get_grounded_vel(delta: float) -> Vector3:
-	#print(is_accel, is_brake, steering)
 	var hop_vel := Vector3.ZERO
 	
 	if input_accel and input_brake:
@@ -1027,13 +1022,11 @@ func get_grounded_vel(delta: float) -> Vector3:
 				# Do miniturbo.
 				if grounded and not still_turbo_ready and $StillTurboTimer.is_stopped():
 					$StillTurboTimer.start()
-					#Debug.print("Start building up miniturbo")
 	else:
 		if input_accel:
 			if still_turbo_ready:
 				still_turbo_ready = false
 				# Perform miniturbo.
-				#Debug.print("Performing miniturbo")
 				small_boost_timer.start(small_boost_duration)
 				
 			cur_speed += get_accel_speed(delta)
@@ -1046,10 +1039,8 @@ func get_grounded_vel(delta: float) -> Vector3:
 		
 		if not $StillTurboTimer.is_stopped():
 			$StillTurboTimer.stop()
-			#Debug.print("Stopped building up miniturbo")
 		if still_turbo_ready:
 			still_turbo_ready = false
-			#Debug.print("Cancelled miniturbo")
 	
 	# Apply boosts
 	cur_speed += get_boost_speed(delta)
@@ -1136,7 +1127,6 @@ func get_boost_speed(delta: float) -> float:
 	return 0
 
 func _on_still_turbo_timer_timeout() -> void:
-	#Debug.print("Miniturbo ready")
 	still_turbo_ready = true
 
 func handle_vehicle_collisions() -> void:
@@ -1169,11 +1159,6 @@ func handle_vehicle_collisions() -> void:
 
 		var my_weight_ratio: float = their_weight / my_weight
 		var their_weight_ratio: float = my_weight / their_weight
-		
-		#if is_player:
-			#print("weight")
-			#print(my_weight, their_weight)
-			#print(my_weight_ratio, their_weight_ratio)
 
 		var my_force: float = push_force * my_weight_ratio
 		var their_force: float = push_force * their_weight_ratio
@@ -1192,6 +1177,8 @@ func apply_push(force: Vector3, vehicle: Vehicle3) -> void:
 	collided_with[vehicle] = frame + 10
 
 	rest_vel += force
+	if !force.is_finite():
+		print(username, " pushed with force ", force.length())
 
 
 
@@ -1316,6 +1303,7 @@ func remove_item() -> void:
 	can_use_item = false
 	if is_player:
 		UI.race_ui.hide_roulette()
+	$ItemRouletteTimer.stop()
 
 func get_item(guaranteed_item: PackedScene = null) -> void:
 	if is_network:
@@ -1368,7 +1356,6 @@ func _process(delta: float) -> void:
 		#is_player = true
 	handle_input()
 	handle_particles()
-	handle_item()
 	
 	if is_player:
 		# Update alerts
