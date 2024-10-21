@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=47 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://assets/vehicles/wheel.gd" id="8_4bboh"]
 [ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_hxerb"]
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_be71b"]
+[ext_resource type="PackedScene" uid="uid://kbseqbudkntg" path="res://scenes/vehicles/vehicle_audio.tscn" id="13_makil"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -1245,6 +1246,9 @@ lifetime = 0.2
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_hs8oo")
 draw_pass_1 = SubResource("QuadMesh_ebj2w")
+
+[node name="VehicleAudio" parent="Visual" instance=ExtResource("13_makil")]
+unique_name_in_owner = true
 
 [node name="Items" type="Node3D" parent="."]
 unique_name_in_owner = true

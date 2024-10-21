@@ -7,3 +7,6 @@ Cethiel	Tileable Brick Ground Textures - Set 2	CC0
 Keith333	Clocks & Watches - Old Clock - Seamless Texture with Normalmap	CC-BY 3.0
 Kenney	Particle Pack	CC0
 timlesch	Horse Shoe (openclipart)	CC0
+engine_idle.wav by mhad -- https://freesound.org/s/390788/ -- License: Creative Commons 0
+engine_ignition.wav by mhad -- https://freesound.org/s/390793/ -- License: Creative Commons 0
+Quad Bike_ATV Engine.wav by Alex_hears_things -- https://freesound.org/s/379915/ -- License: Creative Commons 0

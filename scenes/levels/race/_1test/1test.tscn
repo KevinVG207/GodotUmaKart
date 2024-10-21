@@ -16,9 +16,6 @@ metadata/_edit_group_ = true
 
 [node name="1test" parent="Course" index="0" instance=ExtResource("2_5k6we")]
 
-[node name="Checkpoints" parent="." index="2"]
-visible = false
-
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_864dc")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 26, 0, 0)
 is_key = true
@@ -46,6 +43,9 @@ is_key = true
 
 [node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_864dc")]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)
+
+[node name="EnemyPathPoints" parent="." index="3"]
+visible = false
 
 [node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("4_qon5u")]
 transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 24.4533, 0.00012207, -1.62639)
