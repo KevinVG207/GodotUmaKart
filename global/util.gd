@@ -211,6 +211,10 @@ func load_var(path: String) -> Variant:
 	load_file.close()
 	return object
 
+func doppler_sigmoid(dist_delta: float, max_distance: float) -> float:
+	var exp_multi: float = 6/max_distance
+	return (1.0/(1+exp(-exp_multi*dist_delta))) + 0.5
+
 # These don't work!
 #func save_var_gz(path: String, object: Variant) -> void:
 	#var gzip := StreamPeerGZIP.new()

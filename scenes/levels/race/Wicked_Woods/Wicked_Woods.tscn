@@ -462,6 +462,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.03516, 74.1702, 83.0981)
 
 [node name="PlayerCamera" parent="." index="7"]
 cull_mask = 1023
+doppler_tracking = 0
 
 [node name="MapCamera" parent="." index="12"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -73.326, 1000, -109.108)

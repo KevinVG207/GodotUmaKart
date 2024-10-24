@@ -202,6 +202,7 @@ var respawn_rotation: Vector3 = Vector3.ZERO
 
 var targeted_by_dict: Dictionary = {}
 
+var do_damage: int = DamageType.none
 var in_damage: int = DamageType.none
 const DamageType = {
 	none = 0,
@@ -1147,6 +1148,9 @@ func handle_vehicle_collisions() -> void:
 	for col_vehicle: Vehicle3 in colliding_vehicles.keys():
 		if col_vehicle in collided_with.keys():
 			continue
+			
+		if do_damage != DamageType.none:
+			col_vehicle.damage(do_damage)
 		
 		if prev_frame_pre_sim_vel.length() < col_vehicle.prev_frame_pre_sim_vel.length():
 			# Let the other do the work.
@@ -1171,6 +1175,9 @@ func handle_vehicle_collisions() -> void:
 		col_vehicle.apply_push(their_force * their_dir, self)
 
 func apply_push(force: Vector3, vehicle: Vehicle3) -> void:
+	if do_damage != DamageType.none:
+		return
+	
 	if vehicle in collided_with:
 		return
 	
@@ -1378,7 +1385,10 @@ func _process(delta: float) -> void:
 
 func water_entered(area: Area3D) -> void:
 	in_water = true
-	water_bodies[area] = true
+	
+	if area not in water_bodies:
+		water_bodies[area] = true
+		%VehicleAudio.water_entered()
 
 
 func water_exited(area: Area3D) -> void:

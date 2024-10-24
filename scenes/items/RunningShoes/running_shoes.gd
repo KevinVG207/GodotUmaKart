@@ -28,7 +28,7 @@ var stick_speed := 0.0
 var default_grip := 0.0
 var air_decel := 0.0
 var gravity := Vector3.DOWN
-var weight := 0.0
+#var weight := 0.0
 
 var colliders: Array = []
 
@@ -55,7 +55,7 @@ func start() -> void:
 	parent.after_update.connect(after_update)
 	
 	for col: CollisionShape3D in parent.standard_colliders:
-		col.disabled = true
+		col.set_deferred("disabled", true)
 	
 	for col: CollisionShape3D in $Colliders.get_children():
 		colliders.append(col)
@@ -100,8 +100,8 @@ func start() -> void:
 	gravity = parent.gravity
 	parent.gravity *= 1.5
 	
-	weight = parent.weight;
-	parent.weight *= 3
+	#weight = parent.weight;
+	#parent.weight *= 3
 
 func before_update(_delta: float) -> void:
 	if parent.is_player:
@@ -115,8 +115,10 @@ func before_update(_delta: float) -> void:
 	parent.stick_distance = stick_distance * 3
 	parent.stick_speed = stick_speed * 3
 	parent.gravity = gravity * 1.5
-	parent.weight = weight * 3
+	#parent.weight = weight * 3
 	parent.cpu_target_offset = Vector3.ZERO
+	if open:
+		parent.do_damage = Vehicle3.DamageType.spin
 	return
 
 func get_max_speed() -> float:
@@ -153,6 +155,8 @@ func _exit_tree() -> void:
 	for col: CollisionShape3D in colliders:
 		col.queue_free()
 	
+	open = false
+	
 	parent.is_being_controlled = false
 	
 	parent.show_kart()
@@ -168,7 +172,8 @@ func _exit_tree() -> void:
 	parent.default_grip = default_grip
 	parent.gravity = gravity
 	parent.cpu_target_offset = parent.get_random_target_offset()
-	parent.weight = weight
+	parent.do_damage = Vehicle3.DamageType.none
+	#parent.weight = weight
 
 func remove() -> void:
 	poof.finished.connect(func() -> void: poof.queue_free())

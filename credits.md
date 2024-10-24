@@ -10,3 +10,6 @@ timlesch	Horse Shoe (openclipart)	CC0
 engine_idle.wav by mhad -- https://freesound.org/s/390788/ -- License: Creative Commons 0
 engine_ignition.wav by mhad -- https://freesound.org/s/390793/ -- License: Creative Commons 0
 Quad Bike_ATV Engine.wav by Alex_hears_things -- https://freesound.org/s/379915/ -- License: Creative Commons 0
+car park skiding corner.wav by martian -- https://freesound.org/s/178889/ -- License: Creative Commons 0
+socket_connect_disconnect.mp3 by JustHallowed -- https://freesound.org/s/691007/ -- License: Attribution 4.0
+SPLASH.wav by petenice -- https://freesound.org/s/9508/ -- License: Creative Commons 0

@@ -135,6 +135,7 @@ func _physics_process(delta):
 		global_position = prev_glob_pos
 
 	if mirror != prev_mirror or instant:
+		Global.camera_switched.emit()
 		look_at(true_target, -target.gravity.normalized())
 	else:
 		var old_basis = transform.basis

@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://kbseqbudkntg"]
+[gd_scene load_steps=6 format=3 uid="uid://kbseqbudkntg"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_audio.gd" id="1_rm5v2"]
 [ext_resource type="AudioStream" uid="uid://ddp6gh8rv8qu8" path="res://assets/audio/sfx/vehicle/engine.wav" id="2_clbko"]
 [ext_resource type="AudioStream" uid="uid://d0xn0hynf8bk3" path="res://assets/audio/sfx/vehicle/engine-idle.wav" id="3_tllqt"]
+[ext_resource type="AudioStream" uid="uid://b3ibb1wq3hysi" path="res://assets/audio/sfx/vehicle/skid.wav" id="4_c8ne5"]
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_lx0v6"]
 
@@ -10,10 +11,12 @@
 script = ExtResource("1_rm5v2")
 engine_sound = ExtResource("2_clbko")
 engine_idle_sound = ExtResource("3_tllqt")
+skid_sound = ExtResource("4_c8ne5")
 
 [node name="EngineSFX" type="AudioStreamPlayer3D" parent="."]
 unique_name_in_owner = true
 stream = SubResource("AudioStreamPolyphonic_lx0v6")
-unit_size = 20.0
+unit_size = 30.0
 autoplay = true
 bus = &"SFX"
+attenuation_filter_cutoff_hz = 20500.0

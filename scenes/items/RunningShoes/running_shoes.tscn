@@ -302,6 +302,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.543773, 0)
 [node name="gate" parent="GateContainer" instance=ExtResource("2_fv2r1")]
 transform = Transform3D(-3.61999e-06, 0, 1, 0, 1, 0, -1, 0, -3.61999e-06, 1.38045, 0, 0)
 
+[node name="Gate" parent="GateContainer/gate" index="0"]
+layers = 2
+
+[node name="Flap" parent="GateContainer/gate" index="1"]
+layers = 2
+
+[node name="Flap2" parent="GateContainer/gate" index="2"]
+layers = 2
+
 [node name="Ani" type="AnimationPlayer" parent="GateContainer/gate"]
 unique_name_in_owner = true
 libraries = {
