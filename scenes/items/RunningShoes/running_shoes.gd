@@ -158,6 +158,7 @@ func _exit_tree() -> void:
 	open = false
 	
 	parent.is_being_controlled = false
+	parent.engine_sound = true
 	
 	parent.show_kart()
 	parent.cani.play("sit")
@@ -200,6 +201,7 @@ func _on_swap_timer_timeout() -> void:
 func swap() -> void:
 	parent.cani.play("running_shoes_run")
 	parent.hide_kart()
+	parent.engine_sound = false
 	%OpenTimer.start()
 
 

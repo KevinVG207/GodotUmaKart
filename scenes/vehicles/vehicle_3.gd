@@ -18,6 +18,7 @@ var is_cpu: bool = true
 var is_network: bool = false
 var is_replay: bool = false
 var is_being_controlled: bool = false
+var engine_sound: bool = true
 var user_id: String = ""
 var check_idx: int = -1
 var check_key_idx: int = 0
