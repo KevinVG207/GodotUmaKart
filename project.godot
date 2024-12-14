@@ -219,3 +219,26 @@ common/max_physics_steps_per_frame=18
 [rendering]
 
 textures/default_filters/texture_mipmap_bias=-1.0
+
+[shader_globals]
+
+diffuse_curve={
+"type": "sampler2D",
+"value": "res://assets/shaders/cel/diffuse-texture.tres"
+}
+specular_smoothness={
+"type": "float",
+"value": 0.05
+}
+fresnel_smoothness={
+"type": "float",
+"value": 0.05
+}
+outline_width={
+"type": "float",
+"value": 4.0
+}
+outline_color={
+"type": "color",
+"value": Color(0, 0, 0, 1)
+}

@@ -1,0 +1,20 @@
+[gd_scene load_steps=5 format=3 uid="uid://dbasg5o032ddg"]
+
+[ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="1_h0fr4"]
+[ext_resource type="Shader" path="res://assets/shaders/cel/cel-shader-base.gdshader" id="2_8wcsy"]
+[ext_resource type="Texture2D" uid="uid://c4oexqwwlfk2f" path="res://assets/vehicles/wheel.png" id="3_afq1g"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_08nng"]
+render_priority = 0
+shader = ExtResource("2_8wcsy")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/specular = Color(0.252027, 0.252028, 0.252028, 0.5)
+shader_parameter/fresnel = Color(0.10748, 0.10748, 0.10748, 0.3)
+shader_parameter/base_texture = ExtResource("3_afq1g")
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[node name="wheel" instance=ExtResource("1_h0fr4")]
+
+[node name="Wheel" parent="." index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_08nng")

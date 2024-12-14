@@ -8,6 +8,7 @@ var anchor := Vector3.ZERO
 @onready var initial_rotation = rotation_degrees
 
 @export var steer := false
+@export var invert_steer := false
 var cur_steer_deg := 0.0
 var steer_multi := 300.0
 var cur_rot := 0.0
@@ -55,6 +56,8 @@ func _process(delta: float) -> void:
 	
 	if steer:
 		var target_rot : float = parent.cur_turn_speed * 0.3
+		if invert_steer:
+			target_rot = -target_rot
 		if parent.reversing:
 			target_rot *= -1.0
 		cur_steer_deg = move_toward(cur_steer_deg, target_rot, delta * steer_multi)

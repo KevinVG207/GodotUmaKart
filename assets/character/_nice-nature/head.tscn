@@ -1,5 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://2g11fjvs1kta"]
+[gd_scene load_steps=3 format=3 uid="uid://2g11fjvs1kta"]
 
 [ext_resource type="PackedScene" uid="uid://cchc4yw6h5dme" path="res://assets/character/_nice-nature/head.blend" id="1_tipx0"]
+[ext_resource type="Material" uid="uid://b3irsogfb4cum" path="res://assets/character/_nice-nature/head_base_mat.tres" id="2_45775"]
 
 [node name="head" instance=ExtResource("1_tipx0")]
+
+[node name="Ear" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_45775")
+
+[node name="Head" parent="." index="3"]
+surface_material_override/0 = ExtResource("2_45775")
+
+[node name="Hair" parent="." index="4"]
+surface_material_override/0 = ExtResource("2_45775")
+
+[node name="Pigtail" parent="." index="5"]
+surface_material_override/0 = ExtResource("2_45775")

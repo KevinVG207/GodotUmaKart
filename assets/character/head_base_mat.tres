@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://t5bgb2ruyly5"]
+
+[ext_resource type="Shader" path="res://assets/shaders/cel/outline.gdshader" id="1_x3y2w"]
+[ext_resource type="Shader" path="res://assets/shaders/cel/cel-shader-base.gdshader" id="2_fvvar"]
+[ext_resource type="Texture2D" uid="uid://84rvlna8akqj" path="res://assets/character/head.png" id="3_2tyl5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o3jki"]
+render_priority = 0
+shader = ExtResource("1_x3y2w")
+
+[resource]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_o3jki")
+shader = ExtResource("2_fvvar")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/base_texture = ExtResource("3_2tyl5")
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)

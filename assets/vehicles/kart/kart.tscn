@@ -1,5 +1,89 @@
-[gd_scene load_steps=2 format=3 uid="uid://qy0ee3o43y7b"]
+[gd_scene load_steps=15 format=3 uid="uid://qy0ee3o43y7b"]
 
 [ext_resource type="PackedScene" uid="uid://ds8vqrm05m0py" path="res://assets/vehicles/kart/kart.blend" id="1_4vkh6"]
+[ext_resource type="Shader" path="res://assets/shaders/cel/outline.gdshader" id="2_rnyb6"]
+[ext_resource type="Shader" path="res://assets/shaders/cel/cel-shader-base.gdshader" id="3_m7vcj"]
+[ext_resource type="Shader" path="res://assets/shaders/cel/cel-shader-alpha.gdshader" id="4_gnfnu"]
+[ext_resource type="Texture2D" uid="uid://ob18g686wm50" path="res://assets/vehicles/kart/emblem.png" id="5_ui7vu"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vuofu"]
+render_priority = 0
+shader = ExtResource("2_rnyb6")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pgdac"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_vuofu")
+shader = ExtResource("3_m7vcj")
+shader_parameter/color = Color(1, 0.819934, 0.942723, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bdvjw"]
+render_priority = 0
+shader = ExtResource("2_rnyb6")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k76kr"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_bdvjw")
+shader = ExtResource("3_m7vcj")
+shader_parameter/color = Color(0.7, 0.12, 0.86, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_31mom"]
+render_priority = 0
+shader = ExtResource("3_m7vcj")
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d5u3o"]
+render_priority = 0
+shader = ExtResource("2_rnyb6")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jap0b"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_d5u3o")
+shader = ExtResource("3_m7vcj")
+shader_parameter/color = Color(0.347817, 0.347817, 0.347817, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tyhkg"]
+render_priority = 0
+shader = ExtResource("4_gnfnu")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/base_texture = ExtResource("5_ui7vu")
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vmp8r"]
+render_priority = 0
+shader = ExtResource("3_m7vcj")
+shader_parameter/color = Color(0, 0, 0, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
 
 [node name="kart" instance=ExtResource("1_4vkh6")]
+
+[node name="Kart" parent="." index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_pgdac")
+surface_material_override/1 = SubResource("ShaderMaterial_k76kr")
+surface_material_override/2 = SubResource("ShaderMaterial_31mom")
+surface_material_override/3 = SubResource("ShaderMaterial_jap0b")
+surface_material_override/4 = SubResource("ShaderMaterial_tyhkg")
+
+[node name="Steer" parent="." index="1"]
+surface_material_override/0 = SubResource("ShaderMaterial_vmp8r")

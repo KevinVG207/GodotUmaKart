@@ -1,5 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://b030ek8eo2e54"]
+[gd_scene load_steps=3 format=3 uid="uid://b030ek8eo2e54"]
 
 [ext_resource type="PackedScene" uid="uid://ce8isuqy7fnec" path="res://assets/character/head.blend" id="1_bm1o8"]
+[ext_resource type="Material" uid="uid://t5bgb2ruyly5" path="res://assets/character/head_base_mat.tres" id="2_ea50o"]
 
 [node name="head" instance=ExtResource("1_bm1o8")]
+
+[node name="Head" parent="." index="0"]
+surface_material_override/0 = ExtResource("2_ea50o")
+
+[node name="Hair" parent="." index="1"]
+surface_material_override/0 = ExtResource("2_ea50o")
+
+[node name="Ear" parent="." index="2"]
+surface_material_override/0 = ExtResource("2_ea50o")
+
+[node name="Ear_001" parent="." index="6"]
+surface_material_override/0 = ExtResource("2_ea50o")
