@@ -6,17 +6,17 @@ global uniform vec4 outline_color;
 global uniform float outline_width;
 
 void vertex() {
-	vec4 clip_position =
+	vec4 clip_position = 
 			PROJECTION_MATRIX *
 			(MODELVIEW_MATRIX * vec4(VERTEX, 1.0));
 	vec3 clip_normal =
 			mat3(PROJECTION_MATRIX) *
 			(mat3(MODELVIEW_MATRIX) * NORMAL);
 	clip_position.xy +=
-			(normalize(clip_normal.xy) /
+			normalize(clip_normal.xy) /
 			VIEWPORT_SIZE *
-			min(clip_position.w, 20.0) *
-			outline_width);
+			clip_position.w *
+			outline_width;
 	POSITION = clip_position;
 }
 
