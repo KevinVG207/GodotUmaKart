@@ -57,7 +57,7 @@ var pause_start: int = -1
 
 var course_length: float = 1.0
 
-var cpu_avg_speed: float = 20
+var cpu_avg_speed: float = 22.5
 
 var course_name: String = "default"
 
