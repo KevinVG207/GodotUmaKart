@@ -1,6 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://b3weoxg0yjr52"]
+[gd_scene load_steps=10 format=3 uid="uid://b3weoxg0yjr52"]
 
 [ext_resource type="Script" path="res://scenes/items/_physical/ThrownGreenBean.gd" id="1_fg0ij"]
+[ext_resource type="Shader" path="res://assets/shaders/cel/outline.gdshader" id="2_4x6qu"]
+[ext_resource type="Shader" path="res://assets/shaders/cel/cel-shader-base.gdshader" id="3_b7ocp"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_v8qc4"]
 height = 1.32048
@@ -10,6 +12,21 @@ albedo_color = Color(0, 0.639216, 0.0823529, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_crqg3"]
 material = SubResource("StandardMaterial3D_5qrcn")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s065x"]
+render_priority = 0
+shader = ExtResource("2_4x6qu")
+shader_parameter/outline_width = 5.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2ao5u"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_s065x")
+shader = ExtResource("3_b7ocp")
+shader_parameter/color = Color(0, 1, 0, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.233925, 0.233925, 0.233925, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_hsbh8"]
 height = 0.5
@@ -32,6 +49,7 @@ shape = SubResource("CapsuleShape3D_v8qc4")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(-6.46929e-08, 0, -1.184, 0, 0.888, 0, 1.48, 0, -5.17543e-08, 0, 0.2, 0)
 mesh = SubResource("SphereMesh_crqg3")
+surface_material_override/0 = SubResource("ShaderMaterial_2ao5u")
 
 [node name="DespawnTimer" type="Timer" parent="."]
 

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c1v5bpox4q5m5"]
 
 [ext_resource type="Script" path="res://scenes/items/_physical/ThrownBook.gd" id="1_ibqwy"]
-[ext_resource type="PackedScene" uid="uid://5i10cjnedc8f" path="res://assets/items/book/book.blend" id="2_fhwbd"]
+[ext_resource type="PackedScene" uid="uid://bxvnrwao4pblr" path="res://assets/items/book/book.tscn" id="2_ywjqk"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8fn56"]
 friction = 0.0
@@ -19,9 +19,6 @@ contact_monitor = true
 max_contacts_reported = 10
 script = ExtResource("1_ibqwy")
 
-[node name="book" parent="." instance=ExtResource("2_fhwbd")]
-transform = Transform3D(-1.96701e-08, 0, -0.45, 0, 0.45, 0, 0.45, 0, -1.96701e-08, 0, 0, 0)
-
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.400978, 0)
 shape = SubResource("BoxShape3D_lemdn")
@@ -38,6 +35,9 @@ shape = SubResource("BoxShape3D_lemdn")
 process_callback = 0
 wait_time = 30.0
 one_shot = true
+
+[node name="book2" parent="." instance=ExtResource("2_ywjqk")]
+transform = Transform3D(-1.96701e-08, 0, -0.45, 0, 0.45, 0, 0.45, 0, -1.96701e-08, 0, 0, 0)
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
 [connection signal="timeout" from="DespawnTimer" to="." method="_on_despawn_timer_timeout"]

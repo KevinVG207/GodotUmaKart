@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3 uid="uid://bxvnrwao4pblr"]
+
+[ext_resource type="PackedScene" uid="uid://5i10cjnedc8f" path="res://assets/items/book/book.blend" id="1_0w3e0"]
+[ext_resource type="Shader" path="res://assets/shaders/cel/outline.gdshader" id="2_8jcxt"]
+[ext_resource type="Shader" path="res://assets/shaders/cel/cel-shader-base.gdshader" id="2_520c1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_nfhyy"]
+render_priority = 0
+shader = ExtResource("2_8jcxt")
+shader_parameter/outline_width = 5.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v7o1s"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_nfhyy")
+shader = ExtResource("2_520c1")
+shader_parameter/color = Color(0.286659, 0.160669, 0, 1)
+shader_parameter/specular = Color(0.0605303, 0.0605304, 0.0605303, 0.5)
+shader_parameter/fresnel = Color(0.0846899, 0.0846899, 0.0846899, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_eghn7"]
+render_priority = 0
+next_pass = SubResource("ShaderMaterial_nfhyy")
+shader = ExtResource("2_520c1")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/specular = Color(0.3, 0.3, 0.3, 0.5)
+shader_parameter/fresnel = Color(0.2, 0.2, 0.2, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4qtqb"]
+render_priority = 0
+shader = ExtResource("2_520c1")
+shader_parameter/color = Color(0.906332, 0.662781, 0, 1)
+shader_parameter/specular = Color(0.400698, 0.400698, 0.400698, 0.5)
+shader_parameter/fresnel = Color(0.18359, 0.18359, 0.18359, 0.3)
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)
+
+[node name="book" instance=ExtResource("1_0w3e0")]
+
+[node name="Plane" parent="." index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_v7o1s")
+surface_material_override/1 = SubResource("ShaderMaterial_eghn7")
+
+[node name="Plane_001" parent="." index="1"]
+surface_material_override/0 = SubResource("ShaderMaterial_4qtqb")
