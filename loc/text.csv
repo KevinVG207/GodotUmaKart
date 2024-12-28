@@ -39,6 +39,9 @@ RACE_BTN_BACK,Back to Menu,メニューに戻る
 RACE_BTN_LOBBY,Back to Lobby,ロビーに戻る
 RACE_LAP,Lap %d,Lap %d
 RACE_DNF,DNF,DNF
+RACE_PAUSE_HEADER,Paused,ポーズ中
+RACE_PAUSE_CONTINUE,Continue,続ける
+RACE_PAUSE_EXIT,Return to Menu,ホームに戻る
 HOME_1P_OFFLINE_VS,1P Offline VS,1P シングル VS
 HOME_1P_ONLINE_VS,1P Online VS,1P オンライン VS
 HOME_OFFLINE,Offline,シングルプレイ
@@ -56,6 +59,7 @@ SETTINGS_TAB_KEYBOARD,Keyboard,キーボード
 SETTINGS_TAB_KEYBOARD_DESCR,Change keyboard inputs.,キーボードの設定を変更します
 SETTINGS_TAB_JOYPAD,Gamepad,ゲームパッド
 SETTINGS_TAB_JOYPAD_DESCR,Change controller inputs.,ゲームパッドの設定を変更します
+SETTINGS_TAB_AUDIO,Audio,
 SETTINGS_APPLY,Confirm,決定
 SETTINGS_CANCEL,Undo,アンドゥ
 SETTINGS_RESET_BINDS,Reset Keybinds,キーをリセットする
@@ -83,3 +87,7 @@ SETTING_VSYNC_DESCR,Change the VSync mode.\nAdaptive mode disables VSync when fr
 SETTING_VSYNC_0,Disabled,ON
 SETTING_VSYNC_1,Enabled,OFF
 SETTING_VSYNC_2,Adaptive,アダプティブ
+SETTING_AUDIO_MASTER,Master Volume,
+SETTING_AUDIO_MUSIC,Music Volume,
+SETTING_AUDIO_SFX,SFX Volume,
+SETTING_AUDIO_UI,UI Volume,

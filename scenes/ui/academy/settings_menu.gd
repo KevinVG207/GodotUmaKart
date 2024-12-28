@@ -6,6 +6,7 @@ signal back
 
 var SETTING_CYCLE: PackedScene = preload("res://scenes/ui/cycle_setting.tscn")
 var SETTING_BIND: PackedScene = preload("res://scenes/ui/bind_setting.tscn")
+var SETTING_AUDIO: PackedScene = preload("res://scenes/ui/audio_setting.tscn")
 
 var setting_elements: Array = []
 
@@ -32,6 +33,7 @@ func setup() -> void:
 	Util.remove_children(%Graphics)
 	Util.remove_children(%Keyboard)
 	Util.remove_children(%Joypad)
+	Util.remove_children(%Audio)
 	
 	prev_config = Config.current_config.duplicate(true)
 	prev_bindings = Config.current_bindings.duplicate(true)
@@ -55,6 +57,9 @@ func setup() -> void:
 
 	# Key bindings
 	add_bindings()
+	
+	# Audio
+	add_audio()
 
 
 func add_config_cyclesetting(container: VBoxContainer, config_array: Array, default: int, label_str: String, change_func: Callable) -> void:
@@ -100,6 +105,27 @@ func add_bindings() -> void:
 			bind_ele.updated.connect(_on_bind_update)
 			
 			add_setting(tab, bind_ele, label_str)
+
+func add_audio() -> void:
+	#AudioServer
+	
+	# Loop over all buses
+	# If bus sends to Master (or IS Master), add setting element
+	print("Add Audio")
+	print(AudioServer.bus_count)
+	for bus_idx: int in range(AudioServer.bus_count):
+		print(bus_idx)
+		if bus_idx == 0 or AudioServer.get_bus_send(bus_idx) == "Master":
+			add_volume_slider(bus_idx)
+
+func add_volume_slider(bus_idx) -> void:
+	var bus_name := AudioServer.get_bus_name(bus_idx)
+	var audio_ele: AudioSetting = SETTING_AUDIO.instantiate()
+	audio_ele.set_bus(bus_name)
+	#audio_ele.add_item("AUDIO_%s"%bus_name.to_upper())
+	#audio_ele.select(0)
+	#audio_ele.item_selected.connect(_on_language_change)
+	add_setting(%Audio, audio_ele, "SETTING_AUDIO_%s"%bus_name.to_upper())
 
 func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String) -> void:
 	var cont: SettingsElement = settings_element.instantiate() as SettingsElement

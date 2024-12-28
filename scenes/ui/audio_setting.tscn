@@ -1,0 +1,60 @@
+[gd_scene load_steps=4 format=3 uid="uid://bekgugo01swgn"]
+
+[ext_resource type="Script" path="res://scenes/ui/audio_setting.gd" id="1_r0dmi"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_pegqj"]
+font_size = 20
+
+[sub_resource type="LabelSettings" id="LabelSettings_gk4i0"]
+font_size = 20
+
+[node name="AudioSetting" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_r0dmi")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -16.5
+offset_right = 110.0
+offset_bottom = 16.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Label2" type="Label" parent="PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "  -"
+label_settings = SubResource("LabelSettings_pegqj")
+
+[node name="HSlider" type="HSlider" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 1.0
+step = 0.1
+value = 0.5
+
+[node name="Label" type="Label" parent="PanelContainer/HBoxContainer"]
+layout_mode = 2
+text = "+  "
+label_settings = SubResource("LabelSettings_gk4i0")
+
+[connection signal="value_changed" from="PanelContainer/HBoxContainer/HSlider" to="." method="_on_h_slider_value_changed"]
