@@ -85,6 +85,9 @@ func make_config() -> Dictionary:
 	config.max_fps_mode = max_fps_mode
 	config.vsync_mode = vsync_mode
 	config.online_username = online_username
+	config.audio = generate_audio_dict()
+	
+	print(config)
 	
 	return config
 
@@ -102,6 +105,12 @@ func apply_config(config: Dictionary) -> void:
 		vsync_mode = config.vsync_mode
 	if "online_username" in config:
 		online_username = config.online_username
+	if "audio" in config:
+		for bus_name: String in config.audio:
+			if AudioServer.get_bus_index(bus_name) == -1:
+				continue
+			var volume := linear_to_db(config.audio[bus_name])
+			AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus_name), volume)
 
 func save_config(config: Dictionary) -> void:
 	print("Saving config")
@@ -109,16 +118,18 @@ func save_config(config: Dictionary) -> void:
 
 func load_config() -> Dictionary:
 	print("Loading config")
-	var out: Dictionary = {}
 	var config: Variant = Util.load_json(config_path)
+	
+	var new_config: Dictionary = current_config.duplicate(true)
+	
 	if config:
 		for setting: String in config.keys():
-			if setting not in default_config:
-				print("Removing setting ", setting)
-				config.erase(setting)
-		out = config
+			if setting not in new_config:
+				print("Loaded setting not found in current: ", setting)
+				continue
+			new_config[setting] = config[setting]
 	
-	return out
+	return new_config
 
 func get_bindings() -> Dictionary:
 	# Turn InputMap bindings into editable/savable dictionary.
@@ -200,6 +211,12 @@ func load_bindings() -> Dictionary:
 	
 	return out
 
+func generate_audio_dict() -> Dictionary:
+	var out := {}
+	for idx: int in range(AudioServer.bus_count):
+		out[AudioServer.get_bus_name(idx)] = db_to_linear(AudioServer.get_bus_volume_db(idx))
+	return out
+
 func update_config() -> void:
 	current_config = make_config()
 	save_config(current_config)
@@ -212,24 +229,19 @@ func _ready() -> void:
 	default_config = make_config()
 	current_config = default_config
 	
-	# Ensure config file exists.
-	if not FileAccess.file_exists(config_path):
-		save_config(default_config)
-	
 	# Load current config and apply.
 	if FileAccess.file_exists(config_path):
 		var config := load_config()
 		if config:
 			current_config = config
+			print(config)
 			apply_config(config)
+	
+	save_config(current_config)
 	
 	
 	default_bindings = get_bindings()
 	current_bindings = default_bindings
-	
-	# Ensure keybind file exists.
-	if not FileAccess.file_exists(keybinds_path):
-		save_bindings(default_bindings)
 	
 	# Load current bindings and apply.
 	if FileAccess.file_exists(keybinds_path):
@@ -237,3 +249,5 @@ func _ready() -> void:
 		if binds:
 			current_bindings = binds
 			apply_bindings(binds)
+	
+	save_bindings(current_bindings)
