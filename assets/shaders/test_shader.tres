@@ -1,0 +1,16 @@
+[gd_resource type="VisualShader" load_steps=2 format=3 uid="uid://55dlddx7jh70"]
+
+[sub_resource type="VisualShaderNodeColorConstant" id="VisualShaderNodeColorConstant_pvibe"]
+constant = Color(0.948891, 0.264177, 0, 1)
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+
+
+"
+graph_offset = Vector2(-562.099, -103.735)
+nodes/fragment/0/position = Vector2(380, 140)
+nodes/fragment/2/node = SubResource("VisualShaderNodeColorConstant_pvibe")
+nodes/fragment/2/position = Vector2(-360, 200)
