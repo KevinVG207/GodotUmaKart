@@ -4,9 +4,9 @@ var given_focus := false
 
 signal back
 
-var SETTING_CYCLE: PackedScene = preload("res://scenes/ui/cycle_setting.tscn")
-var SETTING_BIND: PackedScene = preload("res://scenes/ui/bind_setting.tscn")
-var SETTING_AUDIO: PackedScene = preload("res://scenes/ui/audio_setting.tscn")
+var SETTING_CYCLE: PackedScene = preload("res://scenes/ui/settings/cycle_setting.tscn")
+var SETTING_BIND: PackedScene = preload("res://scenes/ui/settings/bind_setting.tscn")
+var SETTING_AUDIO: PackedScene = preload("res://scenes/ui/settings/audio_setting.tscn")
 
 var setting_elements: Array = []
 
@@ -30,6 +30,7 @@ func focus():
 func setup() -> void:
 	# Clear containers
 	setting_elements.clear()
+	Util.remove_children(%General)
 	Util.remove_children(%Graphics)
 	Util.remove_children(%Keyboard)
 	Util.remove_children(%Joypad)
@@ -38,23 +39,10 @@ func setup() -> void:
 	prev_config = Config.current_config.duplicate(true)
 	prev_bindings = Config.current_bindings.duplicate(true)
 	
-	# Language setting
-	var lang_ele: CycleSetting = SETTING_CYCLE.instantiate()
-	for lang: String in Config.locales:
-		lang_ele.add_item("LANG_%s"%lang.to_upper())
-	lang_ele.select(Config.cur_locale)
-	lang_ele.item_selected.connect(_on_language_change)
-	add_setting(%Graphics, lang_ele, "SETTING_LANG")
+	add_general()
 	
-	# Window/fullscreen setting
-	add_config_cyclesetting(%Graphics, Config.window_modes, Config.window_mode, "SETTING_WINDOWMODE", _on_windowmode_change)
+	add_graphics()
 	
-	# Vsync mode
-	add_config_cyclesetting(%Graphics, Config.vsync_modes, Config.vsync_mode, "SETTING_VSYNC", _on_vsync_change)
-	
-	# Max FPS
-	add_config_cyclesetting(%Graphics, Config.max_fps_modes, Config.max_fps_mode, "SETTING_MAXFPS", _on_maxfps_change)
-
 	# Key bindings
 	add_bindings()
 	
@@ -69,6 +57,38 @@ func add_config_cyclesetting(container: VBoxContainer, config_array: Array, defa
 	ele.select(default)
 	ele.item_selected.connect(change_func)
 	add_setting(container, ele, label_str)
+
+func make_on_off(callback: Callable, default: bool = false) -> CycleSetting:
+	var ele: CycleSetting = SETTING_CYCLE.instantiate()
+	ele.add_item("SETTING_OFF")
+	ele.add_item("SETTING_ON")
+	ele.select(int(default))
+	ele.item_selected.connect(callback)
+	return ele
+
+func add_general() -> void:
+	# Language setting
+	var lang_ele: CycleSetting = SETTING_CYCLE.instantiate()
+	for lang: String in Config.locales:
+		lang_ele.add_item("LANG_%s"%lang.to_upper())
+	lang_ele.select(Config.cur_locale)
+	lang_ele.item_selected.connect(_on_language_change)
+	add_setting(%General, lang_ele, "SETTING_LANG")
+	
+	# Skip transitions
+	add_setting(%General, make_on_off(_on_transition_skip_change, Config.transition_skip), "SETTING_TRANSITION_SKIP")
+	
+
+func add_graphics() -> void:
+	# Window/fullscreen setting
+	add_config_cyclesetting(%Graphics, Config.window_modes, Config.window_mode, "SETTING_WINDOWMODE", _on_windowmode_change)
+	
+	# Vsync mode
+	add_config_cyclesetting(%Graphics, Config.vsync_modes, Config.vsync_mode, "SETTING_VSYNC", _on_vsync_change)
+	
+	# Max FPS
+	add_config_cyclesetting(%Graphics, Config.max_fps_modes, Config.max_fps_mode, "SETTING_MAXFPS", _on_maxfps_change)
+
 
 
 func add_bindings() -> void:
@@ -107,14 +127,9 @@ func add_bindings() -> void:
 			add_setting(tab, bind_ele, label_str)
 
 func add_audio() -> void:
-	#AudioServer
-	
 	# Loop over all buses
 	# If bus sends to Master (or IS Master), add setting element
-	print("Add Audio")
-	print(AudioServer.bus_count)
 	for bus_idx: int in range(AudioServer.bus_count):
-		print(bus_idx)
 		if bus_idx == 0 or AudioServer.get_bus_send(bus_idx) == "Master":
 			add_volume_slider(bus_idx)
 
@@ -122,9 +137,6 @@ func add_volume_slider(bus_idx) -> void:
 	var bus_name := AudioServer.get_bus_name(bus_idx)
 	var audio_ele: AudioSetting = SETTING_AUDIO.instantiate()
 	audio_ele.set_bus(bus_name)
-	#audio_ele.add_item("AUDIO_%s"%bus_name.to_upper())
-	#audio_ele.select(0)
-	#audio_ele.item_selected.connect(_on_language_change)
 	add_setting(%Audio, audio_ele, "SETTING_AUDIO_%s"%bus_name.to_upper())
 
 func add_setting(grid: VBoxContainer, setting_ele: Control, label_str: String) -> void:
@@ -168,11 +180,14 @@ func _on_maxfps_change(index: int, _text: String) -> void:
 func _on_vsync_change(index: int, _text: String) -> void:
 	Config.vsync_mode = index
 
+func _on_transition_skip_change(index: int, _text: String) -> void:
+	Config.transition_skip = bool(index)
+
 func _on_tab_container_tab_changed(tab: int) -> void:
 	var tab_ele: VBoxContainer = %TabContainer.get_child(tab)
 	%Description.text = tab_ele.name + "_DESCR"
 	
-	if tab == 1 or tab == 2:
+	if tab_ele.name.ends_with("_KEYBOARD") or tab_ele.name.ends_with("_JOYPAD"):
 		enable_reset_button()
 	else:
 		disable_reset_button()

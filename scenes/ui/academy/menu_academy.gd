@@ -62,6 +62,9 @@ func _process(delta):
 func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFollow3D, time: float, reverse: bool=false, fade_time: float=-1, wait_fade_start: bool=false, wait_fade_end: bool=false):
 	if traveling:
 		return
+		
+	if Config.transition_skip:
+		time = 0
 
 	traveling = true
 	if fade_time < 0:
@@ -132,7 +135,7 @@ func spica_to_fountain():
 
 
 func _on_cam_tween_finished():
-	cam.global_position = cam_follow.global_position
+	cam.global_position = to_cam.global_position
 	cam.rotation = to_cam.rotation
 	cam.fov = to_cam.fov
 	from_cam.visible = false

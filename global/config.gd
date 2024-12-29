@@ -68,6 +68,8 @@ var vsync_mode: int = 2:
 
 var online_username: String = ""
 
+var transition_skip: bool = false
+
 ##### End Settings #####
 
 
@@ -85,6 +87,7 @@ func make_config() -> Dictionary:
 	config.max_fps_mode = max_fps_mode
 	config.vsync_mode = vsync_mode
 	config.online_username = online_username
+	config.transition_skip = transition_skip
 	config.audio = generate_audio_dict()
 	
 	print(config)
@@ -105,6 +108,8 @@ func apply_config(config: Dictionary) -> void:
 		vsync_mode = config.vsync_mode
 	if "online_username" in config:
 		online_username = config.online_username
+	if "transition_skip" in config:
+		transition_skip = config.transition_skip
 	if "audio" in config:
 		for bus_name: String in config.audio:
 			if AudioServer.get_bus_index(bus_name) == -1:
