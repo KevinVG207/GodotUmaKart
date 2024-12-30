@@ -23,7 +23,7 @@ func _on_vs_button_pressed():
 	if not given_focus:
 		return
 	given_focus = false
-	UI.change_scene(single_scene, true)
+	UI.change_scene(Util.get_race_course_path(Util.get_race_courses()[0]), true)
 	last_button = %VSButton
 
 func _input(event: InputEvent) -> void:

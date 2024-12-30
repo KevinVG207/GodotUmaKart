@@ -86,7 +86,7 @@ func _physics_process(delta: float) -> void:
 	var dist_to_target_player: float = 10000
 	if target_player:
 		dist_to_target_player = global_position.distance_to(target_player.global_position)
-		if target_mode == TargetMode.follow and dist_to_target_player < dist_to_homing and owner_id == world.player_user_id:
+		if target_mode == TargetMode.follow and dist_to_target_player < dist_to_homing and (Global.MODE1 == Global.MODE1_OFFLINE or (Global.MODE1 == Global.MODE1_ONLINE and owner_id == world.player_user_id)):
 			target_mode = TargetMode.homing
 			new_owner = target_player.user_id
 			#print("SETTING OWNER: ", new_owner)
