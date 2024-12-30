@@ -23,4 +23,5 @@ func _on_pressed() -> void:
 	popup.max_chars = max_chars
 	is_open = true
 	countdown = 10
+	Global.menu_ignore_input = true
 	get_window().add_child(popup)

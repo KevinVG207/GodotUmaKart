@@ -8,7 +8,7 @@ var action := ""
 var type := ""
 var bind: int = -999999
 
-var rebind_popup: PackedScene = preload("res://assets/ui/rebind_popup.tscn")
+var rebind_popup: PackedScene = preload("res://scenes/ui/settings/rebind_popup.tscn")
 
 func _ready():
 	pass

@@ -48,6 +48,10 @@ HOME_OFFLINE,Offline,シングルプレイ
 HOME_ONLINE,Online,オンラインプレイ
 HOME_SETTINGS,Settings,オプション
 HOME_TITLE,Back to Title,タイトルに戻る
+HOME_EXIT,Quit Game,ゲームを終了
+HOME_EXIT_WARNING,Are you sure you want to quit the game?,ゲームを終了しますか？
+HOME_EXIT_EXIT,Quit,終了する
+HOME_EXIT_CANCEL,Cancel,キャンセル
 LANG_EN,English,英語
 LANG_JA,Japanese,日本語
 GAME_TITLE,Uma Kart Racer,ウマカート・レーシング

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://blwcrdtpkravu"]
 
-[ext_resource type="Script" path="res://assets/ui/rebind_popup.gd" id="1_fbxaj"]
+[ext_resource type="Script" path="res://scenes/ui/settings/rebind_popup.gd" id="1_fbxaj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_48vuk"]
 bg_color = Color(0.121569, 0.121569, 0.121569, 1)

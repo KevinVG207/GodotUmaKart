@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://doyxcgm8r6edh"]
+[gd_scene load_steps=3 format=3 uid="uid://doyxcgm8r6edh"]
 
 [ext_resource type="Script" path="res://scenes/ui/academy/cam_fountain_menu.gd" id="1_1cqih"]
+[ext_resource type="PackedScene" uid="uid://685o3qwltpv8" path="res://scenes/ui/settings/exit_popup.tscn" id="2_hjtk7"]
 
 [node name="CamFountainMenu" type="Control"]
 layout_mode = 3
@@ -12,6 +13,7 @@ grow_vertical = 2
 script = ExtResource("1_1cqih")
 single_scene = "res://scenes/levels/race/Wicked_Woods/Wicked_Woods.tscn"
 online_scene = "res://scenes/ui/lobby/lobby.tscn"
+EXIT_POPUP = ExtResource("2_hjtk7")
 
 [node name="Label2" type="Label" parent="."]
 custom_minimum_size = Vector2(300, 0)
@@ -48,7 +50,7 @@ offset_bottom = -61.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_neighbor_right = NodePath("../OnlineButton")
-focus_neighbor_bottom = NodePath("../SettingsButton")
+focus_neighbor_bottom = NodePath("../ExitButton")
 theme_override_font_sizes/font_size = 40
 text = "HOME_OFFLINE"
 clip_text = true
@@ -130,12 +132,34 @@ offset_right = 395.0
 offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 0
-focus_neighbor_left = NodePath("../VSButton")
+focus_neighbor_left = NodePath("../ExitButton")
 focus_neighbor_top = NodePath("../SettingsButton")
 theme_override_font_sizes/font_size = 35
 text = "HOME_TITLE"
 clip_text = true
 
+[node name="ExitButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -395.0
+offset_top = -116.0
+offset_right = -95.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 0
+focus_neighbor_top = NodePath("../VSButton")
+focus_neighbor_right = NodePath("../TitleButton")
+theme_override_font_sizes/font_size = 35
+text = "HOME_EXIT"
+clip_text = true
+
 [connection signal="pressed" from="OnlineButton" to="." method="_on_online_button_pressed"]
 [connection signal="pressed" from="SettingsButton" to="." method="_on_settings_button_pressed"]
 [connection signal="pressed" from="TitleButton" to="." method="_on_title_button_pressed"]
+[connection signal="pressed" from="ExitButton" to="." method="_on_exit_button_pressed"]

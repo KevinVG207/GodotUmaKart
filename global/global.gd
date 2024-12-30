@@ -18,6 +18,8 @@ var menu_start_cam: String = "%CamInitial"
 
 var rebind_popup: RebindPopup = null
 
+var menu_ignore_input: bool = false
+
 const MODE1_OFFLINE = 0
 const MODE1_ONLINE = 1
 

@@ -149,7 +149,7 @@ func _input(event: InputEvent):
 			return
 	#print(event)
 	
-	if !traveling:
+	if !traveling and !Global.menu_ignore_input:
 		if "position" in event:
 			event.position *= to_cam.scale_multi
 		if "global_position" in event:

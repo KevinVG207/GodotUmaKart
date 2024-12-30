@@ -60,6 +60,7 @@ func _input(event: InputEvent) -> void:
 			return
 
 func exit() -> void:
+	Global.menu_ignore_input = false
 	if parent:
 		parent.text = %LineEdit.text
 		parent.grab_focus()

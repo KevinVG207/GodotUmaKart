@@ -1,8 +1,11 @@
 extends Control
 
+class_name CamFountainMenu
+
 @export var single_scene: String
 @export var online_scene: String
 @onready var last_button: Control = %VSButton
+@export var EXIT_POPUP: PackedScene
 var given_focus := false
 
 signal to_lobby
@@ -52,3 +55,12 @@ func _on_title_button_pressed() -> void:
 	given_focus = false
 	to_title.emit()
 	last_button = %VSButton
+
+
+func _on_exit_button_pressed() -> void:
+	var popup: ExitPopup = EXIT_POPUP.instantiate()
+	popup.parent = self
+	get_window().add_child(popup)
+
+func give_exit_btn_focus() -> void:
+	%ExitButton.grab_focus()
