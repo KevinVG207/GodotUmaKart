@@ -10,7 +10,9 @@ var cur_volume_multi: float = 0
 var occlusion_multi := 1.0
 var occlusion_effect_speed := 1.5
 
-var doppler := false
+var is_player := false
+var bus := "SFX_OTHER"
+
 var doppler_multi := 1.0
 var doppler_prev_distance: float
 
@@ -47,8 +49,8 @@ var cam_switch: bool = true
 func _ready() -> void:
 	Global.camera_switched.connect(_on_cam_switch)
 	engine_playback = %EngineSFX.get_stream_playback()
-	engine_stream = engine_playback.play_stream(engine_sound, randf(), -80, 1.0, AudioServer.PLAYBACK_TYPE_STREAM, "SFX")
-	engine_idle_stream = engine_playback.play_stream(engine_idle_sound, randf(), -80, 1.0, AudioServer.PLAYBACK_TYPE_STREAM, "SFX")
+	engine_stream = engine_playback.play_stream(engine_sound, randf(), -80, 1.0, AudioServer.PLAYBACK_TYPE_STREAM, bus)
+	engine_idle_stream = engine_playback.play_stream(engine_idle_sound, randf(), -80, 1.0, AudioServer.PLAYBACK_TYPE_STREAM, bus)
 	
 
 func do_setup() -> bool:
@@ -74,15 +76,18 @@ func _process(delta: float) -> void:
 	do_drift_sound()
 	do_drift_spark_sound()
 	do_collision_sound()
+	#print(bus)
 
 func do_determine_who() -> void:
 	var max_distance: float = def_max_distance
-	doppler = true
+	is_player = false
+	bus = "SFX_OTHER"
 	cur_volume_multi = their_volume
 	
 	if parent.is_player:
 		max_distance = 0.0
-		doppler = false
+		is_player = true
+		bus = "SFX_ME"
 		cur_volume_multi = our_volume
 	
 	%EngineSFX.max_distance = max_distance
@@ -135,7 +140,7 @@ func do_doppler(delta) -> void:
 	
 	doppler_multi = 1.0
 	
-	if doppler:
+	if !is_player:
 		if !cam_switch:
 			var dist_delta: float = (doppler_prev_distance - doppler_cur_distance) * delta
 			doppler_multi = Util.doppler_sigmoid(dist_delta, 0.075)
@@ -171,7 +176,7 @@ func do_drift_sound() -> void:
 	
 	# parent is drifting
 	if skid_stream == -1:
-		skid_stream = engine_playback.play_stream(skid_sound, 0, make_volume(0.1), 1.0, AudioServer.PLAYBACK_TYPE_STREAM, "SFX")
+		skid_stream = engine_playback.play_stream(skid_sound, 0, make_volume(0.1), 1.0, AudioServer.PLAYBACK_TYPE_STREAM, bus)
 	
 	var turn_delta: float = abs(parent.cur_turn_speed) / parent.max_turn_speed
 	var turn_pitch_multi: float = clamp(remap(turn_delta, parent.drift_turn_min_multiplier, parent.drift_turn_multiplier, 0, 1), 0, 1)
@@ -193,7 +198,7 @@ func water_entered() -> void:
 	play_sample(water_splash_sound, 0.2, randf_range(1.1, 1.3))
 
 func play_sample(sound: AudioStream, volume_linear: float = 1.0, pitch: float = 1.0, offset: float = 0.0) -> void:
-	engine_playback.play_stream(sound, offset, make_volume(volume_linear), pitch, AudioServer.PLAYBACK_TYPE_DEFAULT, "SFX")
+	engine_playback.play_stream(sound, offset, make_volume(volume_linear), pitch, AudioServer.PLAYBACK_TYPE_DEFAULT, bus)
 
 func make_volume(linear_volume: float) -> float:
 	return linear_to_db(cur_volume_multi * occlusion_multi * clamp(linear_volume, 0, 1))

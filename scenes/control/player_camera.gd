@@ -34,6 +34,9 @@ var respawn_multi = 1.0
 var is_respawn = false
 var respawn_decel = 5.0
 
+var cpu_duck_distance := 25.0
+var duck_speed := 0.5
+
 func undo_respawn():
 	respawn_multi = 1.0
 	is_respawn = false
@@ -161,8 +164,35 @@ func _on_camera_area_area_exited(area):
 		in_water = false
 		UI.clear_effect()
 
-func _process(_delta):
+func _process(delta):
 	if !target:
 		return
 		
 	fov = default_fov + target.extra_fov
+	
+	handle_sound(delta)
+
+func handle_sound(delta) -> void:
+	duck_cpu_engines(delta)
+
+func duck_cpu_engines(delta) -> void:
+	var bus_idx := AudioServer.get_bus_index("SFX")
+	var old_volume := db_to_linear(AudioServer.get_bus_volume_db(bus_idx))
+	print("SFX_OTHER " + str(old_volume))
+	
+	var count := 1.0
+	for vehicle: Vehicle3 in target.world.players_dict.values():
+		if vehicle == target:
+			continue
+		var dist = global_position.distance_to(vehicle.global_position)
+		if dist > cpu_duck_distance:
+			continue
+		count += 1.0 - pow(dist / cpu_duck_distance, 2)
+	
+	var new_volume = clampf(remap(1/count, 0.0, 0.5, 0.5, 1.0), 0.0, 1.0)
+		
+	if Input.is_action_pressed("_F4"):
+		new_volume = 0.0
+	
+	AudioServer.set_bus_volume_db(bus_idx, linear_to_db(new_volume))
+	
