@@ -187,7 +187,8 @@ func duck_cpu_engines(delta) -> void:
 		var dist = global_position.distance_to(vehicle.global_position)
 		if dist > cpu_duck_distance:
 			continue
-		count += 1.0 - pow(dist / cpu_duck_distance, 2)
+		#count += pow(1.0 - dist / cpu_duck_distance, 1.5)
+		count += 1.0 - dist / cpu_duck_distance
 	
 	var new_volume = clampf(remap(1/count, 0.0, 0.5, 0.5, 1.0), 0.0, 1.0)
 		
