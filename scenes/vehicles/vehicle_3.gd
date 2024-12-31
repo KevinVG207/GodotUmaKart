@@ -1551,7 +1551,8 @@ func apply_state(state: Dictionary) -> void:
 	if state.bbt:
 		$BigBoostTimer.start(state.bbt)
 	
-	if global_position.distance_to(Util.to_vector3(state.pos)) > network_teleport_distance:
+	#if global_position.distance_to(Util.to_vector3(state.pos)) > network_teleport_distance:
+	if should_teleport_to_network(Util.to_vector3(state.pos)):
 		global_position = Util.to_vector3(state.pos)
 		quaternion = Util.array_to_quat(state.rot)
 		linear_velocity = Util.to_vector3(state.lin_vel)
@@ -1566,6 +1567,14 @@ func apply_state(state: Dictionary) -> void:
 		teleport(global_position, transform.basis.x, transform.basis.y)
 		#Debug.print("TELEPORT!")
 
+func should_teleport_to_network(network_pos: Vector3) -> bool:
+	if global_position.distance_to(network_pos) > network_teleport_distance:
+		return true
+		
+	var grav_component = (global_position - network_pos).project(gravity)
+	if grav_component.length() > network_teleport_distance / 3:
+		return true
+	return false
 
 func _on_failsafe_timer_timeout() -> void:
 	if not finished:

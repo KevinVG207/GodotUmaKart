@@ -178,7 +178,6 @@ func handle_sound(delta) -> void:
 func duck_cpu_engines(delta) -> void:
 	var bus_idx := AudioServer.get_bus_index("SFX")
 	var old_volume := db_to_linear(AudioServer.get_bus_volume_db(bus_idx))
-	print("SFX_OTHER " + str(old_volume))
 	
 	var count := 1.0
 	for vehicle: Vehicle3 in target.world.players_dict.values():
