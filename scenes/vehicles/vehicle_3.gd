@@ -41,6 +41,7 @@ var item: Node = null
 var can_use_item: bool = false
 var moved_to_next: bool = false
 var catch_up: bool = false
+var in_cannon := false
 
 var input_accel: bool = false
 var input_brake: bool = false
@@ -355,7 +356,8 @@ func handle_input() -> void:
 		input_steer = Input.get_axis("right", "left")
 		input_trick = Input.is_action_just_pressed("trick")
 		input_item = Input.is_action_pressed("item")
-		input_item_just = Input.is_action_just_pressed("item")
+		if !in_cannon:
+			input_item_just = Input.is_action_just_pressed("item")
 		input_updown = Input.get_axis("down", "up")
 
 func cpu_control(delta: float) -> void:
@@ -615,68 +617,69 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	
 	# var new_vel = Vector3.ZERO
 	# var ground_vel = get_grounded_vel(delta)
-	if grounded and !in_bounce:
-		air_frames = 0
-		# Apply friction to rest_vel along the ground
-		#var rest_vel_rest = rest_vel.project(floor_normal)
-		#var rest_vel_ground = rest_vel - rest_vel_rest
+	if (!in_cannon):
+		if grounded and !in_bounce:
+			air_frames = 0
+			# Apply friction to rest_vel along the ground
+			#var rest_vel_rest = rest_vel.project(floor_normal)
+			#var rest_vel_ground = rest_vel - rest_vel_rest
 
-		#rest_vel_ground = rest_vel_ground.move_toward(Vector3.ZERO, default_grip_rest * delta)
+			#rest_vel_ground = rest_vel_ground.move_toward(Vector3.ZERO, default_grip_rest * delta)
 
-		#rest_vel = rest_vel_ground
-		
-		# Remove gravity.
-		var vel_grav := rest_vel.project(gravity.normalized())
-		# print(vel_grav)
-		rest_vel -= vel_grav
-		
-		rest_vel = rest_vel.move_toward(Vector3.ZERO, default_grip * delta)
-		
-		if keep_grav:
-			#print("stick")
-			rest_vel += vel_grav
-		#if rest_vel.length() < max_displacement_for_sleep:
-			#rest_vel = Vector3.ZERO
+			#rest_vel = rest_vel_ground
+			
+			# Remove gravity.
+			var vel_grav := rest_vel.project(gravity.normalized())
+			# print(vel_grav)
+			rest_vel -= vel_grav
+			
+			rest_vel = rest_vel.move_toward(Vector3.ZERO, default_grip * delta)
+			
+			if keep_grav:
+				#print("stick")
+				rest_vel += vel_grav
+			#if rest_vel.length() < max_displacement_for_sleep:
+				#rest_vel = Vector3.ZERO
 
-		prop_vel = get_grounded_vel(delta)
-	else:
-		air_frames += 1
+			prop_vel = get_grounded_vel(delta)
+		else:
+			air_frames += 1
+			
+			var grav_component := rest_vel.project(gravity.normalized())
+			var other := rest_vel - grav_component
+			other = other.move_toward(Vector3.ZERO, air_decel * delta)
+			
+			rest_vel = other + grav_component
+			
+			if is_being_controlled:
+				rest_vel = grav_component
+			# new_vel = get_air_vel(delta)
+			#print("airborne ", new_vel)
 		
-		var grav_component := rest_vel.project(gravity.normalized())
-		var other := rest_vel - grav_component
-		other = other.move_toward(Vector3.ZERO, air_decel * delta)
+		#print(speed_vec)
 		
-		rest_vel = other + grav_component
+		var _gravity: Vector3 = gravity
+		# if (prev_gravity_vel + (_gravity*delta)).length() > terminal_velocity:
+		# 	_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
+		if grounded and $TrickTimer.is_stopped():
+			_gravity *= 1
 		
-		if is_being_controlled:
-			rest_vel = grav_component
-		# new_vel = get_air_vel(delta)
-		#print("airborne ", new_vel)
-	
-	#print(speed_vec)
-	
-	var _gravity: Vector3 = gravity
-	# if (prev_gravity_vel + (_gravity*delta)).length() > terminal_velocity:
-	# 	_gravity = prev_gravity_vel.move_toward(gravity.normalized() * terminal_velocity, gravity.length() * delta) - prev_gravity_vel
-	if grounded and $TrickTimer.is_stopped():
-		_gravity *= 1
-	
-	if in_bounce and bounce_frames < 9:
-		_gravity = Vector3.ZERO
-	if in_hop and in_hop_frames < 9:
-		_gravity = Vector3.ZERO
+		if in_bounce and bounce_frames < 9:
+			_gravity = Vector3.ZERO
+		if in_hop and in_hop_frames < 9:
+			_gravity = Vector3.ZERO
 
-	#if grounded:
-		#new_grav *= 2
-	rest_vel += _gravity * delta
+		#if grounded:
+			#new_grav *= 2
+		rest_vel += _gravity * delta
 
 	# var target_vel: Vector3 = prev_vel.move_toward(new_vel, delta * cur_grip * grip_multiplier) + (_gravity * delta)
 
 	# print(prop_vel, " ", rest_vel, " ", linear_velocity)
 	
 	
-	if is_stick:
-		rest_vel += -transform.basis.y.project(gravity.normalized()) * stick_speed * delta
+		if is_stick:
+			rest_vel += -transform.basis.y.project(gravity.normalized()) * stick_speed * delta
 
 			#Debug.print(linear_velocity.y)
 
@@ -776,7 +779,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 		print("PANIC: " + username + " Rest vel is infinite! Setting to 0")
 		rest_vel = Vector3.ZERO
 	
-	linear_velocity = prop_vel + rest_vel
+	if (!in_cannon):
+		linear_velocity = prop_vel + rest_vel
 	
 	if !linear_velocity.is_finite():
 		print("PANIC: " + username + " Lin_vel is infinite! Setting to 0")
@@ -1196,6 +1200,9 @@ func respawn() -> void:
 	
 	if is_network:
 		return
+		
+	if in_cannon:
+		return
 	
 	respawn_stage = 1
 	if item and "remove" in item:
@@ -1278,6 +1285,9 @@ func handle_drift_particles() -> void:
 
 func handle_item() -> void:
 	if not input_item_just:
+		return
+	
+	if in_cannon:
 		return
 	
 	if not can_use_item:
@@ -1586,6 +1596,9 @@ func start_failsafe_timer() -> void:
 	$FailsafeTimer.start()
 
 func damage(damage_type: int) -> void:
+	if in_cannon:
+		return
+	
 	start_failsafe_timer()
 
 	if in_damage:

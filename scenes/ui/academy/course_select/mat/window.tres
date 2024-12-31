@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b5ylqqgwjjyqj"]
+
+[resource]
+resource_name = "window"
+cull_mode = 2
+shading_mode = 0
+diffuse_mode = 3
+disable_receive_shadows = true

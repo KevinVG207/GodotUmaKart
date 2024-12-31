@@ -1,14 +1,27 @@
-[gd_scene load_steps=11 format=3 uid="uid://djkncdwh507k1"]
+[gd_scene load_steps=14 format=3 uid="uid://djkncdwh507k1"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_ecs37"]
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="2_cairb"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_02dhb"]
 [ext_resource type="Script" path="res://scenes/control/Water.gd" id="3_6mpm6"]
+[ext_resource type="PackedScene" uid="uid://clsclqt1h0fjf" path="res://scenes/objects/cannon_trigger.tscn" id="3_te5xt"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_6gkg7"]
 [ext_resource type="PackedScene" uid="uid://bhpncku0ylcxx" path="res://scenes/items/RunningShoes/running_shoes.tscn" id="6_7pr3j"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="6_x6qyg"]
 [ext_resource type="ArrayMesh" uid="uid://dtyvvgshfl4xh" path="res://assets/course/wicked-woods/map_mesh.tres" id="8_torjd"]
 [ext_resource type="PackedScene" uid="uid://b70opqruhfce3" path="res://scenes/control/path/Split.tscn" id="9_nmbxv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dqqnb"]
+resource_local_to_scene = true
+size = Vector3(16, 16, 5)
+
+[sub_resource type="Curve3D" id="Curve3D_tqgkh"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector3Array(-2.73398, 18.7441, -65.264, 2.73398, -18.7441, 65.264, 0, 0, 0, -2.14951, -2.47632, -44.4122, 2.14951, 2.47632, 44.4122, 7.02921, -39.1026, 164.459),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ubem1"]
 size = Vector3(300, 33.77, 141.27)
@@ -22,7 +35,16 @@ metadata/_edit_group_ = true
 
 [node name="WickedWoods" parent="Course" index="0" instance=ExtResource("2_cairb")]
 
-[node name="Water" type="Area3D" parent="Course" index="1"]
+[node name="CannonTrigger" parent="Course" index="1" instance=ExtResource("3_te5xt")]
+transform = Transform3D(0.751402, -0.17078, -0.637361, 1.49012e-08, 0.965926, -0.258819, 0.659844, 0.194477, 0.725799, -17.3402, 157.756, -189.185)
+
+[node name="CollisionShape3D" parent="Course/CannonTrigger" index="0"]
+shape = SubResource("BoxShape3D_dqqnb")
+
+[node name="Path" parent="Course/CannonTrigger" index="1"]
+curve = SubResource("Curve3D_tqgkh")
+
+[node name="Water" type="Area3D" parent="Course" index="2"]
 transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
 collision_layer = 2
 collision_mask = 14
@@ -32,12 +54,12 @@ script = ExtResource("3_6mpm6")
 transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, -76.2508)
 shape = SubResource("BoxShape3D_ubem1")
 
-[node name="MapMesh" parent="Course" index="2"]
+[node name="MapMesh" parent="Course" index="3"]
 transform = Transform3D(4.5, 0, 0, 0, -1.96701e-07, -4.5, 0, 4.5, -1.96701e-07, 0, 0, 0)
 visible = false
 mesh = ExtResource("8_torjd")
 
-[node name="DirectionalLight3D" parent="Course" index="3"]
+[node name="DirectionalLight3D" parent="Course" index="4"]
 light_energy = 1.1
 
 [node name="Objects" parent="." index="1"]
@@ -470,5 +492,6 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -73.32
 [connection signal="body_entered" from="Course/Water" to="Course/Water" method="_on_body_entered"]
 [connection signal="body_exited" from="Course/Water" to="Course/Water" method="_on_body_exited"]
 
+[editable path="Course/CannonTrigger"]
 [editable path="EnemyPathPoints/Split"]
 [editable path="EnemyPathPoints/Split/Branch1/Split"]

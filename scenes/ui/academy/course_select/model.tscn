@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://copuj6vonqpvl"]
+
+[ext_resource type="PackedScene" uid="uid://br4os61oolb0b" path="res://assets/ui/course_select/classroom.blend" id="1_r7gvj"]
+
+[node name="classroom" instance=ExtResource("1_r7gvj")]
+
+[node name="Window" parent="." index="0"]
+layers = 512
+cast_shadow = 0
+
+[node name="Blackboard" parent="." index="1"]
+layers = 512
+
+[node name="Plane_001" parent="." index="2"]
+layers = 512

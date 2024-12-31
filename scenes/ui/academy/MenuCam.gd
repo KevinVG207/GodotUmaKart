@@ -12,10 +12,14 @@ var scale_multi: float = 1.0
 @onready var viewport: SubViewport = $SubViewport
 
 
-var opacity: float:
+@export var opacity: float:
 	set(value):
+		if (!plane):
+			return
 		plane.transparency = 1.0 - value
 	get:
+		if (!plane):
+			return 1.0
 		return 1.0 - plane.transparency
 
 func _ready():
