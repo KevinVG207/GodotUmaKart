@@ -187,7 +187,7 @@ func do_collision_sound() -> void:
 	do_landing_sound()
 
 func do_landing_sound() -> void:
-	if !prev_grounded and parent.grounded:
+	if !prev_grounded and parent.grounded and parent.started:
 		#var grav_component = parent.prev_frame_pre_sim_vel.project(-parent.floor_normal.normalized())
 		#var volume: float = clamp(remap(grav_component.length(), 0, 1, 0, 1), 0.4, 0.75)
 		#print("land ", volume, " ", grav_component.length())

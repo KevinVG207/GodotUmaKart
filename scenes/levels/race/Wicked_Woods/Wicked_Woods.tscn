@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://djkncdwh507k1"]
+[gd_scene load_steps=16 format=3 uid="uid://djkncdwh507k1"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_ecs37"]
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="2_cairb"]
@@ -10,6 +10,15 @@
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="6_x6qyg"]
 [ext_resource type="ArrayMesh" uid="uid://dtyvvgshfl4xh" path="res://assets/course/wicked-woods/map_mesh.tres" id="8_torjd"]
 [ext_resource type="PackedScene" uid="uid://b70opqruhfce3" path="res://scenes/control/path/Split.tscn" id="9_nmbxv"]
+
+[sub_resource type="Gradient" id="Gradient_vd50w"]
+resource_local_to_scene = true
+offsets = PackedFloat32Array(0, 0.846154, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 0.601223, 0.601223, 0.601223, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_oosg3"]
+resource_local_to_scene = true
+gradient = SubResource("Gradient_vd50w")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_dqqnb"]
 resource_local_to_scene = true
@@ -37,6 +46,7 @@ metadata/_edit_group_ = true
 
 [node name="CannonTrigger" parent="Course" index="1" instance=ExtResource("3_te5xt")]
 transform = Transform3D(0.751402, -0.17078, -0.637361, 1.49012e-08, 0.965926, -0.258819, 0.659844, 0.194477, 0.725799, -17.3402, 157.756, -189.185)
+gradient = SubResource("GradientTexture1D_oosg3")
 
 [node name="CollisionShape3D" parent="Course/CannonTrigger" index="0"]
 shape = SubResource("BoxShape3D_dqqnb")

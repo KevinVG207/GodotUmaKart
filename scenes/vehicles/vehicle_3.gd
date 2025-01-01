@@ -1243,6 +1243,9 @@ func handle_respawn() -> void:
 		set_movement_zero()
 		global_position = respawn_position
 		global_rotation = respawn_rotation
+		if is_cpu:
+			cpu_target = Util.get_path_point_ahead_of_player(self)
+			cpu_target_offset = get_random_target_offset()
 
 
 func handle_particles() -> void:

@@ -3,8 +3,13 @@ extends PathFollow3D
 class_name CannonPathFollow
 
 var vehicle: Vehicle3 = null
-var speed := 50.0
+var speed := 50.0:
+	get():
+		if !gradient:
+			return speed
+		return gradient.sample(progress_ratio).get_luminance() * speed
 var finished := false
+var gradient: Gradient = null
 
 func _ready() -> void:
 	loop = false
@@ -20,6 +25,11 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	if !vehicle:
+		queue_free()
+		return
+	
+	if !gradient:
+		print("CannonPathFollow has no gradient!")
 		queue_free()
 		return
 		

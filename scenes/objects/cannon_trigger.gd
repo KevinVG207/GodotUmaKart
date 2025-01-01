@@ -3,13 +3,14 @@ extends Area3D
 class_name CannonTrigger
 
 @export var speed: float = 50.0
+@export var gradient: GradientTexture1D
 
 func _on_body_entered(body: Node3D) -> void:
 	if body is not Vehicle3:
 		return
 	
 	var vehicle: Vehicle3 = body
-	if vehicle.is_being_controlled or vehicle.respawn_stage:
+	if vehicle.respawn_stage:
 		return
 	
 	vehicle.is_being_controlled = true
@@ -19,6 +20,7 @@ func _on_body_entered(body: Node3D) -> void:
 	var new_follow := CannonPathFollow.new()
 	new_follow.vehicle = vehicle
 	new_follow.speed = speed
+	new_follow.gradient = gradient.gradient
 	new_path.add_child(new_follow)
 	
 	var seconds := new_path.curve.get_baked_length() / speed
