@@ -53,13 +53,13 @@ enabled=PackedStringArray("res://addons/material_modifier/plugin.cfg")
 
 floor=""
 wall=""
-weak_offroad=""
 trick=""
-small_trick=""
 offroad=""
 map=""
 boost=""
 bonk=""
+trick_small=""
+offroad_weak=""
 
 [input]
 

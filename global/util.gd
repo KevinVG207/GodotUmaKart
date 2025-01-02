@@ -7,6 +7,19 @@ var version: String:
 			return tmp + "-dev"
 		return tmp
 
+#class Clonable:
+	#func clone(new: Clonable) -> Clonable:
+		#var prop_list := self.get_property_list()
+		#for prop in prop_list:
+			#if prop.name not in new:
+				#continue
+			#if prop.name == "script":
+				#new[prop.name] = self[prop.name]
+			#else:
+				#new[prop.name] = self[prop.name]
+			#
+		#return new
+
 func get_vehicle_accel(max_speed: float, cur_speed: float, initial_accel: float, exponent: float) -> float:
 	var speed_ratio = clamp(cur_speed / max_speed, 0, 1)
 	return max(-initial_accel * speed_ratio ** exponent + initial_accel, 0)
