@@ -1,10 +1,11 @@
-[gd_scene load_steps=44 format=3 uid="uid://ds7es8al63u4p"]
+[gd_scene load_steps=45 format=3 uid="uid://ds7es8al63u4p"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_4.gd" id="1_n82v2"]
 [ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="4_gc5eh"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_6rco1"]
 [ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="6_6ard6"]
 [ext_resource type="PackedScene" uid="uid://qy0ee3o43y7b" path="res://assets/vehicles/kart/kart.tscn" id="7_o06fs"]
+[ext_resource type="Script" path="res://assets/vehicles/wheel.gd" id="7_yuv68"]
 [ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="8_f4b6f"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="10_65ivf"]
 [ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_dx2bk"]
@@ -997,17 +998,25 @@ transform = Transform3D(-6.99382e-09, 0, 0.16, 0, 0.16, 0, -0.16, 0, -6.99382e-0
 [node name="Wheels" type="Node3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 
-[node name="wheel" parent="Node3D/Visual/Wheels" instance=ExtResource("8_f4b6f")]
+[node name="wheel" parent="Node3D/Visual/Wheels" node_paths=PackedStringArray("parent") instance=ExtResource("8_f4b6f")]
 transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, -0.72)
+script = ExtResource("7_yuv68")
+parent = NodePath("../../../..")
 
-[node name="wheel2" parent="Node3D/Visual/Wheels" instance=ExtResource("8_f4b6f")]
+[node name="wheel2" parent="Node3D/Visual/Wheels" node_paths=PackedStringArray("parent") instance=ExtResource("8_f4b6f")]
 transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, 0.72)
+script = ExtResource("7_yuv68")
+parent = NodePath("../../../..")
 
-[node name="wheel3" parent="Node3D/Visual/Wheels" instance=ExtResource("8_f4b6f")]
+[node name="wheel3" parent="Node3D/Visual/Wheels" node_paths=PackedStringArray("parent") instance=ExtResource("8_f4b6f")]
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, -0.624835)
+script = ExtResource("7_yuv68")
+parent = NodePath("../../../..")
 
-[node name="wheel4" parent="Node3D/Visual/Wheels" instance=ExtResource("8_f4b6f")]
+[node name="wheel4" parent="Node3D/Visual/Wheels" node_paths=PackedStringArray("parent") instance=ExtResource("8_f4b6f")]
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, 0.625)
+script = ExtResource("7_yuv68")
+parent = NodePath("../../../..")
 
 [node name="DriftParticles" type="Node3D" parent="Node3D/Visual"]
 unique_name_in_owner = true

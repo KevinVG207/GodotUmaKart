@@ -37,6 +37,9 @@ var is_player := true
 var is_cpu := false
 var is_network := false
 
+var started := true
+var finished := false
+
 var prev_velocity := Velocity.new()
 var velocity := Velocity.new()
 
@@ -147,6 +150,7 @@ class Boost:
 
 var steering := 0.0
 @export var max_turn_speed: float = 80.0
+@export var steer_speed_decrease: float = 0.025
 @export var drift_turn_multiplier: float = 1.2
 @export var drift_turn_min_multiplier: float = 0.5
 @export var air_turn_multiplier: float = 0.5
@@ -249,6 +253,7 @@ func set_inputs() -> void:
 	input.trick = Input.is_action_just_pressed("trick")
 	input.item = Input.is_action_pressed("item")
 	input.tilt = Input.get_axis("down", "up")
+	input.mirror = Input.is_action_pressed("mirror")
 	return
 
 
@@ -297,6 +302,7 @@ func determine_max_speed_and_accel() -> void:
 	grip = base_grip
 	apply_offroad_speed_multi()
 	apply_boost_speed_multi()
+	apply_turn_speed_reduction()
 	return
 
 func apply_offroad_speed_multi() -> void:
@@ -320,6 +326,10 @@ func apply_boost_speed_multi() -> void:
 	max_speed *= cur_boost.speed_multi
 	initial_accel *= cur_boost.initial_accel_multi
 	accel_exponent *= cur_boost.exponent_multi
+
+func apply_turn_speed_reduction() -> void:
+	max_speed -= abs(turn_speed) * steer_speed_decrease
+	return
 
 func determine_floor_normal() -> void:
 	if !ground_contacts:
@@ -378,7 +388,10 @@ func build_contacts() -> void:
 	for i in range(physics_state.get_contact_count()):
 		var cur_ground_contact := false
 		var collider := physics_state.get_contact_collider_object(i) as Node3D
-		for group_raw in collider.get_groups():
+		var groups := collider.get_groups()
+		if groups.is_empty():
+			groups.append("UNKNOWN")
+		for group_raw in groups:
 			var group_str := str(group_raw).to_upper()
 			if group_str.begins_with("_"):
 				continue
@@ -387,7 +400,10 @@ func build_contacts() -> void:
 			var type_str := split_settings[0]
 			var settings := split_settings.slice(0,0) if split_settings.size() == 1 else split_settings.slice(1)
 
-			var contact_type: ContactType = ContactType[type_str] if type_str in ContactType else ContactType.UNKNOWN
+			if type_str not in ContactType:
+				continue
+
+			var contact_type: ContactType = ContactType[type_str]
 			if contact_type in floor_types:
 				cur_ground_contact = true
 			
@@ -451,6 +467,8 @@ func handle_steer() -> void:
 	steering = clampf(input.steer, -1.0, 1.0)
 
 	# TODO: Drift
+	if in_drift:
+		steering = drift_dir * remap(steering * drift_dir, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
 
 	var cur_max_turn_speed: float = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
 	var turn_target := steering * cur_max_turn_speed
@@ -523,7 +541,7 @@ func handle_drift() -> void:
 	if !in_drift:
 		return
 	
-	if cur_speed < min_hop_speed:
+	if cur_speed < min_hop_speed * 0.5:
 		in_drift = false
 	
 	if !input.brake:
@@ -578,7 +596,7 @@ func apply_acceleration() -> void:
 	cur_speed = move_toward(cur_speed, new_speed, delta * grip)
 
 func rotate_accel_along_floor() -> void:
-	return	
+	# TODO: This might not be the correct angle?
 	# Rotate the propulsion direction
 	if grounded and !prev_grounded:
 		# We were in the air and have now landed
