@@ -1267,6 +1267,7 @@ process_callback = 0
 one_shot = true
 
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]
+[connection signal="timeout" from="BoostTimer" to="." method="_on_boost_timer_timeout"]
 [connection signal="timeout" from="ItemRouletteTimer" to="." method="_on_item_roulette_timer_timeout"]
 [connection signal="timeout" from="FailsafeTimer" to="." method="_on_failsafe_timer_timeout"]
 [connection signal="timeout" from="DamageTimer" to="." method="_on_damage_timer_timeout"]

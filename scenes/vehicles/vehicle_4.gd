@@ -70,6 +70,7 @@ var below_normals := []
 var floor_check_grid: Array = []
 var floor_check_distance: float = 0.8
 var ground_rot_multi: float = 6.0
+var air_rot_multi: float = 1.0
 var is_stick := false
 var stick_speed: float = 10
 var in_hop := false
@@ -106,11 +107,12 @@ class WallContact extends Contact:
 	var bounce := 0.2
 
 class OffroadContact extends Contact:
-	var speed_multi := 0.75
+	var speed_multi := 0.6
 
-var cur_boost_type: BoostType
+var cur_boost_type: BoostType = BoostType.NONE
 @onready var boost_timer: Timer = %BoostTimer
 enum BoostType {
+	NONE,
 	SMALL,
 	NORMAL,
 	BIG
@@ -134,9 +136,19 @@ class Boost:
 		exponent_multi = _exponent_multi
 
 
+var steering := 0.0
+@export var max_turn_speed: float = 80.0
+@export var drift_turn_multiplier: float = 1.2
+@export var drift_turn_min_multiplier: float = 0.5
+@export var air_turn_multiplier: float = 0.5
+var turn_speed := 0.0
+@export var base_turn_accel: float = 1800
+var turn_accel := base_turn_accel
+
 var visual_event_queue := []
 
 func _ready() -> void:
+	UI.show_race_ui()
 	print(ContactType.keys())
 	setup_floor_check_grid()
 
@@ -153,6 +165,9 @@ func setup_floor_check_grid() -> void:
 		ml, ml.lerp(mr, 0.5), mr,
 		bl, bl.lerp(br, 0.5), br
 	]
+
+func _process(_delta: float) -> void:
+	UI.race_ui.update_speed(cur_speed)
 
 func visual_tick() -> void:
 	while visual_event_queue.size() > 0:
@@ -190,9 +205,6 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	apply_rotations()
 
 	prev_transform = transform
-
-	Debug.print(velocity.total())
-	Debug.print(velocity.prop_vel.length())
 	return
 
 func handle_sleep() -> void:
@@ -253,7 +265,6 @@ func detect_collisions() -> void:
 func determine_grounded() -> void:
 	prev_grounded = grounded
 	grounded = !ground_contacts.is_empty()
-	# Debug.print(grounded)
 	return
 
 func determine_stick() -> void:
@@ -287,14 +298,13 @@ func apply_offroad_speed_multi() -> void:
 	for contact: OffroadContact in contacts[ContactType.OFFROAD]:
 		if contact.speed_multi < speed_multi:
 			speed_multi = contact.speed_multi
-	print("Speed multi ", speed_multi)
 	
 	max_speed *= speed_multi
 	grip *= 0.5
 	return
 
 func apply_boost_speed_multi() -> void:
-	if !cur_boost_type:
+	if cur_boost_type == BoostType.NONE:
 		return
 	
 	var cur_boost: Boost = boosts[cur_boost_type]
@@ -318,7 +328,6 @@ func determine_floor_normal() -> void:
 		return
 
 	floor_normal = Util.sum(normals) / normals.size()
-	print(floor_normal)
 	return
 
 func raycast_below() -> void:
@@ -385,9 +394,9 @@ func build_contacts() -> void:
 					if !settings.is_empty():
 						match settings[0]:
 							"WEAK":
-								contact.speed_multi *= 0.85
+								contact.speed_multi *= 0.8
 							"STRONG":
-								contact.speed_multi *= 0.60
+								contact.speed_multi *= 0.5
 				ContactType.BOOST:
 					apply_boost(BoostType.NORMAL)
 			
@@ -424,6 +433,24 @@ func handle_item() -> void:
 
 func handle_steer() -> void:
 	angular_velocity = Vector3.ZERO
+	steering = 0.0
+	turn_accel = base_turn_accel
+
+	# if respawn_stage:
+	# 	return
+
+	steering = clampf(input.steer, -1.0, 1.0)
+
+	# TODO: Drift
+
+	var cur_max_turn_speed: float = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
+	var turn_target := steering * cur_max_turn_speed
+
+	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
+
+	var multi := 1.0 if grounded else air_turn_multiplier
+	print(multi)
+	rotation_degrees.y += turn_speed * delta * multi
 	return
 
 func apply_velocities() -> void:
@@ -444,7 +471,8 @@ func apply_velocities() -> void:
 	apply_acceleration()
 	rotate_accel_along_floor()
 
-	# TODO: Apply velocity
+	outside_drift_force()
+
 	linear_velocity = velocity.total()
 	return
 
@@ -463,9 +491,7 @@ func stick_to_ground() -> void:
 	if !is_stick:
 		return
 	
-	var dt := -transform.basis.y.project(gravity.normalized()) * gravity.length() * delta
-	print("a ", dt)
-	velocity.rest_vel += dt
+	velocity.rest_vel += -transform.basis.y.project(gravity.normalized()) * gravity.length() * delta
 	return
 
 func apply_gravity() -> void:
@@ -489,9 +515,9 @@ func apply_acceleration() -> void:
 		return
 
 	var speed_delta: float = 0.0
-	if input.accel and input.brake:
+	if input.accel and input.brake and cur_boost_type == BoostType.NONE:
 		speed_delta = get_brake_speed()
-	elif input.accel:
+	elif input.accel or cur_boost_type != BoostType.NONE:
 		speed_delta = get_accel_speed()
 	elif input.brake:
 		speed_delta = get_reverse_speed()
@@ -514,9 +540,12 @@ func rotate_accel_along_floor() -> void:
 	
 	var new_prop_vel := velocity.prop_vel.rotated(transform.basis.z, -deg_to_rad(angle_to_ground))
 	velocity.prop_vel = velocity.prop_vel.normalized().slerp(new_prop_vel.normalized(), along_ground_multi) * velocity.prop_vel.length()
-	# Debug.print(velocity.prop_vel)
+
 	along_ground_multi -= along_ground_dec * delta
 	along_ground_multi = clamp(along_ground_multi, 0.0, 1.0)
+	return
+
+func outside_drift_force() -> void:
 	return
 
 func get_accel_speed() -> float:
@@ -540,6 +569,7 @@ func get_friction_speed() -> float:
 
 func apply_rotations() -> void:
 	rotate_stick()
+	rotate_to_gravity()
 
 func rotate_stick() -> void:
 	if !grounded:
@@ -555,3 +585,16 @@ func rotate_stick() -> void:
 	rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * multi * delta)
 	rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.x) * ground_rot_multi * multi * delta)
 	rotation.y = prev_y
+
+func rotate_to_gravity() -> void:
+	if grounded:
+		return
+	
+	var prev_y := rotation.y
+	rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(-gravity, transform.basis.z) * air_rot_multi * delta)
+	rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(-gravity, transform.basis.x) * air_rot_multi * delta)
+	rotation.y = prev_y
+
+
+func _on_boost_timer_timeout() -> void:
+	cur_boost_type = BoostType.NONE
