@@ -68,13 +68,22 @@ var grounded := false
 var floor_normal: Vector3 = Vector3.UP
 var below_normals := []
 var floor_check_grid: Array = []
-var floor_check_distance: float = 0.8
-var ground_rot_multi: float = 6.0
+var floor_check_distance: float = 1.0
+var ground_rot_multi: float = 5.0
 var air_rot_multi: float = 1.0
 var is_stick := false
-var stick_speed: float = 10
+var stick_speed: float = 5
 var in_hop := false
+var hop_force: float = 3.5
+var hop_frames := 0
+var min_hop_speed := max_speed * 0.5
 var in_bounce := false
+
+var in_drift := false
+var drift_dir := 0
+var drift_gauge: float = 0
+var drift_gauge_max: float = 100
+@export var drift_gauge_multi: float = 55.0
 
 var along_ground_multi := 0.0
 var along_ground_dec := 5.0
@@ -269,7 +278,7 @@ func determine_grounded() -> void:
 
 func determine_stick() -> void:
 	is_stick = false
-	if air_frames < 15 and !in_hop and !in_bounce:
+	if air_frames < 15 and !in_bounce:
 		var ray_origin := transform.origin
 		var ray_end := ray_origin + gravity.normalized() * 1.4
 		# TODO: Change this back
@@ -450,7 +459,7 @@ func handle_steer() -> void:
 
 	var multi := 1.0 if grounded else air_turn_multiplier
 	print(multi)
-	rotation_degrees.y += turn_speed * delta * multi
+	transform.basis = transform.basis.rotated(transform.basis.y, deg_to_rad(turn_speed * delta * multi))
 	return
 
 func apply_velocities() -> void:
@@ -463,12 +472,15 @@ func apply_velocities() -> void:
 	collide_walls()
 
 	handle_hop()
+	handle_drift()
 
 	apply_gravity()
 
 	stick_to_ground()
 
 	apply_acceleration()
+	velocity.prop_vel = transform.basis.z.normalized() * cur_speed
+
 	rotate_accel_along_floor()
 
 	outside_drift_force()
@@ -485,6 +497,44 @@ func collide_walls() -> void:
 	return
 
 func handle_hop() -> void:
+	min_hop_speed = max_speed * 0.5
+	if !in_hop and input.accel and input.brake and !prev_input.brake and cur_speed > min_hop_speed:
+		# Perform hop
+		in_hop = true
+		hop_frames = -1
+
+	if in_hop:
+		hop_frames += 1
+
+		if hop_frames < 9:
+			velocity.rest_vel += -gravity * 0.03
+			is_stick = false
+
+		if hop_frames > 30 and ground_contacts:
+			in_hop = false
+			if input.brake and cur_speed > min_hop_speed and input.steer != 0:
+				in_drift = true
+				drift_gauge = 0
+				drift_dir = 1 if input.steer > 0 else -1
+		return
+	return
+
+func handle_drift() -> void:
+	if !in_drift:
+		return
+	
+	if cur_speed < min_hop_speed:
+		in_drift = false
+	
+	if !input.brake:
+		in_drift = false
+		if input.accel and drift_gauge >= drift_gauge_max:
+			apply_boost(BoostType.SMALL)
+		return
+	
+	drift_gauge += remap(abs(steering), drift_turn_min_multiplier, drift_turn_multiplier, 1, 2) * drift_gauge_multi * delta
+	drift_gauge = clampf(drift_gauge, 0, drift_gauge_max)
+	Debug.print(["Drift gauge", drift_gauge])
 	return
 
 func stick_to_ground() -> void:
@@ -515,7 +565,7 @@ func apply_acceleration() -> void:
 		return
 
 	var speed_delta: float = 0.0
-	if input.accel and input.brake and cur_boost_type == BoostType.NONE:
+	if input.accel and input.brake and !in_hop and !in_drift and cur_boost_type == BoostType.NONE:
 		speed_delta = get_brake_speed()
 	elif input.accel or cur_boost_type != BoostType.NONE:
 		speed_delta = get_accel_speed()
@@ -527,9 +577,8 @@ func apply_acceleration() -> void:
 	var new_speed := clampf(cur_speed + speed_delta * delta, -max_speed, max_speed)
 	cur_speed = move_toward(cur_speed, new_speed, delta * grip)
 
-	velocity.prop_vel = transform.basis.x.normalized() * cur_speed
-
-func rotate_accel_along_floor() -> void:	
+func rotate_accel_along_floor() -> void:
+	return	
 	# Rotate the propulsion direction
 	if grounded and !prev_grounded:
 		# We were in the air and have now landed
@@ -538,7 +587,7 @@ func rotate_accel_along_floor() -> void:
 	var angle_z := velocity.prop_vel.normalized().angle_to(floor_normal)
 	var angle_to_ground := 90 - rad_to_deg(angle_z)
 	
-	var new_prop_vel := velocity.prop_vel.rotated(transform.basis.z, -deg_to_rad(angle_to_ground))
+	var new_prop_vel := velocity.prop_vel.rotated(transform.basis.x, deg_to_rad(angle_to_ground))
 	velocity.prop_vel = velocity.prop_vel.normalized().slerp(new_prop_vel.normalized(), along_ground_multi) * velocity.prop_vel.length()
 
 	along_ground_multi -= along_ground_dec * delta
@@ -575,26 +624,27 @@ func rotate_stick() -> void:
 	if !grounded:
 		return
 	
-	# Rotate the vehicle to match the ground.
-	var multi := 0.1
+	# # Rotate the vehicle to match the ground.
+	# var multi := 0.1
 
-	if below_normals:
-		multi = float(len(below_normals)) / len(floor_check_grid)
+	# if below_normals:
+	# 	multi = float(len(below_normals)) / len(floor_check_grid)
 
-	var prev_y := rotation.y
-	rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.z) * ground_rot_multi * multi * delta)
-	rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(floor_normal, transform.basis.x) * ground_rot_multi * multi * delta)
-	rotation.y = prev_y
+	var tmp := transform
+	look_at(global_position + floor_normal, -global_transform.basis.z.normalized(), true)
+	var rotated_transform := global_transform.rotated(global_transform.basis.x.normalized(), 0.5*PI)
+	transform = tmp
+	global_transform.basis = Basis(global_transform.basis.get_rotation_quaternion().slerp(rotated_transform.basis.get_rotation_quaternion(), delta * ground_rot_multi))
 
 func rotate_to_gravity() -> void:
 	if grounded:
 		return
-	
-	var prev_y := rotation.y
-	rotation = rotation.rotated(transform.basis.z.normalized(), transform.basis.y.signed_angle_to(-gravity, transform.basis.z) * air_rot_multi * delta)
-	rotation = rotation.rotated(transform.basis.x.normalized(), transform.basis.y.signed_angle_to(-gravity, transform.basis.x) * air_rot_multi * delta)
-	rotation.y = prev_y
 
+	var tmp := transform
+	look_at(global_position - gravity, -global_transform.basis.z.normalized(), true)
+	var rotated_transform := global_transform.rotated(global_transform.basis.x.normalized(), 0.5*PI)
+	transform = tmp
+	global_transform.basis = Basis(global_transform.basis.get_rotation_quaternion().slerp(rotated_transform.basis.get_rotation_quaternion(), delta * air_rot_multi))
 
 func _on_boost_timer_timeout() -> void:
 	cur_boost_type = BoostType.NONE

@@ -808,63 +808,55 @@ contact_monitor = true
 max_contacts_reported = 16
 script = ExtResource("1_n82v2")
 
-[node name="VehicleAnimationTree" type="AnimationTree" parent="."]
+[node name="Node3D" type="Node3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="VehicleAnimationTree" type="AnimationTree" parent="Node3D"]
 root_node = NodePath("%Visual")
 tree_root = SubResource("AnimationNodeStateMachine_nguqk")
 anim_player = NodePath("../VehicleAnimationPlayer")
 script = ExtResource("4_gc5eh")
 
-[node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="Node3D"]
 root_node = NodePath("../Visual")
 libraries = {
 "": SubResource("AnimationLibrary_yrkfx")
 }
 
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.34799e-08, -0.994703, -0.102793, 1, -4.37114e-08, 0, -4.49321e-09, -0.102793, 0.994703, 0.0972483, 4.39723e-09, -0.340266)
-shape = SubResource("CapsuleShape3D_80jr0")
+[node name="Collision" type="Node3D" parent="Node3D"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.34798e-08, -0.994703, 0.102793, 1, -4.37114e-08, 0, 4.4932e-09, 0.102793, 0.994703, 0.097, 0, 0.34)
-shape = SubResource("CapsuleShape3D_80jr0")
-
-[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.0228261, -5.33405e-09, 0)
-shape = SubResource("CapsuleShape3D_ltuck")
-
-[node name="Collision" type="Node3D" parent="."]
-
-[node name="Visual" type="Node3D" parent="."]
+[node name="Visual" type="Node3D" parent="Node3D"]
 unique_name_in_owner = true
 
-[node name="FrontRight" type="Marker3D" parent="Visual"]
+[node name="FrontRight" type="Marker3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.5)
 
-[node name="FrontLeft" type="Marker3D" parent="Visual"]
+[node name="FrontLeft" type="Marker3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -0.5)
 
-[node name="BackRight" type="Marker3D" parent="Visual"]
+[node name="BackRight" type="Marker3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0.6)
 
-[node name="BackLeft" type="Marker3D" parent="Visual"]
+[node name="BackLeft" type="Marker3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -0.6)
 
-[node name="Front" type="Marker3D" parent="Visual"]
+[node name="Front" type="Marker3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.47458, 0, 0)
 
-[node name="Back" type="Marker3D" parent="Visual"]
+[node name="Back" type="Marker3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.46167, 0, 0)
 
-[node name="PlayerCollision" type="Node3D" parent="Visual"]
+[node name="PlayerCollision" type="Node3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 
-[node name="ShapeCast3D" type="ShapeCast3D" parent="Visual/PlayerCollision"]
+[node name="ShapeCast3D" type="ShapeCast3D" parent="Node3D/Visual/PlayerCollision"]
 transform = Transform3D(-4.34798e-08, -0.994703, -0.102793, 1, -4.37114e-08, 0, -4.4932e-09, -0.102793, 0.994703, 0.0972483, 4.39723e-09, -0.340266)
 visible = false
 shape = SubResource("CapsuleShape3D_80jr0")
@@ -872,7 +864,7 @@ target_position = Vector3(0, 0, 0)
 max_results = 10
 collision_mask = 6
 
-[node name="ShapeCast3D2" type="ShapeCast3D" parent="Visual/PlayerCollision"]
+[node name="ShapeCast3D2" type="ShapeCast3D" parent="Node3D/Visual/PlayerCollision"]
 transform = Transform3D(-4.34798e-08, -0.994703, 0.102793, 1, -4.37114e-08, 0, 4.4932e-09, 0.102793, 0.994703, 0.097, 0, 0.34)
 visible = false
 shape = SubResource("CapsuleShape3D_80jr0")
@@ -880,7 +872,7 @@ target_position = Vector3(0, 0, 0)
 max_results = 10
 collision_mask = 6
 
-[node name="ShapeCast3D3" type="ShapeCast3D" parent="Visual/PlayerCollision"]
+[node name="ShapeCast3D3" type="ShapeCast3D" parent="Node3D/Visual/PlayerCollision"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.0250288, -5.33405e-09, 0)
 visible = false
 shape = SubResource("CapsuleShape3D_ltuck")
@@ -888,20 +880,20 @@ target_position = Vector3(0, 0, 0)
 max_results = 10
 collision_mask = 6
 
-[node name="Character" type="Node3D" parent="Visual"]
+[node name="Character" type="Node3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 
-[node name="CharacterAnimationPlayer" type="AnimationPlayer" parent="Visual/Character"]
+[node name="CharacterAnimationPlayer" type="AnimationPlayer" parent="Node3D/Visual/Character"]
 unique_name_in_owner = true
 libraries = {
 "": SubResource("AnimationLibrary_54306")
 }
 autoplay = "sit"
 
-[node name="Body" parent="Visual/Character" instance=ExtResource("6_6ard6")]
+[node name="Body" parent="Node3D/Visual/Character" instance=ExtResource("6_6ard6")]
 transform = Transform3D(-4.37114e-09, 0, 0.1, 0, 0.1, 0, -0.1, 0, -4.37114e-09, -0.342633, -0.988326, 0)
 
-[node name="Skeleton3D" parent="Visual/Character/Body/Armature" index="0"]
+[node name="Skeleton3D" parent="Node3D/Visual/Character/Body/Armature" index="0"]
 bones/0/rotation = Quaternion(0, 1.19209e-07, 0, 1)
 bones/2/position = Vector3(-2.47754e-13, 1.95149, 6.20428e-07)
 bones/3/rest = Transform3D(-0.493239, -0.869894, -4.66584e-07, 0.869894, -0.493239, 2.68043e-07, -4.63306e-07, -2.7367e-07, 1, -4.14798e-07, 1.95149, -1.30496e-13)
@@ -992,39 +984,39 @@ bones/36/rotation = Quaternion(0.309057, -0.0245651, -0.191239, 0.931294)
 bones/37/rest = Transform3D(0.965855, 0.258416, -0.0185844, -0.258416, 0.95574, -0.14065, -0.0185843, 0.14065, 0.989885, -1.23869e-07, 4.3258, 1.65142e-07)
 bones/37/rotation = Quaternion(0.0711162, -1.73859e-08, -0.130662, 0.988873)
 
-[node name="BaseAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="1"]
+[node name="BaseAttachment" parent="Node3D/Visual/Character/Body/Armature/Skeleton3D" index="1"]
 transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, 0, 9.26224, 0)
 
-[node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
+[node name="HeadAttachment" parent="Node3D/Visual/Character/Body/Armature/Skeleton3D" index="2"]
 transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, -9.98328e-14, 15.1167, 6.20428e-07)
 
-[node name="Kart" parent="Visual" instance=ExtResource("7_o06fs")]
+[node name="Kart" parent="Node3D/Visual" instance=ExtResource("7_o06fs")]
 unique_name_in_owner = true
 transform = Transform3D(-6.99382e-09, 0, 0.16, 0, 0.16, 0, -0.16, 0, -6.99382e-09, -0.0278986, -0.292819, 0)
 
-[node name="Wheels" type="Node3D" parent="Visual"]
+[node name="Wheels" type="Node3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 
-[node name="wheel" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
+[node name="wheel" parent="Node3D/Visual/Wheels" instance=ExtResource("8_f4b6f")]
 transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, -0.72)
 
-[node name="wheel2" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
+[node name="wheel2" parent="Node3D/Visual/Wheels" instance=ExtResource("8_f4b6f")]
 transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, 0.72)
 
-[node name="wheel3" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
+[node name="wheel3" parent="Node3D/Visual/Wheels" instance=ExtResource("8_f4b6f")]
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, -0.624835)
 
-[node name="wheel4" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
+[node name="wheel4" parent="Node3D/Visual/Wheels" instance=ExtResource("8_f4b6f")]
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, 0.625)
 
-[node name="DriftParticles" type="Node3D" parent="Visual"]
+[node name="DriftParticles" type="Node3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 
-[node name="DriftCenterCharging" type="Node3D" parent="Visual/DriftParticles"]
+[node name="DriftCenterCharging" type="Node3D" parent="Node3D/Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftCenterCharging"]
+[node name="Particles" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftCenterCharging"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.7)
 amount = 6
 lifetime = 0.01
@@ -1035,7 +1027,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_43ekg")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftCenterCharging"]
+[node name="Particles2" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftCenterCharging"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.7)
 amount = 6
 lifetime = 0.01
@@ -1046,11 +1038,11 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_43ekg")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
-[node name="DriftCenterCharged" type="Node3D" parent="Visual/DriftParticles"]
+[node name="DriftCenterCharged" type="Node3D" parent="Node3D/Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftCenterCharged"]
+[node name="Particles" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftCenterCharged"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.7)
 emitting = false
 amount = 6
@@ -1062,7 +1054,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_il5qp")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftCenterCharged"]
+[node name="Particles2" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftCenterCharged"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.7)
 emitting = false
 amount = 6
@@ -1074,11 +1066,11 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_il5qp")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
-[node name="DriftRightCharging" type="Node3D" parent="Visual/DriftParticles"]
+[node name="DriftRightCharging" type="Node3D" parent="Node3D/Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftRightCharging"]
+[node name="Particles" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftRightCharging"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.85)
 emitting = false
 amount = 6
@@ -1090,7 +1082,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_su7a1")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftRightCharging"]
+[node name="Particles2" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftRightCharging"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.55)
 emitting = false
 amount = 6
@@ -1102,11 +1094,11 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_su7a1")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
-[node name="DriftRightCharged" type="Node3D" parent="Visual/DriftParticles"]
+[node name="DriftRightCharged" type="Node3D" parent="Node3D/Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftRightCharged"]
+[node name="Particles" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftRightCharged"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.85)
 emitting = false
 amount = 6
@@ -1118,7 +1110,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_ndrdy")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftRightCharged"]
+[node name="Particles2" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftRightCharged"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.55)
 emitting = false
 amount = 6
@@ -1130,11 +1122,11 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_ndrdy")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
-[node name="DriftLeftCharging" type="Node3D" parent="Visual/DriftParticles"]
+[node name="DriftLeftCharging" type="Node3D" parent="Node3D/Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftLeftCharging"]
+[node name="Particles" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftLeftCharging"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.55)
 emitting = false
 amount = 6
@@ -1146,7 +1138,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_7jsrh")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftLeftCharging"]
+[node name="Particles2" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftLeftCharging"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.85)
 emitting = false
 amount = 6
@@ -1158,11 +1150,11 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_7jsrh")
 draw_pass_1 = SubResource("QuadMesh_yxijc")
 
-[node name="DriftLeftCharged" type="Node3D" parent="Visual/DriftParticles"]
+[node name="DriftLeftCharged" type="Node3D" parent="Node3D/Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftLeftCharged"]
+[node name="Particles" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftLeftCharged"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.55)
 emitting = false
 amount = 6
@@ -1174,7 +1166,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_og57c")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftLeftCharged"]
+[node name="Particles2" type="GPUParticles3D" parent="Node3D/Visual/DriftParticles/DriftLeftCharged"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.85)
 emitting = false
 amount = 6
@@ -1186,13 +1178,13 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_og57c")
 draw_pass_1 = SubResource("QuadMesh_5glm5")
 
-[node name="ExhaustParticles" type="Node3D" parent="Visual"]
+[node name="ExhaustParticles" type="Node3D" parent="Node3D/Visual"]
 unique_name_in_owner = true
 
-[node name="ExhaustIdle" type="Node3D" parent="Visual/ExhaustParticles"]
+[node name="ExhaustIdle" type="Node3D" parent="Node3D/Visual/ExhaustParticles"]
 unique_name_in_owner = true
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustIdle"]
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Node3D/Visual/ExhaustParticles/ExhaustIdle"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.46145, 0.029854, -0.500729)
 amount = 3
 lifetime = 0.15
@@ -1201,7 +1193,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_dok70")
 draw_pass_1 = SubResource("QuadMesh_beh0s")
 
-[node name="GPUParticles3D2" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustIdle"]
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="Node3D/Visual/ExhaustParticles/ExhaustIdle"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.461, 0.0294046, 0.501)
 amount = 3
 lifetime = 0.15
@@ -1210,10 +1202,10 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_dok70")
 draw_pass_1 = SubResource("QuadMesh_beh0s")
 
-[node name="ExhaustBoost" type="Node3D" parent="Visual/ExhaustParticles"]
+[node name="ExhaustBoost" type="Node3D" parent="Node3D/Visual/ExhaustParticles"]
 unique_name_in_owner = true
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustBoost"]
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Node3D/Visual/ExhaustParticles/ExhaustBoost"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.46145, 0.029854, -0.500729)
 emitting = false
 amount = 4
@@ -1222,7 +1214,7 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_hs8oo")
 draw_pass_1 = SubResource("QuadMesh_ebj2w")
 
-[node name="GPUParticles3D2" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustBoost"]
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="Node3D/Visual/ExhaustParticles/ExhaustBoost"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.461, 0.03, 0.501)
 emitting = false
 amount = 4
@@ -1231,45 +1223,58 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_hs8oo")
 draw_pass_1 = SubResource("QuadMesh_ebj2w")
 
-[node name="VehicleAudio" parent="Visual" instance=ExtResource("13_jx4i7")]
+[node name="VehicleAudio" parent="Node3D/Visual" instance=ExtResource("13_jx4i7")]
 unique_name_in_owner = true
 script = null
 
-[node name="Items" type="Node3D" parent="."]
+[node name="Items" type="Node3D" parent="Node3D"]
 unique_name_in_owner = true
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
 
-[node name="StillTurboTimer" type="Timer" parent="."]
+[node name="StillTurboTimer" type="Timer" parent="Node3D"]
 process_callback = 0
 wait_time = 1.5
 one_shot = true
 
-[node name="BoostTimer" type="Timer" parent="."]
+[node name="BoostTimer" type="Timer" parent="Node3D"]
 unique_name_in_owner = true
 process_callback = 0
 one_shot = true
 
-[node name="TrickTimer" type="Timer" parent="."]
+[node name="TrickTimer" type="Timer" parent="Node3D"]
 one_shot = true
 
-[node name="ItemRouletteTimer" type="Timer" parent="."]
+[node name="ItemRouletteTimer" type="Timer" parent="Node3D"]
 one_shot = true
 
-[node name="RespawnTimer" type="Timer" parent="."]
+[node name="RespawnTimer" type="Timer" parent="Node3D"]
 process_callback = 0
 one_shot = true
 
-[node name="FailsafeTimer" type="Timer" parent="."]
+[node name="FailsafeTimer" type="Timer" parent="Node3D"]
 wait_time = 10.0
 one_shot = true
 
-[node name="DamageTimer" type="Timer" parent="."]
+[node name="DamageTimer" type="Timer" parent="Node3D"]
 process_callback = 0
 one_shot = true
 
-[connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]
-[connection signal="timeout" from="BoostTimer" to="." method="_on_boost_timer_timeout"]
-[connection signal="timeout" from="ItemRouletteTimer" to="." method="_on_item_roulette_timer_timeout"]
-[connection signal="timeout" from="FailsafeTimer" to="." method="_on_failsafe_timer_timeout"]
-[connection signal="timeout" from="DamageTimer" to="." method="_on_damage_timer_timeout"]
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(4.49321e-09, 0.102793, -0.994703, 1, -4.37114e-08, -3.65194e-16, -4.34799e-08, -0.994703, -0.102793, 0.340089, 4.39723e-09, 0.0881733)
+shape = SubResource("CapsuleShape3D_80jr0")
 
-[editable path="Visual/Character/Body"]
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.4932e-09, -0.102793, -0.994703, 1, -4.37114e-08, 3.65194e-16, -4.34798e-08, -0.994703, 0.102793, -0.340177, 0, 0.087925)
+shape = SubResource("CapsuleShape3D_80jr0")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.9107e-15, 4.37112e-08, -1, 1, -4.37114e-08, 0, -4.37114e-08, -1, -4.37112e-08, -0.000177331, -5.33405e-09, 0.0137511)
+shape = SubResource("CapsuleShape3D_ltuck")
+
+[connection signal="timeout" from="Node3D/StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]
+[connection signal="timeout" from="Node3D/BoostTimer" to="." method="_on_boost_timer_timeout"]
+[connection signal="timeout" from="Node3D/ItemRouletteTimer" to="." method="_on_item_roulette_timer_timeout"]
+[connection signal="timeout" from="Node3D/FailsafeTimer" to="." method="_on_failsafe_timer_timeout"]
+[connection signal="timeout" from="Node3D/DamageTimer" to="." method="_on_damage_timer_timeout"]
+
+[editable path="Node3D/Visual/Character/Body"]

@@ -1,17 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://bg0hv35uda3j4"]
+[gd_scene load_steps=4 format=3 uid="uid://bg0hv35uda3j4"]
 
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="1_7xfel"]
 [ext_resource type="PackedScene" uid="uid://ds7es8al63u4p" path="res://scenes/vehicles/vehicle_4.tscn" id="2_211u2"]
+[ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="3_qrayh"]
 
 [node name="V4Test" type="Node3D"]
 
 [node name="WickedWoods" parent="." instance=ExtResource("1_7xfel")]
 
 [node name="Vehicle4" parent="." instance=ExtResource("2_211u2")]
-transform = Transform3D(0.0505581, 0, 0.998721, 0, 1, 0, -0.998721, 0, 0.0505581, -0.3777, 86.72, 80.1158)
+transform = Transform3D(-0.995913, 0, -0.0903197, 0, 1, 0, 0.0903197, 0, -0.995913, -0.3777, 80.1834, 69.2441)
 
 [node name="Camera3D" type="Camera3D" parent="Vehicle4"]
-transform = Transform3D(-4.37114e-08, 0.475624, -0.879649, 0, 0.879649, 0.475624, 1, 2.07902e-08, -3.84507e-08, -7.92, 4.535, 0)
+transform = Transform3D(-1, 4.15804e-08, -7.69013e-08, 0, 0.879649, 0.475624, 8.74228e-08, 0.475624, -0.879649, 0, 4.535, -7.92)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.764252, 0.474445, 0.436831, 0.374999, -0.224144, 0.899519, 0.524685, 0.851271, -0.00661415, -15.5561, 248.104, 15.5561)
@@ -23,3 +24,5 @@ shadow_normal_bias = 1.0
 shadow_opacity = 0.75
 directional_shadow_blend_splits = true
 directional_shadow_max_distance = 500.0
+
+[node name="1test" parent="." instance=ExtResource("3_qrayh")]
