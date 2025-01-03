@@ -26,7 +26,7 @@ var grip := base_grip
 
 var cur_speed := 0.0
 
-var gravity := Vector3.DOWN * 20
+var gravity := Vector3.DOWN * 18
 @export var terminal_velocity: float = 3000
 var air_frames := 0
 
@@ -36,6 +36,7 @@ var input := VehicleInput.new()
 var is_player := true
 var is_cpu := false
 var is_network := false
+var is_replay := false
 
 var started := true
 var finished := false
@@ -79,7 +80,7 @@ var stick_speed: float = 5
 var in_hop := false
 var hop_force: float = 3.5
 var hop_frames := 0
-var min_hop_speed := max_speed * 0.5
+var min_hop_speed := max_speed * 0.33
 var in_bounce := false
 
 var in_drift := false
@@ -87,6 +88,10 @@ var drift_dir := 0
 var drift_gauge: float = 0
 var drift_gauge_max: float = 100
 @export var drift_gauge_multi: float = 55.0
+
+var still_turbo_charge_time: float = drift_gauge_multi / 36.666
+var still_turbo_max_speed: float = 1
+var still_turbo_ready: bool = false
 
 var along_ground_multi := 0.0
 var along_ground_dec := 5.0
@@ -119,7 +124,7 @@ class WallContact extends Contact:
 	var bounce := 0.2
 
 class OffroadContact extends Contact:
-	var speed_multi := 0.6
+	var speed_multi := 0.5
 
 var cur_boost_type: BoostType = BoostType.NONE
 @onready var boost_timer: Timer = %BoostTimer
@@ -158,12 +163,35 @@ var turn_speed := 0.0
 @export var base_turn_accel: float = 1800
 var turn_accel := base_turn_accel
 
+var replay_transparency := 0.75
+var standard_colliders: Array = []
+
 var visual_event_queue := []
 
 func _ready() -> void:
-	UI.show_race_ui()
-	print(ContactType.keys())
+	# UI.show_race_ui()
 	setup_floor_check_grid()
+	setup_head()
+	setup_colliders()
+	
+	if is_replay:
+		recursive_set_transparency($Visual)
+
+func setup_colliders() -> void:
+	for child: Node in get_children():
+		if child is CollisionShape3D:
+			standard_colliders.append(child)
+
+func recursive_set_transparency(n: Node) -> void:
+	if n is GeometryInstance3D:
+		n.transparency = replay_transparency
+		n.cast_shadow = false
+	
+	for c: Node in n.get_children():
+		recursive_set_transparency(c)
+
+func setup_head() -> void:
+	$Node3D/Visual/Character/Body.get_node("%Head").add_child(Util.get_random_head())
 
 func setup_floor_check_grid() -> void:
 	var fl: Vector3 = %FrontLeft.position
@@ -182,16 +210,52 @@ func setup_floor_check_grid() -> void:
 func _process(_delta: float) -> void:
 	UI.race_ui.update_speed(cur_speed)
 
-func visual_tick() -> void:
 	while visual_event_queue.size() > 0:
 		var event: Callable = visual_event_queue.pop_at(0)
 		event.call()
 	
-	set_inputs()
 	handle_particles()
 
 func handle_particles() -> void:
-	return
+	handle_drift_particles()
+	handle_exhaust_particles()
+
+func handle_exhaust_particles() -> void:
+	Util.multi_emit(%ExhaustIdle, false)
+	Util.multi_emit(%ExhaustBoost, false)
+	
+	if cur_boost_type != BoostType.NONE:
+		Util.multi_emit(%ExhaustBoost, true)
+		return
+	Util.multi_emit(%ExhaustIdle, true)
+
+
+func handle_drift_particles() -> void:
+	Util.multi_emit(%DriftCenterCharging, false)
+	Util.multi_emit(%DriftCenterCharged, false)
+	Util.multi_emit(%DriftLeftCharging, false)
+	Util.multi_emit(%DriftLeftCharged, false)
+	Util.multi_emit(%DriftRightCharging, false)
+	Util.multi_emit(%DriftRightCharged, false)
+	
+	if in_drift:
+		if drift_gauge >= drift_gauge_max:
+			if drift_dir > 0:
+				Util.multi_emit(%DriftLeftCharged, true)
+			else:
+				Util.multi_emit(%DriftRightCharged, true)
+		else:
+			if drift_dir > 0:
+				Util.multi_emit(%DriftLeftCharging, true)
+			else:
+				Util.multi_emit(%DriftRightCharging, true)
+	elif !%StillTurboTimer.is_stopped():
+		Util.multi_emit(%DriftCenterCharging, true)
+	elif still_turbo_ready:
+		Util.multi_emit(%DriftCenterCharged, true)
+
+func visual_tick() -> void:
+	set_inputs()
 
 func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	physics_state = new_physics_state
@@ -296,6 +360,8 @@ func determine_stick() -> void:
 			# keep_grav = true
 
 func determine_max_speed_and_accel() -> void:
+	if in_hop and air_frames < 30:
+		return
 	max_speed = base_max_speed
 	initial_accel = base_initial_accel
 	accel_exponent = base_accel_exponent
@@ -419,9 +485,9 @@ func build_contacts() -> void:
 					if !settings.is_empty():
 						match settings[0]:
 							"WEAK":
-								contact.speed_multi *= 0.8
+								contact.speed_multi *= 0.75
 							"STRONG":
-								contact.speed_multi *= 0.5
+								contact.speed_multi *= 0.35
 				ContactType.BOOST:
 					apply_boost(BoostType.NORMAL)
 			
@@ -476,7 +542,6 @@ func handle_steer() -> void:
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
 
 	var multi := 1.0 if grounded else air_turn_multiplier
-	print(multi)
 	transform.basis = transform.basis.rotated(transform.basis.y, deg_to_rad(turn_speed * delta * multi))
 	return
 
@@ -491,6 +556,8 @@ func apply_velocities() -> void:
 
 	handle_hop()
 	handle_drift()
+
+	handle_standstill_turbo()
 
 	apply_gravity()
 
@@ -515,7 +582,7 @@ func collide_walls() -> void:
 	return
 
 func handle_hop() -> void:
-	min_hop_speed = max_speed * 0.5
+	min_hop_speed = max_speed * 0.6
 	if !in_hop and input.accel and input.brake and !prev_input.brake and cur_speed > min_hop_speed:
 		# Perform hop
 		in_hop = true
@@ -527,33 +594,42 @@ func handle_hop() -> void:
 		if hop_frames < 9:
 			velocity.rest_vel += -gravity * 0.03
 			is_stick = false
+		
+		if input.steer != 0 and drift_dir == 0:
+			drift_dir = 1 if input.steer > 0 else -1
 
 		if hop_frames > 30 and ground_contacts:
 			in_hop = false
-			if input.brake and cur_speed > min_hop_speed and input.steer != 0:
+			if input.brake and cur_speed > min_hop_speed and drift_dir != 0:
 				in_drift = true
 				drift_gauge = 0
-				drift_dir = 1 if input.steer > 0 else -1
-		return
 	return
 
 func handle_drift() -> void:
 	if !in_drift:
 		return
 	
-	if cur_speed < min_hop_speed * 0.5:
+	if cur_speed < min_hop_speed:
 		in_drift = false
+		drift_dir = 0
 	
-	if !input.brake:
+	if !(input.brake and input.accel):
 		in_drift = false
+		drift_dir = 0
 		if input.accel and drift_gauge >= drift_gauge_max:
 			apply_boost(BoostType.SMALL)
 		return
 	
 	drift_gauge += remap(abs(steering), drift_turn_min_multiplier, drift_turn_multiplier, 1, 2) * drift_gauge_multi * delta
 	drift_gauge = clampf(drift_gauge, 0, drift_gauge_max)
-	Debug.print(["Drift gauge", drift_gauge])
 	return
+
+func handle_standstill_turbo() -> void:
+	if prev_input.brake and !input.brake:
+		%StillTurboTimer.stop()
+		if still_turbo_ready:
+			still_turbo_ready = false
+			apply_boost(BoostType.SMALL)
 
 func stick_to_ground() -> void:
 	if !is_stick:
@@ -584,7 +660,13 @@ func apply_acceleration() -> void:
 
 	var speed_delta: float = 0.0
 	if input.accel and input.brake and !in_hop and !in_drift and cur_boost_type == BoostType.NONE:
-		speed_delta = get_brake_speed()
+		if abs(cur_speed) <= still_turbo_max_speed:
+			speed_delta = get_standstill_turbo_speed()
+			start_standstill_turbo()
+		elif cur_speed > 0:
+			speed_delta = get_brake_speed()
+		else:
+			speed_delta = get_accel_speed()
 	elif input.accel or cur_boost_type != BoostType.NONE:
 		speed_delta = get_accel_speed()
 	elif input.brake:
@@ -594,6 +676,10 @@ func apply_acceleration() -> void:
 	
 	var new_speed := clampf(cur_speed + speed_delta * delta, -max_speed, max_speed)
 	cur_speed = move_toward(cur_speed, new_speed, delta * grip)
+
+func start_standstill_turbo() -> void:
+	if grounded and not still_turbo_ready and %StillTurboTimer.is_stopped():
+		%StillTurboTimer.start(still_turbo_charge_time)
 
 func rotate_accel_along_floor() -> void:
 	# TODO: This might not be the correct angle?
@@ -615,6 +701,13 @@ func rotate_accel_along_floor() -> void:
 func outside_drift_force() -> void:
 	return
 
+func get_standstill_turbo_speed() -> float:
+	var mult := -1.0
+
+	if cur_speed < 0:
+		mult = 1.0
+
+	return Util.get_vehicle_accel(max_speed, abs(abs(cur_speed) - max_speed), initial_accel, accel_exponent) * mult
 func get_accel_speed() -> float:
 	if cur_speed < 0:
 		return -get_brake_speed()
@@ -666,3 +759,7 @@ func rotate_to_gravity() -> void:
 
 func _on_boost_timer_timeout() -> void:
 	cur_boost_type = BoostType.NONE
+
+
+func _on_still_turbo_timer_timeout() -> void:
+	still_turbo_ready = true

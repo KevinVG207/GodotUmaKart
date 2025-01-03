@@ -4,7 +4,7 @@ var our_volume: float = 0.5
 var their_volume: float = 0.4
 var cur_volume_multi: float = 0
 
-@onready var parent: Vehicle3 = get_parent().get_parent()
+@export var parent: Vehicle4
 @onready var cam: PlayerCam
 
 var occlusion_multi := 1.0
