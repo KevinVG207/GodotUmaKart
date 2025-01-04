@@ -51,7 +51,7 @@ func update_icons(players: Array):
 	for icon: Sprite2D in player_icons.values():
 		icon.visible = false
 	
-	for player: Vehicle3 in players:
+	for player: Vehicle4 in players:
 		var id: String = player.user_id
 		
 		# Create new icons
@@ -240,7 +240,7 @@ func remove_nametag(user_id: String):
 		nametags.erase(user_id)
 		nt.queue_free()
 
-func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle3, cam: Camera3D, delta: float):
+func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle4, cam: Camera3D, delta: float):
 	if not object in alert_dict:
 		var alert = alert_scene.instantiate()
 		$Alerts.add_child(alert)

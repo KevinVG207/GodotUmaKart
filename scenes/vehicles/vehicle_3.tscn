@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=46 format=3 uid="uid://nomey8ht6xwd"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
@@ -9,7 +9,6 @@
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_jjayf"]
 [ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="7_2vipe"]
 [ext_resource type="PackedScene" uid="uid://qy0ee3o43y7b" path="res://assets/vehicles/kart/kart.tscn" id="7_23hik"]
-[ext_resource type="Script" path="res://assets/vehicles/wheel.gd" id="8_4bboh"]
 [ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_hxerb"]
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_be71b"]
 [ext_resource type="PackedScene" uid="uid://kbseqbudkntg" path="res://scenes/vehicles/vehicle_audio.tscn" id="13_makil"]
@@ -1014,21 +1013,15 @@ unique_name_in_owner = true
 
 [node name="wheel" parent="Visual/Wheels" instance=ExtResource("7_2vipe")]
 transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, -0.72)
-script = ExtResource("8_4bboh")
 
 [node name="wheel2" parent="Visual/Wheels" instance=ExtResource("7_2vipe")]
 transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, 0.72)
-script = ExtResource("8_4bboh")
 
 [node name="wheel3" parent="Visual/Wheels" instance=ExtResource("7_2vipe")]
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, -0.624835)
-script = ExtResource("8_4bboh")
-steer = true
 
 [node name="wheel4" parent="Visual/Wheels" instance=ExtResource("7_2vipe")]
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, 0.625)
-script = ExtResource("8_4bboh")
-steer = true
 
 [node name="DriftParticles" type="Node3D" parent="Visual"]
 unique_name_in_owner = true

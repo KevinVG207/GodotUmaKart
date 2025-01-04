@@ -2,7 +2,7 @@ extends Node3D
 
 # We assume the wheel model has a radius of 1m
 
-@export var parent: Vehicle4
+@onready var parent: Vehicle4 = get_parent().get_parent().get_parent()
 @onready var radius := scale.x
 var anchor := Vector3.ZERO
 @onready var initial_rotation = rotation_degrees
@@ -38,7 +38,7 @@ func _process(delta: float) -> void:
 	#position = local_pos
 	
 	var param := PhysicsRayQueryParameters3D.create(start_pos, end_pos, 1, [self])
-	var result := get_world_3d().direct_space_state.intersect_ray(param)
+	var result := parent.world.space_state.intersect_ray(param)
 	var point := end_pos
 	if result:
 		point = result.position
@@ -52,10 +52,10 @@ func _process(delta: float) -> void:
 	#else:
 		#position.y = point.y
 	position.y = move_toward(position.y, point.y, abs(delta * parent.gravity.y * 0.03))
-	
+
 	if steer:
-		var target_rot : float = parent.cur_turn_speed * 0.3
-		if parent.reversing:
+		var target_rot : float = parent.turn_speed * 0.3
+		if parent.cur_speed < 0:
 			target_rot *= -1.0
 		cur_steer_deg = move_toward(cur_steer_deg, target_rot, delta * steer_multi)
 		new_rot.y += cur_steer_deg

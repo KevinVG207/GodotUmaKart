@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="6_i62ff"]
 
 [node name="1test" instance=ExtResource("1_2vsv6")]
-lap_count = 10
+lap_count = 2
 
 [node name="Course" parent="." index="0"]
 metadata/_edit_group_ = true

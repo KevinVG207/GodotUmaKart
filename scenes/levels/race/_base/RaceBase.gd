@@ -29,7 +29,7 @@ var network_path_points: Dictionary = {}
 
 @onready var vehicles_node: Node3D = $Vehicles
 
-var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_3.tscn")
+var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_4.tscn")
 var rank_panel_scene: PackedScene = preload("res://scenes/ui/rank_panel.tscn")
 
 var menu_cam_str: String = "%CamFountain"
@@ -496,7 +496,7 @@ func apply_item_state(data: Dictionary):
 	#print("New owner ", instance.owner_id)
 
 
-func _physics_process(_delta):
+func _physics_process(_delta: float) -> void:
 	space_state = get_world_3d().direct_space_state
 	
 	pause_cooldown = max(0, pause_cooldown - 1)
@@ -567,6 +567,7 @@ func _physics_process(_delta):
 		check_finished()
 
 func save_replay(force: bool=false) -> void:
+	return
 	# TODO: Save all vehicles.
 	# TODO: Include items.
 	var cur_time: float = get_timer_seconds()
@@ -767,10 +768,10 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 			path_point.visible = false
 			$NetworkPathPoints.add_child(path_point)
 	
-	new_vehicle.cpu_target = $EnemyPathPoints.get_child(0)
+	new_vehicle.cpu_logic.target = $EnemyPathPoints.get_child(0)
 	
 	if user_id == player_user_id:
-		new_vehicle.make_player()
+		new_vehicle.initialize_player()
 		player_vehicle = new_vehicle
 		player_camera.target = new_vehicle
 		new_vehicle.username = "Player"
@@ -867,30 +868,30 @@ func send_ready():
 	return
 
 func get_vehicle_progress(vehicle: Vehicle4) -> float:
-	var check_idx = vehicle.check_idx
+	var check_idx := vehicle.check_idx
 	if check_idx < 0:
 		check_idx = checkpoints.size() - check_idx - 2
 	var cur_progress: float = 10000 * vehicle.lap + check_idx + vehicle.check_progress
 	return cur_progress
 
 func update_ranks():
-	var ranks = []
-	var ranks_vehicles = []
+	var ranks := []
+	var ranks_vehicles := []
 
-	var finished_vehicles = []
+	var finished_vehicles := []
 
 	for vehicle: Vehicle4 in players_dict.values():
 		if vehicle.finished:
 			finished_vehicles.append(vehicle)
 			continue
 
-		var cur_progress = get_vehicle_progress(vehicle)
+		var cur_progress := get_vehicle_progress(vehicle)
 		if not ranks:
 			ranks.append(cur_progress)
 			ranks_vehicles.append(vehicle)
 			continue
 
-		var stop = false
+		var stop := false
 		for i in range(ranks.size()):
 			if cur_progress > ranks[i]:
 				ranks.insert(i, cur_progress)
@@ -904,16 +905,15 @@ func update_ranks():
 		ranks.append(cur_progress)
 		ranks_vehicles.append(vehicle)
 	
-
+	
 	finished_vehicles.sort_custom(func(a, b): return a.finish_time < b.finish_time)
 
 	finished_vehicles.append_array(ranks_vehicles)
 
-
 	for i in range(finished_vehicles.size()):
 		finished_vehicles[i].set_rank(i)
 	
-	#UI.update_ranks(finished_vehicles)
+	# UI.update_ranks(finished_vehicles)
 
 	# print("Ranks:")
 	# for vehicle: Vehicle4 in finished_vehicles.slice(0, 5):
@@ -962,8 +962,8 @@ func check_reverse(player: Vehicle4) -> bool:
 	var prev_idx = (player.check_idx - 1) % len(checkpoints)
 	if prev_idx < 0:
 		prev_idx = len(checkpoints) + prev_idx
-	
-	if dist_to_checkpoint(player, prev_idx) > 0:
+
+	if dist_to_checkpoint(player, player.check_idx) > 0:
 		return false
 
 	var prev_checkpoint: Checkpoint = checkpoints[prev_idx]
@@ -993,8 +993,8 @@ func check_reverse(player: Vehicle4) -> bool:
 	return true
 
 func update_checkpoint(player: Vehicle4):
-	if player.respawn_stage:
-		return
+	#if player.respawn_stage:
+		#return
 	
 	if not check_advance(player):
 		check_reverse(player)

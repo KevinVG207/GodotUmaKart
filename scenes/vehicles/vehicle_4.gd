@@ -2,11 +2,15 @@ extends RigidBody3D
 
 class_name Vehicle4
 
+@export var icon: CompressedTexture2D
+
 var tick: int = -1
 var delta: float = 1.0 / Engine.physics_ticks_per_second
 var visual_delta := delta * 3.0
 
 var sleep := false
+
+var world: RaceBase = null
 var physics_state: PhysicsDirectBodyState3D
 var prev_transform: Transform3D = Transform3D.IDENTITY
 
@@ -37,9 +41,21 @@ var is_player := true
 var is_cpu := false
 var is_network := false
 var is_replay := false
+var user_id := ""
+var username := "Player"
+
+@onready var cpu_logic := %CPULogic
+
+var can_use_item: bool = false
 
 var started := true
 var finished := false
+var check_idx := -1
+var check_key_idx := 0
+var check_progress := 0.0
+var lap := 0
+var rank := 999999
+var finish_time := 0.0
 
 var prev_velocity := Velocity.new()
 var velocity := Velocity.new()
@@ -202,7 +218,7 @@ func recursive_set_transparency(n: Node) -> void:
 		recursive_set_transparency(c)
 
 func setup_head() -> void:
-	$Node3D/Visual/Character/Body.get_node("%Head").add_child(Util.get_random_head())
+	$Visual/Character/Body.get_node("%Head").add_child(Util.get_random_head())
 
 func setup_floor_check_grid() -> void:
 	var fl: Vector3 = %FrontLeft.position
@@ -226,6 +242,9 @@ func _process(_delta: float) -> void:
 		event.call()
 	
 	handle_particles()
+	
+	if is_player:
+		Debug.print([check_idx, check_progress])
 
 func handle_particles() -> void:
 	handle_drift_particles()
@@ -319,7 +338,7 @@ func set_inputs() -> void:
 	# 	return
 
 	if is_cpu:
-		%CPU.set_inputs()
+		cpu_logic.set_inputs()
 		return
 	
 	input.accel = Input.is_action_pressed("accelerate")
@@ -362,8 +381,7 @@ func determine_stick() -> void:
 		var ray_origin := transform.origin
 		var ray_end := ray_origin + gravity.normalized() * 1.4
 		# TODO: Change this back
-		# var ray_result := world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
-		var ray_result := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
+		var ray_result := world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
 
 		if ray_result:
 			is_stick = true
@@ -433,8 +451,7 @@ func raycast_below() -> void:
 		var start_pos := to_global(loc_start_pos)
 		var end_pos := start_pos + (transform.basis.y.normalized() * -floor_check_distance)
 		# TODO: Revert
-		# var result := Util.raycast_for_group(world.space_state, start_pos, end_pos, "floor", [self])
-		var result := Util.raycast_for_group(get_world_3d().direct_space_state, start_pos, end_pos, "floor", [self])
+		var result := Util.raycast_for_group(world.space_state, start_pos, end_pos, "floor", [self])
 		if result:
 			below_normals.append(result.normal)
 
@@ -646,7 +663,7 @@ func handle_hop() -> void:
 			velocity.rest_vel += -gravity * 0.03
 			is_stick = false
 		
-		if input.steer != 0:
+		if input.steer != 0 and drift_dir == 0 and hop_frames > 30:
 			drift_dir = 1 if input.steer > 0 else -1
 
 		if hop_frames > 30 and ground_contacts:
@@ -815,9 +832,47 @@ func rotate_to_gravity() -> void:
 	transform = tmp
 	global_transform.basis = Basis(global_transform.basis.get_rotation_quaternion().slerp(rotated_transform.basis.get_rotation_quaternion(), delta * air_rot_multi))
 
+func stop_movement() -> void:
+	prev_transform = transform
+	prev_velocity = Velocity.new()
+	velocity = prev_velocity
+	cur_speed = 0
+	turn_speed = 0
+	linear_velocity = Vector3.ZERO
+	angular_velocity = Vector3.ZERO
+
+func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3, keep_velocity: bool = true) -> void:
+	global_position = new_pos
+	look_at(new_pos + look_dir, up_dir, true)
+	if !keep_velocity:
+		stop_movement()
+
+func axis_lock() -> void:
+	axis_lock_linear_x = true
+	axis_lock_linear_z = true
+
+func axis_unlock() -> void:
+	axis_lock_linear_x = false
+	axis_lock_linear_z = false
+
+func initialize_player() -> void:
+	is_player = true
+	is_cpu = false
+	is_network = false
+	is_replay = false
+	UI.race_ui.roulette_ended.connect(_on_roulette_stop)
+
+func set_rank(new_rank: int) -> void:
+	if is_player and new_rank != rank:
+		UI.race_ui.update_rank(new_rank)
+	rank = new_rank
+
 func _on_boost_timer_timeout() -> void:
 	cur_boost_type = BoostType.NONE
 
 
 func _on_still_turbo_timer_timeout() -> void:
 	still_turbo_ready = true
+
+func _on_roulette_stop() -> void:
+	can_use_item = true

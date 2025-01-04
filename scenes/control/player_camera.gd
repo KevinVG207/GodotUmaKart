@@ -69,21 +69,21 @@ func _physics_process(delta: float) -> void:
 		cur_lerp_speed = lerp_speed_finished
 		cur_look_offset = look_offset_finished
 
-	var prev_pos = cur_pos
-	var prev_pos_bw = cur_pos_bw
+	var prev_pos := cur_pos
+	var prev_pos_bw := cur_pos_bw
 
-	var new_pos = target.global_transform.translated_local(cur_offset).origin
-	var new_pos_bw = target.global_transform.translated_local(cur_offset_bw).origin
+	var new_pos := target.global_transform.translated_local(cur_offset).origin
+	var new_pos_bw := target.global_transform.translated_local(cur_offset_bw).origin
 
 
 	# Raycast to keep the camera from going through walls
 	# Forward
-	var ray_start = target.global_transform.translated_local(Vector3(0, cur_offset.y, 0)).origin
-	var ray_end = new_pos
-	var result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
+	var ray_start := target.global_transform.translated_local(Vector3(0, cur_offset.y, 0)).origin
+	var ray_end := new_pos
+	var result := target.world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
 	if result:
-		var cur_safe_distance = safe_distance
-		var dist_to_point = result.position.distance_to(ray_start)
+		var cur_safe_distance := safe_distance
+		var dist_to_point: float = result.position.distance_to(ray_start)
 		if dist_to_point < safe_distance:
 			cur_safe_distance = dist_to_point
 		
@@ -92,10 +92,10 @@ func _physics_process(delta: float) -> void:
 	# Backwards
 	ray_start = target.global_transform.translated_local(Vector3(0, cur_offset_bw.y, 0)).origin
 	ray_end = new_pos_bw
-	result = get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
+	result = target.world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
 	if result:
-		var cur_safe_distance = safe_distance
-		var dist_to_point = result.position.distance_to(ray_start)
+		var cur_safe_distance := safe_distance
+		var dist_to_point: float = result.position.distance_to(ray_start)
 		if dist_to_point < safe_distance:
 			cur_safe_distance = dist_to_point
 		
