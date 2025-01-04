@@ -66,6 +66,7 @@ class VehicleInput:
 
 var prev_contacts := {}
 var contacts := {}
+var prev_ground_contacts := []
 var ground_contacts := []
 var prev_grounded := false
 var grounded := false
@@ -126,6 +127,9 @@ class WallContact extends Contact:
 class OffroadContact extends Contact:
 	var speed_multi := 0.5
 
+class TrickContact extends Contact:
+	var boost := BoostType.NORMAL
+
 var cur_boost_type: BoostType = BoostType.NONE
 @onready var boost_timer: Timer = %BoostTimer
 enum BoostType {
@@ -152,6 +156,8 @@ class Boost:
 		initial_accel_multi = _initial_accel_multi
 		exponent_multi = _exponent_multi
 
+var in_trick := false
+var trick_boost_type: BoostType = BoostType.NONE
 
 var steering := 0.0
 @export var max_turn_speed: float = 80.0
@@ -165,6 +171,11 @@ var turn_accel := base_turn_accel
 
 var replay_transparency := 0.75
 var standard_colliders: Array = []
+
+var trick_safezone_frames := 36
+var trick_input_frames := 0
+var trick_timer := 0
+var trick_timer_length := int(180 * 0.4)
 
 var visual_event_queue := []
 
@@ -314,7 +325,7 @@ func set_inputs() -> void:
 	input.accel = Input.is_action_pressed("accelerate")
 	input.brake = Input.is_action_pressed("brake") or Input.is_action_pressed("brake2")
 	input.steer = Input.get_axis("right", "left")
-	input.trick = Input.is_action_just_pressed("trick")
+	input.trick = Input.is_action_pressed("trick")
 	input.item = Input.is_action_pressed("item")
 	input.tilt = Input.get_axis("down", "up")
 	input.mirror = Input.is_action_pressed("mirror")
@@ -449,6 +460,7 @@ func build_vehicle_collisions() -> void:
 func build_contacts() -> void:
 	prev_contacts = contacts
 	contacts = {}
+	prev_ground_contacts = ground_contacts
 	ground_contacts = []
 
 	for i in range(physics_state.get_contact_count()):
@@ -485,11 +497,19 @@ func build_contacts() -> void:
 					if !settings.is_empty():
 						match settings[0]:
 							"WEAK":
-								contact.speed_multi *= 0.75
+								contact.speed_multi = 0.75
 							"STRONG":
-								contact.speed_multi *= 0.35
+								contact.speed_multi = 0.35
 				ContactType.BOOST:
 					apply_boost(BoostType.NORMAL)
+				ContactType.TRICK:
+					contact = TrickContact.new()
+					if !settings.is_empty():
+						match settings[0]:
+							"BIG":
+								contact.boost = BoostType.BIG
+							"SMALL":
+								contact.boost = BoostType.SMALL
 			
 			if contact == null:
 				contact = Contact.new()
@@ -554,6 +574,7 @@ func apply_velocities() -> void:
 	collide_vehicles()
 	collide_walls()
 
+	handle_trick()
 	handle_hop()
 	handle_drift()
 
@@ -581,21 +602,51 @@ func collide_walls() -> void:
 	# Reduce speed to minimum after all contacts?
 	return
 
+func handle_trick() -> void:
+	trick_input_frames = maxi(trick_input_frames - 1, 0)
+	trick_timer = maxi(trick_timer - 1, 0)
+
+	if input.trick:
+		trick_input_frames = trick_safezone_frames
+	
+	if ContactType.TRICK in prev_contacts and !ground_contacts:
+		# Trick can begin
+		trick_timer = trick_timer_length
+		for contact: TrickContact in prev_contacts[ContactType.TRICK]:
+			if contact.boost > trick_boost_type:
+				trick_boost_type = contact.boost
+	
+	if trick_input_frames and trick_timer:
+		trick_input_frames = 0
+		trick_timer = 0
+		in_trick = true
+		start_hop()
+	
+	if ground_contacts and in_trick and hop_frames > 30:
+		in_trick = false
+		trick_boost_type = BoostType.NONE
+		apply_boost(BoostType.NORMAL)
+
 func handle_hop() -> void:
 	min_hop_speed = max_speed * 0.6
 	if !in_hop and input.accel and input.brake and !prev_input.brake and cur_speed > min_hop_speed:
 		# Perform hop
-		in_hop = true
-		hop_frames = -1
+		start_hop()
 
 	if in_hop:
 		hop_frames += 1
+
+		if air_frames and hop_frames < 2:
+			if in_trick:
+				hop_frames = 4
+			else:
+				hop_frames = 30
 
 		if hop_frames < 9:
 			velocity.rest_vel += -gravity * 0.03
 			is_stick = false
 		
-		if input.steer != 0 and drift_dir == 0:
+		if input.steer != 0:
 			drift_dir = 1 if input.steer > 0 else -1
 
 		if hop_frames > 30 and ground_contacts:
@@ -603,6 +654,13 @@ func handle_hop() -> void:
 			if input.brake and cur_speed > min_hop_speed and drift_dir != 0:
 				in_drift = true
 				drift_gauge = 0
+	return
+
+func start_hop() -> void:
+	if in_hop:
+		return
+	in_hop = true
+	hop_frames = -1
 	return
 
 func handle_drift() -> void:
