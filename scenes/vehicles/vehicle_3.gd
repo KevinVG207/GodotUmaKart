@@ -28,7 +28,7 @@ var rank: int = 999999
 var finished: bool = false
 var finish_time: float = 0
 var username: String = "Player"
-var world: RaceBase
+var world: RaceBaseOld
 var prev_state: Dictionary = {}
 var reversing := false
 var steering := 0.0
