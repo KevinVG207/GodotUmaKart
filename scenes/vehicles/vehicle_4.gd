@@ -534,7 +534,7 @@ func build_contacts() -> void:
 	return
 
 func apply_boost(boost_type: BoostType) -> void:
-	if boost_type <= cur_boost_type:
+	if boost_type < cur_boost_type:
 		return
 	cur_boost_type = boost_type
 	boost_timer.start(boosts[boost_type].length)
