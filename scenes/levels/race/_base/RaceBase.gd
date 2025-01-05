@@ -948,7 +948,7 @@ func check_advance(player: Vehicle4) -> bool:
 			var time_after_finish = get_timer_seconds()
 			
 			var finish_plane_normal: Vector3 = checkpoints[0].transform.basis.z
-			var vehicle_vel: Vector3 = player.prev_frame_pre_sim_vel
+			var vehicle_vel: Vector3 = player.prev_velocity.total()
 			var seconds_per_tick = 1.0/Engine.physics_ticks_per_second
 
 			# Determine the ratio of the vehicle_vel to the finish_plane_normal, and determine how much time it had taken to cross the finish line since the last frame

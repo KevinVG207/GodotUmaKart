@@ -37,6 +37,8 @@ var respawn_decel := 5.0
 var cpu_duck_distance := 25.0
 var duck_speed := 0.5
 
+var cpu_volume := 1.0
+
 func undo_respawn() -> void:
 	respawn_multi = 1.0
 	is_respawn = false
@@ -168,16 +170,16 @@ func _process(delta: float) -> void:
 	if !target:
 		return
 		
-	# fov = default_fov + target.extra_fov
+	fov = default_fov + target.extra_fov
 	
-	# handle_sound(delta)
+	handle_sound(delta)
 
 func handle_sound(delta: float) -> void:
 	duck_cpu_engines(delta)
 
 func duck_cpu_engines(_delta: float) -> void:
-	var bus_idx := AudioServer.get_bus_index("SFX")
-	var old_volume := db_to_linear(AudioServer.get_bus_volume_db(bus_idx))
+	# var bus_idx := AudioServer.get_bus_index("SFX_OTHER")
+	# var old_volume := db_to_linear(AudioServer.get_bus_volume_db(bus_idx))
 	
 	var count := 1.0
 	for vehicle: Vehicle4 in target.world.players_dict.values():
@@ -189,10 +191,10 @@ func duck_cpu_engines(_delta: float) -> void:
 		#count += pow(1.0 - dist / cpu_duck_distance, 1.5)
 		count += 1.0 - dist / cpu_duck_distance
 	
-	var new_volume := clampf(remap(1/count, 0.0, 0.5, 0.5, 1.0), 0.0, 1.0)
+	cpu_volume = clampf(remap(1/count, 0.0, 0.5, 0.5, 1.0), 0.0, 1.0)
 		
 	if Input.is_action_pressed("_F4"):
-		new_volume = 0.0
+		cpu_volume = 0.0
 	
-	AudioServer.set_bus_volume_db(bus_idx, linear_to_db(new_volume))
+	# AudioServer.set_bus_volume_db(bus_idx, linear_to_db(new_volume))
 	

@@ -45,6 +45,7 @@ var user_id := ""
 var username := "Player"
 
 @onready var cpu_logic := %CPULogic
+@onready var audio := %VehicleAudio
 
 var can_use_item: bool = false
 
@@ -56,6 +57,8 @@ var check_progress := 0.0
 var lap := 0
 var rank := 999999
 var finish_time := 0.0
+
+var extra_fov := 0.0
 
 var prev_velocity := Velocity.new()
 var velocity := Velocity.new()
@@ -199,7 +202,7 @@ var turn_accel := base_turn_accel
 var replay_transparency := 0.75
 var standard_colliders: Array = []
 
-var trick_safezone_frames := 36
+var trick_safezone_frames := 30
 var trick_input_frames := 0
 var trick_timer := 0
 var trick_timer_length := int(180 * 0.4)
@@ -255,6 +258,11 @@ func _process(_delta: float) -> void:
 	if is_player:
 		Debug.print([check_idx, check_progress])
 		UI.race_ui.update_speed(velocity.total().length())
+
+		if cur_speed > base_max_speed:
+			extra_fov = (cur_speed - base_max_speed) * 0.3
+		else:
+			extra_fov = 0.0
 
 func handle_particles() -> void:
 	handle_drift_particles()
@@ -686,7 +694,7 @@ func handle_trick() -> void:
 			if contact.boost > trick_boost_type:
 				trick_boost_type = contact.boost
 	
-	if trick_input_frames and trick_timer:
+	if trick_input_frames and trick_timer and trick_timer < (trick_timer_length - 10):
 		trick_input_frames = 0
 		trick_timer = 0
 		in_trick = true
@@ -696,6 +704,10 @@ func handle_trick() -> void:
 		in_trick = false
 		trick_boost_type = BoostType.NONE
 		apply_boost(BoostType.NORMAL)
+	
+	if ground_contacts:
+		trick_input_frames = 0
+		trick_timer = 0
 
 func handle_hop() -> void:
 	min_hop_speed = max_speed * 0.6
@@ -716,7 +728,8 @@ func handle_hop() -> void:
 			velocity.rest_vel += -gravity * 0.03
 			is_stick = false
 		
-		if input.steer != 0 and drift_dir == 0 and hop_frames > 30:
+		# if input.steer != 0 and drift_dir == 0 and hop_frames > 30:
+		if input.steer != 0 and !in_drift:
 			drift_dir = 1 if input.steer > 0 else -1
 
 		if hop_frames > 30 and ground_contacts:
