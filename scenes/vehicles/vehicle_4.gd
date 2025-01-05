@@ -49,7 +49,7 @@ var username := "Player"
 
 var can_use_item: bool = false
 
-var started := true
+var started := false
 var finished := false
 var check_idx := -1
 var check_key_idx := 0
@@ -256,7 +256,7 @@ func _process(_delta: float) -> void:
 	handle_particles()
 	
 	if is_player:
-		Debug.print([check_idx, check_progress])
+		# Debug.print([check_idx, check_progress])
 		UI.race_ui.update_speed(velocity.total().length())
 
 		if cur_speed > base_max_speed:
@@ -378,6 +378,8 @@ func set_inputs() -> void:
 		cpu_logic.set_inputs()
 		return
 	
+	# cpu_logic.set_inputs()
+
 	input.accel = Input.is_action_pressed("accelerate")
 	input.brake = Input.is_action_pressed("brake") or Input.is_action_pressed("brake2")
 	input.steer = Input.get_axis("right", "left")
@@ -921,6 +923,9 @@ func axis_lock() -> void:
 func axis_unlock() -> void:
 	axis_lock_linear_x = false
 	axis_lock_linear_z = false
+
+func start() -> void:
+	started = true
 
 func initialize_player() -> void:
 	is_player = true

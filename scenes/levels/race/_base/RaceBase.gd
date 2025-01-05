@@ -1113,6 +1113,7 @@ func _on_countdown_timer_timeout():
 	print("START: ", race_start_time)
 	for vehicle: Vehicle4 in players_dict.values():
 		vehicle.axis_unlock()
+		vehicle.start()
 	#UI.race_ui.rank_label.visible = true
 
 func join_next():
