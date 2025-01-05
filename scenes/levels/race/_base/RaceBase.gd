@@ -1019,23 +1019,23 @@ func get_respawn_point(vehicle: Vehicle4) -> Dictionary:
 		"rotation": Vector3.ZERO
 	}
 	
-	var cur_checkpoint = checkpoints[vehicle.check_idx] as Checkpoint
-	var player_idx = players_dict.values().find(vehicle)
+	var cur_checkpoint := checkpoints[vehicle.check_idx] as Checkpoint
+	var player_idx := players_dict.values().find(vehicle)
 	
-	var spawn_pos = cur_checkpoint.global_position
-	var spawn_dir = -cur_checkpoint.transform.basis.z
-	var side_direction = cur_checkpoint.transform.basis.x
-	var up_dir = cur_checkpoint.transform.basis.y
+	var spawn_pos := cur_checkpoint.global_position
+	var spawn_dir := -cur_checkpoint.transform.basis.z
+	var side_direction := cur_checkpoint.transform.basis.x
+	var up_dir := cur_checkpoint.transform.basis.y
 	
-	var side_multi = player_idx % 2
+	var side_multi := player_idx % 2
 	if side_multi < 0:
 		side_multi = -1
 	
-	var offset = spawn_dir * player_idx * 0.1 + side_direction * 0.2 * side_multi + up_dir * 2.0
+	var offset := spawn_dir * player_idx * 0.1 + side_direction * 0.2 * side_multi + up_dir * 2.0
 	spawn_pos += offset
 	
 	out.position = spawn_pos
-	out.rotation = cur_checkpoint.basis.rotated(up_dir, deg_to_rad(-90)).get_euler()
+	out.rotation = cur_checkpoint.basis.get_euler()
 	
 	return out
 

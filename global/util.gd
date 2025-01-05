@@ -158,7 +158,7 @@ func align_with_y(xform: Transform3D, new_y: Vector3):
 	xform.basis = xform.basis.orthonormalized()
 	return xform
 
-func get_path_point_ahead_of_player(player: Vehicle3) -> EnemyPath:
+func get_path_point_ahead_of_player(player: Vehicle4) -> EnemyPath:
 	var points: Array = player.world.all_path_points
 	var plane_pos: Vector3 = player.get_node("%Front").global_position
 	var plane_normal: Vector3 = player.transform.basis.x

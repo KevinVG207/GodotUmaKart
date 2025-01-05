@@ -114,6 +114,17 @@ var along_ground_multi := 0.0
 var along_ground_dec := 5.0
 var min_angle_to_detach := 10.0
 
+var respawn_stage := RespawnStage.NONE
+var respawn_time: float = 3.5
+var respawn_stage2_time: float = 1.0
+var respawn_data := {}
+
+enum RespawnStage {
+	NONE,
+	FALLING,
+	RESPAWNING
+}
+
 class Contact:
 	var collider: Object
 	var position: Vector3
@@ -235,8 +246,6 @@ func setup_floor_check_grid() -> void:
 	]
 
 func _process(_delta: float) -> void:
-	UI.race_ui.update_speed(cur_speed)
-
 	while visual_event_queue.size() > 0:
 		var event: Callable = visual_event_queue.pop_at(0)
 		event.call()
@@ -245,6 +254,7 @@ func _process(_delta: float) -> void:
 	
 	if is_player:
 		Debug.print([check_idx, check_progress])
+		UI.race_ui.update_speed(velocity.total().length())
 
 func handle_particles() -> void:
 	handle_drift_particles()
@@ -325,7 +335,23 @@ func respawn_if_too_low() -> void:
 		respawn()
 
 func respawn() -> void:
-	return
+	if respawn_stage != RespawnStage.NONE:
+		return
+	
+	if is_network:
+		return
+		
+	# if in_cannon:
+	# 	return
+	
+	respawn_stage = RespawnStage.FALLING
+	# if item and "remove" in item:
+	# 	item.remove()
+	# else:
+	# 	remove_item()
+	%RespawnTimer.start(respawn_time)
+	if is_player:
+		world.player_camera.do_respawn()
 
 func set_inputs() -> void:
 	prev_input = input
@@ -336,6 +362,9 @@ func set_inputs() -> void:
 
 	# if finished:
 	# 	return
+
+	if respawn_stage != RespawnStage.NONE:
+		return
 
 	if is_cpu:
 		cpu_logic.set_inputs()
@@ -591,22 +620,25 @@ func apply_velocities() -> void:
 	collide_vehicles()
 	collide_walls()
 
-	handle_trick()
-	handle_hop()
-	handle_drift()
+	handle_respawn()
 
-	handle_standstill_turbo()
+	if respawn_stage != RespawnStage.RESPAWNING:
+		handle_trick()
+		handle_hop()
+		handle_drift()
 
-	apply_gravity()
+		handle_standstill_turbo()
 
-	stick_to_ground()
+		apply_gravity()
 
-	apply_acceleration()
-	velocity.prop_vel = transform.basis.z.normalized() * cur_speed
+		stick_to_ground()
 
-	rotate_accel_along_floor()
+		apply_acceleration()
+		velocity.prop_vel = transform.basis.z.normalized() * cur_speed
 
-	outside_drift_force()
+		rotate_accel_along_floor()
+
+		outside_drift_force()
 
 	linear_velocity = velocity.total()
 	return
@@ -618,6 +650,27 @@ func collide_walls() -> void:
 	# Bounce of all walls?
 	# Reduce speed to minimum after all contacts?
 	return
+
+func handle_respawn() -> void:
+	freeze = false
+	if respawn_stage == RespawnStage.NONE:
+		return
+	
+	if %RespawnTimer.is_stopped():
+		respawn_stage = RespawnStage.NONE
+		return
+	
+	if respawn_stage == RespawnStage.FALLING and $RespawnTimer.time_left <= respawn_stage2_time:
+		respawn_stage = RespawnStage.RESPAWNING
+		respawn_data = world.get_respawn_point(self)
+		if is_player:
+			world.player_camera.instant = true
+			world.player_camera.undo_respawn()
+	
+	if respawn_stage == RespawnStage.RESPAWNING:
+		stop_movement()
+		global_position = respawn_data.position
+		global_rotation = respawn_data.rotation
 
 func handle_trick() -> void:
 	trick_input_frames = maxi(trick_input_frames - 1, 0)
@@ -840,6 +893,7 @@ func stop_movement() -> void:
 	turn_speed = 0
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
+	cur_boost_type = BoostType.NONE
 
 func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3, keep_velocity: bool = true) -> void:
 	global_position = new_pos

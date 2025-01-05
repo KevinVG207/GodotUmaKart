@@ -1244,7 +1244,7 @@ func handle_respawn() -> void:
 		global_position = respawn_position
 		global_rotation = respawn_rotation
 		if is_cpu:
-			cpu_target = Util.get_path_point_ahead_of_player(self)
+			# cpu_target = Util.get_path_point_ahead_of_player(self)
 			cpu_target_offset = get_random_target_offset()
 
 
@@ -1382,7 +1382,7 @@ func _process(delta: float) -> void:
 		# Update alerts
 		for alert_object: Node3D in targeted_by_dict:
 			var tex: CompressedTexture2D = targeted_by_dict[alert_object]
-			UI.race_ui.update_alert(alert_object, tex, self, world.player_camera, delta)
+			# UI.race_ui.update_alert(alert_object, tex, self, world.player_camera, delta)
 		
 		var spd := linear_velocity.length()
 		UI.race_ui.update_speed(spd)
@@ -1523,7 +1523,7 @@ func apply_state(state: Dictionary) -> void:
 	network_path.normal = network_path.transform.basis.x
 	if user_id in world.pings:
 		network_path.global_position += network_path.transform.basis.x * state.cur_speed * (1 + ((world.pings[user_id] + world.pings[world.player_user_id])/1000)) * 0.35
-	network_path.next_points = [Util.get_path_point_ahead_of_player(self)]
+	# network_path.next_points = [Util.get_path_point_ahead_of_player(self)]
 	network_path.prev_points = network_path.next_points[0].prev_points
 	cpu_target_offset = Vector3.ZERO
 	moved_to_next = false

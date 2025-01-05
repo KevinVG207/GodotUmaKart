@@ -6,7 +6,7 @@ class_name RunningShoes
 @export var to_pos: int = 12
 var local = true
 
-var parent: Vehicle3 = null
+var parent: Vehicle4 = null
 @onready var poof: GPUParticles3D = %Poof
 
 var started := false

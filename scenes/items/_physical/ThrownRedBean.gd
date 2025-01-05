@@ -21,7 +21,7 @@ const TargetMode = {
 	homing = 2
 }
 var target_mode: int = TargetMode.follow
-var target_player: Vehicle3 = null:
+var target_player: Vehicle4 = null:
 	set(value):
 		if value != target_player:
 			value.add_targeted(self, target_texture)
@@ -62,7 +62,7 @@ func _enter_tree() -> void:
 	if target_rank < 0:
 		target_rank = world.players_dict.size() - 1
 	
-	for v: Vehicle3 in world.players_dict.values():
+	for v: Vehicle4 in world.players_dict.values():
 		if v.rank == target_rank:
 			target_player = v
 			break
