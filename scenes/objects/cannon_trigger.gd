@@ -6,14 +6,14 @@ class_name CannonTrigger
 @export var gradient: GradientTexture1D
 
 func _on_body_entered(body: Node3D) -> void:
-	if body is not Vehicle3:
+	if body is not Vehicle4:
 		return
 	
-	var vehicle: Vehicle3 = body
+	var vehicle: Vehicle4 = body
 	if vehicle.respawn_stage:
 		return
 	
-	vehicle.is_being_controlled = true
+	vehicle.is_controlled = true
 	vehicle.in_cannon = true
 	
 	var new_path := make_new_path(vehicle)
@@ -26,7 +26,7 @@ func _on_body_entered(body: Node3D) -> void:
 	var seconds := new_path.curve.get_baked_length() / speed
 	
 
-func make_new_path(vehicle: Vehicle3) -> Path3D:
+func make_new_path(vehicle: Vehicle4) -> Path3D:
 	var new_path := Path3D.new()
 	add_child(new_path)
 	var new_curve := Curve3D.new()

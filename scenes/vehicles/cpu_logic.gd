@@ -66,12 +66,7 @@ func try_trick() -> void:
 		return
 
 	var chance := float(parent.trick_timer_length - parent.trick_timer) / parent.trick_timer_length / (Engine.physics_ticks_per_second / 20.0)
-	# Debug.print(chance)
-	# Debug.print(parent.trick_timer)
 	if randf() < (chance):
-		Debug.print("TRICK")
-		# TODO: The line above should probably be improved.
-		# Possibly increasing the change the lower the trick_timer becomes?
 		parent.input.trick = true
 	if parent.grounded and parent.cur_speed > parent.min_hop_speed and randf() < (1.0 / Engine.physics_ticks_per_second):
 		parent.input.brake = true

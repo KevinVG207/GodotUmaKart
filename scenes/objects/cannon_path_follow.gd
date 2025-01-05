@@ -2,7 +2,7 @@ extends PathFollow3D
 
 class_name CannonPathFollow
 
-var vehicle: Vehicle3 = null
+var vehicle: Vehicle4 = null
 var speed := 50.0:
 	get():
 		if !gradient:
@@ -15,7 +15,7 @@ func _ready() -> void:
 	loop = false
 	rotation_mode = ROTATION_ORIENTED
 	tilt_enabled = true
-	#use_model_front = true
+	use_model_front = true
 
 #func _process(_delta: float) -> void:
 	#Debug.print([self, progress_ratio])
@@ -39,18 +39,17 @@ func _physics_process(delta: float) -> void:
 	
 	vehicle.global_position = global_position
 	vehicle.global_rotation = global_rotation
-	vehicle.transform.basis = vehicle.transform.basis.rotated(vehicle.transform.basis.y, deg_to_rad(90))
+	# vehicle.transform.basis = vehicle.transform.basis.rotated(vehicle.transform.basis.y, deg_to_rad(90))
 	
-	vehicle.prop_vel = vehicle.transform.basis.x.normalized() * speed
-	vehicle.rest_vel = Vector3.ZERO
-	vehicle.prev_rest_vel = Vector3.ZERO
-	vehicle.prev_prop_vel = vehicle.prop_vel
-	vehicle.prev_vel = Vector3.ZERO
-	vehicle.linear_velocity = vehicle.prop_vel
+	vehicle.velocity.prop_vel = vehicle.transform.basis.z.normalized() * speed
+	vehicle.velocity.rest_vel = Vector3.ZERO
+	vehicle.prev_velocity.rest_vel = Vector3.ZERO
+	vehicle.prev_velocity.prop_vel = vehicle.velocity.prop_vel
+	vehicle.linear_velocity = vehicle.velocity.prop_vel
 	
 	if progress_ratio >= 1.0:
 		finished = true
-		vehicle.is_being_controlled = false
+		vehicle.is_controlled = false
 		vehicle.in_cannon = false
 		
 		#vehicle.global_position = parent.to_global(parent.curve.get_point_position(parent.curve.point_count))
@@ -60,5 +59,5 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	
-	vehicle.is_being_controlled = true
+	vehicle.is_controlled = true
 	

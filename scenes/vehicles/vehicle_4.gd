@@ -37,6 +37,9 @@ var air_frames := 0
 var prev_input := VehicleInput.new()
 var input := VehicleInput.new()
 
+var is_controlled := false
+var in_cannon := false
+
 var is_player := true
 var is_cpu := false
 var is_network := false
@@ -256,7 +259,6 @@ func _process(_delta: float) -> void:
 	handle_particles()
 	
 	if is_player:
-		# Debug.print([check_idx, check_progress])
 		UI.race_ui.update_speed(velocity.total().length())
 
 		if cur_speed > base_max_speed:
@@ -371,6 +373,16 @@ func set_inputs() -> void:
 	# if finished:
 	# 	return
 
+	# Some inputs that don't affect gameplay might be set at any point
+	if is_player:
+		input.mirror = Input.is_action_pressed("mirror")
+
+	if is_controlled:
+		return
+	
+	if in_cannon:
+		return
+
 	if respawn_stage != RespawnStage.NONE:
 		return
 
@@ -386,7 +398,7 @@ func set_inputs() -> void:
 	input.trick = Input.is_action_pressed("trick")
 	input.item = Input.is_action_pressed("item")
 	input.tilt = Input.get_axis("down", "up")
-	input.mirror = Input.is_action_pressed("mirror")
+	
 	return
 
 
@@ -657,6 +669,9 @@ func collide_vehicles() -> void:
 	return
 
 func collide_walls() -> void:
+	if is_controlled:
+		return
+
 	# Bounce of all walls?
 	# Reduce speed to minimum after all contacts?
 	return
@@ -909,6 +924,11 @@ func stop_movement() -> void:
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
 	cur_boost_type = BoostType.NONE
+	in_hop = false
+	in_drift = false
+	in_bounce = false
+	in_trick = false
+	trick_timer = 0
 
 func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3, keep_velocity: bool = true) -> void:
 	global_position = new_pos
