@@ -367,12 +367,6 @@ func set_inputs() -> void:
 	prev_input = input
 	input = VehicleInput.new()
 
-	# if !started:
-	# 	return
-
-	# if finished:
-	# 	return
-
 	# Some inputs that don't affect gameplay might be set at any point
 	if is_player:
 		input.mirror = Input.is_action_pressed("mirror")
@@ -390,7 +384,8 @@ func set_inputs() -> void:
 		cpu_logic.set_inputs()
 		return
 	
-	# cpu_logic.set_inputs()
+	if finished:
+		return
 
 	input.accel = Input.is_action_pressed("accelerate")
 	input.brake = Input.is_action_pressed("brake") or Input.is_action_pressed("brake2")
@@ -398,7 +393,6 @@ func set_inputs() -> void:
 	input.trick = Input.is_action_pressed("trick")
 	input.item = Input.is_action_pressed("item")
 	input.tilt = Input.get_axis("down", "up")
-	
 	return
 
 
@@ -958,6 +952,17 @@ func set_rank(new_rank: int) -> void:
 	if is_player and new_rank != rank:
 		UI.race_ui.update_rank(new_rank)
 	rank = new_rank
+
+func set_finished(_finish_time: float) -> void:
+	finished = true
+	finish_time = _finish_time
+
+	if !is_network:
+		is_cpu = true
+
+	if is_player:
+		UI.race_ui.hide_roulette()
+		UI.race_ui.finished()
 
 func _on_boost_timer_timeout() -> void:
 	cur_boost_type = BoostType.NONE

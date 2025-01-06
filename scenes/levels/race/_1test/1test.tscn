@@ -8,12 +8,15 @@
 [ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="6_i62ff"]
 
 [node name="1test" instance=ExtResource("1_2vsv6")]
-lap_count = 2
+lap_count = 1
 
 [node name="Course" parent="." index="0"]
 metadata/_edit_group_ = true
 
 [node name="1test" parent="Course" index="0" instance=ExtResource("2_5k6we")]
+
+[node name="Checkpoints" parent="." index="2"]
+visible = false
 
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_864dc")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 26, 0, 0)
@@ -92,3 +95,6 @@ guaranteed_item = ExtResource("6_i62ff")
 
 [node name="CountdownTimer" parent="." index="14"]
 process_callback = 1
+
+[node name="MapCamera" parent="." index="17"]
+size = 200.0

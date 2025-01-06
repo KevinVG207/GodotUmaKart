@@ -1,6 +1,7 @@
-[gd_scene load_steps=46 format=3 uid="uid://ds7es8al63u4p"]
+[gd_scene load_steps=47 format=3 uid="uid://ds7es8al63u4p"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
+[ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
 [ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="4_gc5eh"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_6rco1"]
 [ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="6_6ard6"]
@@ -809,6 +810,7 @@ continuous_cd = true
 contact_monitor = true
 max_contacts_reported = 16
 script = ExtResource("1_p7mde")
+icon = ExtResource("2_r88gu")
 
 [node name="Visual" type="Node3D" parent="."]
 unique_name_in_owner = true
