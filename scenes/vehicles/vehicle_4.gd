@@ -17,6 +17,8 @@ var prev_transform: Transform3D = Transform3D.IDENTITY
 var max_displacement_for_sleep := 0.003
 var max_degrees_change_for_sleep := 0.5
 
+@export var vehicle_height_below: float = 0.5
+
 @export var base_max_speed: float = 25
 var max_speed := base_max_speed
 @export var base_initial_accel: float = 10
@@ -107,6 +109,9 @@ var hop_force: float = 3.5
 var hop_frames := 0
 var min_hop_speed := max_speed * 0.33
 var in_bounce := false
+@export var min_bounce_ratio: float = 0.5
+var bounce_force: float = 5.0
+var bounce_frames: int = 0
 
 var in_drift := false
 var drift_dir := 0
@@ -424,7 +429,7 @@ func determine_grounded() -> void:
 
 func determine_stick() -> void:
 	is_stick = false
-	if air_frames < 15 and !in_bounce:
+	if air_frames < 15:
 		var ray_origin := transform.origin
 		var ray_end := ray_origin + gravity.normalized() * 1.4
 		# TODO: Change this back
@@ -553,6 +558,13 @@ func build_contacts() -> void:
 
 			match contact_type:
 				ContactType.WALL:
+					var point := global_position + (global_transform.basis.y * -vehicle_height_below)
+					# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
+					var dist_above_floor := Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
+
+					if dist_above_floor < 0.05 and not collider.is_in_group("bonk"):
+						continue
+
 					contact = WallContact.new()
 					if collider.get("physics_material_override") and collider.physics_material_override.get("bounce"):
 						contact.bounce = collider.physics_material_override.bounce
@@ -637,7 +649,12 @@ func apply_velocities() -> void:
 	collide_vehicles()
 	collide_walls()
 
+	bounce_walls()
+	handle_bounce()
+
 	handle_respawn()
+
+	apply_friction()
 
 	if respawn_stage != RespawnStage.RESPAWNING:
 		handle_trick()
@@ -670,6 +687,70 @@ func collide_walls() -> void:
 	# Bounce of all walls?
 	# Reduce speed to minimum after all contacts?
 	return
+
+func apply_friction() -> void:
+	if !grounded:
+		return
+	
+	var grav_component := velocity.grav_component(gravity)
+	var velocity_not_gravity := velocity.rest_vel - grav_component
+	velocity_not_gravity = velocity_not_gravity.move_toward(Vector3.ZERO, delta * grip)
+	velocity.rest_vel = velocity_not_gravity + grav_component
+
+
+func bounce_walls() -> void:
+	if is_controlled:
+		return
+	
+	if ContactType.WALL not in contacts:
+		return
+	
+	var avg_normal := Vector3.ZERO
+	var wall_contacts: Array = contacts[ContactType.WALL]
+
+	for contact: WallContact in wall_contacts:
+		avg_normal += contact.normal
+	
+	avg_normal /= wall_contacts.size()
+
+	var bonk := false
+	var bounce_ratio: float = 0.2
+	for contact: WallContact in wall_contacts:
+		if contact.collider.is_in_group("bonk"):
+			bonk = true
+		if contact.collider.get("physics_material_override") and contact.collider.physics_material_override.get("bounce"):
+			var cur_bounce_ratio: float = contact.collider.physics_material_override.bounce
+			if cur_bounce_ratio > bounce_ratio:
+				bounce_ratio = cur_bounce_ratio
+	
+	bounce_ratio += 0.2
+	
+	var prev_vel := prev_velocity.total() - prev_velocity.grav_component(gravity)
+
+	# If we are already moving away from the wall, don't bounce
+	var dp := avg_normal.normalized().dot(prev_vel.normalized())
+
+	if !in_bounce and (dp < 0.60 or (dp < 0 and bonk)):
+		# Get the component of the linear velocity that is perpendicular to the wall
+		var perp_vel := prev_vel.project(avg_normal).length()
+		var new_max_speed: float = (1 - abs(dp)) * max_speed
+		var min_bounce_speed := max_speed * min_bounce_ratio if dp < 0.50 else 1000.0
+		if perp_vel > min_bounce_speed:
+			# prop_vel = prop_vel.bounce(avg_normal.normalized()) * bounce_ratio
+			var new_total_vel := prev_vel.bounce(avg_normal.normalized()) * bounce_ratio
+			velocity.prop_vel = new_total_vel.project(transform.basis.z.normalized())
+			velocity.rest_vel = new_total_vel - velocity.prop_vel
+			velocity.rest_vel -= velocity.grav_component(gravity)
+			velocity.rest_vel += -gravity.normalized() * bounce_force
+			in_bounce = true
+			bounce_frames = 0
+		else:
+			if velocity.prop_vel.length() > new_max_speed:
+				velocity.prop_vel = velocity.prop_vel.normalized() * new_max_speed
+				# prev_velocity.prop_vel = velocity.prop_vel
+		cur_speed = velocity.prop_vel.length()
+		if velocity.prop_vel.normalized().dot(global_transform.basis.z.normalized()) < 0:
+			cur_speed = -cur_speed
 
 func handle_respawn() -> void:
 	freeze = false
@@ -750,6 +831,17 @@ func handle_hop() -> void:
 				in_drift = true
 				drift_gauge = 0
 	return
+
+func handle_bounce() -> void:
+	if in_bounce:
+		bounce_frames += 1
+
+		if bounce_frames < 30:
+			is_stick = false
+		
+		if bounce_frames >= 30:
+			bounce_frames = 0
+			in_bounce = false
 
 func start_hop() -> void:
 	if in_hop:
@@ -891,7 +983,7 @@ func unstick_from_walls() -> void:
 	else:
 		wall_turn_multi += delta * 3
 	
-	wall_turn_multi = max(1.0, wall_turn_multi)
+	wall_turn_multi = clamp(wall_turn_multi, 1.0, max_wall_turn_multi)
 
 func rotate_stick() -> void:
 	if !grounded:
