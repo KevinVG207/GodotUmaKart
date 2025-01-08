@@ -90,6 +90,8 @@ var prev_contacts := {}
 var contacts := {}
 var prev_ground_contacts := []
 var ground_contacts := []
+var wall_turn_multi := 1.0
+var max_wall_turn_multi := 2.0
 var prev_grounded := false
 var grounded := false
 var floor_normal: Vector3 = Vector3.UP
@@ -614,12 +616,11 @@ func handle_steer() -> void:
 
 	steering = clampf(input.steer, -1.0, 1.0)
 
-	# TODO: Drift
 	if in_drift:
 		steering = drift_dir * remap(steering * drift_dir, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
 
 	var cur_max_turn_speed: float = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
-	var turn_target := steering * cur_max_turn_speed
+	var turn_target := steering * cur_max_turn_speed * wall_turn_multi
 
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
 
@@ -880,8 +881,17 @@ func get_friction_speed() -> float:
 	return mult * Util.get_vehicle_accel(max_speed, abs(abs(cur_speed) - max_speed), initial_accel * friction_multi, accel_exponent)
 
 func apply_rotations() -> void:
+	unstick_from_walls()
 	rotate_stick()
 	rotate_to_gravity()
+
+func unstick_from_walls() -> void:
+	if ContactType.WALL not in contacts:
+		wall_turn_multi = 1.0
+	else:
+		wall_turn_multi += delta * 3
+	
+	wall_turn_multi = max(1.0, wall_turn_multi)
 
 func rotate_stick() -> void:
 	if !grounded:
@@ -908,6 +918,7 @@ func rotate_to_gravity() -> void:
 	var rotated_transform := global_transform.rotated(global_transform.basis.x.normalized(), 0.5*PI)
 	transform = tmp
 	global_transform.basis = Basis(global_transform.basis.get_rotation_quaternion().slerp(rotated_transform.basis.get_rotation_quaternion(), delta * air_rot_multi))
+
 
 func stop_movement() -> void:
 	prev_transform = transform
