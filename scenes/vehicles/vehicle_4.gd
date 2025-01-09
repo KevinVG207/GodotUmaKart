@@ -679,7 +679,26 @@ func apply_velocities() -> void:
 		outside_drift_force()
 
 	linear_velocity = velocity.total()
+
+	failsafe()
 	return
+
+func failsafe() -> void:
+	if !velocity.prop_vel.is_finite():
+		print("PANIC: " + username + " Prop vel infinite! Setting to 0")
+		velocity = prev_velocity
+	if !velocity.rest_vel.is_finite():
+		print("PANIC: " + username + " Rest vel is infinite! Setting to 0")
+		velocity = prev_velocity
+	
+	if !linear_velocity.is_finite():
+		print("PANIC: " + username + " Lin_vel is infinite! Setting to 0")
+		linear_velocity = velocity.total()
+	
+	if !linear_velocity.is_finite():
+		print("PANIC: FAILSAFE FAILED! SETTING ALL VELOCITY TO ZERO!")
+		velocity = Velocity.new()
+		linear_velocity = velocity.total()
 
 func collide_vehicles() -> void:
 	return
@@ -734,37 +753,41 @@ func bounce_walls() -> void:
 	# If we are already moving away from the wall, don't bounce
 	var dp := avg_normal.normalized().dot(prev_vel.normalized())
 
-	if !in_bounce and (dp < 0.60 or (dp < 0 and bonk)):
+	if dp > 0:
+		return
+
+	var min_bounce_speed := max_speed * min_bounce_ratio if dp < 0.50 else 1000.0
+	var perp_vel := prev_vel.project(avg_normal).length()
+
+	if !in_bounce and (dp < 0.60 or bonk) and perp_vel > min_bounce_speed:
 		# Get the component of the linear velocity that is perpendicular to the wall
-		var perp_vel := prev_vel.project(avg_normal).length()
-		var new_max_speed: float = (1 - abs(dp)) * max_speed
-		var min_bounce_speed := max_speed * min_bounce_ratio if dp < 0.50 else 1000.0
-		if perp_vel > min_bounce_speed:
-			# prop_vel = prop_vel.bounce(avg_normal.normalized()) * bounce_ratio
-			var new_total_vel := prev_vel.bounce(avg_normal.normalized()) * bounce_ratio
-			velocity.prop_vel = new_total_vel.project(transform.basis.z.normalized())
-			velocity.rest_vel = new_total_vel - velocity.prop_vel
-			velocity.rest_vel -= velocity.grav_component(gravity)
-			velocity.rest_vel += -gravity.normalized() * bounce_force
-			in_bounce = true
-			bounce_frames = 0
-		else:
-			var on_grav_plane := prev_velocity.total().slide(gravity.normalized())
-			var wall_on_grav_plane := avg_normal.slide(gravity.normalized())
-			var tmp := on_grav_plane.project(wall_on_grav_plane.normalized())
-			var new_total_vel := on_grav_plane - tmp
-			var grav_comp := velocity.grav_component(gravity)
-			if grav_comp.normalized().dot(gravity.normalized()) < 0:
-				grav_comp = Vector3.ZERO
-			velocity.prop_vel = new_total_vel.project(transform.basis.z.normalized())
-			velocity.rest_vel = new_total_vel - velocity.prop_vel
-			velocity.rest_vel += grav_comp
-			#if velocity.prop_vel.length() > new_max_speed:
-				#velocity.prop_vel = velocity.prop_vel.normalized() * new_max_speed
-				# prev_velocity.prop_vel = velocity.prop_vel
-		cur_speed = velocity.prop_vel.length()
-		if velocity.prop_vel.normalized().dot(global_transform.basis.z.normalized()) < 0:
-			cur_speed = -cur_speed
+		var new_total_vel := prev_vel.bounce(avg_normal.normalized()) * bounce_ratio
+		velocity.prop_vel = new_total_vel.project(transform.basis.z.normalized())
+		velocity.rest_vel = new_total_vel - velocity.prop_vel
+		velocity.rest_vel -= velocity.grav_component(gravity)
+		velocity.rest_vel += -gravity.normalized() * bounce_force
+		in_bounce = true
+		bounce_frames = 0
+	else:
+		# Slide along wall
+		var on_grav_plane := prev_velocity.total().slide(gravity.normalized())
+		var wall_on_grav_plane := avg_normal.slide(gravity.normalized())
+		var tmp := on_grav_plane.project(wall_on_grav_plane.normalized())
+		var new_total_vel := on_grav_plane - tmp
+		var grav_comp := velocity.grav_component(gravity)
+		if grav_comp.normalized().dot(gravity.normalized()) < 0:
+			grav_comp = Vector3.ZERO
+		velocity.prop_vel = new_total_vel.project(transform.basis.z.normalized())
+		velocity.rest_vel = new_total_vel - velocity.prop_vel
+		velocity.rest_vel += grav_comp
+
+		# FIXME: The velocity ends up with NAN in rare cases?
+		if !velocity.total().is_finite():
+			print("PANIC: DURING SLIDE ALONG WALL, VELOCITY NAN")
+			velocity = prev_velocity
+	cur_speed = velocity.prop_vel.length()
+	if velocity.prop_vel.normalized().dot(global_transform.basis.z.normalized()) < 0:
+		cur_speed = -cur_speed
 
 func handle_respawn() -> void:
 	freeze = false
@@ -987,7 +1010,7 @@ func get_friction_speed() -> float:
 	return mult * Util.get_vehicle_accel(max_speed, abs(abs(cur_speed) - max_speed), initial_accel * friction_multi, accel_exponent)
 
 func apply_rotations() -> void:
-	unstick_from_walls()
+	# unstick_from_walls()  # TODO: May not be needed anymore
 	rotate_stick()
 	rotate_to_gravity()
 
