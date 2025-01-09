@@ -559,9 +559,13 @@ func build_contacts() -> void:
 			match contact_type:
 				ContactType.WALL:
 					var point := global_position + (global_transform.basis.y * -vehicle_height_below)
+					
+					var in_front_half := Util.dist_to_plane(velocity.total().normalized(), global_position, physics_state.get_contact_local_position(i))
+					if in_front_half < 0:
+						continue
+					
 					# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
 					var dist_above_floor := Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
-
 					if dist_above_floor < 0.05 and not collider.is_in_group("bonk"):
 						continue
 
@@ -745,8 +749,18 @@ func bounce_walls() -> void:
 			in_bounce = true
 			bounce_frames = 0
 		else:
-			if velocity.prop_vel.length() > new_max_speed:
-				velocity.prop_vel = velocity.prop_vel.normalized() * new_max_speed
+			var on_grav_plane := prev_velocity.total().slide(gravity.normalized())
+			var wall_on_grav_plane := avg_normal.slide(gravity.normalized())
+			var tmp := on_grav_plane.project(wall_on_grav_plane.normalized())
+			var new_total_vel := on_grav_plane - tmp
+			var grav_comp := velocity.grav_component(gravity)
+			if grav_comp.normalized().dot(gravity.normalized()) < 0:
+				grav_comp = Vector3.ZERO
+			velocity.prop_vel = new_total_vel.project(transform.basis.z.normalized())
+			velocity.rest_vel = new_total_vel - velocity.prop_vel
+			velocity.rest_vel += grav_comp
+			#if velocity.prop_vel.length() > new_max_speed:
+				#velocity.prop_vel = velocity.prop_vel.normalized() * new_max_speed
 				# prev_velocity.prop_vel = velocity.prop_vel
 		cur_speed = velocity.prop_vel.length()
 		if velocity.prop_vel.normalized().dot(global_transform.basis.z.normalized()) < 0:
@@ -984,6 +998,8 @@ func unstick_from_walls() -> void:
 		wall_turn_multi += delta * 3
 	
 	wall_turn_multi = clamp(wall_turn_multi, 1.0, max_wall_turn_multi)
+	if is_player:
+		Debug.print(wall_turn_multi)
 
 func rotate_stick() -> void:
 	if !grounded:

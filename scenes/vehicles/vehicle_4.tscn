@@ -1275,11 +1275,11 @@ process_callback = 0
 one_shot = true
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(4.49321e-09, 0.102793, -0.994703, 1, -4.37114e-08, -3.65194e-16, -4.34799e-08, -0.994703, -0.102793, 0.340089, 4.39723e-09, 0.105983)
+transform = Transform3D(1.5255e-09, 0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, -0.0348995, 0.3, 0, 0.106)
 shape = SubResource("CapsuleShape3D_80jr0")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.4932e-09, -0.102793, -0.994703, 1, -4.37114e-08, 3.65194e-16, -4.34798e-08, -0.994703, 0.102793, -0.340177, 0, 0.105734)
+transform = Transform3D(-1.52551e-09, -0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, 0.0348995, -0.3, 0, 0.106)
 shape = SubResource("CapsuleShape3D_80jr0")
 
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
