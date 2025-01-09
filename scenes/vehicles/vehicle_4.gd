@@ -49,6 +49,9 @@ var is_replay := false
 var user_id := ""
 var username := "Player"
 
+@export var weight: float = 1.0
+var push_force: float = 12.0
+
 @onready var cpu_logic := %CPULogic
 @onready var audio := %VehicleAudio
 
@@ -216,6 +219,8 @@ var trick_safezone_frames := 30
 var trick_input_frames := 0
 var trick_timer := 0
 var trick_timer_length := int(180 * 0.4)
+
+var collided_with := {}
 
 var visual_event_queue := []
 
@@ -521,10 +526,69 @@ func handle_vehicle_collisions() -> void:
 	build_vehicle_collisions()
 
 func expire_vehicle_collisions() -> void:
+	var keys := collided_with.keys()
+	for vehicle: Vehicle4 in keys:
+		collided_with[vehicle] -= 1
+		if collided_with[vehicle] <= 0:
+			collided_with.erase(vehicle)
 	return
 
 func build_vehicle_collisions() -> void:
+	var colliding_vehicles := get_colliding_vehicles()
+
+	for other: Vehicle4 in colliding_vehicles.keys():
+		# if do_damage != DamageType.none:
+		# 	col_vehicle.damage(do_damage)
+
+		if velocity.total().length() < other.velocity.total().length():
+			continue
+
+		var avg_point: Vector3 = Util.sum(colliding_vehicles[other]) / len(colliding_vehicles[other])
+		
+		var my_weight: float = weight * remap(min(velocity.total().length(), 2*max_speed), 0, 2*max_speed, 1.0, 2.0)
+		var their_weight: float = other.weight * remap(min(other.velocity.total().length(), 2*other.max_speed), 0, 2*other.max_speed, 1.0, 2.0)
+
+		var my_weight_ratio: float = their_weight / my_weight
+		var their_weight_ratio: float = my_weight / their_weight
+
+		var my_force: float = push_force * my_weight_ratio
+		var their_force: float = push_force * their_weight_ratio
+
+		
+		var my_dir: Vector3 = Plane(prev_transform.basis.y).project(prev_transform.origin - avg_point).normalized()
+		var their_dir: Vector3 = Plane(other.prev_transform.basis.y).project(other.prev_transform.origin - avg_point).normalized()
+		
+		apply_push(my_force * my_dir, other)
+		other.apply_push(their_force * their_dir, self)
 	return
+
+func apply_push(force: Vector3, vehicle: Vehicle4) -> void:
+	# if do_damage != DamageType.none:
+	# 	return
+	
+	if vehicle in collided_with:
+		return
+	
+	collided_with[vehicle] = 10
+
+	velocity.rest_vel += force
+
+
+func get_colliding_vehicles() -> Dictionary:
+	var colliding_vehicles: Dictionary = {}
+	for shape: ShapeCast3D in %PlayerCollision.get_children():
+		if !shape.enabled:
+			continue
+		shape.force_shapecast_update()
+		for i in range(shape.get_collision_count()):
+			var collider: Node3D = shape.get_collider(i)
+			if collider == self:
+				continue
+			if collider is Vehicle4:
+				if collider not in colliding_vehicles:
+					colliding_vehicles[collider] = []
+				colliding_vehicles[collider].append(shape.get_collision_point(i))
+	return colliding_vehicles
 
 func build_contacts() -> void:
 	prev_contacts = contacts
@@ -894,7 +958,7 @@ func handle_drift() -> void:
 	if cur_speed < min_hop_speed:
 		in_drift = false
 		drift_dir = 0
-	
+
 	if !(input.brake and input.accel):
 		in_drift = false
 		drift_dir = 0
@@ -907,6 +971,10 @@ func handle_drift() -> void:
 	return
 
 func handle_standstill_turbo() -> void:
+	if input.brake and !input.accel:
+		%StillTurboTimer.stop()
+		still_turbo_ready = false
+
 	if prev_input.brake and !input.brake:
 		%StillTurboTimer.stop()
 		if still_turbo_ready:
