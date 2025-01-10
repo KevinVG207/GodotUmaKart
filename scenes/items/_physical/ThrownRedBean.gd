@@ -94,7 +94,7 @@ func _physics_process(delta: float) -> void:
 	match target_mode:
 		TargetMode.homing:
 			target_pos = target_player.global_position
-			target_speed = remap(clamp(dist_to_target_player, 0.0, 20.0), 0.0, 20.0, max(target_player.max_speed/2, target_player.prop_vel.length()), start_speed)
+			target_speed = remap(clamp(dist_to_target_player, 0.0, 20.0), 0.0, 20.0, max(target_player.max_speed/2, target_player.velocity.prop_vel.length()), start_speed)
 	
 		TargetMode.follow:
 			# First, change the target player.
@@ -114,8 +114,8 @@ func _physics_process(delta: float) -> void:
 	if target_pos:
 		# Determine which side to steer
 		var target_dir := (target_pos - global_position).normalized()
-		var angle := transform.basis.z.angle_to(target_dir) - PI/2
-		var is_behind := transform.basis.x.dot(target_dir) < 0
+		var angle := transform.basis.x.angle_to(target_dir) - PI/2
+		var is_behind := transform.basis.z.dot(target_dir) < 0
 
 		if is_behind:
 			if angle < 0:

@@ -5,7 +5,7 @@ extends Node3D
 @onready var parent: Vehicle4 = get_parent().get_parent().get_parent()
 @onready var radius := scale.x
 var anchor := Vector3.ZERO
-@onready var initial_rotation = rotation_degrees
+@onready var initial_rotation := rotation_degrees
 
 @export var steer := false
 var cur_steer_deg := 0.0
@@ -17,7 +17,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	# Roll over the ground.
-	var new_rot = initial_rotation
+	var new_rot := initial_rotation
 	
 	var dist_travelled := parent.cur_speed * delta
 	var circum := 2.0 * PI * radius

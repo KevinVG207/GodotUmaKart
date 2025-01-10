@@ -24,8 +24,8 @@ var max_displacement_for_sleep := 0.003
 var max_degrees_change_for_sleep := 0.5
 
 @export var vehicle_height_below: float = 0.5
-@export var vehicle_length_ahead: float = 1.0
-@export var vehicle_length_behind: float = 1.0
+@export var vehicle_length_ahead: float = 1.5
+@export var vehicle_length_behind: float = 1.5
 
 @export var base_max_speed: float = 25
 var max_speed := base_max_speed
@@ -120,7 +120,8 @@ var stick_speed: float = 5
 var in_hop := false
 var hop_force: float = 3.5
 var hop_frames := 0
-var min_hop_speed := max_speed * 0.33
+var min_hop_speed := base_max_speed * 0.33
+var min_drift_speed := base_max_speed * 0.42
 var in_bounce := false
 @export var min_bounce_ratio: float = 0.5
 var bounce_force: float = 5.0
@@ -178,7 +179,7 @@ class WallContact extends Contact:
 	var bounce := 0.2
 
 class OffroadContact extends Contact:
-	var speed_multi := 0.5
+	var speed_multi := 0.4
 
 class TrickContact extends Contact:
 	var boost := BoostType.NORMAL
@@ -242,6 +243,8 @@ enum DamageType {
 var cur_damage_type := DamageType.NONE
 var do_damage_type := DamageType.NONE
 
+var targeted_by_dict: Dictionary = {}
+
 var visual_event_queue := []
 
 func _ready() -> void:
@@ -283,7 +286,7 @@ func setup_floor_check_grid() -> void:
 		bl, bl.lerp(br, 0.5), br
 	]
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	while visual_event_queue.size() > 0:
 		var event: Callable = visual_event_queue.pop_at(0)
 		event.call()
@@ -293,10 +296,21 @@ func _process(_delta: float) -> void:
 	if is_player:
 		UI.race_ui.update_speed(velocity.total().length())
 
-		if cur_speed > base_max_speed:
-			extra_fov = (cur_speed - base_max_speed) * 0.3
-		else:
-			extra_fov = 0.0
+		update_alerts(delta)
+
+		update_fov()
+
+func update_alerts(delta: float) -> void:
+	for alert_object: Node3D in targeted_by_dict:
+		var tex: CompressedTexture2D = targeted_by_dict[alert_object]
+		UI.race_ui.update_alert(alert_object, tex, self, world.player_camera, delta)
+	return
+
+func update_fov() -> void:
+	if cur_speed > base_max_speed:
+		extra_fov = (cur_speed - base_max_speed) * 0.3
+	else:
+		extra_fov = 0.0
 
 func handle_particles() -> void:
 	handle_drift_particles()
@@ -464,7 +478,6 @@ func determine_stick() -> void:
 	if air_frames < 15:
 		var ray_origin := transform.origin
 		var ray_end := ray_origin + gravity.normalized() * 1.4
-		# TODO: Change this back
 		var ray_result := world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_origin, ray_end, 0xFFFFFFFF, [self]))
 
 		if ray_result:
@@ -486,6 +499,9 @@ func determine_max_speed_and_accel() -> void:
 
 func apply_offroad_speed_multi() -> void:
 	if ContactType.OFFROAD not in contacts:
+		return
+	
+	if cur_boost_type != BoostType.NONE:
 		return
 	
 	var speed_multi := 1.0
@@ -668,9 +684,9 @@ func build_contacts() -> void:
 					if !settings.is_empty():
 						match settings[0]:
 							"WEAK":
-								contact.speed_multi = 0.75
+								contact.speed_multi = 0.7
 							"STRONG":
-								contact.speed_multi = 0.35
+								contact.speed_multi = 0.3
 				ContactType.BOOST:
 					apply_boost(BoostType.NORMAL)
 				ContactType.TRICK:
@@ -928,9 +944,9 @@ func handle_trick() -> void:
 		trick_timer = 0
 
 func handle_hop() -> void:
-	min_hop_speed = max_speed * 0.6
 	if !in_hop and input.accel and input.brake and !prev_input.brake and cur_speed > min_hop_speed:
 		# Perform hop
+		prev_input.brake = true
 		start_hop()
 
 	if in_hop:
@@ -952,7 +968,7 @@ func handle_hop() -> void:
 
 		if hop_frames > 30 and ground_contacts:
 			in_hop = false
-			if input.brake and cur_speed > min_hop_speed and drift_dir != 0:
+			if input.brake and cur_speed > min_drift_speed and drift_dir != 0:
 				in_drift = true
 				drift_gauge = 0
 	return
@@ -979,7 +995,7 @@ func handle_drift() -> void:
 	if !in_drift:
 		return
 	
-	if cur_speed < min_hop_speed:
+	if cur_speed < min_drift_speed:
 		in_drift = false
 		drift_dir = 0
 
@@ -1000,6 +1016,7 @@ func handle_standstill_turbo() -> void:
 		still_turbo_ready = false
 
 	if prev_input.brake and !input.brake:
+		prev_input.brake = false
 		%StillTurboTimer.stop()
 		if still_turbo_ready:
 			still_turbo_ready = false
@@ -1227,7 +1244,10 @@ func get_item(guaranteed_item: PackedScene = null) -> void:
 
 
 func handle_item() -> void:
-	if not (input.item and !prev_input.item):
+	if !input.item:
+		return
+
+	if prev_input.item:
 		return
 	
 	if in_cannon:
@@ -1247,7 +1267,9 @@ func handle_item() -> void:
 	if not item:
 		return
 
+	Debug.print(["USING ", item])
 	item = item.use(self, world)
+	prev_input.item = true
 	
 	if not item:
 		remove_item()
@@ -1295,6 +1317,15 @@ func show_kart() -> void:
 	%Wheels.visible = true
 	%DriftParticles.visible = true
 	%ExhaustParticles.visible = true
+
+func add_targeted(object: Node3D, tex: CompressedTexture2D) -> void:
+	if not object in targeted_by_dict:
+		targeted_by_dict[object] = tex
+
+func remove_targeted(object: Node3D) -> void:
+	if object in targeted_by_dict:
+		targeted_by_dict.erase(object)
+		UI.race_ui.remove_alert(object)
 
 func _on_damage_timer_timeout() -> void:
 	cur_damage_type = DamageType.NONE
