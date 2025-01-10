@@ -10,5 +10,5 @@ var no_updates: bool = false
 func get_state() -> Dictionary:
 	return {}
 	
-func set_state(state: Dictionary):
+func set_state(state: Dictionary) -> void:
 	return

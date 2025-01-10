@@ -13,15 +13,15 @@ var grace_frames: int = 30
 var cur_grace: int = 0
 
 func _enter_tree() -> void:
-	var thrower := world.players_dict[owner_id] as Vehicle3
+	var thrower := world.players_dict[owner_id] as Vehicle4
 	gravity = thrower.gravity
-	var offset := thrower.transform.basis.x * (thrower.vehicle_length_ahead * 1)
+	var offset: Vector3 = thrower.transform.basis.z * (thrower.vehicle_length_ahead * 1)
 	var dir_multi: float = 1.0
-	if thrower.input_updown < 0:
+	if thrower.input.tilt < 0:
 		dir_multi = -1.0
-		offset = -thrower.transform.basis.x * (thrower.vehicle_length_behind * 2)
+		offset = -thrower.transform.basis.z * (thrower.vehicle_length_behind * 2)
 	
-	var direction := thrower.transform.basis.x * dir_multi
+	var direction := thrower.transform.basis.z * dir_multi
 
 	var throw_force := thrower.linear_velocity
 	if dir_multi > 0:
@@ -30,6 +30,8 @@ func _enter_tree() -> void:
 		if thrower.in_hop:
 			multi = 1.5
 		throw_force += ((direction * 1.5) + (thrower.transform.basis.y * 1.0)) * 13 * multi
+	else:
+		throw_force += -thrower.global_transform.basis.z.normalized() * 3
 
 	global_rotation = thrower.global_rotation
 	global_position = thrower.global_position + offset
@@ -117,16 +119,18 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 		world.destroy_physical_item(body.item_id)
 		return
 	
-	if not body is Vehicle3:
+	if not body is Vehicle4:
 		return
 	
-	if body.is_network:
+	var vehicle := body as Vehicle4
+	
+	if vehicle.is_network:
 		return
 	
-	if body == world.players_dict[owner_id] and cur_grace <= grace_frames:
+	if vehicle == world.players_dict[owner_id] and cur_grace <= grace_frames:
 		return
 	
-	body.damage(Vehicle3.DamageType.spin)
+	vehicle.damage(Vehicle4.DamageType.SPIN)
 	world.destroy_physical_item(item_id)
 
 

@@ -36,15 +36,15 @@ var new_owner: String = ""
 func _enter_tree() -> void:
 	if Global.MODE1 == Global.MODE1_ONLINE:
 		$Area3D.set_collision_mask_value(3, false)
-	var thrower := world.players_dict[owner_id] as Vehicle3
+	var thrower := world.players_dict[owner_id] as Vehicle4
 	gravity = thrower.gravity
-	var offset := thrower.transform.basis.x * (thrower.vehicle_length_ahead * 2)
+	var offset := thrower.transform.basis.z * (thrower.vehicle_length_ahead * 2)
 	var dir_multi: float = 1.0
-	if thrower.input_updown < 0:
+	if thrower.input.tilt < 0:
 		target_mode = TargetMode.none
 		dir_multi = -1.0
-		offset = -thrower.transform.basis.x * (thrower.vehicle_length_behind * 2)
-	var direction := thrower.transform.basis.x * dir_multi
+		offset = -thrower.transform.basis.z * (thrower.vehicle_length_behind * 2)
+	var direction := thrower.transform.basis.z * dir_multi
 	
 	global_position = thrower.global_position + offset
 
@@ -102,7 +102,7 @@ func _physics_process(delta: float) -> void:
 			targets.erase(world.players_dict[owner_id])
 			
 			if targets:
-				targets.sort_custom(func(a: Vehicle3, b: Vehicle3) -> bool: return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position))
+				targets.sort_custom(func(a: Vehicle4, b: Vehicle4) -> bool: return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position))
 				target_player = targets[0]
 				
 				var dist_to_target := global_position.distance_to(target_point.global_position)
@@ -114,8 +114,8 @@ func _physics_process(delta: float) -> void:
 	if target_pos:
 		# Determine which side to steer
 		var target_dir := (target_pos - global_position).normalized()
-		var angle := transform.basis.x.angle_to(target_dir) - PI/2
-		var is_behind := transform.basis.z.dot(target_dir) < 0
+		var angle := transform.basis.z.angle_to(target_dir) - PI/2
+		var is_behind := transform.basis.x.dot(target_dir) < 0
 
 		if is_behind:
 			if angle < 0:
@@ -209,7 +209,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 		world.destroy_physical_item(body.item_id)
 		return
 	
-	if not body is Vehicle3:
+	if not body is Vehicle4:
 		return
 	
 	if body.is_network:
@@ -218,5 +218,5 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body == world.players_dict[owner_id] and cur_grace <= grace_frames:
 		return
 	
-	body.damage(Vehicle3.DamageType.spin)
+	body.damage(Vehicle4.DamageType.SPIN)
 	world.destroy_physical_item(item_id)

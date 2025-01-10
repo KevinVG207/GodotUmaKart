@@ -2,7 +2,13 @@ extends RigidBody3D
 
 class_name Vehicle4
 
+signal before_update(delta: float)
+signal after_update(delta: float)
+
 @export var icon: CompressedTexture2D
+
+@onready var vani: VehicleAnimationTree = %VehicleAnimationTree
+@onready var cani: AnimationPlayer = %CharacterAnimationPlayer # TODO: Character animation player
 
 var tick: int = -1
 var delta: float = 1.0 / Engine.physics_ticks_per_second
@@ -18,6 +24,8 @@ var max_displacement_for_sleep := 0.003
 var max_degrees_change_for_sleep := 0.5
 
 @export var vehicle_height_below: float = 0.5
+@export var vehicle_length_ahead: float = 1.0
+@export var vehicle_length_behind: float = 1.0
 
 @export var base_max_speed: float = 25
 var max_speed := base_max_speed
@@ -27,10 +35,13 @@ var initial_accel := base_initial_accel
 var accel_exponent := base_accel_exponent
 @export var reverse_multi := 0.5
 var friction_multi := 1.5
-@export var base_grip: float = 60
+@export var base_grip: float = 100
 var grip := base_grip
 
 var cur_speed := 0.0
+
+var item: Node = null
+var can_use_item: bool = false
 
 var gravity := Vector3.DOWN * 18
 @export var terminal_velocity: float = 3000
@@ -44,6 +55,7 @@ var in_cannon := false
 
 var is_player := true
 var is_cpu := false
+var use_cpu_logic := false
 var is_network := false
 var is_replay := false
 var user_id := ""
@@ -52,10 +64,8 @@ var username := "Player"
 @export var weight: float = 1.0
 var push_force: float = 12.0
 
-@onready var cpu_logic := %CPULogic
-@onready var audio := %VehicleAudio
-
-var can_use_item: bool = false
+@onready var cpu_logic: CPULogic = %CPULogic
+@onready var audio: VehicleAudio = %VehicleAudio
 
 var started := false
 var finished := false
@@ -222,6 +232,16 @@ var trick_timer_length := int(180 * 0.4)
 
 var collided_with := {}
 
+enum DamageType {
+	NONE,
+	SPIN,
+	TUMBLE,
+	EXPLODE
+}
+
+var cur_damage_type := DamageType.NONE
+var do_damage_type := DamageType.NONE
+
 var visual_event_queue := []
 
 func _ready() -> void:
@@ -325,6 +345,8 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	delta = new_physics_state.step
 	visual_delta += delta
 
+	before_update.emit(delta)
+
 	handle_sleep()
 
 	if tick % 3 == 0:
@@ -344,6 +366,8 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	apply_rotations()
 
 	prev_transform = transform
+
+	after_update.emit(delta)
 	return
 
 func handle_sleep() -> void:
@@ -363,14 +387,14 @@ func respawn() -> void:
 	if is_network:
 		return
 		
-	# if in_cannon:
-	# 	return
+	if in_cannon:
+		return
 	
 	respawn_stage = RespawnStage.FALLING
-	# if item and "remove" in item:
-	# 	item.remove()
-	# else:
-	# 	remove_item()
+	if item and "remove" in item:
+		item.remove()
+	else:
+		remove_item()
 	%RespawnTimer.start(respawn_time)
 	if is_player:
 		world.player_camera.do_respawn()
@@ -382,18 +406,21 @@ func set_inputs() -> void:
 	# Some inputs that don't affect gameplay might be set at any point
 	if is_player:
 		input.mirror = Input.is_action_pressed("mirror")
-
-	if is_controlled:
-		return
 	
 	if in_cannon:
+		return
+	
+	if cur_damage_type != DamageType.NONE:
 		return
 
 	if respawn_stage != RespawnStage.NONE:
 		return
 
-	if is_cpu:
+	if is_cpu or use_cpu_logic:
 		cpu_logic.set_inputs()
+		return
+
+	if is_controlled:
 		return
 	
 	if finished:
@@ -537,8 +564,8 @@ func build_vehicle_collisions() -> void:
 	var colliding_vehicles := get_colliding_vehicles()
 
 	for other: Vehicle4 in colliding_vehicles.keys():
-		# if do_damage != DamageType.none:
-		# 	col_vehicle.damage(do_damage)
+		if do_damage_type != DamageType.NONE:
+			other.damage(do_damage_type)
 
 		if velocity.total().length() < other.velocity.total().length():
 			continue
@@ -682,9 +709,6 @@ func apply_boost(boost_type: BoostType) -> void:
 		return
 	cur_boost_type = boost_type
 	boost_timer.start(boosts[boost_type].length)
-
-func handle_item() -> void:
-	return
 
 func handle_steer() -> void:
 	angular_velocity = Vector3.ZERO
@@ -1174,12 +1198,124 @@ func set_finished(_finish_time: float) -> void:
 		UI.race_ui.hide_roulette()
 		UI.race_ui.finished()
 
+
+func get_item(guaranteed_item: PackedScene = null) -> void:
+	if is_network:
+		return
+	
+	if respawn_stage:
+		return
+	
+	if item:
+		return
+	can_use_item = false
+	if guaranteed_item:
+		item = guaranteed_item.instantiate()
+	else:
+		var item_rank: int = round(remap(rank, 0, world.players_dict.size(), 0, Global.player_count))
+		item = Global.item_dist[item_rank].pick_random().instantiate()
+	if "parent" in item:
+		item.parent = self
+	if not "local" in item or not item.local:
+		world.add_child(item)
+	else:
+		%Items.add_child(item)
+	
+	%ItemRouletteTimer.start(4)
+	if is_player and !finished:
+		UI.race_ui.start_roulette()
+
+
+func handle_item() -> void:
+	if not (input.item and !prev_input.item):
+		return
+	
+	if in_cannon:
+		return
+	
+	if not can_use_item:
+		if not %ItemRouletteTimer.is_stopped():
+			# User pressed item button while roulette is running.
+			var new_time: float = %ItemRouletteTimer.time_left - 0.5
+			if new_time < 0:
+				%ItemRouletteTimer.stop()
+				_on_item_roulette_timer_timeout()
+			else:
+				%ItemRouletteTimer.start(new_time)
+		return
+	
+	if not item:
+		return
+
+	item = item.use(self, world)
+	
+	if not item:
+		remove_item()
+	else:
+		can_use_item = true
+		if is_player and !finished:
+			UI.race_ui.set_item_texture(item.texture)
+
+
+func remove_item() -> void:
+	if item:
+		item.queue_free()
+		item = null
+	can_use_item = false
+	if is_player:
+		UI.race_ui.hide_roulette()
+	%ItemRouletteTimer.stop()
+
+
+func damage(damage_type: DamageType) -> void:
+	if in_cannon:
+		return
+	
+	# start_failsafe_timer()
+
+	if cur_damage_type != DamageType.NONE:
+		return
+
+	cur_damage_type = damage_type
+	cur_boost_type = BoostType.NONE
+	
+	match damage_type:
+		DamageType.SPIN:
+			%DamageTimer.start(1.5)
+			vani.animation = vani.Type.dmg_spin
+
+func hide_kart() -> void:
+	%Kart.visible = false
+	%Wheels.visible = false
+	%DriftParticles.visible = false
+	%ExhaustParticles.visible = false
+
+func show_kart() -> void:
+	%Kart.visible = true
+	%Wheels.visible = true
+	%DriftParticles.visible = true
+	%ExhaustParticles.visible = true
+
+func _on_damage_timer_timeout() -> void:
+	cur_damage_type = DamageType.NONE
+
 func _on_boost_timer_timeout() -> void:
 	cur_boost_type = BoostType.NONE
 
 
 func _on_still_turbo_timer_timeout() -> void:
 	still_turbo_ready = true
+
+func _on_item_roulette_timer_timeout() -> void:
+	if not item:
+		print("Error: Roulette stopped but no item assigned!")
+		return
+	
+	if !is_player or is_network:
+		can_use_item = true
+		return
+	
+	UI.race_ui.stop_roulette(item.texture)
 
 func _on_roulette_stop() -> void:
 	can_use_item = true

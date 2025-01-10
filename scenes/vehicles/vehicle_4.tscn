@@ -1226,12 +1226,14 @@ script = ExtResource("11_73o1g")
 steer = true
 
 [node name="VehicleAnimationTree" type="AnimationTree" parent="."]
+unique_name_in_owner = true
 root_node = NodePath("%Visual")
 tree_root = SubResource("AnimationNodeStateMachine_nguqk")
 anim_player = NodePath("../VehicleAnimationPlayer")
 script = ExtResource("4_gc5eh")
 
 [node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
 root_node = NodePath("../Visual")
 libraries = {
 "": SubResource("AnimationLibrary_yrkfx")
@@ -1259,6 +1261,7 @@ one_shot = true
 one_shot = true
 
 [node name="ItemRouletteTimer" type="Timer" parent="."]
+unique_name_in_owner = true
 one_shot = true
 
 [node name="RespawnTimer" type="Timer" parent="."]
@@ -1271,6 +1274,7 @@ wait_time = 10.0
 one_shot = true
 
 [node name="DamageTimer" type="Timer" parent="."]
+unique_name_in_owner = true
 process_callback = 0
 one_shot = true
 

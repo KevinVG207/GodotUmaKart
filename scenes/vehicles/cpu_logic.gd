@@ -64,6 +64,9 @@ func update_target() -> void:
 func try_trick() -> void:
 	if !parent.trick_timer:
 		return
+	
+	if parent.is_controlled:
+		return
 
 	var chance := float(parent.trick_timer_length - parent.trick_timer) / parent.trick_timer_length / (Engine.physics_ticks_per_second / 20.0)
 	if randf() < (chance):

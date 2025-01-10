@@ -4,7 +4,7 @@ class_name ItemPickup
 
 @export var guaranteed_item: PackedScene = null
 
-func _ready():
+func _ready() -> void:
 	if Global.MODE2 == Global.MODE2_TIMETRIALS:
 		visible = false
 		monitoring = false
@@ -14,8 +14,8 @@ func _ready():
 	$AnimationPlayer.advance($AnimationPlayer.current_animation_length * randf())
 
 
-func _on_body_entered(body):
-	if not body is Vehicle3:
+func _on_body_entered(body) -> void:
+	if not body is Vehicle4:
 		return
 
 	$CollisionShape3D.set_deferred("disabled", true)
@@ -25,6 +25,6 @@ func _on_body_entered(body):
 	
 
 
-func _on_respawn_timer_timeout():
+func _on_respawn_timer_timeout() -> void:
 	$CollisionShape3D.disabled = false
 	$ItemPickup.visible = true

@@ -55,7 +55,7 @@ func _process(delta: float) -> void:
 
 	if steer:
 		var target_rot : float = parent.turn_speed * 0.3
-		if parent.cur_speed < 0:
+		if parent.cur_speed < -0.1:
 			target_rot *= -1.0
 		cur_steer_deg = move_toward(cur_steer_deg, target_rot, delta * steer_multi)
 		new_rot.y += cur_steer_deg

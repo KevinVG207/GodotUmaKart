@@ -15,14 +15,14 @@ var cur_grace: int = 0
 func _enter_tree() -> void:
 	if Global.MODE1 == Global.MODE1_ONLINE:
 		$Area3D.set_collision_mask_value(3, false)
-	var thrower := world.players_dict[owner_id] as Vehicle3
+	var thrower := world.players_dict[owner_id] as Vehicle4
 	gravity = thrower.gravity
-	var offset := thrower.transform.basis.x * (thrower.vehicle_length_ahead * 2)
+	var offset := thrower.transform.basis.z * (thrower.vehicle_length_ahead * 2)
 	var dir_multi: float = 1.0
-	if thrower.input_updown < 0:
+	if thrower.input.tilt < 0:
 		dir_multi = -1.0
-		offset = -thrower.transform.basis.x * (thrower.vehicle_length_behind * 2)
-	var direction := thrower.transform.basis.x * dir_multi
+		offset = -thrower.transform.basis.z * (thrower.vehicle_length_behind * 2)
+	var direction := thrower.transform.basis.z * dir_multi
 	
 	global_position = thrower.global_position + offset
 
@@ -107,7 +107,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 		world.destroy_physical_item(body.item_id)
 		return
 	
-	if not body is Vehicle3:
+	if not body is Vehicle4:
 		return
 		
 	if body.is_network:
@@ -116,5 +116,5 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body == world.players_dict[owner_id] and cur_grace <= grace_frames:
 		return
 	
-	body.damage(Vehicle3.DamageType.spin)
+	body.damage(Vehicle4.DamageType.SPIN)
 	world.destroy_physical_item(item_id)

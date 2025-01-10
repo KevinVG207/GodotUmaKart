@@ -1,5 +1,7 @@
 extends Node3D
 
+class_name VehicleAudio
+
 var our_volume: float = 0.5
 var their_volume: float = 0.4
 var cur_volume_multi: float = 0
