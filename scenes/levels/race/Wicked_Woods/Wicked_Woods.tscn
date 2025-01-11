@@ -142,6 +142,8 @@ guaranteed_item = ExtResource("6_7pr3j")
 
 [node name="ItemPickup21" parent="Objects" index="20" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.86517, 76.6755, 55.5704)
+visible = false
+monitoring = false
 guaranteed_item = ExtResource("8_u35rw")
 
 [node name="ItemPickup22" parent="Objects" index="21" instance=ExtResource("5_6gkg7")]
