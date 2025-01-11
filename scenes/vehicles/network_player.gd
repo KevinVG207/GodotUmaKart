@@ -76,6 +76,7 @@ func apply_state(state: Dictionary) -> void:
 	set_path_point(state)
 
 	# FIXME: In reality, it should probably compare to the predicted position, because the network_pos is currently behind the true position of the player!
+	# BUT the network predicted position could be inside the ground or similar...
 	if should_teleport_to_network(Util.to_vector3(state.pos)):
 		teleport_to_network(state)
 	
