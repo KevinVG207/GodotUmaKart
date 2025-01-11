@@ -136,6 +136,8 @@ transform = Transform3D(-0.736003, 0, -0.676979, 0, 1, 0, 0.676979, 0, -0.736003
 
 [node name="ItemPickup2" parent="Objects" index="19" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.29563, 76.6755, 51.2539)
+visible = false
+monitoring = false
 guaranteed_item = ExtResource("6_7pr3j")
 
 [node name="ItemPickup21" parent="Objects" index="20" instance=ExtResource("5_6gkg7")]
@@ -144,6 +146,8 @@ guaranteed_item = ExtResource("8_u35rw")
 
 [node name="ItemPickup22" parent="Objects" index="21" instance=ExtResource("5_6gkg7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.86517, 76.6755, 59.3967)
+visible = false
+monitoring = false
 guaranteed_item = ExtResource("9_gxv84")
 
 [node name="Checkpoints" parent="." index="2"]

@@ -772,6 +772,10 @@ func apply_boost(boost_type: BoostType) -> void:
 	cur_boost_type = boost_type
 	boost_timer.start(boosts[boost_type].length)
 
+func stop_boost() -> void:
+	cur_boost_type = BoostType.NONE
+	boost_timer.stop()
+
 func handle_steer() -> void:
 	angular_velocity = Vector3.ZERO
 	steering = 0.0
@@ -1176,8 +1180,6 @@ func unstick_from_walls() -> void:
 		wall_turn_multi += delta * 3
 	
 	wall_turn_multi = clamp(wall_turn_multi, 1.0, max_wall_turn_multi)
-	if is_player:
-		Debug.print(wall_turn_multi)
 
 func rotate_stick() -> void:
 	if !grounded:
@@ -1256,7 +1258,7 @@ func stop_movement() -> void:
 	turn_speed = 0
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
-	cur_boost_type = BoostType.NONE
+	stop_boost()
 	in_hop = false
 	in_drift = false
 	in_bounce = false
@@ -1354,8 +1356,7 @@ func handle_item() -> void:
 	
 	if not item:
 		return
-
-	Debug.print(["USING ", item])
+	
 	item = item.use(self, world)
 	prev_input.item = true
 	
@@ -1387,7 +1388,7 @@ func damage(damage_type: DamageType) -> void:
 		return
 
 	cur_damage_type = damage_type
-	cur_boost_type = BoostType.NONE
+	stop_boost()
 	
 	match damage_type:
 		DamageType.SPIN:
@@ -1419,7 +1420,7 @@ func _on_damage_timer_timeout() -> void:
 	cur_damage_type = DamageType.NONE
 
 func _on_boost_timer_timeout() -> void:
-	cur_boost_type = BoostType.NONE
+	stop_boost()
 
 
 func _on_still_turbo_timer_timeout() -> void:

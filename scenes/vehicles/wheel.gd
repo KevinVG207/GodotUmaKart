@@ -57,7 +57,6 @@ func _process(delta: float) -> void:
 		var target_rot: float
 		if parent.is_network and parent.network.prev_input:
 			target_rot = parent.max_turn_speed * parent.network.prev_input.steer * 0.3
-			Debug.print(parent.network.prev_input.steer)
 		else:
 			target_rot = parent.turn_speed * 0.3
 		#Debug.print(target_rot)
