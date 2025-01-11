@@ -23,6 +23,8 @@ var prev_transform: Transform3D = Transform3D.IDENTITY
 var max_displacement_for_sleep := 0.003
 var max_degrees_change_for_sleep := 0.5
 
+@onready var respawn_timer: Timer = %RespawnTimer
+
 @export var vehicle_height_below: float = 0.5
 @export var vehicle_length_ahead: float = 1.5
 @export var vehicle_length_behind: float = 1.5
@@ -66,6 +68,7 @@ var push_force: float = 12.0
 
 @onready var cpu_logic: CPULogic = %CPULogic
 @onready var audio: VehicleAudio = %VehicleAudio
+@onready var network: NetworkPlayer = %NetworkPlayer
 
 var started := false
 var finished := false
@@ -90,6 +93,18 @@ class Velocity:
 	
 	func grav_component(gravity: Vector3) -> Vector3:
 		return rest_vel.project(gravity.normalized())
+	
+	func to_dict() -> Dictionary:
+		return {
+			"prop_vel": Util.to_array(prop_vel),
+			"rest_vel": Util.to_array(rest_vel)
+		}
+	
+	static func from_dict(dict: Dictionary) -> Velocity:
+		var out := Velocity.new()
+		out.prop_vel = Util.to_vector3(dict.prop_vel)
+		out.rest_vel = Util.to_vector3(dict.rest_vel)
+		return out
 
 
 class VehicleInput:
@@ -100,6 +115,29 @@ class VehicleInput:
 	var item := false
 	var tilt := 0.0
 	var mirror := false
+
+	func to_dict() -> Dictionary:
+		return {
+			"accel": accel,
+			"brake": brake,
+			"steer": steer,
+			"trick": trick,
+			"item": item,
+			"tilt": tilt,
+			"mirror": mirror
+		}
+	
+	static func from_dict(dict: Dictionary) -> VehicleInput:
+		var out := VehicleInput.new()
+		out.accel = dict.accel
+		out.brake = dict.brake
+		out.steer = dict.steer
+		out.trick = dict.trick
+		out.item = dict.item
+		out.tilt = dict.tilt
+		out.mirror = dict.mirror
+		return out
+		
 
 var prev_contacts := {}
 var contacts := {}
@@ -379,6 +417,8 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 
 	apply_rotations()
 
+	apply_network_drift()
+
 	prev_transform = transform
 
 	after_update.emit(delta)
@@ -409,7 +449,7 @@ func respawn() -> void:
 		item.remove()
 	else:
 		remove_item()
-	%RespawnTimer.start(respawn_time)
+	respawn_timer.start(respawn_time)
 	if is_player:
 		world.player_camera.do_respawn()
 
@@ -417,8 +457,11 @@ func set_inputs() -> void:
 	prev_input = input
 	input = VehicleInput.new()
 
+	# FIXME: Deal with just_pressed situations correctly. Maybe add them to VehicleInput?
+	# Then whatever sets just_pressed should update inside integrate_forces so it only gets set for 1 physics tick.
+
 	# Some inputs that don't affect gameplay might be set at any point
-	if is_player:
+	if is_player and get_window().has_focus():
 		input.mirror = Input.is_action_pressed("mirror")
 	
 	if in_cannon:
@@ -438,6 +481,9 @@ func set_inputs() -> void:
 		return
 	
 	if finished:
+		return
+	
+	if !get_window().has_focus():
 		return
 
 	input.accel = Input.is_action_pressed("accelerate")
@@ -733,7 +779,7 @@ func handle_steer() -> void:
 
 	# if respawn_stage:
 	# 	return
-
+	#Debug.print([self, input.steer])
 	steering = clampf(input.steer, -1.0, 1.0)
 
 	if in_drift:
@@ -898,7 +944,7 @@ func handle_respawn() -> void:
 	if respawn_stage == RespawnStage.NONE:
 		return
 	
-	if %RespawnTimer.is_stopped():
+	if respawn_timer.is_stopped():
 		respawn_stage = RespawnStage.NONE
 		return
 	
@@ -1159,6 +1205,48 @@ func rotate_to_gravity() -> void:
 	transform = tmp
 	global_transform.basis = Basis(global_transform.basis.get_rotation_quaternion().slerp(rotated_transform.basis.get_rotation_quaternion(), delta * air_rot_multi))
 
+
+func apply_network_drift() -> void:
+	if !is_network:
+		return
+
+	if !network.prev_state:
+		return
+
+	var network_pos: Vector3 = cpu_logic.target.global_position
+	var network_rot: Quaternion = Util.array_to_quat(network.prev_state.rot)
+	var move_multi := 0.0
+	var rot_multi := 1.0
+	
+	if !cpu_logic.moved_to_next:
+		var dist: float = max(network.network_teleport_distance/2, global_position.distance_to(network_pos))
+		move_multi = remap(dist, network.network_teleport_distance/2, network.network_teleport_distance, 0.0, 3.0)
+	
+	else:
+		move_multi = 0.0
+	
+	if network.prev_state.cur_speed < 5.0: # and global_position.distance_to(network_pos) < 3.0:
+		network_pos = Util.to_vector3(network.prev_state.pos)
+		move_multi = clamp(remap(network.prev_state.cur_speed, 0, 5.0, 2.0, 0.0), 0.0, 2.0)
+		rot_multi = 3.0
+		prev_input.steer = 0.0
+		input.steer = 0.0
+	
+	var new_pos: Vector3 = global_position.lerp(network_pos, delta * move_multi)
+	var new_movement: Vector3 = new_pos - global_position
+
+	# Remove the component along the gravity vector
+	var adjusted_movement: Vector3 = Plane(-gravity.normalized()).project(new_movement)
+	var vertical_movement: Vector3 = new_movement - adjusted_movement
+
+	global_position += adjusted_movement
+	
+	if vertical_movement.length() > network.network_teleport_distance / 2 and !cpu_logic.moved_to_next:
+		global_position = network_pos
+	
+	var cur_quat := Quaternion.from_euler(rotation)
+	var target_quat := network_rot
+	rotation = cur_quat.slerp(target_quat, rot_multi * delta).get_euler()
 
 func stop_movement() -> void:
 	prev_transform = transform

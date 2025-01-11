@@ -11,6 +11,11 @@ var respawning := false
 var progress: float = -100000
 var moved_to_next := false
 
+var network: NetworkPlayer
+
+func _ready() -> void:
+	network = parent.network
+
 func set_inputs() -> void:
 	# if parent.in_damage:
 	# 	return
@@ -26,6 +31,9 @@ func set_inputs() -> void:
 	if !parent.is_network:
 		try_trick()
 		accel_decel()
+	else:
+		parent.input.accel = parent.prev_input.accel
+		parent.input.brake = parent.prev_input.brake
 
 	steer()
 
@@ -52,14 +60,18 @@ func _process(_delta: float) -> void:
 func get_random_target_offset() -> Vector3:
 	return Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))
 
-func update_target() -> void:
+func update_target(should_exit: bool = false) -> void:
 	target_pos = target.global_position + (target_offset * target.dist / 3)
 	if parent.global_position.distance_to(target_pos) < target.dist or Util.dist_to_plane(target.normal, target.global_position, parent.global_position) > 0:
 		# Get next target
-		target = parent.world.pick_next_path_point(target)
+		if !moved_to_next and parent.is_network:
+			target = Util.get_path_point_ahead_of_player(parent)
+		else:
+			target = parent.world.pick_next_path_point(target)
 		target_offset = get_random_target_offset()
 		moved_to_next = true
-		update_target()
+		if !should_exit:
+			update_target(true)
 
 func try_trick() -> void:
 	if !parent.trick_timer:
@@ -91,8 +103,8 @@ func steer() -> void:
 		else:
 			angle += 10
 	
-	# if !parent.is_network:
-	hold_drift(angle)
+	if !parent.is_network:
+		hold_drift(angle)
 	
 	if abs(angle) > max_angle:
 		# Should steer

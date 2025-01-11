@@ -17,7 +17,7 @@ var starting_order: Array = []
 var spectate: bool = false
 # var timer_tick: int = 0
 var race_start_time: float = 0
-var physical_item_counter = 0
+var physical_item_counter := 0
 var physical_items: Dictionary = {}
 var deleted_physical_items: Array = []
 var all_path_points: Array = []
@@ -398,8 +398,8 @@ func make_physical_item(key: String, player: Vehicle4) -> Node:
 		return
 
 	physical_item_counter += 1
-	var unique_key = player_user_id + str(physical_item_counter)
-	var instance = Global.physical_items[key].instantiate()
+	var unique_key := player_user_id + str(physical_item_counter)
+	var instance: Node = Global.physical_items[key].instantiate()
 	instance.item_id = unique_key
 	instance.owner_id = player.user_id
 	instance.world = self
@@ -555,11 +555,11 @@ func _physics_process(_delta: float) -> void:
 			if update_wait_frames > frames_between_update:
 				update_wait_frames = 0
 				if player_vehicle:
-					var vehicle_data: Dictionary = player_vehicle.get_state()
+					var vehicle_data: Dictionary = player_vehicle.network.get_state()
 					Network.send_match_state(raceOp.CLIENT_UPDATE_VEHICLE_STATE, vehicle_data)
 					#player_vehicle.call_deferred("upload_data")
 				
-				for unique_id in physical_items.keys():
+				for unique_id: String in physical_items.keys():
 					var item = physical_items[unique_id]
 					if not item.no_updates and item.owner_id == player_user_id:
 						send_item_state(item)
@@ -1056,7 +1056,7 @@ func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 		_add_vehicle(user_id, cur_position, look_dir, up_dir)
 		players_dict[user_id].axis_unlock()
 	
-	players_dict[user_id].apply_state(vehicle_state)
+	players_dict[user_id].network.apply_state(vehicle_state)
 	#players_dict[user_id].call_deferred("apply_state", vehicle_state)
 
 

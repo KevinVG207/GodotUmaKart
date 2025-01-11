@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://ds7es8al63u4p"]
+[gd_scene load_steps=48 format=3 uid="uid://ds7es8al63u4p"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_dgcfk"]
 [ext_resource type="Script" path="res://scenes/vehicles/cpu_logic.gd" id="12_u6ron"]
 [ext_resource type="PackedScene" uid="uid://kbseqbudkntg" path="res://scenes/vehicles/vehicle_audio.tscn" id="13_jx4i7"]
+[ext_resource type="Script" path="res://scenes/vehicles/network_player.gd" id="14_284x6"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -1294,6 +1295,10 @@ shape = SubResource("CapsuleShape3D_ltuck")
 unique_name_in_owner = true
 script = ExtResource("12_u6ron")
 parent = NodePath("..")
+
+[node name="NetworkPlayer" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("14_284x6")
 
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]
 [connection signal="timeout" from="BoostTimer" to="." method="_on_boost_timer_timeout"]

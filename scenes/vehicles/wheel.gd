@@ -54,7 +54,13 @@ func _process(delta: float) -> void:
 	position.y = move_toward(position.y, point.y, abs(delta * parent.gravity.y * 0.03))
 
 	if steer:
-		var target_rot : float = parent.turn_speed * 0.3
+		var target_rot: float
+		if parent.is_network and parent.network.prev_input:
+			target_rot = parent.max_turn_speed * parent.network.prev_input.steer * 0.3
+			Debug.print(parent.network.prev_input.steer)
+		else:
+			target_rot = parent.turn_speed * 0.3
+		#Debug.print(target_rot)
 		if parent.cur_speed < -0.1:
 			target_rot *= -1.0
 		cur_steer_deg = move_toward(cur_steer_deg, target_rot, delta * steer_multi)
