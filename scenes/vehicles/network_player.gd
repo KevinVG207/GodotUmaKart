@@ -27,7 +27,7 @@ func get_state() -> Dictionary:
 		"in_drift": vehicle.in_drift,
 		"drift_dir": vehicle.drift_dir,
 		"drift_gauge": vehicle.drift_gauge,
-		"grounded": vehicle.grounded,
+		# "grounded": vehicle.grounded,
 		"in_bounce": vehicle.in_bounce,
 		"bounce_frames": vehicle.bounce_frames,
 		# "in_water": vehicle.in_water,
@@ -93,7 +93,7 @@ func apply_simple(state: Dictionary) -> void:
 	vehicle.in_drift = state.in_drift
 	vehicle.drift_dir = state.drift_dir
 	vehicle.drift_gauge = state.drift_gauge
-	vehicle.grounded = state.grounded
+	# vehicle.grounded = state.grounded
 	vehicle.in_bounce = state.in_bounce
 	vehicle.bounce_frames = state.bounce_frames
 	vehicle.respawn_stage = state.respawn_stage
