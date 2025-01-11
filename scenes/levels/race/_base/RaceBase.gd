@@ -3,6 +3,7 @@ extends Node3D
 class_name RaceBase
 
 @onready var player_camera: Camera3D = $PlayerCamera
+var updates_to_server_per_second: int = 6
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
 var players_dict: Dictionary = {}
@@ -125,13 +126,14 @@ var loaded_replay: Array = []
 var loaded_replay_idx: int = 0
 var loaded_replay_vehicle: Vehicle4 = null
 
-func _ready():
+func _ready() -> void:
 	course_name = Util.get_race_course_name_from_path(scene_file_path)
 	
 	# Setup ticks
 	Engine.physics_ticks_per_second = 180
 	replay_tick_interval = 6
 	replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
+	frames_between_update = int(float(Engine.physics_ticks_per_second) / updates_to_server_per_second)
 	
 	#load_replay("user://replays/1test/1725744856.sav")
 	
@@ -1070,8 +1072,8 @@ func handle_race_start(data: Dictionary):
 
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
-	if Global.randPing:
-		await get_tree().create_timer(Global.randPing / 1000.0).timeout
+	if Global.extraPing:
+		await get_tree().create_timer(Global.extraPing / 1000.0).timeout
 	
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:

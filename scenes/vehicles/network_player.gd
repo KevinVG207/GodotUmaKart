@@ -40,6 +40,7 @@ func get_state() -> Dictionary:
 		"finish_time": vehicle.finish_time,
 		"username": vehicle.username,
 		"boost_type": vehicle.cur_boost_type,
+		"still_turbo_ready": vehicle.still_turbo_ready,
 
 		# Special
 		"gravity": Util.to_array(vehicle.gravity),
@@ -48,7 +49,8 @@ func get_state() -> Dictionary:
 		"velocity": vehicle.velocity.to_dict(),
 		"input": vehicle.input.to_dict(),
 		"respawn_time": vehicle.respawn_timer.time_left,
-		"boost_time": vehicle.boost_timer.time_left
+		"boost_time": vehicle.boost_timer.time_left,
+		"still_turbo_time": vehicle.still_timer.time_left,
 	}
 
 func apply_state(state: Dictionary) -> void:
@@ -73,8 +75,13 @@ func apply_state(state: Dictionary) -> void:
 
 	set_path_point(state)
 
+	# FIXME: In reality, it should probably compare to the predicted position, because the network_pos is currently behind the true position of the player!
 	if should_teleport_to_network(Util.to_vector3(state.pos)):
 		teleport_to_network(state)
+	
+	apply_timer(vehicle.respawn_timer, state.respawn_time)
+	apply_timer(vehicle.boost_timer, state.boost_time)
+	apply_timer(vehicle.still_timer, state.still_turbo_time)
 
 func apply_simple(state: Dictionary) -> void:
 	vehicle.vani.animation = state.vani
@@ -93,6 +100,7 @@ func apply_simple(state: Dictionary) -> void:
 	vehicle.finish_time = state.finish_time
 	vehicle.username = state.username
 	vehicle.cur_boost_type = state.boost_type
+	vehicle.still_turbo_ready = state.still_turbo_ready
 
 func set_path_point(state: Dictionary) -> void:
 	var network_path := vehicle.world.network_path_points[vehicle] as EnemyPath

@@ -1070,8 +1070,8 @@ func handle_race_start(data: Dictionary):
 
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
-	if Global.randPing:
-		await get_tree().create_timer(Global.randPing / 1000.0).timeout
+	if Global.extraPing:
+		await get_tree().create_timer(Global.extraPing / 1000.0).timeout
 	
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:

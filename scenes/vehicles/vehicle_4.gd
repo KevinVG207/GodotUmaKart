@@ -9,6 +9,7 @@ signal after_update(delta: float)
 
 @onready var vani: VehicleAnimationTree = %VehicleAnimationTree
 @onready var cani: AnimationPlayer = %CharacterAnimationPlayer # TODO: Character animation player
+@onready var still_timer: Timer = %StillTurboTimer
 
 var tick: int = -1
 var delta: float = 1.0 / Engine.physics_ticks_per_second
@@ -383,7 +384,7 @@ func handle_drift_particles() -> void:
 				Util.multi_emit(%DriftLeftCharging, true)
 			else:
 				Util.multi_emit(%DriftRightCharging, true)
-	elif !%StillTurboTimer.is_stopped():
+	elif !still_timer.is_stopped():
 		Util.multi_emit(%DriftCenterCharging, true)
 	elif still_turbo_ready:
 		Util.multi_emit(%DriftCenterCharged, true)
@@ -1062,12 +1063,12 @@ func handle_drift() -> void:
 
 func handle_standstill_turbo() -> void:
 	if input.brake and !input.accel:
-		%StillTurboTimer.stop()
+		still_timer.stop()
 		still_turbo_ready = false
 
 	if prev_input.brake and !input.brake:
 		prev_input.brake = false
-		%StillTurboTimer.stop()
+		still_timer.stop()
 		if still_turbo_ready:
 			still_turbo_ready = false
 			apply_boost(BoostType.SMALL)
@@ -1119,8 +1120,8 @@ func apply_acceleration() -> void:
 	cur_speed = move_toward(cur_speed, new_speed, delta * grip)
 
 func start_standstill_turbo() -> void:
-	if grounded and not still_turbo_ready and %StillTurboTimer.is_stopped():
-		%StillTurboTimer.start(still_turbo_charge_time)
+	if grounded and not still_turbo_ready and still_timer.is_stopped():
+		still_timer.start(still_turbo_charge_time)
 
 func rotate_accel_along_floor() -> void:
 	# TODO: This might not be the correct angle?

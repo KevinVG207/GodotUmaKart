@@ -11,7 +11,7 @@ var player_count: int = default_player_count:
 		player_count = value
 		setup_items()
 
-var randPing = 0
+var extraPing = 0
 var unique_string = OS.get_unique_id()
 
 var menu_start_cam: String = "%CamInitial"
@@ -43,7 +43,7 @@ var items: Array = [
 	load("res://scenes/items/GreenBean.tscn"),
 	load("res://scenes/items/RedBean.tscn"),
 	load("res://scenes/items/Book.tscn"),
-	load("res://scenes/items/RunningShoes/running_shoes.tscn")
+	# load("res://scenes/items/RunningShoes/running_shoes.tscn")
 ]
 
 var item_dist: Array = []
