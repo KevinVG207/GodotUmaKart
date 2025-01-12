@@ -51,16 +51,16 @@ func _physics_process(delta: float) -> void:
 	if !target:
 		return
 	
-	var prev_glob_pos = global_position
+	var prev_glob_pos := global_position
 
-	var cur_offset = offset
-	var cur_offset_bw = offset_bw
-	var cur_lerp_speed = lerp_speed
-	var cur_look_offset = look_offset
+	var cur_offset := offset
+	var cur_offset_bw := offset_bw
+	var cur_lerp_speed := lerp_speed
+	var cur_look_offset := look_offset
 
-	var target_finished = target.finished
-	# if target.world.spectate:
-	# 	target_finished = false
+	var target_finished := target.finished
+	if target.world.spectate:
+		target_finished = false
 	
 	if finished != target_finished:
 		instant = true
@@ -126,14 +126,14 @@ func _physics_process(delta: float) -> void:
 		cur_pos = target.global_transform.translated_local(cur_offset).origin
 		cur_pos_bw = target.global_transform.translated_local(cur_offset_bw).origin
 
-	var mirror = false
+	var mirror := false
 	if target.input.mirror:
 		transform.origin = cur_pos_bw
 		mirror = true
 	else:
 		transform.origin = cur_pos
 	
-	var true_look_offset = target.global_transform.basis.x * cur_look_offset.x + target.global_transform.basis.y * cur_look_offset.y + target.global_transform.basis.z * cur_look_offset.z
+	var true_look_offset := target.global_transform.basis.x * cur_look_offset.x + target.global_transform.basis.y * cur_look_offset.y + target.global_transform.basis.z * cur_look_offset.z
 	var true_target: Vector3 = target.global_transform.origin + true_look_offset + target.global_transform.basis.x * target.turn_speed * 0.001
 
 	if no_move:
@@ -143,9 +143,9 @@ func _physics_process(delta: float) -> void:
 		Global.camera_switched.emit()
 		look_at(true_target, -target.gravity.normalized())
 	else:
-		var old_basis = transform.basis
+		var old_basis := transform.basis
 		look_at(true_target, -target.gravity.normalized())
-		var new_basis = transform.basis
+		var new_basis := transform.basis
 		transform.basis = Basis(Quaternion(old_basis).slerp(Quaternion(new_basis), lerp_speed_look * delta))
 
 	if instant:

@@ -284,6 +284,9 @@ var do_damage_type := DamageType.NONE
 
 var targeted_by_dict: Dictionary = {}
 
+var in_water := false
+var water_bodies: Dictionary = {}
+
 var visual_event_queue := []
 
 func _ready() -> void:
@@ -540,6 +543,7 @@ func determine_max_speed_and_accel() -> void:
 	accel_exponent = base_accel_exponent
 	grip = base_grip
 	apply_offroad_speed_multi()
+	apply_water_grip()
 	apply_boost_speed_multi()
 	apply_turn_speed_reduction()
 	return
@@ -559,6 +563,10 @@ func apply_offroad_speed_multi() -> void:
 	max_speed *= speed_multi
 	grip *= 0.5
 	return
+
+func apply_water_grip() -> void:
+	if in_water:
+		grip *= 0.7
 
 func apply_boost_speed_multi() -> void:
 	if cur_boost_type == BoostType.NONE:
@@ -827,7 +835,9 @@ func apply_velocities() -> void:
 		stick_to_ground()
 
 		apply_acceleration()
-		velocity.prop_vel = transform.basis.z.normalized() * cur_speed
+
+		var grip_multi := pow(grip / base_grip, 2)
+		velocity.prop_vel = prev_velocity.prop_vel.slerp(transform.basis.z.normalized() * cur_speed, clampf(grip_multi, 0, 1))
 
 		rotate_accel_along_floor()
 
@@ -943,6 +953,7 @@ func bounce_walls() -> void:
 	cur_speed = velocity.prop_vel.length()
 	if velocity.prop_vel.normalized().dot(global_transform.basis.z.normalized()) < 0:
 		cur_speed = -cur_speed
+	prev_velocity = velocity
 
 func handle_respawn() -> void:
 	freeze = false
@@ -1416,6 +1427,19 @@ func remove_targeted(object: Node3D) -> void:
 	if object in targeted_by_dict:
 		targeted_by_dict.erase(object)
 		UI.race_ui.remove_alert(object)
+
+func water_entered(area: Area3D) -> void:
+	in_water = true
+	
+	if area not in water_bodies:
+		water_bodies[area] = true
+		audio.water_entered()
+
+
+func water_exited(area: Area3D) -> void:
+	water_bodies.erase(area)
+	if water_bodies.size() == 0:
+		in_water = false
 
 func _on_damage_timer_timeout() -> void:
 	cur_damage_type = DamageType.NONE

@@ -27,7 +27,7 @@ func get_state() -> Dictionary:
 		"in_drift": vehicle.in_drift,
 		"drift_dir": vehicle.drift_dir,
 		"drift_gauge": vehicle.drift_gauge,
-		# "grounded": vehicle.grounded,
+		"grounded": vehicle.grounded,
 		"in_bounce": vehicle.in_bounce,
 		"bounce_frames": vehicle.bounce_frames,
 		# "in_water": vehicle.in_water,
@@ -93,7 +93,6 @@ func apply_simple(state: Dictionary) -> void:
 	vehicle.in_drift = state.in_drift
 	vehicle.drift_dir = state.drift_dir
 	vehicle.drift_gauge = state.drift_gauge
-	# vehicle.grounded = state.grounded
 	vehicle.in_bounce = state.in_bounce
 	vehicle.bounce_frames = state.bounce_frames
 	vehicle.respawn_stage = state.respawn_stage
@@ -124,6 +123,7 @@ func teleport_to_network(state: Dictionary) -> void:
 		vehicle.check_progress = state.check_progress
 		vehicle.in_hop = state.in_hop
 		vehicle.hop_frames = state.hop_frames
+		vehicle.grounded = state.grounded
 		vehicle.teleport(vehicle.global_position, vehicle.transform.basis.z, vehicle.transform.basis.y)
 
 func should_teleport_to_network(network_pos: Vector3) -> bool:
