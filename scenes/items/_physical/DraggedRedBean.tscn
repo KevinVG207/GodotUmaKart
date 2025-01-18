@@ -12,7 +12,7 @@ material = SubResource("StandardMaterial3D_tufje")
 height = 0.5
 radius = 0.456419
 
-[node name="GreenBean" type="Area3D"]
+[node name="GreenBean" type="Area3D" groups=["item_draggable"]]
 collision_layer = 8
 collision_mask = 14
 script = ExtResource("1_hyh8g")

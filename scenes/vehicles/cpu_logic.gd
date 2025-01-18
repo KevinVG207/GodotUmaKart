@@ -40,8 +40,8 @@ func set_inputs() -> void:
 	# if parent.is_being_controlled:
 	# 	parent.input.brake = false
 
-	# if !parent.is_network:
-	# 	try_use_item()
+	if !parent.is_network:
+		try_use_item()
 	
 	return
 
@@ -83,7 +83,7 @@ func try_trick() -> void:
 	var chance := float(parent.trick_timer_length - parent.trick_timer) / parent.trick_timer_length / (Engine.physics_ticks_per_second / 20.0)
 	if randf() < (chance):
 		parent.input.trick = true
-	if parent.grounded and parent.cur_speed > parent.min_hop_speed and randf() < (1.0 / Engine.physics_ticks_per_second):
+	if parent.grounded and parent.cur_speed > parent.min_hop_speed and randf() < (1.0 / Engine.physics_ticks_per_second / 3.0):
 		parent.input.brake = true
 
 func accel_decel() -> void:
@@ -131,3 +131,47 @@ func get_angle_to_target(target_dir: Vector3) -> float:
 	return (-parent.global_transform.basis.x).angle_to(target_dir) - PI/2
 func get_max_angle_to_target() -> float:
 	return target.dist/2 / parent.global_position.distance_to(target_pos)
+
+
+func try_use_item() -> void:
+	var perform := true if randf() < 1.0/(Engine.physics_ticks_per_second / 3.0) else false
+
+	if parent.has_dragged_item:
+		perform_draggable_item(perform)
+		return
+	
+	if parent.item == null:
+		return
+
+	var item: Node = parent.item
+	if item.is_in_group("item_draggable"):
+		perform_draggable_item(perform)
+		return
+
+	perform_default_item(perform)
+	return
+	
+func perform_draggable_item(perform: bool) -> void:
+	if !perform and !parent.has_dragged_item:
+		# Ignore
+		return
+	
+	if perform and !parent.has_dragged_item:
+		# Start dragging
+		parent.input.item = true
+		return
+	
+	if parent.has_dragged_item and perform and randf() < 0.25:
+		# Throw
+		parent.input.item = false
+		return
+	
+	# Keep dragging
+	parent.input.item = true
+
+
+func perform_default_item(perform: bool) -> void:
+	if perform:
+		perform = true if randf() < 0.25 else false
+	parent.input.item = perform
+	return

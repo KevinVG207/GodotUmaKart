@@ -5,12 +5,12 @@
 [node name="park" instance=ExtResource("1_x0a6j")]
 transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, 0, 0)
 
-[node name="street" parent="." index="1" groups=["floor"]]
+[node name="street" parent="." index="1" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="street" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="street" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="dirtroad" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="dirtroad" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="street_001" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="street_001" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="street_002" index="0" groups=["wall"]]
+[node name="StaticBody3D" parent="street_002" index="0" groups=["col_wall"]]

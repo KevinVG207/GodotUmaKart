@@ -44,7 +44,8 @@ var grip := base_grip
 var cur_speed := 0.0
 
 var item: Node = null
-var can_use_item: bool = false
+var can_use_item : = false
+var has_dragged_item := false
 
 var gravity := Vector3.DOWN * 18
 @export var terminal_velocity: float = 3000
@@ -699,11 +700,12 @@ func build_contacts() -> void:
 		var collider := physics_state.get_contact_collider_object(i) as Node3D
 		var groups := collider.get_groups()
 		if groups.is_empty():
-			groups.append("UNKNOWN")
+			groups.append("COL_UNKNOWN")
 		for group_raw in groups:
 			var group_str := str(group_raw).to_upper()
-			if group_str.begins_with("_"):
+			if !group_str.begins_with("COL_"):
 				continue
+			group_str = group_str.substr(4)
 
 			var split_settings := group_str.split("_")
 			var type_str := split_settings[0]
@@ -728,7 +730,7 @@ func build_contacts() -> void:
 					
 					# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
 					var dist_above_floor := Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
-					if dist_above_floor < 0.05 and not collider.is_in_group("bonk"):
+					if dist_above_floor < 0.05 and not collider.is_in_group("col_bonk"):
 						continue
 
 					contact = WallContact.new()
@@ -792,7 +794,6 @@ func handle_steer() -> void:
 
 	# if respawn_stage:
 	# 	return
-	#Debug.print([self, input.steer])
 	steering = clampf(input.steer, -1.0, 1.0)
 
 	if in_drift:
@@ -904,7 +905,7 @@ func bounce_walls() -> void:
 	var bonk := false
 	var bounce_ratio: float = 0.2
 	for contact: WallContact in wall_contacts:
-		if contact.collider.is_in_group("bonk"):
+		if contact.collider.is_in_group("col_bonk"):
 			bonk = true
 		if contact.collider.get("physics_material_override") and contact.collider.physics_material_override.get("bounce"):
 			var cur_bounce_ratio: float = contact.collider.physics_material_override.bounce

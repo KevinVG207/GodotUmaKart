@@ -59,7 +59,7 @@ func _process(delta: float) -> void:
 			target_rot = parent.max_turn_speed * parent.network.prev_input.steer * 0.3
 		else:
 			target_rot = parent.turn_speed * 0.3
-		#Debug.print(target_rot)
+
 		if parent.cur_speed < -0.1:
 			target_rot *= -1.0
 		cur_steer_deg = move_toward(cur_steer_deg, target_rot, delta * steer_multi)

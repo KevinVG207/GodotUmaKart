@@ -51,15 +51,16 @@ enabled=PackedStringArray("res://addons/material_modifier/plugin.cfg")
 
 [global_group]
 
-floor=""
-wall=""
-trick=""
-offroad=""
 map=""
-boost=""
-bonk=""
-trick_small=""
-offroad_weak=""
+col_wall=""
+col_trick_small=""
+col_trick=""
+col_offroad_weak=""
+col_offroad=""
+col_floor=""
+col_boost=""
+col_bonk=""
+item_draggable=""
 
 [input]
 

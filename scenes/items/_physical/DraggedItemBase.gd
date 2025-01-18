@@ -16,11 +16,13 @@ func _ready() -> void:
 	self.body_entered.connect(_on_body_entered)
 
 func _physics_process(_delta: float) -> void:
+	var vehicle := world.players_dict[owner_id] as Vehicle4
+
 	if item_id in world.deleted_physical_items:
 		self.queue_free()
 		return
 	
-	var vehicle := world.players_dict[owner_id] as Vehicle4
+	vehicle.has_dragged_item = true
 	
 	if !vehicle.input.item and not vehicle.is_network:
 		# User let go of the item! Turn into thrown item.
@@ -61,3 +63,6 @@ func _on_body_entered(body: Node) -> void:
 	if body is Vehicle4 and body.user_id != owner_id and damage_type and !body.is_network:
 		body.damage(damage_type)
 		world.destroy_physical_item(item_id)
+
+func _exit_tree() -> void:
+	world.players_dict[owner_id].has_dragged_item = false

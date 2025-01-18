@@ -2,6 +2,21 @@
 
 [ext_resource type="PackedScene" uid="uid://b3bc0qg52i2mr" path="res://assets/course/barn/barn_course.blend" id="1_qkepo"]
 
+[sub_resource type="Animation" id="Animation_t5qgo"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.148353, 0.0942478, 0.20944)]
+}
+
 [sub_resource type="Animation" id="Animation_dmnkx"]
 resource_name = "rotate"
 length = 15.0
@@ -20,21 +35,6 @@ tracks/0/keys = {
 "values": [Vector3(-0.148353, 0.0942478, 0.20944), Vector3(-0.148353, 0.0942478, 6.49262)]
 }
 
-[sub_resource type="Animation" id="Animation_t5qgo"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector3(-0.148353, 0.0942478, 0.20944)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_h1eff"]
 _data = {
 "RESET": SubResource("Animation_t5qgo"),
@@ -43,11 +43,11 @@ _data = {
 
 [node name="barn_course" instance=ExtResource("1_qkepo")]
 
-[node name="StaticBody3D" parent="Plane" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="Plane" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="Stables" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="Stables" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="Windmill" index="0" groups=["floor"]]
+[node name="StaticBody3D" parent="Windmill" index="0" groups=["col_floor"]]
 
 [node name="Windmill-mill" parent="." index="4"]
 transform = Transform3D(0.970915, -0.220595, 0.0930746, 0.205628, 0.967404, 0.147809, -0.122647, -0.124372, 0.984627, -19.1097, 41.4223, -165.944)

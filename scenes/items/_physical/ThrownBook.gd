@@ -54,7 +54,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	
 	for i in range(physics_state.get_contact_count()):
 		var collider := physics_state.get_contact_collider_object(i) as Node
-		if collider.is_in_group("floor"):
+		if collider.is_in_group("col_floor"):
 			# Floor touched! Snap to it and land.
 			landed = true
 			cur_grace += grace_frames

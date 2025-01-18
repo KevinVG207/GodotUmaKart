@@ -69,7 +69,7 @@ func _physics_process(delta: float) -> void:
 	for i in get_slide_collision_count():
 		var col_data := get_slide_collision(i)
 		var collider := col_data.get_collider(0)
-		if collider.is_in_group("wall"):
+		if collider.is_in_group("col_wall"):
 			# Bounce off walls
 			var normal := col_data.get_normal(0)
 			if velocity.length() > 0.1 and velocity.normalized().dot(normal) < 0:
