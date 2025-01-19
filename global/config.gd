@@ -36,6 +36,9 @@ var window_mode: int = 0:
 		window_mode = value
 		DisplayServer.window_set_mode(window_modes[value])
 
+		if window_mode == 0:
+			_on_windowed_mode()
+
 
 var max_fps_modes := [
 	60,
@@ -256,3 +259,11 @@ func _ready() -> void:
 			apply_bindings(binds)
 	
 	save_bindings(current_bindings)
+
+	if window_mode == 0:
+		_on_windowed_mode()
+
+func _on_windowed_mode() -> void:
+	# Set window size to 1280x720
+	DisplayServer.window_set_size(Vector2i(1280, 720))
+	Util.center_window()

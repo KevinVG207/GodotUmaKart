@@ -247,3 +247,14 @@ func doppler_sigmoid(dist_delta: float, max_distance: float) -> float:
 	#var object: Variant = bytes_to_var(gzip.get_data(gzip.get_available_bytes())[1])
 	#load_file.close()
 	#return object
+
+func center_window(window_id: int = 0) -> void:
+	var scr := DisplayServer.window_get_current_screen(window_id)
+	var pos := DisplayServer.screen_get_position(scr)
+	var siz := DisplayServer.screen_get_size(scr)
+
+	var window_size := DisplayServer.window_get_size()
+
+	var new_pos := Vector2(pos.x + (siz.x - window_size.x) / 2, pos.y + (siz.y - window_size.y) / 2)
+
+	DisplayServer.window_set_position(new_pos, window_id)

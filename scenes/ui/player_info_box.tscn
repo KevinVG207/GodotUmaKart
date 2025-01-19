@@ -33,7 +33,7 @@ current_user_color = Color(1, 1, 0, 1)
 picked_color = Color(0.957889, 0.956623, 0, 0.435294)
 
 [node name="HboxContainer" type="HBoxContainer" parent="."]
-custom_minimum_size = Vector2(500, 0)
+custom_minimum_size = Vector2(750, 0)
 layout_mode = 2
 theme_override_constants/separation = 5
 
@@ -47,7 +47,7 @@ stretch_mode = 4
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/font_size = 38
 text = "PlayerName1"
 
 [node name="Pick" type="Label" parent="HboxContainer"]
@@ -55,5 +55,5 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/font_size = 38
 horizontal_alignment = 2

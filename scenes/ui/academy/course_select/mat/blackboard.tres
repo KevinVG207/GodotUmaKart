@@ -4,5 +4,6 @@
 resource_name = "blackboard"
 cull_mode = 2
 diffuse_mode = 3
+specular_mode = 1
 albedo_color = Color(0.294117, 0.380392, 0.368627, 1)
-roughness = 0.5
+roughness = 0.0
