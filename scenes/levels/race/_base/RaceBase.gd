@@ -39,7 +39,7 @@ var lobby_cam_str: String = "%CamTrunk"
 var lobby_scene: String = "res://scenes/ui/academy/menu_academy.tscn"
 
 @export var lap_count: int = 3
-var finished = false
+var finished := false
 
 var path_point_scene: PackedScene = preload("res://scenes/control/path/EnemyPath.tscn")
 
@@ -165,10 +165,10 @@ func _ready() -> void:
 
 func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 	var root: bool = len(prev_points) == 0
-	var path_points = parent.get_children()
-	var initial_points = []
+	var path_points := parent.get_children()
+	var initial_points := []
 	for i in range(len(path_points)):
-		var cur_point = path_points[i]
+		var cur_point := path_points[i]
 		
 		if i == 1:
 			initial_points = prev_points
@@ -182,12 +182,12 @@ func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 		
 		all_path_points.append(cur_point)
 		
-		for point in prev_points:
+		for point: EnemyPath in prev_points:
 			point.next_points.append(cur_point)
 		
 		prev_points = [cur_point]
 		
-		var next_i = i+1
+		var next_i := i+1
 		if next_i >= path_points.size():
 			if root:
 				cur_point.next_points = initial_points
@@ -197,8 +197,8 @@ func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 	return prev_points
 
 
-func setup_enemy_path():
-	var last_point: Array = recursive_path_link($EnemyPathPoints, [])
+func setup_enemy_path() -> void:
+	recursive_path_link($EnemyPathPoints, [])
 	
 	# Set up prev_points
 	for point: EnemyPath in all_path_points:
@@ -210,7 +210,7 @@ func setup_enemy_path():
 		var avg_normal: Vector3 = Util.sum(normals) / normals.size()
 		point.normal = avg_normal
 
-func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath):
+func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath) -> EnemyPath:
 	var cur_leaves: Array = target_point.prev_points
 	
 	while true:
@@ -222,9 +222,13 @@ func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath):
 				return leaf
 			new_leaves += leaf.prev_points
 		cur_leaves = new_leaves
+	
+	Debug.print("PANIC: Could not pick next point to target!")
+	print("PANIC: Could not pick next point to target!")
+	return cur_point
 
 
-func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false):
+func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false) -> EnemyPath:
 	var next_points: Array = cur_point.next_points
 	return next_points.pick_random()
 	
@@ -238,7 +242,7 @@ func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false):
 			#closest_pt = point
 	#return closest_pt
 
-func get_timer_seconds():
+func get_timer_seconds() -> float:
 	if race_start_time == 0:
 		return 0.0
 	return (Time.get_ticks_usec() - race_start_time) / 1000000.0
@@ -320,19 +324,19 @@ func _process(delta: float) -> void:
 			exclude_list.append(vehicle.get_rid())
 			
 		var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-		var nt_deadzone_sides = viewport_size.x / 10
-		var nt_deadzone_top = viewport_size.y / 14
-		var nt_deadzone_bottom = viewport_size.y / 3
+		var nt_deadzone_sides := viewport_size.x / 10
+		var nt_deadzone_top := viewport_size.y / 14
+		var nt_deadzone_bottom := viewport_size.y / 3
 		
 		for user_id: String in players_dict.keys():
-			var vehicle = players_dict[user_id] as Vehicle4
+			var vehicle := players_dict[user_id] as Vehicle4
 			if vehicle == player_vehicle:
 				continue
-			var nametag_pos = vehicle.transform.origin + (player_camera.transform.basis.y * 1.5) as Vector3
+			var nametag_pos := vehicle.transform.origin + (player_camera.transform.basis.y * 1.5) as Vector3
 			#var second_check = nametag_pos + (player_camera.transform.basis.z * -5.0)
-			var dist = nametag_pos.distance_to(player_camera.global_position)
-			var tag_visible = true
-			var force = false
+			var dist := nametag_pos.distance_to(player_camera.global_position)
+			var tag_visible := true
+			var force := false
 			#if dist > 75 or player_camera.is_position_behind(second_check):
 			if dist > 75:
 				tag_visible = false
@@ -343,16 +347,16 @@ func _process(delta: float) -> void:
 			
 			# Raycast between camera pos and nametag_pos. If anything is in-between, don't render the nametag.
 			if tag_visible:
-				var ray_result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(player_camera.global_position, nametag_pos, 0xFFFFFFFF, exclude_list))
+				var ray_result := space_state.intersect_ray(PhysicsRayQueryParameters3D.create(player_camera.global_position, nametag_pos, 0xFFFFFFFF, exclude_list))
 				if ray_result:
 					tag_visible = false
 			
-			var screen_pos = player_camera.unproject_position(nametag_pos)
+			var screen_pos := player_camera.unproject_position(nametag_pos)
 
 			if screen_pos.x < nt_deadzone_sides or screen_pos.x > viewport_size.x - nt_deadzone_sides or screen_pos.y < nt_deadzone_top or screen_pos.y > viewport_size.y - nt_deadzone_bottom:
 				tag_visible = false
 				
-			var opacity = 1.0
+			var opacity := 1.0
 			if dist > 60:
 				opacity = remap(dist, 60, 75, 1.0, 0.0)
 			
@@ -573,7 +577,7 @@ func save_replay(force: bool=false) -> void:
 	return
 	# TODO: Save all vehicles.
 	# TODO: Include items.
-	var cur_time: float = get_timer_seconds()
+	var cur_time := get_timer_seconds()
 	if cur_time - replay_last_time < replay_tick_max_time and !force:
 		return
 	
@@ -591,7 +595,7 @@ func advance_replay() -> void:
 		return
 	
 	# Load frame
-	var cur_time: float = get_timer_seconds()
+	var cur_time := get_timer_seconds()
 	
 	if cur_time >= loaded_replay[loaded_replay_idx+1].time:
 		loaded_replay_idx += 1
@@ -699,7 +703,7 @@ func setup_finish_order() -> void:
 	finish_order = finished_vehicles
 	
 
-func handle_rankings():
+func handle_rankings() -> void:
 	if stop_rankings:
 		return
 	
@@ -712,10 +716,10 @@ func handle_rankings():
 			
 		var cur_vehicle: Vehicle4 = players_dict[finish_order[cur_idx]]
 		
-		var end_position = Vector2(-262, 16 + (40+5)*cur_idx)
-		var start_position = end_position
-		start_position.x = 800
-		var new_panel = rank_panel_scene.instantiate() as RankPanel
+		var end_position := Vector2(-403, 25 + (60+7)*cur_idx)
+		var start_position := end_position
+		start_position.x = 1000
+		var new_panel := rank_panel_scene.instantiate() as RankPanel
 		new_panel.set_rank(cur_idx)  # Util.make_ordinal(cur_idx+1)
 		new_panel.set_username(cur_vehicle.username)
 		new_panel.set_time(cur_vehicle.finish_time, cur_vehicle.finished)
@@ -725,7 +729,7 @@ func handle_rankings():
 			new_panel.set_border()
 		
 		UI.race_ui.get_node("Rankings").add_child(new_panel)
-		var tween = create_tween()
+		var tween := create_tween()
 		tween.tween_property(new_panel, "position", end_position, 0.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
 	rankings_timer += 1
@@ -792,22 +796,22 @@ func _remove_vehicle(user_id: String):
 		UI.race_ui.remove_nametag(user_id)
 
 
-func setup_vehicles():
-	var start_checkpoint = checkpoints[0] as Checkpoint
-	var start_position = start_checkpoint.global_position
-	var start_direction = -start_checkpoint.transform.basis.z
-	var side_direction = start_checkpoint.transform.basis.x
-	var up_dir = start_checkpoint.transform.basis.y
+func setup_vehicles() -> void:
+	var start_checkpoint := checkpoints[0] as Checkpoint
+	var start_position := start_checkpoint.global_position
+	var start_direction := -start_checkpoint.transform.basis.z
+	var side_direction := start_checkpoint.transform.basis.x
+	var up_dir := start_checkpoint.transform.basis.y
 	start_position += up_dir * 1.0
 
 	for i in range(starting_order.size()):
-		var user_id = starting_order[i]
+		var user_id: String = starting_order[i]
 		
-		var side_multi = 1
+		var side_multi := 1
 		if i % 2 == 1:
 			side_multi = -1
 
-		var cur_pos = start_position + start_offset_z * (i + 3) * start_direction + side_multi * start_offset_x * side_direction
+		var cur_pos := start_position + start_offset_z * (i + 3) * start_direction + side_multi * start_offset_x * side_direction
 		_add_vehicle(user_id, cur_pos, -start_direction, up_dir)
 
 func get_starting_order():
@@ -877,7 +881,7 @@ func get_vehicle_progress(vehicle: Vehicle4) -> float:
 	var cur_progress: float = 10000 * vehicle.lap + check_idx + vehicle.check_progress
 	return cur_progress
 
-func update_ranks():
+func update_ranks() -> void:
 	var ranks := []
 	var ranks_vehicles := []
 
@@ -909,7 +913,7 @@ func update_ranks():
 		ranks_vehicles.append(vehicle)
 	
 	
-	finished_vehicles.sort_custom(func(a, b): return a.finish_time < b.finish_time)
+	finished_vehicles.sort_custom(func(a: Vehicle4, b: Vehicle4) -> bool: return a.finish_time < b.finish_time)
 
 	finished_vehicles.append_array(ranks_vehicles)
 
@@ -924,7 +928,7 @@ func update_ranks():
 	# print("===")
 
 func check_advance(player: Vehicle4) -> bool:
-	var next_idx = player.check_idx+1 % len(checkpoints)
+	var next_idx := player.check_idx+1 % len(checkpoints)
 	if next_idx >= len(checkpoints):
 		next_idx -= len(checkpoints)
 	if dist_to_checkpoint(player, next_idx) < 0:
@@ -934,8 +938,8 @@ func check_advance(player: Vehicle4) -> bool:
 	
 	# Don't advance to next key checkpoint if the previous key checkpoint wasn't reached
 	if next_checkpoint.is_key:
-		var cur_key_idx = key_checkpoints[next_checkpoint]
-		var prev_key_idx = cur_key_idx - 1
+		var cur_key_idx: int = key_checkpoints[next_checkpoint]
+		var prev_key_idx := cur_key_idx - 1
 		if prev_key_idx < 0:
 			prev_key_idx = key_checkpoints.size()-1
 		if prev_key_idx != player.check_key_idx and player.check_key_idx != cur_key_idx:
@@ -948,21 +952,21 @@ func check_advance(player: Vehicle4) -> bool:
 		player.lap += 1
 		if not player.finished and player.lap > lap_count and not player.is_network:
 			# var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
-			var time_after_finish = get_timer_seconds()
+			var time_after_finish := get_timer_seconds()
 			
 			var finish_plane_normal: Vector3 = checkpoints[0].transform.basis.z
 			var vehicle_vel: Vector3 = player.prev_velocity.total()
-			var seconds_per_tick = 1.0/Engine.physics_ticks_per_second
+			var seconds_per_tick := 1.0/Engine.physics_ticks_per_second
 
 			# Determine the ratio of the vehicle_vel to the finish_plane_normal, and determine how much time it had taken to cross the finish line since the last frame
-			var final_time = time_after_finish - clamp(dist_to_checkpoint(player, 0) / vehicle_vel.project(finish_plane_normal).length(), 0, seconds_per_tick)
+			var final_time := time_after_finish - clampf(dist_to_checkpoint(player, 0) / vehicle_vel.project(finish_plane_normal).length(), 0, seconds_per_tick)
 			print("Finishing ", player.username, " with time ", final_time, " ", player.finish_time, " ", time_after_finish, " ", seconds_per_tick, " ", time_after_finish - final_time)
 			player.set_finished(final_time)
 	
 	return true
 
 func check_reverse(player: Vehicle4) -> bool:
-	var prev_idx = (player.check_idx - 1) % len(checkpoints)
+	var prev_idx := (player.check_idx - 1) % len(checkpoints)
 	if prev_idx < 0:
 		prev_idx = len(checkpoints) + prev_idx
 
@@ -971,11 +975,11 @@ func check_reverse(player: Vehicle4) -> bool:
 
 	var prev_checkpoint: Checkpoint = checkpoints[prev_idx]
 	if prev_checkpoint.is_key:
-		var cur_key = player.check_key_idx
+		var cur_key := player.check_key_idx
 		
 		#Debug.print([cur_key, key_checkpoints[prev_checkpoint]])
-		var prev_key = key_checkpoints[prev_checkpoint]
-		var subtract = 0
+		var prev_key: int = key_checkpoints[prev_checkpoint]
+		var subtract := 0
 		if prev_key == 0:
 			subtract = key_checkpoints.size()
 			prev_key += subtract
@@ -995,7 +999,7 @@ func check_reverse(player: Vehicle4) -> bool:
 	
 	return true
 
-func update_checkpoint(player: Vehicle4):
+func update_checkpoint(player: Vehicle4) -> void:
 	#if player.respawn_stage:
 		#return
 	
@@ -1006,7 +1010,7 @@ func update_checkpoint(player: Vehicle4):
 
 
 func dist_to_checkpoint(player: Vehicle4, checkpoint_idx: int) -> float:
-	var checkpoint = checkpoints[checkpoint_idx % len(checkpoints)] as Node3D
+	var checkpoint := checkpoints[checkpoint_idx % len(checkpoints)] as Node3D
 	return Util.dist_to_plane(checkpoint.transform.basis.z, checkpoint.global_position, player.get_node("%Front").global_position)
 
 

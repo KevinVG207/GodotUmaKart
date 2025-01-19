@@ -43,6 +43,7 @@ func setup() -> void:
 	hide_race_over()
 	hide_roulette()
 	hide_time()
+	remove_all_nametags()
 	for c: Control in $Rankings.get_children():
 		c.queue_free()
 	back_btn.visible = false
@@ -57,7 +58,7 @@ func update_icons(players: Array):
 		# Create new icons
 		if not id in player_icons:
 			var new_icon := Sprite2D.new()
-			new_icon.scale = Vector2(0.3, 0.3)
+			new_icon.scale = Vector2(0.45, 0.45)
 			new_icon.texture = player.icon
 			if player.is_player:
 				#new_icon.material = icon_material_player
@@ -217,6 +218,7 @@ func update_nametag(user_id: String, username: String, coords: Vector2, opacity:
 	
 	var cur_nt = nametags[user_id] as Nametag
 	cur_nt.position = coords
+	Debug.print(coords)
 	cur_nt.dist = dist
 	cur_nt.username.text = username
 	
@@ -239,6 +241,10 @@ func remove_nametag(user_id: String):
 		var nt = nametags[user_id]
 		nametags.erase(user_id)
 		nt.queue_free()
+
+func remove_all_nametags() -> void:
+	for key: String in nametags:
+		remove_nametag(key)
 
 func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle4, cam: Camera3D, delta: float):
 	if not object in alert_dict:

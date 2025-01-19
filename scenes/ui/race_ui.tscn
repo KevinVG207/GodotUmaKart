@@ -71,43 +71,43 @@ _data = {
 viewport_path = NodePath("MapContainer/MapTexture/MapViewport")
 
 [sub_resource type="LabelSettings" id="LabelSettings_11ql6"]
-font_size = 50
-outline_size = 8
+font_size = 75
+outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_esb4h"]
-font_size = 100
-outline_size = 15
+font_size = 150
+outline_size = 23
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_7j71x"]
-font_size = 45
-outline_size = 8
+font_size = 68
+outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_80x08"]
-font_size = 25
-outline_size = 6
+font_size = 38
+outline_size = 9
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_ptjgw"]
-font_size = 50
-outline_size = 10
+font_size = 75
+outline_size = 15
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_gj5rm"]
-font_size = 40
-outline_size = 8
+font_size = 60
+outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_t3q3l"]
-font_size = 40
-outline_size = 8
+font_size = 60
+outline_size = 12
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_saaky"]
-font_size = 30
-outline_size = 7
+font_size = 45
+outline_size = 11
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_x4rd4"]
@@ -116,8 +116,8 @@ outline_size = 6
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_pqt07"]
-font_size = 85
-outline_size = 10
+font_size = 128
+outline_size = 15
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="Animation" id="Animation_wlpck"]
@@ -186,7 +186,7 @@ content_margin_bottom = 10.0
 bg_color = Color(0.162066, 0.162066, 0.162066, 0.815686)
 
 [sub_resource type="LabelSettings" id="LabelSettings_pt0yc"]
-font_size = 40
+font_size = 60
 
 [node name="RaceUI" type="CanvasLayer"]
 layer = 10
@@ -203,9 +203,8 @@ offset_bottom = 40.0
 
 [node name="ItemBox" type="TextureRect" parent="."]
 process_mode = 1
-visible = false
-offset_right = 215.0
-offset_bottom = 210.0
+offset_right = 300.0
+offset_bottom = 300.0
 texture = SubResource("ViewportTexture_5eh43")
 expand_mode = 1
 stretch_mode = 4
@@ -259,8 +258,8 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -512.0
-offset_top = -512.0
+offset_left = -800.0
+offset_top = -800.0
 grow_horizontal = 0
 grow_vertical = 0
 texture = SubResource("ViewportTexture_i2ab8")
@@ -272,7 +271,7 @@ transparent_bg = true
 size = Vector2i(1024, 1024)
 
 [node name="StartLineMarker" type="Sprite2D" parent="MapContainer"]
-scale = Vector2(0.4, 0.4)
+scale = Vector2(0.6, 0.6)
 texture = ExtResource("5_s54dk")
 region_rect = Rect2(0, 0, 80, 20)
 
@@ -291,6 +290,7 @@ offset_right = -27.0
 offset_bottom = -17.0
 grow_horizontal = 0
 grow_vertical = 0
+text = "0"
 label_settings = SubResource("LabelSettings_11ql6")
 horizontal_alignment = 2
 vertical_alignment = 2
@@ -348,6 +348,7 @@ alignment = 2
 layout_mode = 2
 size_flags_vertical = 1
 theme_override_font_sizes/font_size = 45
+text = "0"
 label_settings = SubResource("LabelSettings_7j71x")
 vertical_alignment = 2
 
@@ -370,10 +371,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -108.5
-offset_top = -63.0
-offset_right = 108.5
-offset_bottom = 6.0
+offset_left = -279.0
+offset_top = -98.0
+offset_right = 279.0
+offset_bottom = 5.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "RACE_FINISHED"
@@ -402,10 +403,10 @@ visible = false
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -101.5
-offset_top = 2.0
-offset_right = 101.5
-offset_bottom = 57.0
+offset_left = -177.5
+offset_top = 11.0
+offset_right = 177.5
+offset_bottom = 66.0
 grow_horizontal = 2
 text = "RACE_SPECTATING"
 label_settings = SubResource("LabelSettings_t3q3l")
@@ -419,9 +420,9 @@ anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
 offset_left = -82.0
-offset_top = -71.0
+offset_top = -103.0
 offset_right = 82.0
-offset_bottom = -29.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_font_sizes/font_size = 30
@@ -438,6 +439,7 @@ offset_top = -4.0
 offset_right = -13.0
 offset_bottom = 51.0
 grow_horizontal = 0
+text = "00:00.00"
 label_settings = ExtResource("7_fx38p")
 horizontal_alignment = 2
 
@@ -481,7 +483,7 @@ offset_right = 361.0
 offset_bottom = -36.9999
 grow_vertical = 0
 pivot_offset = Vector2(15.055, 90.069)
-theme_override_font_sizes/font_size = 100
+theme_override_font_sizes/font_size = 150
 text = "1st"
 label_settings = SubResource("LabelSettings_pqt07")
 
@@ -497,13 +499,13 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -103.5
-offset_top = -66.0
-offset_right = 103.5
-offset_bottom = -23.0
+offset_left = -155.0
+offset_top = -94.0
+offset_right = 155.0
+offset_bottom = -33.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 25
+theme_override_font_sizes/font_size = 38
 disabled = true
 text = "RACE_BTN_BACK"
 
@@ -529,7 +531,7 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.262745)
 
 [node name="PanelContainer" type="PanelContainer" parent="PauseMenu/ColorRect"]
-custom_minimum_size = Vector2(500, 0)
+custom_minimum_size = Vector2(750, 0)
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -561,32 +563,32 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_top = NodePath("../BtnPauseExit")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 45
 text = "RACE_PAUSE_CONTINUE"
 
 [node name="BtnPauseRestart" type="Button" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 45
 text = "RACE_PAUSE_RESTART"
 
 [node name="BtnPauseVehicle" type="Button" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 45
 text = "RACE_PAUSE_VEHICLE"
 
 [node name="BtnPauseCharacter" type="Button" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 45
 text = "RACE_PAUSE_CHARACTER"
 
 [node name="BtnPauseExit" type="Button" parent="PauseMenu/ColorRect/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_neighbor_bottom = NodePath("../BtnPauseContinue")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 45
 text = "RACE_PAUSE_EXIT"
 
 [connection signal="button_down" from="PauseMenu/ColorRect/PanelContainer/VBoxContainer/BtnPauseContinue" to="PauseMenu" method="_on_btn_pause_continue_button_down"]
