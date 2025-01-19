@@ -134,7 +134,9 @@ func _physics_process(delta: float) -> void:
 		transform.origin = cur_pos
 	
 	var true_look_offset := target.global_transform.basis.x * cur_look_offset.x + target.global_transform.basis.y * cur_look_offset.y + target.global_transform.basis.z * cur_look_offset.z
-	var true_target: Vector3 = target.global_transform.origin + true_look_offset + target.global_transform.basis.x * target.turn_speed * 0.001
+	var true_target: Vector3 = target.global_transform.origin + true_look_offset
+	if target.started:
+		true_target += target.global_transform.basis.x * target.turn_speed * 0.001
 
 	if no_move:
 		global_position = prev_glob_pos

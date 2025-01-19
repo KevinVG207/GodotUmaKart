@@ -288,6 +288,13 @@ var targeted_by_dict: Dictionary = {}
 var in_water := false
 var water_bodies: Dictionary = {}
 
+var countdown_gauge := 0.0
+var countdown_timer := 1.5
+var countdown_gauge_max := 0.0
+var countdown_gauge_min := 0.0
+var countdown_gauge_middle := 0.0
+var countdown_gauge_tick_size := 0.0
+
 var visual_event_queue := []
 
 func _ready() -> void:
@@ -295,9 +302,18 @@ func _ready() -> void:
 	setup_floor_check_grid()
 	setup_head()
 	setup_colliders()
+
+	setup_countdown_boost()
 	
 	if is_replay:
 		recursive_set_transparency($Visual)
+
+func setup_countdown_boost() -> void:
+	# Countdown boost
+	countdown_gauge_tick_size = 1.0 / Engine.physics_ticks_per_second
+	countdown_gauge_max = countdown_gauge_tick_size * countdown_timer * Engine.physics_ticks_per_second
+	countdown_gauge_middle = countdown_gauge_max * 0.75
+	countdown_gauge_min = countdown_gauge_max * 0.5
 
 func setup_colliders() -> void:
 	for child: Node in get_children():
@@ -418,6 +434,8 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 
 	handle_steer()
 
+	handle_countdown_gauge()
+
 	apply_velocities()
 
 	apply_rotations()
@@ -428,6 +446,16 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 
 	after_update.emit(delta)
 	return
+
+func handle_countdown_gauge() -> void:
+	if started:
+		return
+	
+	if input.accel:
+		countdown_gauge += countdown_gauge_tick_size
+	else:
+		countdown_gauge -= countdown_gauge_tick_size
+	countdown_gauge = maxf(countdown_gauge, 0)
 
 func handle_sleep() -> void:
 	sleep = false
@@ -805,7 +833,9 @@ func handle_steer() -> void:
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
 
 	var multi := 1.0 if grounded else air_turn_multiplier
-	transform.basis = transform.basis.rotated(transform.basis.y, deg_to_rad(turn_speed * delta * multi))
+
+	if started:
+		transform.basis = transform.basis.rotated(transform.basis.y, deg_to_rad(turn_speed * delta * multi))
 	return
 
 func apply_velocities() -> void:
@@ -825,9 +855,10 @@ func apply_velocities() -> void:
 	apply_friction()
 
 	if respawn_stage != RespawnStage.RESPAWNING:
-		handle_trick()
-		handle_hop()
-		handle_drift()
+		if started:
+			handle_trick()
+			handle_hop()
+			handle_drift()
 
 		handle_standstill_turbo()
 
@@ -838,7 +869,9 @@ func apply_velocities() -> void:
 		apply_acceleration()
 
 		var grip_multi := pow(grip / base_grip, 2)
-		velocity.prop_vel = prev_velocity.prop_vel.slerp(transform.basis.z.normalized() * cur_speed, clampf(grip_multi, 0, 1))
+
+		if started:
+			velocity.prop_vel = prev_velocity.prop_vel.slerp(transform.basis.z.normalized() * cur_speed, clampf(grip_multi, 0, 1))
 
 		rotate_accel_along_floor()
 
@@ -1284,16 +1317,31 @@ func teleport(new_pos: Vector3, look_dir: Vector3, up_dir: Vector3, keep_velocit
 	if !keep_velocity:
 		stop_movement()
 
-func axis_lock() -> void:
-	axis_lock_linear_x = true
-	axis_lock_linear_z = true
+# func axis_lock() -> void:
+# 	axis_lock_linear_x = true
+# 	axis_lock_linear_z = true
 
-func axis_unlock() -> void:
-	axis_lock_linear_x = false
-	axis_lock_linear_z = false
+# func axis_unlock() -> void:
+# 	axis_lock_linear_x = false
+# 	axis_lock_linear_z = false
 
 func start() -> void:
 	started = true
+	cur_speed = 0
+	do_countdown_boost()
+
+func do_countdown_boost() -> void:
+	if !input.accel:
+		return
+
+	if countdown_gauge > countdown_gauge_max:
+		damage(DamageType.SPIN)
+		return
+	
+	if countdown_gauge > countdown_gauge_middle:
+		apply_boost(BoostType.NORMAL)
+	elif countdown_gauge > countdown_gauge_min:
+		apply_boost(BoostType.SMALL)
 
 func initialize_player() -> void:
 	is_player = true

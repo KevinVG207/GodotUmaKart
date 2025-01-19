@@ -22,9 +22,6 @@ func set_inputs() -> void:
 	
 	if not target:
 		return
-	
-	if !parent.started:
-		return
 
 	update_target()
 	
@@ -34,6 +31,9 @@ func set_inputs() -> void:
 	else:
 		parent.input.accel = parent.prev_input.accel
 		parent.input.brake = parent.prev_input.brake
+
+	if !parent.started:
+		return
 
 	steer()
 
@@ -87,8 +87,17 @@ func try_trick() -> void:
 		parent.input.brake = true
 
 func accel_decel() -> void:
-	parent.input.accel = true
-	return
+	if parent.started:
+		parent.input.accel = true
+		return
+	
+	if parent.prev_input.accel:
+		parent.input.accel = true
+		return
+
+	if parent.world.countdown_timer.time_left < parent.countdown_timer and randf() < 0.01:
+		parent.input.accel = true
+		return
 
 func steer() -> void:
 	var target_dir := get_target_dir()

@@ -62,6 +62,8 @@ var cpu_avg_speed: float = 22.5
 
 var course_name: String = "default"
 
+@onready var countdown_timer: Timer = $CountdownTimer
+
 
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
@@ -264,8 +266,8 @@ func _process(delta: float) -> void:
 	
 	UI.race_ui.set_startline(checkpoints[0])
 	
-	if not $CountdownTimer.is_stopped() and $CountdownTimer.time_left <= 3.0:
-		UI.race_ui.update_countdown(str(ceil($CountdownTimer.time_left)))
+	if not countdown_timer.is_stopped() and countdown_timer.time_left <= 3.0:
+		UI.race_ui.update_countdown(str(ceil(countdown_timer.time_left)))
 	else:
 		UI.race_ui.update_countdown("")
 		
@@ -511,10 +513,9 @@ func _physics_process(_delta: float) -> void:
 			change_state(STATE_READY_FOR_START, send_ready)
 		STATE_COUNTDOWN:
 			if Global.MODE1 == Global.MODE1_ONLINE:
-				$CountdownTimer.start(3.0)
+				countdown_timer.start(3.0)
 			else:
-				$CountdownTimer.start(4.0)
-			# timer_tick = -Engine.physics_ticks_per_second * $CountdownTimer.time_left
+				countdown_timer.start(4.0)
 			state = STATE_COUNTING_DOWN
 		STATE_RACE:
 			save_replay()
@@ -751,7 +752,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 	players_dict[user_id] = new_vehicle
 	vehicles_node.add_child(new_vehicle)
 	new_vehicle.teleport(new_position, look_dir, up_dir)
-	new_vehicle.axis_lock()
+	# new_vehicle.axis_lock()
 	new_vehicle.is_player = false
 	new_vehicle.world = self
 	new_vehicle.user_id = user_id
@@ -1114,7 +1115,7 @@ func _on_countdown_timer_timeout():
 	race_start_time = Time.get_ticks_usec()
 	print("START: ", race_start_time)
 	for vehicle: Vehicle4 in players_dict.values():
-		vehicle.axis_unlock()
+		# vehicle.axis_unlock()
 		vehicle.start()
 	#UI.race_ui.rank_label.visible = true
 
