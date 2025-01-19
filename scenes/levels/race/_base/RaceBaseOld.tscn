@@ -1,0 +1,84 @@
+[gd_scene load_steps=5 format=3 uid="uid://ch6mq875u88ck"]
+
+[ext_resource type="Script" path="res://scenes/levels/race/_base/race_base_old.gd" id="1_j3o6r"]
+[ext_resource type="Material" uid="uid://c0453n1hsktoe" path="res://scenes/levels/race/_base/MapMaterial.tres" id="2_londu"]
+[ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_nu7uk"]
+[ext_resource type="Environment" uid="uid://bkllq0dgr17en" path="res://scenes/levels/race/_base/base_env.tres" id="4_dvknr"]
+
+[node name="RaceBase" type="Node3D"]
+process_priority = 900
+process_physics_priority = 900
+script = ExtResource("1_j3o6r")
+
+[node name="Course" type="Node3D" parent="."]
+metadata/_edit_lock_ = true
+
+[node name="MapMesh" type="MeshInstance3D" parent="Course"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+layers = 262144
+material_override = ExtResource("2_londu")
+cast_shadow = 0
+skeleton = NodePath("../..")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Course"]
+transform = Transform3D(-0.764252, 0.474445, 0.436831, 0.374999, -0.224144, 0.899519, 0.524685, 0.851271, -0.00661415, -15.5561, 248.104, 15.5561)
+light_color = Color(1, 0.922912, 0.91767, 1)
+shadow_enabled = true
+shadow_bias = 0.05
+shadow_normal_bias = 1.0
+shadow_opacity = 0.75
+directional_shadow_blend_splits = true
+directional_shadow_max_distance = 500.0
+
+[node name="Objects" type="Node3D" parent="."]
+
+[node name="Checkpoints" type="Node3D" parent="."]
+metadata/_edit_lock_ = true
+
+[node name="EnemyPathPoints" type="Node3D" parent="."]
+
+[node name="Vehicles" type="Node3D" parent="."]
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="ReplayVehicles" type="Node3D" parent="."]
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="Items" type="Node3D" parent="."]
+
+[node name="PlayerCamera" parent="." instance=ExtResource("3_nu7uk")]
+cull_mask = 262143
+current = true
+metadata/_edit_lock_ = true
+metadata/_edit_group_ = true
+
+[node name="StartTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
+[node name="CountdownTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
+[node name="NextRaceTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 25.0
+one_shot = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("4_dvknr")
+
+[node name="MapCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1000, 0)
+cull_mask = 262144
+projection = 1
+size = 600.0
+
+[node name="NetworkPathPoints" type="Node3D" parent="."]
+
+[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="timeout" from="CountdownTimer" to="." method="_on_countdown_timer_timeout"]
+[connection signal="timeout" from="NextRaceTimer" to="." method="_on_next_race_timer_timeout"]

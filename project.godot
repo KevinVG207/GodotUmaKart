@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Uma Kart"
-config/version="0.0.8"
+config/version="0.0.8.veh4"
 run/main_scene="res://scenes/ui/academy/menu_academy.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="KevinVG207/UmaKart"
@@ -51,15 +51,16 @@ enabled=PackedStringArray("res://addons/material_modifier/plugin.cfg")
 
 [global_group]
 
-floor=""
-wall=""
-weak_offroad=""
-trick=""
-small_trick=""
-offroad=""
 map=""
-boost=""
-bonk=""
+col_wall=""
+col_trick_small=""
+col_trick=""
+col_offroad_weak=""
+col_offroad=""
+col_floor=""
+col_boost=""
+col_bonk=""
+item_draggable=""
 
 [input]
 

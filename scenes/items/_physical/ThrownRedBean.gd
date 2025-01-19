@@ -21,7 +21,7 @@ const TargetMode = {
 	homing = 2
 }
 var target_mode: int = TargetMode.follow
-var target_player: Vehicle3 = null:
+var target_player: Vehicle4 = null:
 	set(value):
 		if value != target_player:
 			value.add_targeted(self, target_texture)
@@ -36,15 +36,15 @@ var new_owner: String = ""
 func _enter_tree() -> void:
 	if Global.MODE1 == Global.MODE1_ONLINE:
 		$Area3D.set_collision_mask_value(3, false)
-	var thrower := world.players_dict[owner_id] as Vehicle3
+	var thrower := world.players_dict[owner_id] as Vehicle4
 	gravity = thrower.gravity
-	var offset := thrower.transform.basis.x * (thrower.vehicle_length_ahead * 2)
+	var offset := thrower.transform.basis.z * (thrower.vehicle_length_ahead * 2)
 	var dir_multi: float = 1.0
-	if thrower.input_updown < 0:
+	if thrower.input.tilt < 0:
 		target_mode = TargetMode.none
 		dir_multi = -1.0
-		offset = -thrower.transform.basis.x * (thrower.vehicle_length_behind * 2)
-	var direction := thrower.transform.basis.x * dir_multi
+		offset = -thrower.transform.basis.z * (thrower.vehicle_length_behind * 2)
+	var direction := thrower.transform.basis.z * dir_multi
 	
 	global_position = thrower.global_position + offset
 
@@ -62,7 +62,7 @@ func _enter_tree() -> void:
 	if target_rank < 0:
 		target_rank = world.players_dict.size() - 1
 	
-	for v: Vehicle3 in world.players_dict.values():
+	for v: Vehicle4 in world.players_dict.values():
 		if v.rank == target_rank:
 			target_player = v
 			break
@@ -94,7 +94,7 @@ func _physics_process(delta: float) -> void:
 	match target_mode:
 		TargetMode.homing:
 			target_pos = target_player.global_position
-			target_speed = remap(clamp(dist_to_target_player, 0.0, 20.0), 0.0, 20.0, max(target_player.max_speed/2, target_player.prop_vel.length()), start_speed)
+			target_speed = remap(clamp(dist_to_target_player, 0.0, 20.0), 0.0, 20.0, max(target_player.max_speed/2, target_player.velocity.prop_vel.length()), start_speed)
 	
 		TargetMode.follow:
 			# First, change the target player.
@@ -102,7 +102,7 @@ func _physics_process(delta: float) -> void:
 			targets.erase(world.players_dict[owner_id])
 			
 			if targets:
-				targets.sort_custom(func(a: Vehicle3, b: Vehicle3) -> bool: return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position))
+				targets.sort_custom(func(a: Vehicle4, b: Vehicle4) -> bool: return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position))
 				target_player = targets[0]
 				
 				var dist_to_target := global_position.distance_to(target_point.global_position)
@@ -153,7 +153,7 @@ func _physics_process(delta: float) -> void:
 	for i in get_slide_collision_count():
 		var col_data := get_slide_collision(i)
 		var collider := col_data.get_collider(0)
-		if collider.is_in_group("wall"):
+		if collider.is_in_group("col_wall"):
 			# Break on walls
 			var col_pos: Vector3 = to_local(col_data.get_position())
 			if col_pos.y >= 0.1:
@@ -209,7 +209,7 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 		world.destroy_physical_item(body.item_id)
 		return
 	
-	if not body is Vehicle3:
+	if not body is Vehicle4:
 		return
 	
 	if body.is_network:
@@ -218,5 +218,5 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	if body == world.players_dict[owner_id] and cur_grace <= grace_frames:
 		return
 	
-	body.damage(Vehicle3.DamageType.spin)
+	body.damage(Vehicle4.DamageType.SPIN)
 	world.destroy_physical_item(item_id)

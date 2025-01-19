@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scenes/items/RedBean.gd" id="1_jrd61"]
 [ext_resource type="Texture2D" uid="uid://chjvxxnrtrfvk" path="res://assets/items/jellybean_red.png" id="2_k2jhv"]
 
-[node name="RedBean" type="Node"]
+[node name="RedBean" type="Node" groups=["item_draggable"]]
 script = ExtResource("1_jrd61")
 texture = ExtResource("2_k2jhv")
 from_pos = 2

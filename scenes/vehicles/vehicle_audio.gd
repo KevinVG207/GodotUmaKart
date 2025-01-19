@@ -1,17 +1,21 @@
 extends Node3D
 
+class_name VehicleAudio
+
 var our_volume: float = 0.5
 var their_volume: float = 0.4
 var cur_volume_multi: float = 0
 
-@onready var parent: Vehicle3 = get_parent().get_parent()
+@export var parent: Vehicle4
 @onready var cam: PlayerCam
+
+var engine_sound_enabled := true
 
 var occlusion_multi := 1.0
 var occlusion_effect_speed := 1.5
 
 var is_player := false
-var bus := "SFX_OTHER"
+var bus := "SFX"
 
 var doppler_multi := 1.0
 var doppler_prev_distance: float
@@ -26,10 +30,10 @@ const DRIFT_FULL := 3
 @onready var engine_playback: AudioStreamPlaybackPolyphonic
 
 @export var engine_sound: AudioStream
-var engine_stream: int
+var engine_stream: int = 0
 
 @export var engine_idle_sound: AudioStream
-var engine_idle_stream: int
+var engine_idle_stream: int = 0
 
 @export var skid_sound: AudioStream
 var skid_stream: int = -1
@@ -47,11 +51,18 @@ var setup: bool = false
 var cam_switch: bool = true
 
 func _ready() -> void:
+	do_determine_who()
 	Global.camera_switched.connect(_on_cam_switch)
+	setup_streams()
+
+func setup_streams() -> void:
 	engine_playback = %EngineSFX.get_stream_playback()
+	if engine_stream:
+		engine_playback.stop_stream(engine_stream)
 	engine_stream = engine_playback.play_stream(engine_sound, randf(), -80, 1.0, AudioServer.PLAYBACK_TYPE_STREAM, bus)
+	if engine_idle_stream:
+		engine_playback.stop_stream(engine_idle_stream)
 	engine_idle_stream = engine_playback.play_stream(engine_idle_sound, randf(), -80, 1.0, AudioServer.PLAYBACK_TYPE_STREAM, bus)
-	
 
 func do_setup() -> bool:
 	if parent.world == null:
@@ -81,15 +92,13 @@ func _process(delta: float) -> void:
 func do_determine_who() -> void:
 	var max_distance: float = def_max_distance
 	is_player = false
-	bus = "SFX_OTHER"
 	cur_volume_multi = their_volume
 	
-	if parent.is_player:
+	if parent.world and parent == parent.world.player_camera.target:
 		max_distance = 0.0
 		is_player = true
-		bus = "SFX_ME"
 		cur_volume_multi = our_volume
-	
+
 	%EngineSFX.max_distance = max_distance
 
 func do_drift_spark_sound() -> void:
@@ -152,17 +161,17 @@ func do_doppler(delta) -> void:
 
 func do_engine_sound() -> void:
 	var engine_idle_volume: float = make_volume(remap(abs(parent.cur_speed), 3, 10, 0.3, 0))
-	if !parent.engine_sound:
+	if !engine_sound_enabled:
 		engine_idle_volume = make_volume(0)
 	engine_playback.set_stream_volume(engine_idle_stream, engine_idle_volume)
 	engine_playback.set_stream_pitch_scale(engine_idle_stream, doppler_multi)
 	
 	var engine_volume: float = make_volume(remap(abs(parent.cur_speed), 3, 10, 0.5, 0.75))
-	if !parent.engine_sound:
+	if !engine_sound_enabled:
 		engine_volume = make_volume(0)
 	engine_playback.set_stream_volume(engine_stream, engine_volume)
 	
-	var engine_pitch: float = remap(abs(parent.cur_speed), 0, parent.default_max_speed, 1.0, 2.0)
+	var engine_pitch: float = remap(abs(parent.cur_speed), 0, parent.base_max_speed, 1.0, 2.0)
 	engine_pitch *= doppler_multi
 	engine_playback.set_stream_pitch_scale(engine_stream, engine_pitch)
 
@@ -178,7 +187,7 @@ func do_drift_sound() -> void:
 	if skid_stream == -1:
 		skid_stream = engine_playback.play_stream(skid_sound, 0, make_volume(0.1), 1.0, AudioServer.PLAYBACK_TYPE_STREAM, bus)
 	
-	var turn_delta: float = abs(parent.cur_turn_speed) / parent.max_turn_speed
+	var turn_delta: float = abs(parent.turn_speed) / parent.max_turn_speed
 	var turn_pitch_multi: float = clamp(remap(turn_delta, parent.drift_turn_min_multiplier, parent.drift_turn_multiplier, 0, 1), 0, 1)
 	turn_pitch_multi = remap(turn_pitch_multi, 0, 1, 0.95, 1.05) * doppler_multi
 	engine_playback.set_stream_pitch_scale(skid_stream, turn_pitch_multi)
@@ -201,7 +210,10 @@ func play_sample(sound: AudioStream, volume_linear: float = 1.0, pitch: float = 
 	engine_playback.play_stream(sound, offset, make_volume(volume_linear), pitch, AudioServer.PLAYBACK_TYPE_DEFAULT, bus)
 
 func make_volume(linear_volume: float) -> float:
-	return linear_to_db(cur_volume_multi * occlusion_multi * clamp(linear_volume, 0, 1))
+	var mult := 1.0
+	if !is_player:
+		mult = parent.world.player_camera.cpu_volume
+	return linear_to_db(cur_volume_multi * occlusion_multi * mult * clamp(linear_volume, 0, 1))
 
 func _on_cam_switch() -> void:
 	cam_switch = true

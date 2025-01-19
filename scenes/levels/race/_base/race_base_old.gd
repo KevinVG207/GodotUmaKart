@@ -1,9 +1,8 @@
 extends Node3D
 
-class_name RaceBase
+class_name RaceBaseOld
 
 @onready var player_camera: Camera3D = $PlayerCamera
-var updates_to_server_per_second: int = 6
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
 var players_dict: Dictionary = {}
@@ -11,14 +10,14 @@ var frames_between_update: int = 45
 var update_wait_frames: int = 0
 var should_exit: bool = false
 var update_thread: Thread
-var player_vehicle: Vehicle4 = null
+var player_vehicle: Vehicle3 = null
 var player_user_id: String = ""
 var removed_player_ids: Array = []
 var starting_order: Array = []
 var spectate: bool = false
 # var timer_tick: int = 0
 var race_start_time: float = 0
-var physical_item_counter := 0
+var physical_item_counter = 0
 var physical_items: Dictionary = {}
 var deleted_physical_items: Array = []
 var all_path_points: Array = []
@@ -30,7 +29,7 @@ var network_path_points: Dictionary = {}
 
 @onready var vehicles_node: Node3D = $Vehicles
 
-var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_4.tscn")
+var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_3.tscn")
 var rank_panel_scene: PackedScene = preload("res://scenes/ui/rank_panel.tscn")
 
 var menu_cam_str: String = "%CamFountain"
@@ -61,8 +60,6 @@ var course_length: float = 1.0
 var cpu_avg_speed: float = 22.5
 
 var course_name: String = "default"
-
-@onready var countdown_timer: Timer = $CountdownTimer
 
 
 class raceOp:
@@ -126,16 +123,15 @@ var replay_tick_max_time: float = 0
 
 var loaded_replay: Array = []
 var loaded_replay_idx: int = 0
-var loaded_replay_vehicle: Vehicle4 = null
+var loaded_replay_vehicle: Vehicle3 = null
 
-func _ready() -> void:
+func _ready():
 	course_name = Util.get_race_course_name_from_path(scene_file_path)
 	
 	# Setup ticks
 	Engine.physics_ticks_per_second = 180
 	replay_tick_interval = 6
 	replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
-	frames_between_update = int(float(Engine.physics_ticks_per_second) / updates_to_server_per_second)
 	
 	#load_replay("user://replays/1test/1725744856.sav")
 	
@@ -228,7 +224,7 @@ func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false):
 	var next_points: Array = cur_point.next_points
 	return next_points.pick_random()
 	
-#func find_closest_enemy_point(player: Vehicle4) -> EnemyPath:
+#func find_closest_enemy_point(player: Vehicle3) -> EnemyPath:
 	#var closest_pt: EnemyPath = all_path_points[0]
 	#var closest_dist: float = closest_pt.global_position.distance_to(player.global_position)
 	#for point: EnemyPath in all_path_points.slice(1):
@@ -266,8 +262,8 @@ func _process(delta: float) -> void:
 	
 	UI.race_ui.set_startline(checkpoints[0])
 	
-	if not countdown_timer.is_stopped() and countdown_timer.time_left <= 3.0:
-		UI.race_ui.update_countdown(str(ceil(countdown_timer.time_left)))
+	if not $CountdownTimer.is_stopped() and $CountdownTimer.time_left <= 3.0:
+		UI.race_ui.update_countdown(str(ceil($CountdownTimer.time_left)))
 	else:
 		UI.race_ui.update_countdown("")
 		
@@ -316,7 +312,7 @@ func _process(delta: float) -> void:
 	if player_camera.target:
 		# Display nametags.
 		var exclude_list: Array = []
-		for vehicle: Vehicle4 in players_dict.values():
+		for vehicle: Vehicle3 in players_dict.values():
 			exclude_list.append(vehicle.get_rid())
 			
 		var viewport_size: Vector2 = get_viewport().get_visible_rect().size
@@ -325,7 +321,7 @@ func _process(delta: float) -> void:
 		var nt_deadzone_bottom = viewport_size.y / 3
 		
 		for user_id: String in players_dict.keys():
-			var vehicle = players_dict[user_id] as Vehicle4
+			var vehicle = players_dict[user_id] as Vehicle3
 			if vehicle == player_vehicle:
 				continue
 			var nametag_pos = vehicle.transform.origin + (player_camera.transform.basis.y * 1.5) as Vector3
@@ -397,13 +393,13 @@ func change_state(new_state: int, state_func: Callable = Callable()):
 	state = new_state
 	state_func.call()
 
-func make_physical_item(key: String, player: Vehicle4) -> Node:
+func make_physical_item(key: String, player: Vehicle3) -> Node:
 	if player.is_network:
 		return
 
 	physical_item_counter += 1
-	var unique_key := player_user_id + str(physical_item_counter)
-	var instance: Node = Global.physical_items[key].instantiate()
+	var unique_key = player_user_id + str(physical_item_counter)
+	var instance = Global.physical_items[key].instantiate()
 	instance.item_id = unique_key
 	instance.owner_id = player.user_id
 	instance.world = self
@@ -500,7 +496,7 @@ func apply_item_state(data: Dictionary):
 	#print("New owner ", instance.owner_id)
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(_delta):
 	space_state = get_world_3d().direct_space_state
 	
 	pause_cooldown = max(0, pause_cooldown - 1)
@@ -513,9 +509,10 @@ func _physics_process(_delta: float) -> void:
 			change_state(STATE_READY_FOR_START, send_ready)
 		STATE_COUNTDOWN:
 			if Global.MODE1 == Global.MODE1_ONLINE:
-				countdown_timer.start(3.0)
+				$CountdownTimer.start(3.0)
 			else:
-				countdown_timer.start(4.0)
+				$CountdownTimer.start(4.0)
+			# timer_tick = -Engine.physics_ticks_per_second * $CountdownTimer.time_left
 			state = STATE_COUNTING_DOWN
 		STATE_RACE:
 			save_replay()
@@ -548,7 +545,7 @@ func _physics_process(_delta: float) -> void:
 	
 	if state in UPDATE_STATES or Global.MODE1 == Global.MODE1_OFFLINE:
 		# Player checkpoints
-		for vehicle: Vehicle4 in players_dict.values():
+		for vehicle: Vehicle3 in players_dict.values():
 			update_checkpoint(vehicle)
 			if vehicle == player_camera.target:
 				UI.race_ui.set_cur_lap(vehicle.lap)
@@ -558,11 +555,11 @@ func _physics_process(_delta: float) -> void:
 			if update_wait_frames > frames_between_update:
 				update_wait_frames = 0
 				if player_vehicle:
-					var vehicle_data: Dictionary = player_vehicle.network.get_state()
+					var vehicle_data: Dictionary = player_vehicle.get_state()
 					Network.send_match_state(raceOp.CLIENT_UPDATE_VEHICLE_STATE, vehicle_data)
 					#player_vehicle.call_deferred("upload_data")
 				
-				for unique_id: String in physical_items.keys():
+				for unique_id in physical_items.keys():
 					var item = physical_items[unique_id]
 					if not item.no_updates and item.owner_id == player_user_id:
 						send_item_state(item)
@@ -570,7 +567,6 @@ func _physics_process(_delta: float) -> void:
 		check_finished()
 
 func save_replay(force: bool=false) -> void:
-	return
 	# TODO: Save all vehicles.
 	# TODO: Include items.
 	var cur_time: float = get_timer_seconds()
@@ -608,7 +604,7 @@ func advance_replay() -> void:
 	
 	# Create new vehicle if needed
 	if loaded_replay_vehicle == null:
-		loaded_replay_vehicle = player_scene.instantiate() as Vehicle4
+		loaded_replay_vehicle = player_scene.instantiate() as Vehicle3
 		loaded_replay_vehicle.world = self
 		loaded_replay_vehicle.setup_replay()
 		$ReplayVehicles.add_child(loaded_replay_vehicle)
@@ -641,14 +637,14 @@ func write_replay() -> void:
 func load_replay(path: String) -> void:
 	loaded_replay = Util.load_var(path)
 
-func get_vehicle_distance_from_start(vehicle: Vehicle4) -> float:
+func get_vehicle_distance_from_start(vehicle: Vehicle3) -> float:
 	var cur_check: Checkpoint = checkpoints[vehicle.check_idx]
 	var distance: float = (vehicle.lap - 1) * course_length
 	distance += cur_check.length_until
 	distance += cur_check.length * vehicle.check_progress
 	return distance
 
-func get_vehicle_distance_to_finish(vehicle: Vehicle4) -> float:
+func get_vehicle_distance_to_finish(vehicle: Vehicle3) -> float:
 	var course_distance: float = course_length * lap_count
 	return course_distance - get_vehicle_distance_from_start(vehicle)
 	
@@ -663,7 +659,7 @@ func set_course_length() -> void:
 
 func finish_cpus() -> void:
 	var cur_seconds: float = get_timer_seconds()
-	for vehicle: Vehicle4 in players_dict.values():
+	for vehicle: Vehicle3 in players_dict.values():
 		if vehicle.is_player:
 			continue
 		if not vehicle.is_cpu or vehicle.finished:
@@ -710,7 +706,7 @@ func handle_rankings():
 		if cur_idx >= len(finish_order)-1:
 			stop_rankings = true
 			
-		var cur_vehicle: Vehicle4 = players_dict[finish_order[cur_idx]]
+		var cur_vehicle: Vehicle3 = players_dict[finish_order[cur_idx]]
 		
 		var end_position = Vector2(-262, 16 + (40+5)*cur_idx)
 		var start_position = end_position
@@ -738,7 +734,7 @@ func check_finished():
 	
 	if Global.MODE1 == Global.MODE1_OFFLINE:
 		var is_finished: bool = true
-		for vehicle: Vehicle4 in players_dict.values():
+		for vehicle: Vehicle3 in players_dict.values():
 			if vehicle.is_player and not vehicle.finished:
 				is_finished = false
 				break
@@ -748,11 +744,11 @@ func check_finished():
 
 
 func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3):
-	var new_vehicle = player_scene.instantiate() as Vehicle4
+	var new_vehicle = player_scene.instantiate() as Vehicle3
 	players_dict[user_id] = new_vehicle
 	vehicles_node.add_child(new_vehicle)
 	new_vehicle.teleport(new_position, look_dir, up_dir)
-	# new_vehicle.axis_lock()
+	new_vehicle.axis_lock()
 	new_vehicle.is_player = false
 	new_vehicle.world = self
 	new_vehicle.user_id = user_id
@@ -771,10 +767,10 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 			path_point.visible = false
 			$NetworkPathPoints.add_child(path_point)
 	
-	new_vehicle.cpu_logic.target = $EnemyPathPoints.get_child(0)
+	new_vehicle.cpu_target = $EnemyPathPoints.get_child(0)
 	
 	if user_id == player_user_id:
-		new_vehicle.initialize_player()
+		new_vehicle.make_player()
 		player_vehicle = new_vehicle
 		player_camera.target = new_vehicle
 		new_vehicle.username = "Player"
@@ -870,31 +866,31 @@ func send_ready():
 	state = STATE_WAIT_FOR_START
 	return
 
-func get_vehicle_progress(vehicle: Vehicle4) -> float:
-	var check_idx := vehicle.check_idx
+func get_vehicle_progress(vehicle: Vehicle3) -> float:
+	var check_idx = vehicle.check_idx
 	if check_idx < 0:
 		check_idx = checkpoints.size() - check_idx - 2
 	var cur_progress: float = 10000 * vehicle.lap + check_idx + vehicle.check_progress
 	return cur_progress
 
 func update_ranks():
-	var ranks := []
-	var ranks_vehicles := []
+	var ranks = []
+	var ranks_vehicles = []
 
-	var finished_vehicles := []
+	var finished_vehicles = []
 
-	for vehicle: Vehicle4 in players_dict.values():
+	for vehicle: Vehicle3 in players_dict.values():
 		if vehicle.finished:
 			finished_vehicles.append(vehicle)
 			continue
 
-		var cur_progress := get_vehicle_progress(vehicle)
+		var cur_progress = get_vehicle_progress(vehicle)
 		if not ranks:
 			ranks.append(cur_progress)
 			ranks_vehicles.append(vehicle)
 			continue
 
-		var stop := false
+		var stop = false
 		for i in range(ranks.size()):
 			if cur_progress > ranks[i]:
 				ranks.insert(i, cur_progress)
@@ -908,22 +904,23 @@ func update_ranks():
 		ranks.append(cur_progress)
 		ranks_vehicles.append(vehicle)
 	
-	
+
 	finished_vehicles.sort_custom(func(a, b): return a.finish_time < b.finish_time)
 
 	finished_vehicles.append_array(ranks_vehicles)
 
+
 	for i in range(finished_vehicles.size()):
 		finished_vehicles[i].set_rank(i)
 	
-	# UI.update_ranks(finished_vehicles)
+	#UI.update_ranks(finished_vehicles)
 
 	# print("Ranks:")
-	# for vehicle: Vehicle4 in finished_vehicles.slice(0, 5):
+	# for vehicle: Vehicle3 in finished_vehicles.slice(0, 5):
 	# 	print(vehicle.rank, " ", vehicle.finish_time)
 	# print("===")
 
-func check_advance(player: Vehicle4) -> bool:
+func check_advance(player: Vehicle3) -> bool:
 	var next_idx = player.check_idx+1 % len(checkpoints)
 	if next_idx >= len(checkpoints):
 		next_idx -= len(checkpoints)
@@ -951,7 +948,7 @@ func check_advance(player: Vehicle4) -> bool:
 			var time_after_finish = get_timer_seconds()
 			
 			var finish_plane_normal: Vector3 = checkpoints[0].transform.basis.z
-			var vehicle_vel: Vector3 = player.prev_velocity.total()
+			var vehicle_vel: Vector3 = player.prev_frame_pre_sim_vel
 			var seconds_per_tick = 1.0/Engine.physics_ticks_per_second
 
 			# Determine the ratio of the vehicle_vel to the finish_plane_normal, and determine how much time it had taken to cross the finish line since the last frame
@@ -961,12 +958,12 @@ func check_advance(player: Vehicle4) -> bool:
 	
 	return true
 
-func check_reverse(player: Vehicle4) -> bool:
+func check_reverse(player: Vehicle3) -> bool:
 	var prev_idx = (player.check_idx - 1) % len(checkpoints)
 	if prev_idx < 0:
 		prev_idx = len(checkpoints) + prev_idx
-
-	if dist_to_checkpoint(player, player.check_idx) > 0:
+	
+	if dist_to_checkpoint(player, prev_idx) > 0:
 		return false
 
 	var prev_checkpoint: Checkpoint = checkpoints[prev_idx]
@@ -995,9 +992,9 @@ func check_reverse(player: Vehicle4) -> bool:
 	
 	return true
 
-func update_checkpoint(player: Vehicle4):
-	#if player.respawn_stage:
-		#return
+func update_checkpoint(player: Vehicle3):
+	if player.respawn_stage:
+		return
 	
 	if not check_advance(player):
 		check_reverse(player)
@@ -1005,40 +1002,40 @@ func update_checkpoint(player: Vehicle4):
 	player.check_progress = progress_in_cur_checkpoint(player)
 
 
-func dist_to_checkpoint(player: Vehicle4, checkpoint_idx: int) -> float:
+func dist_to_checkpoint(player: Vehicle3, checkpoint_idx: int) -> float:
 	var checkpoint = checkpoints[checkpoint_idx % len(checkpoints)] as Node3D
 	return Util.dist_to_plane(checkpoint.transform.basis.z, checkpoint.global_position, player.get_node("%Front").global_position)
 
 
-func progress_in_cur_checkpoint(player: Vehicle4) -> float:
+func progress_in_cur_checkpoint(player: Vehicle3) -> float:
 	var dist_behind: float = abs(dist_to_checkpoint(player, player.check_idx))
 	var dist_ahead: float = abs(dist_to_checkpoint(player, player.check_idx+1))
 	return dist_behind / (dist_behind + dist_ahead)
 
 
-func get_respawn_point(vehicle: Vehicle4) -> Dictionary:
+func get_respawn_point(vehicle: Vehicle3) -> Dictionary:
 	var out: Dictionary = {
 		"position": Vector3.ZERO,
 		"rotation": Vector3.ZERO
 	}
 	
-	var cur_checkpoint := checkpoints[vehicle.check_idx] as Checkpoint
-	var player_idx := players_dict.values().find(vehicle)
+	var cur_checkpoint = checkpoints[vehicle.check_idx] as Checkpoint
+	var player_idx = players_dict.values().find(vehicle)
 	
-	var spawn_pos := cur_checkpoint.global_position
-	var spawn_dir := -cur_checkpoint.transform.basis.z
-	var side_direction := cur_checkpoint.transform.basis.x
-	var up_dir := cur_checkpoint.transform.basis.y
+	var spawn_pos = cur_checkpoint.global_position
+	var spawn_dir = -cur_checkpoint.transform.basis.z
+	var side_direction = cur_checkpoint.transform.basis.x
+	var up_dir = cur_checkpoint.transform.basis.y
 	
-	var side_multi := player_idx % 2
+	var side_multi = player_idx % 2
 	if side_multi < 0:
 		side_multi = -1
 	
-	var offset := spawn_dir * player_idx * 0.1 + side_direction * 0.2 * side_multi + up_dir * 2.0
+	var offset = spawn_dir * player_idx * 0.1 + side_direction * 0.2 * side_multi + up_dir * 2.0
 	spawn_pos += offset
 	
 	out.position = spawn_pos
-	out.rotation = cur_checkpoint.basis.get_euler()
+	out.rotation = cur_checkpoint.basis.rotated(up_dir, deg_to_rad(-90)).get_euler()
 	
 	return out
 
@@ -1059,7 +1056,7 @@ func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 		_add_vehicle(user_id, cur_position, look_dir, up_dir)
 		players_dict[user_id].axis_unlock()
 	
-	players_dict[user_id].network.apply_state(vehicle_state)
+	players_dict[user_id].apply_state(vehicle_state)
 	#players_dict[user_id].call_deferred("apply_state", vehicle_state)
 
 
@@ -1114,9 +1111,8 @@ func _on_countdown_timer_timeout():
 	state = STATE_RACE
 	race_start_time = Time.get_ticks_usec()
 	print("START: ", race_start_time)
-	for vehicle: Vehicle4 in players_dict.values():
-		# vehicle.axis_unlock()
-		vehicle.start()
+	for vehicle: Vehicle3 in players_dict.values():
+		vehicle.axis_unlock()
 	#UI.race_ui.rank_label.visible = true
 
 func join_next():

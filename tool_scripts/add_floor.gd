@@ -9,5 +9,5 @@ func _run():
 			for child2 in child.get_children():
 				if child2 is StaticBody3D:
 					print(child2.get_groups())
-					if not child2.is_in_group("floor"):
-						child2.add_to_group("floor")
+					if not child2.is_in_group("col_floor"):
+						child2.add_to_group("col_floor")

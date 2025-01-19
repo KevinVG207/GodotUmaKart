@@ -1,77 +1,23 @@
-[gd_scene load_steps=46 format=3 uid="uid://nomey8ht6xwd"]
+[gd_scene load_steps=48 format=3 uid="uid://ds7es8al63u4p"]
 
-[ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
-[ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
-[ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="2_b5ade"]
-[ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="2_v00a1"]
-[ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="3_2njw6"]
-[ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="5_awqsk"]
-[ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_jjayf"]
-[ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="7_2vipe"]
-[ext_resource type="PackedScene" uid="uid://qy0ee3o43y7b" path="res://assets/vehicles/kart/kart.tscn" id="7_23hik"]
-[ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_hxerb"]
-[ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_be71b"]
-[ext_resource type="PackedScene" uid="uid://kbseqbudkntg" path="res://scenes/vehicles/vehicle_audio.tscn" id="13_makil"]
+[ext_resource type="Script" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
+[ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
+[ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="4_gc5eh"]
+[ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_6rco1"]
+[ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="6_6ard6"]
+[ext_resource type="PackedScene" uid="uid://qy0ee3o43y7b" path="res://assets/vehicles/kart/kart.tscn" id="7_o06fs"]
+[ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="8_f4b6f"]
+[ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="10_65ivf"]
+[ext_resource type="Script" path="res://scenes/vehicles/wheel.gd" id="11_73o1g"]
+[ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_dx2bk"]
+[ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_dgcfk"]
+[ext_resource type="Script" path="res://scenes/vehicles/cpu_logic.gd" id="12_u6ron"]
+[ext_resource type="PackedScene" uid="uid://kbseqbudkntg" path="res://scenes/vehicles/vehicle_audio.tscn" id="13_jx4i7"]
+[ext_resource type="Script" path="res://scenes/vehicles/network_player.gd" id="14_284x6"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
 absorbent = true
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xypq3"]
-animation = &"RESET"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bleu3"]
-animation = &"dmg_spin"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kfx7h"]
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kjaip"]
-switch_mode = 2
-advance_mode = 2
-
-[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_nguqk"]
-states/RESET/node = SubResource("AnimationNodeAnimation_xypq3")
-states/RESET/position = Vector2(551, 93)
-states/Start/position = Vector2(279, 93)
-states/dmg_spin/node = SubResource("AnimationNodeAnimation_bleu3")
-states/dmg_spin/position = Vector2(551, 208)
-transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_kfx7h"), "dmg_spin", "RESET", SubResource("AnimationNodeStateMachineTransition_kjaip")]
-graph_offset = Vector2(-19, -37)
-
-[sub_resource type="Animation" id="Animation_8ksb3"]
-length = 0.001
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation:y")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-
-[sub_resource type="Animation" id="Animation_oqrol"]
-resource_name = "dmg_spin"
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation:y")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(6.283, -0.25, 0, 0.05, -4.33713, 0, -0.5, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 1)
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_yrkfx"]
-_data = {
-"RESET": SubResource("Animation_8ksb3"),
-"dmg_spin": SubResource("Animation_oqrol")
-}
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_80jr0"]
 height = 2.74023
@@ -635,7 +581,7 @@ tracks/38/keys = PackedFloat32Array()
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_54306"]
 _data = {
 "RESET": SubResource("Animation_2t2a3"),
-"running_shoes_run": ExtResource("5_jjayf"),
+"running_shoes_run": ExtResource("5_6rco1"),
 "sit": SubResource("Animation_ywfgf")
 }
 
@@ -680,7 +626,7 @@ gravity = Vector3(0, 0, 0)
 transparency = 1
 shading_mode = 0
 albedo_color = Color(1, 0.714868, 0.669018, 1)
-albedo_texture = ExtResource("2_b5ade")
+albedo_texture = ExtResource("10_65ivf")
 billboard_mode = 3
 billboard_keep_scale = true
 particles_anim_h_frames = 1
@@ -749,7 +695,7 @@ scale_max = 0.2
 transparency = 1
 shading_mode = 0
 albedo_color = Color(1, 1, 1, 0.290196)
-albedo_texture = ExtResource("11_hxerb")
+albedo_texture = ExtResource("11_dx2bk")
 billboard_mode = 3
 billboard_keep_scale = true
 particles_anim_h_frames = 1
@@ -782,7 +728,7 @@ scale_curve = SubResource("CurveTexture_owppn")
 transparency = 1
 diffuse_mode = 3
 albedo_color = Color(0.764224, 0.389651, 0, 1)
-albedo_texture = ExtResource("12_be71b")
+albedo_texture = ExtResource("12_dgcfk")
 emission_enabled = true
 emission = Color(0.93091, 0.631411, 7.70092e-07, 1)
 emission_energy_multiplier = 1.5
@@ -796,11 +742,67 @@ particles_anim_loop = false
 [sub_resource type="QuadMesh" id="QuadMesh_ebj2w"]
 material = SubResource("StandardMaterial3D_bwgu6")
 
-[node name="Vehicle3" type="RigidBody3D" groups=["vehicle"]]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xypq3"]
+animation = &"RESET"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bleu3"]
+animation = &"dmg_spin"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kfx7h"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kjaip"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_nguqk"]
+states/RESET/node = SubResource("AnimationNodeAnimation_xypq3")
+states/RESET/position = Vector2(551, 93)
+states/Start/position = Vector2(279, 93)
+states/dmg_spin/node = SubResource("AnimationNodeAnimation_bleu3")
+states/dmg_spin/position = Vector2(551, 208)
+transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_kfx7h"), "dmg_spin", "RESET", SubResource("AnimationNodeStateMachineTransition_kjaip")]
+graph_offset = Vector2(-19, -37)
+
+[sub_resource type="Animation" id="Animation_8ksb3"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_oqrol"]
+resource_name = "dmg_spin"
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(6.283, -0.25, 0, 0.05, -4.33713, 0, -0.5, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 1)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_yrkfx"]
+_data = {
+"RESET": SubResource("Animation_8ksb3"),
+"dmg_spin": SubResource("Animation_oqrol")
+}
+
+[node name="Vehicle4" type="RigidBody3D" groups=["vehicle"]]
 process_priority = 1000
 process_physics_priority = 1000
 collision_layer = 2
-mass = 100.0
+mass = 10.0
 physics_material_override = SubResource("PhysicsMaterial_b3vot")
 gravity_scale = 0.0
 can_sleep = false
@@ -808,67 +810,39 @@ freeze_mode = 1
 continuous_cd = true
 contact_monitor = true
 max_contacts_reported = 16
-script = ExtResource("1_lrmky")
-list_image = ExtResource("2_6jcjm")
-icon = ExtResource("3_2njw6")
-vehicle_length_ahead = 1.475
-vehicle_length_behind = 1.462
-
-[node name="VehicleAnimationTree" type="AnimationTree" parent="."]
-root_node = NodePath("%Visual")
-tree_root = SubResource("AnimationNodeStateMachine_nguqk")
-anim_player = NodePath("../VehicleAnimationPlayer")
-script = ExtResource("2_v00a1")
-
-[node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="."]
-root_node = NodePath("../Visual")
-libraries = {
-"": SubResource("AnimationLibrary_yrkfx")
-}
-
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.34799e-08, -0.994703, -0.102793, 1, -4.37114e-08, 0, -4.49321e-09, -0.102793, 0.994703, 0.0972483, 4.39723e-09, -0.340266)
-shape = SubResource("CapsuleShape3D_80jr0")
-
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.34798e-08, -0.994703, 0.102793, 1, -4.37114e-08, 0, 4.4932e-09, 0.102793, 0.994703, 0.097, 0, 0.34)
-shape = SubResource("CapsuleShape3D_80jr0")
-
-[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0.0228261, -5.33405e-09, 0)
-shape = SubResource("CapsuleShape3D_ltuck")
-
-[node name="Collision" type="Node3D" parent="."]
+script = ExtResource("1_p7mde")
+icon = ExtResource("2_r88gu")
 
 [node name="Visual" type="Node3D" parent="."]
 unique_name_in_owner = true
 
 [node name="FrontRight" type="Marker3D" parent="Visual"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0.5)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.501646, 0, 1.00165)
 
 [node name="FrontLeft" type="Marker3D" parent="Visual"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -0.5)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0.498354, 0, 1.00165)
 
 [node name="BackRight" type="Marker3D" parent="Visual"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0.6)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.601646, 0, -0.998354)
 
 [node name="BackLeft" type="Marker3D" parent="Visual"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -0.6)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0.598354, 0, -0.998354)
 
 [node name="Front" type="Marker3D" parent="Visual"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.47458, 0, 0)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164611, 0, 1.46982)
 
 [node name="Back" type="Marker3D" parent="Visual"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.46167, 0, 0)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164598, 0, -1.46002)
 
 [node name="PlayerCollision" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164605, 0, 0.00164604)
 
 [node name="ShapeCast3D" type="ShapeCast3D" parent="Visual/PlayerCollision"]
 transform = Transform3D(-4.34798e-08, -0.994703, -0.102793, 1, -4.37114e-08, 0, -4.4932e-09, -0.102793, 0.994703, 0.0972483, 4.39723e-09, -0.340266)
@@ -896,6 +870,7 @@ collision_mask = 6
 
 [node name="Character" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164605, 0, 0.00164604)
 
 [node name="CharacterAnimationPlayer" type="AnimationPlayer" parent="Visual/Character"]
 unique_name_in_owner = true
@@ -904,7 +879,7 @@ libraries = {
 }
 autoplay = "sit"
 
-[node name="Body" parent="Visual/Character" instance=ExtResource("5_awqsk")]
+[node name="Body" parent="Visual/Character" instance=ExtResource("6_6ard6")]
 transform = Transform3D(-4.37114e-09, 0, 0.1, 0, 0.1, 0, -0.1, 0, -4.37114e-09, -0.342633, -0.988326, 0)
 
 [node name="Skeleton3D" parent="Visual/Character/Body/Armature" index="0"]
@@ -1004,27 +979,13 @@ transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, 0, 9.262
 [node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
 transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, -9.98328e-14, 15.1167, 6.20428e-07)
 
-[node name="Kart" parent="Visual" instance=ExtResource("7_23hik")]
+[node name="Kart" parent="Visual" instance=ExtResource("7_o06fs")]
 unique_name_in_owner = true
-transform = Transform3D(-6.99382e-09, 0, 0.16, 0, 0.16, 0, -0.16, 0, -6.99382e-09, -0.0278986, -0.292819, 0)
-
-[node name="Wheels" type="Node3D" parent="Visual"]
-unique_name_in_owner = true
-
-[node name="wheel" parent="Visual/Wheels" instance=ExtResource("7_2vipe")]
-transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, -0.72)
-
-[node name="wheel2" parent="Visual/Wheels" instance=ExtResource("7_2vipe")]
-transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, 0.72)
-
-[node name="wheel3" parent="Visual/Wheels" instance=ExtResource("7_2vipe")]
-transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, -0.624835)
-
-[node name="wheel4" parent="Visual/Wheels" instance=ExtResource("7_2vipe")]
-transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, 0.625)
+transform = Transform3D(0.16, 0, -2.22045e-15, 0, 0.16, 0, 8.88178e-16, 0, 0.16, -0.00164604, -0.292819, -0.0262525)
 
 [node name="DriftParticles" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164605, 0, 0.00164604)
 
 [node name="DriftCenterCharging" type="Node3D" parent="Visual/DriftParticles"]
 unique_name_in_owner = true
@@ -1194,6 +1155,7 @@ draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="ExhaustParticles" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164605, 0, 0.00164604)
 
 [node name="ExhaustIdle" type="Node3D" parent="Visual/ExhaustParticles"]
 unique_name_in_owner = true
@@ -1237,33 +1199,74 @@ local_coords = true
 process_material = SubResource("ParticleProcessMaterial_hs8oo")
 draw_pass_1 = SubResource("QuadMesh_ebj2w")
 
-[node name="VehicleAudio" parent="Visual" instance=ExtResource("13_makil")]
+[node name="VehicleAudio" parent="Visual" node_paths=PackedStringArray("parent") instance=ExtResource("13_jx4i7")]
 unique_name_in_owner = true
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164605, 0, 0.00164604)
+parent = NodePath("../..")
+
+[node name="Wheels" type="Node3D" parent="Visual"]
+unique_name_in_owner = true
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164605, 0, 0.00164604)
+
+[node name="wheel" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
+transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, -0.72)
+script = ExtResource("11_73o1g")
+
+[node name="wheel2" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
+transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, 0.72)
+script = ExtResource("11_73o1g")
+
+[node name="wheel3" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
+transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, -0.624835)
+script = ExtResource("11_73o1g")
+steer = true
+
+[node name="wheel4" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
+transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, 0.625)
+script = ExtResource("11_73o1g")
+steer = true
+
+[node name="VehicleAnimationTree" type="AnimationTree" parent="."]
+unique_name_in_owner = true
+root_node = NodePath("%Visual")
+tree_root = SubResource("AnimationNodeStateMachine_nguqk")
+anim_player = NodePath("../VehicleAnimationPlayer")
+script = ExtResource("4_gc5eh")
+
+[node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+root_node = NodePath("../Visual")
+libraries = {
+"": SubResource("AnimationLibrary_yrkfx")
+}
+
+[node name="Collision" type="Node3D" parent="."]
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 0, 0, 0)
 
 [node name="Items" type="Node3D" parent="."]
 unique_name_in_owner = true
+transform = Transform3D(1.31134e-07, 0, 1, 0, 1, 0, -1, 0, 1.31134e-07, 0, 0, 0)
 
 [node name="StillTurboTimer" type="Timer" parent="."]
+unique_name_in_owner = true
 process_callback = 0
 wait_time = 1.5
 one_shot = true
 
-[node name="SmallBoostTimer" type="Timer" parent="."]
-one_shot = true
-
-[node name="NormalBoostTimer" type="Timer" parent="."]
-one_shot = true
-
-[node name="BigBoostTimer" type="Timer" parent="."]
+[node name="BoostTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+process_callback = 0
 one_shot = true
 
 [node name="TrickTimer" type="Timer" parent="."]
 one_shot = true
 
 [node name="ItemRouletteTimer" type="Timer" parent="."]
+unique_name_in_owner = true
 one_shot = true
 
 [node name="RespawnTimer" type="Timer" parent="."]
+unique_name_in_owner = true
 process_callback = 0
 one_shot = true
 
@@ -1272,10 +1275,33 @@ wait_time = 10.0
 one_shot = true
 
 [node name="DamageTimer" type="Timer" parent="."]
+unique_name_in_owner = true
 process_callback = 0
 one_shot = true
 
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.5255e-09, 0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, -0.0348995, 0.3, 0, 0.106)
+shape = SubResource("CapsuleShape3D_80jr0")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+transform = Transform3D(-1.52551e-09, -0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, 0.0348995, -0.3, 0, 0.106)
+shape = SubResource("CapsuleShape3D_80jr0")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.9107e-15, 4.37112e-08, -1, 1, -4.37114e-08, 0, -4.37114e-08, -1, -4.37112e-08, -0.000177331, -5.33405e-09, 0.0315605)
+shape = SubResource("CapsuleShape3D_ltuck")
+
+[node name="CPULogic" type="Node" parent="." node_paths=PackedStringArray("parent")]
+unique_name_in_owner = true
+script = ExtResource("12_u6ron")
+parent = NodePath("..")
+
+[node name="NetworkPlayer" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("14_284x6")
+
 [connection signal="timeout" from="StillTurboTimer" to="." method="_on_still_turbo_timer_timeout"]
+[connection signal="timeout" from="BoostTimer" to="." method="_on_boost_timer_timeout"]
 [connection signal="timeout" from="ItemRouletteTimer" to="." method="_on_item_roulette_timer_timeout"]
 [connection signal="timeout" from="FailsafeTimer" to="." method="_on_failsafe_timer_timeout"]
 [connection signal="timeout" from="DamageTimer" to="." method="_on_damage_timer_timeout"]

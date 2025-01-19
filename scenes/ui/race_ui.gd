@@ -51,12 +51,12 @@ func update_icons(players: Array):
 	for icon: Sprite2D in player_icons.values():
 		icon.visible = false
 	
-	for player: Vehicle3 in players:
+	for player: Vehicle4 in players:
 		var id: String = player.user_id
 		
 		# Create new icons
 		if not id in player_icons:
-			var new_icon = Sprite2D.new()
+			var new_icon := Sprite2D.new()
 			new_icon.scale = Vector2(0.3, 0.3)
 			new_icon.texture = player.icon
 			if player.is_player:
@@ -90,10 +90,10 @@ func set_startline(checkpoint: Checkpoint):
 	#local_dir = local_dir.rotated(1)
 	move_map_sprite(startline_marker, checkpoint.global_position, local_dir)
 
-func move_map_sprite(sprite: Sprite2D, global_pos: Vector3, direction: Vector2 = Vector2.RIGHT):
+func move_map_sprite(sprite: Sprite2D, global_pos: Vector3, direction: Vector2 = Vector2.RIGHT) -> void:
 	var viewport_pos: Vector2 = map_camera.unproject_position(global_pos)
-	var final_x = viewport_pos.x / map_viewport.size.x * map_texture.size.x + map_texture.position.x
-	var final_y = viewport_pos.y / map_viewport.size.y * map_texture.size.y + map_texture.position.y
+	var final_x := viewport_pos.x / map_viewport.size.x * map_texture.size.x + map_texture.position.x
+	var final_y := viewport_pos.y / map_viewport.size.y * map_texture.size.y + map_texture.position.y
 	sprite.position = Vector2(final_x, final_y)
 	sprite.rotation = atan2(-direction.x, direction.y)
 	#sprite.look_at(sprite.position + direction.rotated(PI/2))
@@ -240,7 +240,7 @@ func remove_nametag(user_id: String):
 		nametags.erase(user_id)
 		nt.queue_free()
 
-func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle3, cam: Camera3D, delta: float):
+func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle4, cam: Camera3D, delta: float):
 	if not object in alert_dict:
 		var alert = alert_scene.instantiate()
 		$Alerts.add_child(alert)

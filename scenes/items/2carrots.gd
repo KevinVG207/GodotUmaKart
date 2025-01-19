@@ -1,8 +1,8 @@
 extends ItemBase
 
-var next_item = preload("res://scenes/items/1carrot.tscn")
+var next_item := preload("res://scenes/items/1carrot.tscn")
 
-func use(player: Vehicle3, world: RaceBase) -> ItemBase:
-	player.normal_boost_timer.start(player.normal_boost_duration)
+func use(player: Vehicle4, _world: RaceBase) -> ItemBase:
+	player.apply_boost(Vehicle4.BoostType.NORMAL)
 	self.queue_free()
 	return next_item.instantiate()

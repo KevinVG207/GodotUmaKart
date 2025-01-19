@@ -12,7 +12,7 @@ material = SubResource("StandardMaterial3D_tufje")
 height = 0.5
 radius = 0.456419
 
-[node name="GreenBean" type="Area3D"]
+[node name="GreenBean" type="Area3D" groups=["item_draggable"]]
 collision_layer = 8
 collision_mask = 14
 script = ExtResource("1_hyh8g")
@@ -20,7 +20,7 @@ next_item_key = "thrown_red_bean"
 damage_type = 1
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.6, 0, 0, 0, 0.8, 0, 0.2, 0)
+transform = Transform3D(-4.37114e-08, 0, 0.8, 0, 0.6, 0, -1, 0, -3.49691e-08, 0, 0.2, 0)
 mesh = SubResource("SphereMesh_mxjff")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]

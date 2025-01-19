@@ -7,8 +7,21 @@ var version: String:
 			return tmp + "-dev"
 		return tmp
 
+#class Clonable:
+	#func clone(new: Clonable) -> Clonable:
+		#var prop_list := self.get_property_list()
+		#for prop in prop_list:
+			#if prop.name not in new:
+				#continue
+			#if prop.name == "script":
+				#new[prop.name] = self[prop.name]
+			#else:
+				#new[prop.name] = self[prop.name]
+			#
+		#return new
+
 func get_vehicle_accel(max_speed: float, cur_speed: float, initial_accel: float, exponent: float) -> float:
-	var speed_ratio = clamp(cur_speed / max_speed, 0, 1)
+	var speed_ratio: float = clamp(cur_speed / max_speed, 0, 1)
 	return max(-initial_accel * speed_ratio ** exponent + initial_accel, 0)
 
 func sum(array: Array):
@@ -145,10 +158,10 @@ func align_with_y(xform: Transform3D, new_y: Vector3):
 	xform.basis = xform.basis.orthonormalized()
 	return xform
 
-func get_path_point_ahead_of_player(player: Vehicle3) -> EnemyPath:
+func get_path_point_ahead_of_player(player: Vehicle4) -> EnemyPath:
 	var points: Array = player.world.all_path_points
 	var plane_pos: Vector3 = player.get_node("%Front").global_position
-	var plane_normal: Vector3 = player.transform.basis.x
+	var plane_normal: Vector3 = player.transform.basis.z.normalized()
 	
 	var filtered_point: EnemyPath
 	var filtered_distance = 1000000000

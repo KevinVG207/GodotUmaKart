@@ -157,7 +157,7 @@ offset_right = -21.9375
 offset_bottom = 83.0
 grow_horizontal = 0
 max_value = 1000.0
-step = 100.0
+step = 25.0
 
 [node name="UsernameContainer" type="HBoxContainer" parent="."]
 layout_mode = 1

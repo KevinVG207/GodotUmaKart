@@ -2,10 +2,10 @@ extends Node3D
 
 # We assume the wheel model has a radius of 1m
 
-@onready var parent: Vehicle3 = self.get_parent().get_parent().get_parent()
+@onready var parent: Vehicle4 = get_parent().get_parent().get_parent()
 @onready var radius := scale.x
 var anchor := Vector3.ZERO
-@onready var initial_rotation = rotation_degrees
+@onready var initial_rotation := rotation_degrees
 
 @export var steer := false
 var cur_steer_deg := 0.0
@@ -17,7 +17,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	# Roll over the ground.
-	var new_rot = initial_rotation
+	var new_rot := initial_rotation
 	
 	var dist_travelled := parent.cur_speed * delta
 	var circum := 2.0 * PI * radius
@@ -52,10 +52,15 @@ func _process(delta: float) -> void:
 	#else:
 		#position.y = point.y
 	position.y = move_toward(position.y, point.y, abs(delta * parent.gravity.y * 0.03))
-	
+
 	if steer:
-		var target_rot : float = parent.cur_turn_speed * 0.3
-		if parent.reversing:
+		var target_rot: float
+		if parent.is_network and parent.network.prev_input:
+			target_rot = parent.max_turn_speed * parent.network.prev_input.steer * 0.3
+		else:
+			target_rot = parent.turn_speed * 0.3
+
+		if parent.cur_speed < -0.1:
 			target_rot *= -1.0
 		cur_steer_deg = move_toward(cur_steer_deg, target_rot, delta * steer_multi)
 		new_rot.y += cur_steer_deg

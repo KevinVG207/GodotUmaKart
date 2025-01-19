@@ -11,7 +11,7 @@ var player_count: int = default_player_count:
 		player_count = value
 		setup_items()
 
-var randPing = 0
+var extraPing = 0
 var unique_string = OS.get_unique_id()
 
 var menu_start_cam: String = "%CamInitial"
@@ -43,7 +43,7 @@ var items: Array = [
 	load("res://scenes/items/GreenBean.tscn"),
 	load("res://scenes/items/RedBean.tscn"),
 	load("res://scenes/items/Book.tscn"),
-	load("res://scenes/items/RunningShoes/running_shoes.tscn")
+	# load("res://scenes/items/RunningShoes/running_shoes.tscn")
 ]
 
 var item_dist: Array = []
@@ -87,6 +87,18 @@ func setup_items() -> void:
 	UI.race_ui.setup()
 
 #func _ready():
+	#var gravity := Vector3(0, -1, 0)
+	#var vel := Vector3(1, -1, -1)
+	#var wall_normal := Vector3(0, -1, 1).normalized()
+	#var on_grav_plane := vel.slide(gravity)
+	#var wall_on_grav_plane := wall_normal.slide(gravity)
+	#var tmp := on_grav_plane.project(wall_on_grav_plane.normalized())
+#
+	#print(on_grav_plane)
+	#print(wall_on_grav_plane)
+	#print(on_grav_plane - tmp)
+	#
+	#get_tree().quit()
 	#setup_items()
 
 

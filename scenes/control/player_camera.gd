@@ -3,13 +3,13 @@ extends Camera3D
 class_name PlayerCam
 
 @export var default_fov: float = 75
-@export var target: Vehicle3 = null
-var offset: Vector3 = Vector3(-5, 2.5, 0)
-var offset_finished: Vector3 = Vector3(5, 1.5, 3)
-var offset_bw: Vector3 = Vector3(5, 2.5, 0)
+@export var target: Vehicle4 = null
+var offset: Vector3 = Vector3(0, 2.5, -5)
+var offset_finished: Vector3 = Vector3(3, 1.5, 5)
+var offset_bw: Vector3 = Vector3(0, 2.5, 5)
 #var offset: Vector3 = Vector3(0, 2, 5)
 var look_offset: Vector3 = Vector3(0, 1.2, 0)
-var look_offset_finished: Vector3 = Vector3(1, 1.2, 0)
+var look_offset_finished: Vector3 = Vector3(0, 1.2, 1)
 var lerp_speed: float = 12
 var lerp_speed_finished: float = 20
 var lerp_speed_look: float = 30
@@ -22,41 +22,43 @@ var cur_target: Vector3 = Vector3.INF
 
 var prev_mirror: bool = false
 
-var forwards = true
-var instant = true
-var finished = false
-var no_move = false
+var forwards := true
+var instant := true
+var finished := false
+var no_move := false
 
-var in_water = false
-var water_areas = {}
+var in_water := false
+var water_areas := {}
 
-var respawn_multi = 1.0
-var is_respawn = false
-var respawn_decel = 5.0
+var respawn_multi := 1.0
+var is_respawn := false
+var respawn_decel := 5.0
 
 var cpu_duck_distance := 25.0
 var duck_speed := 0.5
 
-func undo_respawn():
+var cpu_volume := 1.0
+
+func undo_respawn() -> void:
 	respawn_multi = 1.0
 	is_respawn = false
 
-func do_respawn():
+func do_respawn() -> void:
 	respawn_multi = 1.0
 	is_respawn = true
 
-func _physics_process(delta):
+func _physics_process(delta: float) -> void:
 	if !target:
 		return
 	
-	var prev_glob_pos = global_position
+	var prev_glob_pos := global_position
 
-	var cur_offset = offset
-	var cur_offset_bw = offset_bw
-	var cur_lerp_speed = lerp_speed
-	var cur_look_offset = look_offset
+	var cur_offset := offset
+	var cur_offset_bw := offset_bw
+	var cur_lerp_speed := lerp_speed
+	var cur_look_offset := look_offset
 
-	var target_finished = target.finished
+	var target_finished := target.finished
 	if target.world.spectate:
 		target_finished = false
 	
@@ -69,21 +71,21 @@ func _physics_process(delta):
 		cur_lerp_speed = lerp_speed_finished
 		cur_look_offset = look_offset_finished
 
-	var prev_pos = cur_pos
-	var prev_pos_bw = cur_pos_bw
+	var prev_pos := cur_pos
+	var prev_pos_bw := cur_pos_bw
 
-	var new_pos = target.global_transform.translated_local(cur_offset).origin
-	var new_pos_bw = target.global_transform.translated_local(cur_offset_bw).origin
+	var new_pos := target.global_transform.translated_local(cur_offset).origin
+	var new_pos_bw := target.global_transform.translated_local(cur_offset_bw).origin
 
 
 	# Raycast to keep the camera from going through walls
 	# Forward
-	var ray_start = target.global_transform.translated_local(Vector3(0, cur_offset.y, 0)).origin
-	var ray_end = new_pos
-	var result = target.world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
+	var ray_start := target.global_transform.translated_local(Vector3(0, cur_offset.y, 0)).origin
+	var ray_end := new_pos
+	var result := target.world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
 	if result:
-		var cur_safe_distance = safe_distance
-		var dist_to_point = result.position.distance_to(ray_start)
+		var cur_safe_distance := safe_distance
+		var dist_to_point: float = result.position.distance_to(ray_start)
 		if dist_to_point < safe_distance:
 			cur_safe_distance = dist_to_point
 		
@@ -94,8 +96,8 @@ func _physics_process(delta):
 	ray_end = new_pos_bw
 	result = target.world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
 	if result:
-		var cur_safe_distance = safe_distance
-		var dist_to_point = result.position.distance_to(ray_start)
+		var cur_safe_distance := safe_distance
+		var dist_to_point: float = result.position.distance_to(ray_start)
 		if dist_to_point < safe_distance:
 			cur_safe_distance = dist_to_point
 		
@@ -124,15 +126,17 @@ func _physics_process(delta):
 		cur_pos = target.global_transform.translated_local(cur_offset).origin
 		cur_pos_bw = target.global_transform.translated_local(cur_offset_bw).origin
 
-	var mirror = false
-	if target.input_mirror:
+	var mirror := false
+	if target.input.mirror:
 		transform.origin = cur_pos_bw
 		mirror = true
 	else:
 		transform.origin = cur_pos
 	
-	var true_look_offset = target.global_transform.basis.x * cur_look_offset.x + target.global_transform.basis.y * cur_look_offset.y + target.global_transform.basis.z * cur_look_offset.z
-	var true_target: Vector3 = target.global_transform.origin + true_look_offset + target.global_transform.basis.z * -target.cur_turn_speed * 0.001
+	var true_look_offset := target.global_transform.basis.x * cur_look_offset.x + target.global_transform.basis.y * cur_look_offset.y + target.global_transform.basis.z * cur_look_offset.z
+	var true_target: Vector3 = target.global_transform.origin + true_look_offset
+	if target.started:
+		true_target += target.global_transform.basis.x * target.turn_speed * 0.001
 
 	if no_move:
 		global_position = prev_glob_pos
@@ -141,9 +145,9 @@ func _physics_process(delta):
 		Global.camera_switched.emit()
 		look_at(true_target, -target.gravity.normalized())
 	else:
-		var old_basis = transform.basis
+		var old_basis := transform.basis
 		look_at(true_target, -target.gravity.normalized())
-		var new_basis = transform.basis
+		var new_basis := transform.basis
 		transform.basis = Basis(Quaternion(old_basis).slerp(Quaternion(new_basis), lerp_speed_look * delta))
 
 	if instant:
@@ -152,19 +156,19 @@ func _physics_process(delta):
 	prev_mirror = mirror
 
 
-func _on_camera_area_area_entered(area):
+func _on_camera_area_area_entered(area: Node) -> void:
 	in_water = true
 	water_areas[area] = true
 	UI.apply_water()
 
 
-func _on_camera_area_area_exited(area):
+func _on_camera_area_area_exited(area: Node) -> void:
 	water_areas.erase(area)
 	if water_areas.size() == 0:
 		in_water = false
 		UI.clear_effect()
 
-func _process(delta):
+func _process(delta: float) -> void:
 	if !target:
 		return
 		
@@ -172,27 +176,27 @@ func _process(delta):
 	
 	handle_sound(delta)
 
-func handle_sound(delta) -> void:
+func handle_sound(delta: float) -> void:
 	duck_cpu_engines(delta)
 
-func duck_cpu_engines(delta) -> void:
-	var bus_idx := AudioServer.get_bus_index("SFX")
-	var old_volume := db_to_linear(AudioServer.get_bus_volume_db(bus_idx))
+func duck_cpu_engines(_delta: float) -> void:
+	# var bus_idx := AudioServer.get_bus_index("SFX_OTHER")
+	# var old_volume := db_to_linear(AudioServer.get_bus_volume_db(bus_idx))
 	
 	var count := 1.0
-	for vehicle: Vehicle3 in target.world.players_dict.values():
+	for vehicle: Vehicle4 in target.world.players_dict.values():
 		if vehicle == target:
 			continue
-		var dist = global_position.distance_to(vehicle.global_position)
+		var dist := global_position.distance_to(vehicle.global_position)
 		if dist > cpu_duck_distance:
 			continue
 		#count += pow(1.0 - dist / cpu_duck_distance, 1.5)
 		count += 1.0 - dist / cpu_duck_distance
 	
-	var new_volume = clampf(remap(1/count, 0.0, 0.5, 0.5, 1.0), 0.0, 1.0)
+	cpu_volume = clampf(remap(1/count, 0.0, 0.5, 0.5, 1.0), 0.0, 1.0)
 		
 	if Input.is_action_pressed("_F4"):
-		new_volume = 0.0
+		cpu_volume = 0.0
 	
-	AudioServer.set_bus_volume_db(bus_idx, linear_to_db(new_volume))
+	# AudioServer.set_bus_volume_db(bus_idx, linear_to_db(new_volume))
 	

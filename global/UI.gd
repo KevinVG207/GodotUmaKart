@@ -54,7 +54,7 @@ func clear_effect():
 
 func update_ranks(vehicles: Array):
 	var rank_strings = []
-	for vehicle: Vehicle3 in vehicles:
+	for vehicle: Vehicle4 in vehicles:
 		rank_strings.append("#" + str(vehicle.rank) + ": " + vehicle.username)
 	race_ui.get_node("Ranks").text = "\n".join(rank_strings)
 

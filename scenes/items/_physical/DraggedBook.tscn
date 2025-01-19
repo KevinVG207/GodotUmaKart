@@ -6,7 +6,7 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_0kdv5"]
 size = Vector3(0.623291, 0.391937, 0.793945)
 
-[node name="DraggedBook" type="Area3D"]
+[node name="DraggedBook" type="Area3D" groups=["item_draggable"]]
 collision_layer = 8
 collision_mask = 14
 script = ExtResource("1_13gny")
@@ -14,7 +14,7 @@ next_item_key = "thrown_book"
 damage_type = 1
 
 [node name="book" parent="." instance=ExtResource("2_0c5ik")]
-transform = Transform3D(-1.5299e-08, 0, -0.35, 0, 0.35, 0, 0.35, 0, -1.5299e-08, 0, 0, 0)
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.193222, 0)
