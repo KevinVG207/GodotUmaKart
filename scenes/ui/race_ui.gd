@@ -218,7 +218,7 @@ func update_nametag(user_id: String, username: String, coords: Vector2, opacity:
 	
 	var cur_nt = nametags[user_id] as Nametag
 	cur_nt.position = coords
-	Debug.print(coords)
+	# Debug.print(coords)
 	cur_nt.dist = dist
 	cur_nt.username.text = username
 	

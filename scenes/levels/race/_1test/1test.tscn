@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://tgm0tkbghr0c"]
+[gd_scene load_steps=9 format=3 uid="uid://tgm0tkbghr0c"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_2vsv6"]
 [ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_5k6we"]
+[ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/_1test/1test_map_Circle_001.res" id="3_0eo7q"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_864dc"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_qon5u"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_jv31a"]
@@ -10,11 +11,18 @@
 
 [node name="1test" instance=ExtResource("1_2vsv6")]
 lap_count = 1
+map_outline_width = 1.0
+map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
 
 [node name="Course" parent="." index="0"]
 metadata/_edit_group_ = true
 
 [node name="1test" parent="Course" index="0" instance=ExtResource("2_5k6we")]
+
+[node name="MapMesh" parent="Course" index="1"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+visible = false
+mesh = ExtResource("3_0eo7q")
 
 [node name="Checkpoints" parent="." index="2"]
 visible = false

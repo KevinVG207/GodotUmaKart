@@ -64,6 +64,10 @@ var course_name: String = "default"
 
 @onready var countdown_timer: Timer = $CountdownTimer
 
+var map_outline_color: Color = Color(0.37, 0.37, 0.37, 1.0)
+@export var map_outline_width: float = 2.5
+@export var map_mesh_instances: Array[NodePath] = []
+var map_mesh_material: ShaderMaterial = preload("res://scenes/levels/race/_base/MapMaterial.tres")
 
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
@@ -157,11 +161,23 @@ func _ready() -> void:
 	set_course_length()  # This also sets up checkpoint lengths.
 	
 	setup_enemy_path()
+
+	setup_map_meshes()
 	
 	#minimap_recursive($Course)
-	$Course/MapMesh.visible = true
+	# $Course/MapMesh.visible = true
 	UI.race_ui.set_map_camera(map_camera)
 	UI.race_ui.set_startline(checkpoints[0])
+
+func setup_map_meshes() -> void:
+	for path: NodePath in map_mesh_instances:
+		var mesh: MeshInstance3D = get_node(path)
+		mesh.layers = 0
+		mesh.set_layer_mask_value(19, true)
+		mesh.visible = true
+		map_mesh_material.set_shader_parameter("color", map_outline_color)
+		map_mesh_material.set_shader_parameter("outline_thickness", map_outline_width)
+		mesh.material_override = map_mesh_material
 
 func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 	var root: bool = len(prev_points) == 0
