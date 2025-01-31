@@ -47,7 +47,8 @@ var item: Node = null
 var can_use_item : = false
 var has_dragged_item := false
 
-var gravity := Vector3.DOWN * 18
+var gravity := Vector3.ZERO
+var gravity_zones: Array[GravityZone.GravityZoneParams] = []
 @export var terminal_velocity: float = 3000
 var air_frames := 0
 
@@ -299,6 +300,7 @@ var visual_event_queue := []
 
 func _ready() -> void:
 	# UI.show_race_ui()
+	
 	setup_floor_check_grid()
 	setup_head()
 	setup_colliders()
@@ -429,6 +431,7 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	respawn_if_too_low()
 
 	detect_collisions()
+	determine_gravity()
 
 	handle_item()
 
@@ -546,6 +549,15 @@ func detect_collisions() -> void:
 
 	determine_floor_normal()
 	return
+
+func determine_gravity() -> void:
+	gravity = world.base_gravity
+
+	if gravity_zones.is_empty():
+		return
+
+	gravity_zones.sort_custom(func(a: GravityZone.GravityZoneParams, b: GravityZone.GravityZoneParams) -> bool: return a.priority > b.priority)
+	gravity = gravity_zones[0].direction * world.base_gravity.length() * gravity_zones[0].multiplier
 
 func determine_grounded() -> void:
 	prev_grounded = grounded
@@ -1513,3 +1525,15 @@ func _on_item_roulette_timer_timeout() -> void:
 
 func _on_roulette_stop() -> void:
 	can_use_item = true
+
+func apply_gravity_zone(params: GravityZone.GravityZoneParams) -> void:
+	if params in gravity_zones:
+		return
+	
+	gravity_zones.append(params)
+
+func remove_gravity_zone(params: GravityZone.GravityZoneParams) -> void:
+	if params not in gravity_zones:
+		return
+	
+	gravity_zones.erase(params)

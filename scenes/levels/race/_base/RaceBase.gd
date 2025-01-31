@@ -41,6 +41,8 @@ var lobby_scene: String = "res://scenes/ui/academy/menu_academy.tscn"
 @export var lap_count: int = 3
 var finished := false
 
+@export var base_gravity := Vector3(0, -18, 0)
+
 var path_point_scene: PackedScene = preload("res://scenes/control/path/EnemyPath.tscn")
 
 var finish_order: Array = []

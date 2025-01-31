@@ -20,6 +20,9 @@ var look_target: Array = []
 @onready var cur_pos_bw: Vector3 = position
 var cur_target: Vector3 = Vector3.INF
 
+var target_gravity: Vector3 = Vector3.DOWN
+var gravity_change_speed: float = 3.0
+
 var prev_mirror: bool = false
 
 var forwards := true
@@ -141,12 +144,17 @@ func _physics_process(delta: float) -> void:
 	if no_move:
 		global_position = prev_glob_pos
 
+	if !is_respawn:
+		target_gravity = target_gravity.slerp(target.gravity.normalized(), gravity_change_speed * delta)
+		if instant:
+			target_gravity = target.gravity.normalized()
+
 	if mirror != prev_mirror or instant:
 		Global.camera_switched.emit()
-		look_at(true_target, -target.gravity.normalized())
+		look_at(true_target, -target_gravity)
 	else:
 		var old_basis := transform.basis
-		look_at(true_target, -target.gravity.normalized())
+		look_at(true_target, -target_gravity)
 		var new_basis := transform.basis
 		transform.basis = Basis(Quaternion(old_basis).slerp(Quaternion(new_basis), lerp_speed_look * delta))
 
@@ -157,12 +165,17 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_camera_area_area_entered(area: Node) -> void:
+	if area is not WaterArea:
+		return
 	in_water = true
 	water_areas[area] = true
 	UI.apply_water()
 
 
 func _on_camera_area_area_exited(area: Node) -> void:
+	if area is not WaterArea:
+		return
+
 	water_areas.erase(area)
 	if water_areas.size() == 0:
 		in_water = false
