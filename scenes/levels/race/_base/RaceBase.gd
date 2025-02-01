@@ -1043,7 +1043,8 @@ func progress_in_cur_checkpoint(player: Vehicle4) -> float:
 func get_respawn_point(vehicle: Vehicle4) -> Dictionary:
 	var out: Dictionary = {
 		"position": Vector3.ZERO,
-		"rotation": Vector3.ZERO
+		"rotation": Vector3.ZERO,
+		"gravity_zone": null
 	}
 	
 	var cur_checkpoint := checkpoints[vehicle.check_idx] as Checkpoint
@@ -1063,6 +1064,8 @@ func get_respawn_point(vehicle: Vehicle4) -> Dictionary:
 	
 	out.position = spawn_pos
 	out.rotation = cur_checkpoint.basis.get_euler()
+	
+	out.gravity_zone = cur_checkpoint.gravity_zone
 	
 	return out
 

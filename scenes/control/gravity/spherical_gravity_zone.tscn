@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://0b3c3s4dwccp"]
 
-[ext_resource type="PackedScene" uid="uid://cqng3bjv7wadr" path="res://scenes/control/gravity_zone.tscn" id="1_o5esa"]
-[ext_resource type="Script" path="res://scenes/control/spherical_gravity_zone.gd" id="2_ckuku"]
+[ext_resource type="PackedScene" uid="uid://cqng3bjv7wadr" path="res://scenes/control/gravity/gravity_zone.tscn" id="1_o5esa"]
+[ext_resource type="Script" path="res://scenes/control/gravity/spherical_gravity_zone.gd" id="2_ckuku"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_4npgj"]
 resource_local_to_scene = true

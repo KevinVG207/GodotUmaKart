@@ -3,7 +3,7 @@ extends Area3D
 class_name GravityZone
 
 class GravityZoneParams:
-	var direction: Vector3 = Vector3.ZERO
+	var direction: Vector3 = Vector3.DOWN
 	var multiplier: float = 1.0
 	var priority: int = 0
 
@@ -24,3 +24,9 @@ func _on_body_entered(body: Node3D) -> void:
 func _on_body_exited(body: Node3D) -> void:
 	if body is Vehicle4:
 		body.remove_gravity_zone(self)
+
+func remove_vehicle(vehicle: Vehicle4) -> void:
+	return
+
+func add_vehicle(vehicle: Vehicle4) -> void:
+	return

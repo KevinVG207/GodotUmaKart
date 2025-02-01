@@ -17,9 +17,16 @@ func _physics_process(_delta: float) -> void:
 
 func _on_body_entered(body: Node3D) -> void:
 	if body is Vehicle4:
-		vehicles[body] = GravityZoneParams.new()
+		add_vehicle(body)
 
 func _on_body_exited(body: Node3D) -> void:
 	if body is Vehicle4:
 		body.remove_gravity_zone(self)
 		vehicles.erase(body)
+
+func remove_vehicle(vehicle: Vehicle4) -> void:
+	vehicle.remove_gravity_zone(self)
+	vehicles.erase(vehicle)
+
+func add_vehicle(vehicle: Vehicle4) -> void:
+	vehicles[vehicle] = GravityZoneParams.new()

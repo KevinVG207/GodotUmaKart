@@ -1014,6 +1014,13 @@ func handle_respawn() -> void:
 	if respawn_stage == RespawnStage.FALLING and $RespawnTimer.time_left <= respawn_stage2_time:
 		respawn_stage = RespawnStage.RESPAWNING
 		respawn_data = world.get_respawn_point(self)
+		
+		for zone: Node3D in gravity_zones:
+			zone.remove_vehicle(self)
+		
+		if respawn_data.gravity_zone:
+			respawn_data.gravity_zone.add_vehicle(self)
+		
 		if is_player:
 			world.player_camera.instant = true
 			world.player_camera.undo_respawn()
@@ -1022,6 +1029,8 @@ func handle_respawn() -> void:
 		stop_movement()
 		global_position = respawn_data.position
 		global_rotation = respawn_data.rotation
+		if world.player_camera.target == self:
+			world.player_camera.target_gravity = gravity
 
 func handle_trick() -> void:
 	trick_input_frames = maxi(trick_input_frames - 1, 0)
@@ -1527,10 +1536,10 @@ func _on_item_roulette_timer_timeout() -> void:
 func _on_roulette_stop() -> void:
 	can_use_item = true
 
-func apply_gravity_zone(zone: GravityZone, params: GravityZone.GravityZoneParams) -> void:
+func apply_gravity_zone(zone: Node3D, params: GravityZone.GravityZoneParams) -> void:
 	gravity_zones[zone] = params
 
-func remove_gravity_zone(zone: GravityZone) -> void:
+func remove_gravity_zone(zone: Node3D) -> void:
 	if zone not in gravity_zones:
 		return
 	
