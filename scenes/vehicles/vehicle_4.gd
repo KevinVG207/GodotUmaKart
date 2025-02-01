@@ -48,7 +48,7 @@ var can_use_item : = false
 var has_dragged_item := false
 
 var gravity := Vector3.ZERO
-var gravity_zones: Array[GravityZone.GravityZoneParams] = []
+var gravity_zones: Dictionary = {}
 @export var terminal_velocity: float = 3000
 var air_frames := 0
 
@@ -467,7 +467,7 @@ func handle_sleep() -> void:
 		sleep = true
 
 func respawn_if_too_low() -> void:
-	if global_position.y < -100:
+	if global_position.y < world.fall_failsafe:
 		respawn()
 
 func respawn() -> void:
@@ -556,8 +556,9 @@ func determine_gravity() -> void:
 	if gravity_zones.is_empty():
 		return
 
-	gravity_zones.sort_custom(func(a: GravityZone.GravityZoneParams, b: GravityZone.GravityZoneParams) -> bool: return a.priority > b.priority)
-	gravity = gravity_zones[0].direction * world.base_gravity.length() * gravity_zones[0].multiplier
+	var zones := gravity_zones.values()
+	zones.sort_custom(func(a: GravityZone.GravityZoneParams, b: GravityZone.GravityZoneParams) -> bool: return a.priority > b.priority)
+	gravity = zones[0].direction * world.base_gravity.length() * zones[0].multiplier
 
 func determine_grounded() -> void:
 	prev_grounded = grounded
@@ -1526,14 +1527,11 @@ func _on_item_roulette_timer_timeout() -> void:
 func _on_roulette_stop() -> void:
 	can_use_item = true
 
-func apply_gravity_zone(params: GravityZone.GravityZoneParams) -> void:
-	if params in gravity_zones:
-		return
-	
-	gravity_zones.append(params)
+func apply_gravity_zone(zone: GravityZone, params: GravityZone.GravityZoneParams) -> void:
+	gravity_zones[zone] = params
 
-func remove_gravity_zone(params: GravityZone.GravityZoneParams) -> void:
-	if params not in gravity_zones:
+func remove_gravity_zone(zone: GravityZone) -> void:
+	if zone not in gravity_zones:
 		return
 	
-	gravity_zones.erase(params)
+	gravity_zones.erase(zone)

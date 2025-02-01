@@ -1,0 +1,140 @@
+[gd_scene load_steps=14 format=3 uid="uid://crkh75jyi25qq"]
+
+[ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_oq3jr"]
+[ext_resource type="PackedScene" uid="uid://0b3c3s4dwccp" path="res://scenes/control/spherical_gravity_zone.tscn" id="3_1c0o1"]
+[ext_resource type="Texture2D" uid="uid://cj3j5w81elffd" path="res://assets/course/barn/tex/checker.png" id="3_7gt87"]
+[ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/_1test/1test_map_Circle_001.res" id="3_ob57e"]
+[ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="4_n73gn"]
+[ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="5_a2cpo"]
+[ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="6_gnk6y"]
+[ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="7_e4vn4"]
+[ext_resource type="PackedScene" uid="uid://i7r86beliswl" path="res://scenes/items/3carrots.tscn" id="8_18fpj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2b3sy"]
+albedo_texture = ExtResource("3_7gt87")
+uv1_scale = Vector3(50, 50, 50)
+
+[sub_resource type="SphereMesh" id="SphereMesh_odjbb"]
+material = SubResource("StandardMaterial3D_2b3sy")
+radius = 100.0
+height = 200.0
+radial_segments = 128
+rings = 64
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_neyxo"]
+radius = 100.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_njv2n"]
+resource_local_to_scene = true
+radius = 500.0
+
+[node name="1test" instance=ExtResource("1_oq3jr")]
+map_outline_width = 1.0
+map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
+fall_failsafe = -300.0
+
+[node name="Course" parent="." index="0"]
+metadata/_edit_group_ = true
+
+[node name="MapMesh" parent="Course" index="0"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+visible = false
+mesh = ExtResource("3_ob57e")
+
+[node name="Node3D" type="StaticBody3D" parent="Course" index="2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -98.8735, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Course/Node3D" index="0"]
+mesh = SubResource("SphereMesh_odjbb")
+skeleton = NodePath("../..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Course/Node3D" index="1"]
+shape = SubResource("SphereShape3D_neyxo")
+
+[node name="SphericalGravityZone" parent="Course/Node3D" index="2" instance=ExtResource("3_1c0o1")]
+
+[node name="CollisionShape3D" parent="Course/Node3D/SphericalGravityZone" index="0"]
+shape = SubResource("SphereShape3D_njv2n")
+
+[node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("4_n73gn")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 26, 0, 0)
+is_key = true
+
+[node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("4_n73gn")]
+transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 19, 0, -17)
+
+[node name="Checkpoint3" parent="Checkpoints" index="2" instance=ExtResource("4_n73gn")]
+transform = Transform3D(-5.96046e-08, 0, -1, 0, 1, 0, 1, 0, -5.96046e-08, 0, 0, -25)
+is_key = true
+
+[node name="Checkpoint4" parent="Checkpoints" index="3" instance=ExtResource("4_n73gn")]
+transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -17, 0, -19)
+
+[node name="Checkpoint5" parent="Checkpoints" index="4" instance=ExtResource("4_n73gn")]
+transform = Transform3D(1, 0, -8.9407e-08, 0, 1, 0, 8.9407e-08, 0, 1, -25, 0, 0)
+is_key = true
+
+[node name="Checkpoint6" parent="Checkpoints" index="5" instance=ExtResource("4_n73gn")]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -20, 0, 16)
+
+[node name="Checkpoint7" parent="Checkpoints" index="6" instance=ExtResource("4_n73gn")]
+transform = Transform3D(8.9407e-08, 0, 1, 0, 1, 0, -1, 0, 8.9407e-08, 0, 0, 26)
+is_key = true
+
+[node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("4_n73gn")]
+transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)
+
+[node name="EnemyPathPoints" parent="." index="3"]
+visible = false
+
+[node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("5_a2cpo")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 24.4533, 0.00012207, -1.62639)
+
+[node name="EnemyPath4" parent="EnemyPathPoints" index="1" instance=ExtResource("5_a2cpo")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 16.8846, -0.00012207, -16.6743)
+
+[node name="EnemyPath7" parent="EnemyPathPoints" index="2" instance=ExtResource("5_a2cpo")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0.378935, 0.00012207, -23.835)
+
+[node name="EnemyPath10" parent="EnemyPathPoints" index="3" instance=ExtResource("5_a2cpo")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -17.6754, -0.000244141, -15.973)
+
+[node name="EnemyPath13" parent="EnemyPathPoints" index="4" instance=ExtResource("5_a2cpo")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -24.1485, 0.00012207, -0.0945807)
+
+[node name="EnemyPath2" parent="EnemyPathPoints" index="5" instance=ExtResource("5_a2cpo")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -17.2244, 0, 15.5187)
+
+[node name="EnemyPath3" parent="EnemyPathPoints" index="6" instance=ExtResource("5_a2cpo")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -0.121189, 0.000244141, 23.9498)
+
+[node name="EnemyPath5" parent="EnemyPathPoints" index="7" instance=ExtResource("5_a2cpo")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 18.7887, 0.000244141, 14.5551)
+
+[node name="ItemPickup" parent="." index="8" instance=ExtResource("6_gnk6y")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.7305, 1.90735e-06, -19.2348)
+guaranteed_item = ExtResource("7_e4vn4")
+
+[node name="ItemPickup2" parent="." index="9" instance=ExtResource("6_gnk6y")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.181, 1.90735e-06, -19.8046)
+guaranteed_item = ExtResource("8_18fpj")
+
+[node name="ItemPickup3" parent="." index="10" instance=ExtResource("6_gnk6y")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 10.7742, -1.90735e-06, -23.0451)
+guaranteed_item = ExtResource("7_e4vn4")
+
+[node name="ItemPickup4" parent="." index="11" instance=ExtResource("6_gnk6y")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 14.0165, -1.90735e-06, -23.6097)
+guaranteed_item = ExtResource("7_e4vn4")
+
+[node name="ItemPickup5" parent="." index="12" instance=ExtResource("6_gnk6y")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)
+guaranteed_item = ExtResource("7_e4vn4")
+
+[node name="CountdownTimer" parent="." index="14"]
+process_callback = 1
+
+[node name="MapCamera" parent="." index="17"]
+size = 200.0
+
+[editable path="Course/Node3D/SphericalGravityZone"]

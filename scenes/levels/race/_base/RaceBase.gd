@@ -71,6 +71,8 @@ var map_outline_color: Color = Color(0.37, 0.37, 0.37, 1.0)
 @export var map_mesh_instances: Array[NodePath] = []
 var map_mesh_material: ShaderMaterial = preload("res://scenes/levels/race/_base/MapMaterial.tres")
 
+@export var fall_failsafe: float = -100
+
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
 	const CLIENT_UPDATE_VEHICLE_STATE = 2
