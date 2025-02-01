@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://crkh75jyi25qq"]
+[gd_scene load_steps=20 format=3 uid="uid://crkh75jyi25qq"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_oq3jr"]
 [ext_resource type="PackedScene" uid="uid://0b3c3s4dwccp" path="res://scenes/control/spherical_gravity_zone.tscn" id="3_1c0o1"]
@@ -6,6 +6,7 @@
 [ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/_1test/1test_map_Circle_001.res" id="3_ob57e"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="4_n73gn"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="5_a2cpo"]
+[ext_resource type="PackedScene" uid="uid://cqng3bjv7wadr" path="res://scenes/control/gravity_zone.tscn" id="5_vg353"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="6_gnk6y"]
 [ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="7_e4vn4"]
 [ext_resource type="PackedScene" uid="uid://i7r86beliswl" path="res://scenes/items/3carrots.tscn" id="8_18fpj"]
@@ -28,6 +29,22 @@ radius = 100.0
 resource_local_to_scene = true
 radius = 500.0
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_a3ddl"]
+size = Vector3(20, 10, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_maeer"]
+size = Vector3(20, 10, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1lw5n"]
+size = Vector3(5, 10, 15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_k6dcw"]
+size = Vector3(5, 10, 15)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_2spst"]
+resource_local_to_scene = true
+size = Vector3(15.7751, 20, 20)
+
 [node name="1test" instance=ExtResource("1_oq3jr")]
 map_outline_width = 1.0
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
@@ -41,7 +58,7 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 visible = false
 mesh = ExtResource("3_ob57e")
 
-[node name="Node3D" type="StaticBody3D" parent="Course" index="2"]
+[node name="Node3D" type="StaticBody3D" parent="Course" index="2" groups=["col_floor"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -98.8735, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Course/Node3D" index="0"]
@@ -55,6 +72,54 @@ shape = SubResource("SphereShape3D_neyxo")
 
 [node name="CollisionShape3D" parent="Course/Node3D/SphericalGravityZone" index="0"]
 shape = SubResource("SphereShape3D_njv2n")
+
+[node name="Tower" type="Node3D" parent="Course" index="3"]
+transform = Transform3D(-1.23567, -0.0283459, -0.849888, -0.65149, -0.931928, 0.9783, -0.54651, 1.17503, 0.755394, 0.0319031, -162.666, 75.3139)
+
+[node name="Block" type="StaticBody3D" parent="Course/Tower" index="0" groups=["col_floor"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Course/Tower/Block" index="0"]
+shape = SubResource("BoxShape3D_a3ddl")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Course/Tower/Block" index="1"]
+mesh = SubResource("BoxMesh_maeer")
+
+[node name="Block2" type="StaticBody3D" parent="Course/Tower" index="1" groups=["col_floor"]]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Course/Tower/Block2" index="0"]
+transform = Transform3D(1, 0, 0, 0, 0.866025, -0.5, 0, 0.5, 0.866025, 0, -3.05507, 13.9735)
+shape = SubResource("BoxShape3D_1lw5n")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Course/Tower/Block2" index="1"]
+transform = Transform3D(1, 0, 0, 0, 0.866025, -0.5, 0, 0.5, 0.866025, 0, -3.05507, 13.9735)
+mesh = SubResource("BoxMesh_k6dcw")
+
+[node name="GravityZone" parent="Course/Tower" index="2" instance=ExtResource("5_vg353")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14, 0)
+gravity_priority = 10
+
+[node name="CollisionShape3D" parent="Course/Tower/GravityZone" index="0"]
+shape = SubResource("BoxShape3D_2spst")
+
+[node name="Node3D" type="Node3D" parent="Course/Tower" index="3"]
+transform = Transform3D(0.748447, -0.663195, 2.98023e-08, 0.663195, 0.748447, 0, 2.2398e-08, 1.97648e-08, 1, 16.9457, 5.44189, 1.07851e-07)
+
+[node name="Block3" type="StaticBody3D" parent="Course/Tower/Node3D" index="0" groups=["col_floor"]]
+transform = Transform3D(1, -2.98023e-08, 0, -2.98023e-08, 1, 2.98023e-08, 5.96046e-08, -2.98023e-08, 1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Course/Tower/Node3D/Block3" index="0"]
+shape = SubResource("BoxShape3D_a3ddl")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Course/Tower/Node3D/Block3" index="1"]
+mesh = SubResource("BoxMesh_maeer")
+
+[node name="GravityZone2" parent="Course/Tower/Node3D" index="1" instance=ExtResource("5_vg353")]
+transform = Transform3D(1, -2.98023e-08, 0, -2.98023e-08, 1, 2.98023e-08, 5.96046e-08, -2.98023e-08, 1, 3.8147e-06, 14, -3.8147e-06)
+gravity_priority = 11
+
+[node name="CollisionShape3D" parent="Course/Tower/Node3D/GravityZone2" index="0"]
+transform = Transform3D(1, 1.04308e-07, -7.45058e-09, 2.98023e-08, 1, 0, -2.98023e-08, 0, 1, 2.1124, 7.62939e-06, 3.8147e-05)
+shape = SubResource("BoxShape3D_2spst")
 
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("4_n73gn")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 26, 0, 0)
@@ -138,3 +203,5 @@ process_callback = 1
 size = 200.0
 
 [editable path="Course/Node3D/SphericalGravityZone"]
+[editable path="Course/Tower/GravityZone"]
+[editable path="Course/Tower/Node3D/GravityZone2"]

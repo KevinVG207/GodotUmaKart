@@ -9,7 +9,7 @@ func _ready() -> void:
 
 func _physics_process(_delta: float) -> void:
 	for vehicle: Vehicle4 in vehicles.keys():
-		var new_params = GravityZoneParams.new()
+		var new_params = vehicles[vehicle]
 		new_params.multiplier = params.multiplier
 		new_params.priority = params.priority
 		new_params.direction = (global_position - vehicle.global_position).normalized()
@@ -17,7 +17,7 @@ func _physics_process(_delta: float) -> void:
 
 func _on_body_entered(body: Node3D) -> void:
 	if body is Vehicle4:
-		vehicles[body] = null
+		vehicles[body] = GravityZoneParams.new()
 
 func _on_body_exited(body: Node3D) -> void:
 	if body is Vehicle4:
