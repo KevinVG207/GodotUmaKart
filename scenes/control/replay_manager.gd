@@ -4,16 +4,11 @@ class_name ReplayManager
 
 class ReplayData:
 	var course_name: String = ""
-	# var vehicles: Array[VehicleSpawnData] = []
 	var states: Array[RaceState] = []
 	var idx: int = 0
 	var finish_times: Dictionary = {}  # player_id: time
 	
 	func to_dict() -> Dictionary:
-		# var v_array := []
-		# for data in vehicles:
-		# 	v_array.append(data.to_dict())
-		
 		var s_array := []
 		for state in states:
 			s_array.append(state.to_dict())
@@ -53,7 +48,6 @@ class ReplayData:
 		out.finish_times = data["finish_times"]
 
 		return out
-
 
 # class VehicleSpawnData:
 # 	var user_id: String
@@ -264,7 +258,15 @@ func make_item_state(key: String, world: RaceBase) -> ItemState:
 	
 	return state
 
+func set_finish_time(id: String, time: float) -> void:
+	if write_replay == null:
+		print("ERR: Attempted to set finish time, but no replay is set up!")
+		return
+	write_replay.finish_times[id] = time
+	return
+
 func save_replay() -> void:
+	print("SAVE REPLAY")
 	if write_replay == null:
 		print("ERR: Attempted to save replay, but no replay is set up!")
 		return
@@ -303,6 +305,9 @@ func load_replay(path: String, world: RaceBase) -> int:
 		return ERR_INVALID_DATA
 
 	loaded_replay = data
+	Debug.print("Loaded replay with finish times:")
+	for id: String in loaded_replay.finish_times:
+		Debug.print([id, loaded_replay.finish_times[id]])
 
 	return OK
 

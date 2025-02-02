@@ -80,6 +80,9 @@ func _process(delta: float) -> void:
 		setup = do_setup()
 		return
 	
+	if parent.is_replay:
+		return
+
 	do_determine_who()
 	do_occlusion(delta)
 	do_doppler(delta)

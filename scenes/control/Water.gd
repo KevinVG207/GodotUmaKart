@@ -4,7 +4,6 @@ class_name WaterArea
 
 func _on_body_entered(body: Node) -> void:
 	if "water_entered" in body:
-		Debug.print(["Water entered: ", body])
 		body.water_entered(self)
 
 

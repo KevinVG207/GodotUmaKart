@@ -578,9 +578,11 @@ func _physics_process(_delta: float) -> void:
 				# Here we prepare the finishing times for all the CPUs and then show the rankings.
 				setup_finish_order()
 				state = STATE_SHOW_RANKINGS
-		STATE_READY_FOR_RANKINGS:
+			
+			save_finish_times_to_replay()
+			replay_manager.save_state(self)
 			replay_manager.save_replay()
-
+		STATE_READY_FOR_RANKINGS:
 			if spectate:
 				change_state(STATE_JOINING_NEXT, join_next)
 			else:
@@ -626,9 +628,13 @@ func _physics_process(_delta: float) -> void:
 		handle_replay()
 
 func handle_replay() -> void:
-	if state <= STATE_RACE_OVER:
+	if state < STATE_RACE_OVER:
 		replay_manager.save_state(self)
 	replay_manager.advance_loaded_state(self)
+
+func save_finish_times_to_replay() -> void:
+	for user_id: String in players_dict.keys():
+		replay_manager.set_finish_time(user_id, players_dict[user_id].finish_time)
 
 # func save_replay(force: bool=false) -> void:
 # 	return

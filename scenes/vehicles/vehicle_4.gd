@@ -420,6 +420,9 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	delta = new_physics_state.step
 	visual_delta += delta
 
+	if is_replay:
+		return
+
 	before_update.emit(delta)
 
 	handle_sleep()
