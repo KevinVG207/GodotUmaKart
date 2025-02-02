@@ -21,8 +21,8 @@ var world: RaceBase = null
 var physics_state: PhysicsDirectBodyState3D
 var prev_transform: Transform3D = Transform3D.IDENTITY
 
-var max_displacement_for_sleep := 0.003
-var max_degrees_change_for_sleep := 0.5
+static var max_displacement_for_sleep := 0.003
+static var max_degrees_change_for_sleep := 0.5
 
 @onready var respawn_timer: Timer = %RespawnTimer
 
@@ -183,8 +183,8 @@ var along_ground_dec := 5.0
 var min_angle_to_detach := 10.0
 
 var respawn_stage := RespawnStage.NONE
-var respawn_time: float = 3.5
-var respawn_stage2_time: float = 1.0
+static var respawn_time: float = 3.5
+static var respawn_stage2_time: float = 1.0
 var respawn_data := {}
 
 enum RespawnStage {
@@ -209,7 +209,7 @@ enum ContactType {
 	FALL
 }
 
-var floor_types := [
+static var floor_types := [
 	ContactType.UNKNOWN,
 	ContactType.FLOOR,
 	ContactType.TRICK,
@@ -264,10 +264,10 @@ var turn_speed := 0.0
 @export var base_turn_accel: float = 1800
 var turn_accel := base_turn_accel
 
-var replay_transparency := 0.75
+static var replay_transparency := 0.75
 var standard_colliders: Array = []
 
-var trick_safezone_frames := 30
+static var trick_safezone_frames := 30
 var trick_input_frames := 0
 var trick_timer := 0
 var trick_timer_length := int(180 * 0.4)
@@ -290,7 +290,7 @@ var in_water := false
 var water_bodies: Dictionary = {}
 
 var countdown_gauge := 0.0
-var countdown_timer := 1.5
+static var countdown_timer := 1.5
 var countdown_gauge_max := 0.0
 var countdown_gauge_min := 0.0
 var countdown_gauge_middle := 0.0
@@ -306,9 +306,9 @@ func _ready() -> void:
 	setup_colliders()
 
 	setup_countdown_boost()
-	
+
 	if is_replay:
-		recursive_set_transparency($Visual)
+		recursive_set_transparency(%Visual)
 
 func setup_countdown_boost() -> void:
 	# Countdown boost
@@ -1547,3 +1547,13 @@ func remove_gravity_zone(zone: Node3D) -> void:
 		return
 	
 	gravity_zones.erase(zone)
+
+func setup_replay() -> void:
+	is_player = false
+	is_network = false
+	is_cpu = false
+	is_replay = true
+	freeze_mode = FREEZE_MODE_STATIC
+	freeze = true
+	collision_layer = 0
+	collision_mask = 0

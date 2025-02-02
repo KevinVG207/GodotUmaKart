@@ -122,16 +122,26 @@ const UPDATE_STATES = [
 	STATE_JOIN_NEXT
 ]
 
+const REPLAY_STATES = [
+	STATE_COUNTING_DOWN,
+	STATE_RACE,
+	STATE_RACE_OVER,
+	STATE_READY_FOR_RANKINGS,
+	STATE_SHOW_RANKINGS
+]
+
 var state: int = STATE_INITIAL
 
 @onready var map_camera: Camera3D = $MapCamera
 
 @onready var replay_manager: ReplayManager = %ReplayManager
-var replay: Array = []
-var replay_tick_interval: float = 3
-var replay_cur_tick: int = 0
-var replay_last_time: float = -1
-var replay_tick_max_time: float = 0
+@onready var replay_vehicles: Node3D = $ReplayVehicles
+
+# var replay: Array = []
+# var replay_tick_interval: float = 3
+# var replay_cur_tick: int = 0
+# var replay_last_time: float = -1
+# var replay_tick_max_time: float = 0
 
 var loaded_replay: Array = []
 var loaded_replay_idx: int = 0
@@ -142,8 +152,8 @@ func _ready() -> void:
 	
 	# Setup ticks
 	Engine.physics_ticks_per_second = 180
-	replay_tick_interval = 6
-	replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
+	# replay_tick_interval = 6
+	# replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
 	frames_between_update = int(float(Engine.physics_ticks_per_second) / updates_to_server_per_second)
 	
 	#load_replay("user://replays/1test/1725744856.sav")
@@ -173,6 +183,10 @@ func _ready() -> void:
 	# $Course/MapMesh.visible = true
 	UI.race_ui.set_map_camera(map_camera)
 	UI.race_ui.set_startline(checkpoints[0])
+
+	if Global.selected_replay:
+		replay_manager.load_replay(Global.selected_replay, self)
+		Global.selected_replay = ""
 
 func setup_map_meshes() -> void:
 	for path: NodePath in map_mesh_instances:
@@ -550,16 +564,14 @@ func _physics_process(_delta: float) -> void:
 				countdown_timer.start(4.0)
 			replay_manager.setup_new_replay(self)
 			state = STATE_COUNTING_DOWN
-		STATE_COUNTING_DOWN:
-			replay_manager.save_state(self)
-		STATE_RACE:
+		# STATE_COUNTING_DOWN:
+		# 	handle_replay()
+		# STATE_RACE:
 			#save_replay()
-			replay_manager.save_state(self)
 		STATE_RACE_OVER:
 			#save_replay(true)
 			#write_replay()
-			replay_manager.save_state(self)
-			replay_manager.save_replay()
+			
 			UI.race_ui.race_over()
 			if Global.MODE1 == Global.MODE1_OFFLINE:
 				# Race is over in offline mode.
@@ -567,6 +579,8 @@ func _physics_process(_delta: float) -> void:
 				setup_finish_order()
 				state = STATE_SHOW_RANKINGS
 		STATE_READY_FOR_RANKINGS:
+			replay_manager.save_replay()
+
 			if spectate:
 				change_state(STATE_JOINING_NEXT, join_next)
 			else:
@@ -607,78 +621,86 @@ func _physics_process(_delta: float) -> void:
 						send_item_state(item)
 		
 		check_finished()
+	
+	if state in REPLAY_STATES:
+		handle_replay()
 
-func save_replay(force: bool=false) -> void:
-	return
-	# TODO: Save all vehicles.
-	# TODO: Include items.
-	var cur_time := get_timer_seconds()
-	if cur_time - replay_last_time < replay_tick_max_time and !force:
-		return
-	
-	replay_last_time = cur_time
-	
-	var frame := {
-		"time": cur_time,
-		"vehicle": player_vehicle.get_replay_state()
-	}
-	
-	replay.append(frame)
+func handle_replay() -> void:
+	if state <= STATE_RACE_OVER:
+		replay_manager.save_state(self)
+	replay_manager.advance_loaded_state(self)
 
-func advance_replay() -> void:
-	if loaded_replay_idx+1 >= len(loaded_replay):
-		return
+# func save_replay(force: bool=false) -> void:
+# 	return
+# 	# TODO: Save all vehicles.
+# 	# TODO: Include items.
+# 	var cur_time := get_timer_seconds()
+# 	if cur_time - replay_last_time < replay_tick_max_time and !force:
+# 		return
 	
-	# Load frame
-	var cur_time := get_timer_seconds()
+# 	replay_last_time = cur_time
 	
-	if cur_time >= loaded_replay[loaded_replay_idx+1].time:
-		loaded_replay_idx += 1
+# 	var frame := {
+# 		"time": cur_time,
+# 		"vehicle": player_vehicle.get_replay_state()
+# 	}
 	
-	var cur_frame: Dictionary = loaded_replay[loaded_replay_idx]
-	var next_frame = cur_frame
-	
-	if loaded_replay_idx+1 < len(loaded_replay):
-		next_frame = loaded_replay[loaded_replay_idx+1]
-	
-	#if loaded_replay_idx+1 < len(loaded_replay) and cur_time >= loaded_replay[loaded_replay_idx+1].time:
-		#next_frame = loaded_replay[loaded_replay_idx+1]
-		#loaded_replay_idx += 1
-	
-	# Create new vehicle if needed
-	if loaded_replay_vehicle == null:
-		loaded_replay_vehicle = player_scene.instantiate() as Vehicle4
-		loaded_replay_vehicle.world = self
-		loaded_replay_vehicle.setup_replay()
-		$ReplayVehicles.add_child(loaded_replay_vehicle)
-	
-	# Apply frame
-	var frame_time: float = next_frame.time - cur_frame.time
-	var factor: float
-	if abs(frame_time) < 0.000001:
-		factor = 1.0
-	else:
-		factor = clamp((cur_time - cur_frame.time) / frame_time, 0, 1)
-		#print(factor, " ", cur_time, " ", cur_frame.time, " ", next_frame.time, " ", frame_time)
-	
-	loaded_replay_vehicle.apply_replay_state(cur_frame.vehicle)
-	loaded_replay_vehicle.global_position = Util.to_vector3(cur_frame.vehicle.pos).lerp(Util.to_vector3(next_frame.vehicle.pos), factor)
-	loaded_replay_vehicle.quaternion = Util.array_to_quat(cur_frame.vehicle.rot).slerp(Util.array_to_quat(next_frame.vehicle.rot), factor)
+# 	replay.append(frame)
 
-func write_replay() -> void:
-	if not replay:
-		return
+# func advance_replay() -> void:
+# 	if loaded_replay_idx+1 >= len(loaded_replay):
+# 		return
 	
-	# TODO: Include course name
-	var file: String = str(round(Time.get_unix_time_from_system()))
-	var dir: String = "user://replays/" + course_name
-	var path = dir + "/" + file + ".sav"
+# 	# Load frame
+# 	var cur_time := get_timer_seconds()
 	
-	DirAccess.make_dir_recursive_absolute(dir)
-	Util.save_var(path, replay)
+# 	if cur_time >= loaded_replay[loaded_replay_idx+1].time:
+# 		loaded_replay_idx += 1
+	
+# 	var cur_frame: Dictionary = loaded_replay[loaded_replay_idx]
+# 	var next_frame = cur_frame
+	
+# 	if loaded_replay_idx+1 < len(loaded_replay):
+# 		next_frame = loaded_replay[loaded_replay_idx+1]
+	
+# 	#if loaded_replay_idx+1 < len(loaded_replay) and cur_time >= loaded_replay[loaded_replay_idx+1].time:
+# 		#next_frame = loaded_replay[loaded_replay_idx+1]
+# 		#loaded_replay_idx += 1
+	
+# 	# Create new vehicle if needed
+# 	if loaded_replay_vehicle == null:
+# 		loaded_replay_vehicle = player_scene.instantiate() as Vehicle4
+# 		loaded_replay_vehicle.world = self
+# 		loaded_replay_vehicle.setup_replay()
+# 		$ReplayVehicles.add_child(loaded_replay_vehicle)
+	
+# 	# Apply frame
+# 	var frame_time: float = next_frame.time - cur_frame.time
+# 	var factor: float
+# 	if abs(frame_time) < 0.000001:
+# 		factor = 1.0
+# 	else:
+# 		factor = clamp((cur_time - cur_frame.time) / frame_time, 0, 1)
+# 		#print(factor, " ", cur_time, " ", cur_frame.time, " ", next_frame.time, " ", frame_time)
+	
+# 	loaded_replay_vehicle.apply_replay_state(cur_frame.vehicle)
+# 	loaded_replay_vehicle.global_position = Util.to_vector3(cur_frame.vehicle.pos).lerp(Util.to_vector3(next_frame.vehicle.pos), factor)
+# 	loaded_replay_vehicle.quaternion = Util.array_to_quat(cur_frame.vehicle.rot).slerp(Util.array_to_quat(next_frame.vehicle.rot), factor)
 
-func load_replay(path: String) -> void:
-	loaded_replay = Util.load_var(path)
+# func write_replay() -> void:
+# 	if not replay:
+# 		return
+	
+# 	# TODO: Include course name
+# 	var file: String = str(round(Time.get_unix_time_from_system()))
+# 	var dir: String = "user://replays/" + course_name
+# 	var path = dir + "/" + file + ".sav"
+	
+# 	DirAccess.make_dir_recursive_absolute(dir)
+# 	Util.save_var(path, replay)
+
+# func load_replay(path: String) -> void:
+# 	loaded_replay = Util.load_var(path)
 
 func get_vehicle_distance_from_start(vehicle: Vehicle4) -> float:
 	var cur_check: Checkpoint = checkpoints[vehicle.check_idx]
@@ -787,9 +809,9 @@ func check_finished():
 
 
 func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3, ignore_replay:=false):
-	if !ignore_replay:
-		replay_manager.spawn_vehicle(user_id, new_position, look_dir, up_dir)
-	var new_vehicle = player_scene.instantiate() as Vehicle4
+	# if !ignore_replay:
+	# 	replay_manager.spawn_vehicle(user_id, new_position, look_dir, up_dir)
+	var new_vehicle := player_scene.instantiate() as Vehicle4
 	players_dict[user_id] = new_vehicle
 	vehicles_node.add_child(new_vehicle)
 	new_vehicle.teleport(new_position, look_dir, up_dir)

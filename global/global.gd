@@ -66,6 +66,9 @@ var heads: Dictionary = {
 	"nice-nature": "res://assets/character/_nice-nature/head.tscn"
 }
 
+#var selected_replay: String = "user://replays/Wicked_Woods/demo.sav"
+var selected_replay: String = "user://replays/1test/demo.sav"
+
 func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
 
