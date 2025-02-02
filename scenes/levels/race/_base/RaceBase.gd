@@ -550,6 +550,8 @@ func _physics_process(_delta: float) -> void:
 				countdown_timer.start(4.0)
 			replay_manager.setup_new_replay(self)
 			state = STATE_COUNTING_DOWN
+		STATE_COUNTING_DOWN:
+			replay_manager.save_state(self)
 		STATE_RACE:
 			#save_replay()
 			replay_manager.save_state(self)

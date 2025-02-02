@@ -454,6 +454,9 @@ func handle_countdown_gauge() -> void:
 	if started:
 		return
 	
+	if world.state != world.STATE_COUNTING_DOWN:
+		return
+	
 	if input.accel:
 		countdown_gauge += countdown_gauge_tick_size
 	else:

@@ -9,6 +9,9 @@ class ReplayData:
 	var finish_times: Dictionary = {}  # player_id: time
 	
 	func to_json() -> String:
+		return JSON.stringify(to_dict())
+	
+	func to_dict() -> Dictionary:
 		var v_array := []
 		for data in vehicles:
 			v_array.append(data.to_dict())
@@ -17,12 +20,12 @@ class ReplayData:
 		for state in states:
 			s_array.append(state.to_dict())
 		
-		return JSON.stringify({
+		return {
 			"course_name": course_name,
 			"vehicles": v_array,
 			"states": s_array,
 			"finish_times": finish_times
-		})
+		}
 
 class VehicleSpawnData:
 	var user_id: String
@@ -42,6 +45,7 @@ class RaceState:
 	var vehicle_states: Array[VehicleState] = []
 	var item_states: Array[ItemState] = []
 	var items_to_spawn: Array[Dictionary] = []
+	var time: float
 	
 	func to_dict() -> Dictionary:
 		var v_dict := []
@@ -63,18 +67,28 @@ class RaceState:
 		if items_to_spawn:
 			out.items_to_spawn = items_to_spawn
 		
+		out.time = time
+		
 		return out
 
 class VehicleState:
-	var id: String = ""
+	var id: String
+	var position: Vector3
+	var rotation: Quaternion
+	var input: Vehicle4.VehicleInput
 	
 	func to_dict() -> Dictionary:
-		return {
-			"id": id
-		}
+		var out := {}
+
+		out.id = id
+		out.position = position  # Util.to_array(position)
+		out.rotation = rotation  # Util.quat_to_array(rotation)
+		out.input = input.to_dict()
+
+		return out
 
 class ItemState:
-	var key: String = ""
+	var key: String
 	
 	func to_dict() -> Dictionary:
 		return {
@@ -120,6 +134,7 @@ func save_state(world: RaceBase) -> void:
 		print("ERR: Attempted to save state to replay, but no replay is set up!")
 		return
 	var state := RaceState.new()
+	state.time = world.get_timer_seconds()
 	state.items_to_spawn = item_spawn_data
 	item_spawn_data = []
 	
@@ -137,7 +152,12 @@ func save_state(world: RaceBase) -> void:
 func make_vehicle_state(id: String, world: RaceBase) -> VehicleState:
 	var state := VehicleState.new()
 	
+	var player: Vehicle4 = world.players_dict[id]
+
 	state.id = id
+	state.position = player.global_position
+	state.rotation = player.global_transform.basis.get_rotation_quaternion()
+	state.input = player.input
 	
 	return state
 
@@ -178,15 +198,32 @@ func _exit_tree() -> void:
 
 func _replay_thread_loop() -> void:
 	replay_thread_semaphore.wait()
+	
+	var t0 := Time.get_ticks_msec()
 	replay_thread_mutex.lock()
-	var data := write_replay.to_json()
+	var data := write_replay.to_dict()
 	var course_name := write_replay.course_name
 	replay_thread_mutex.unlock()
+	var t1 := Time.get_ticks_msec()
 
 	var file: String = str(round(Time.get_unix_time_from_system()))
 	var dir: String = "user://replays/" + course_name
 	var path := dir + "/" + file + ".sav"
-	
 	DirAccess.make_dir_recursive_absolute(dir)
-	Util.save_string_zip(path, data)
+
+	var t2 := Time.get_ticks_msec()
+	# Util.save_string_zip(path, JSON.stringify(data))
+	var t3 := Time.get_ticks_msec()
+	Util.save_var(dir + "/" + file + ".sav2", data)
+	var t4 := Time.get_ticks_msec()
+	# Util.save_string(path + "3", JSON.stringify(data))
+	var t5 := Time.get_ticks_msec()
+
+	replay_thread_mutex.lock()
+	write_replay = null
+	replay_thread_mutex.unlock()
 	print("Replay finished saving")
+	print("ms to serialize: ", t1 - t0)
+	print("ms to save json zip: ", t3 - t2)
+	print("ms to save json: ", t5 - t4)
+	print("ms to save dict var: ", t4 - t3)
