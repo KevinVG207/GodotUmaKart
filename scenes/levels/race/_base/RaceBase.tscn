@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://crersi2gg0o1o"]
+[gd_scene load_steps=6 format=3 uid="uid://crersi2gg0o1o"]
 
 [ext_resource type="Script" path="res://scenes/levels/race/_base/RaceBase.gd" id="1_2b6un"]
 [ext_resource type="Material" uid="uid://c0453n1hsktoe" path="res://scenes/levels/race/_base/MapMaterial.tres" id="2_hkcxl"]
+[ext_resource type="PackedScene" uid="uid://d01ajbl5oevb7" path="res://scenes/control/replay_manager.tscn" id="2_u4tgh"]
 [ext_resource type="Environment" uid="uid://bkllq0dgr17en" path="res://scenes/levels/race/_base/base_env.tres" id="3_34w1p"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_70vu5"]
 
@@ -9,6 +10,29 @@
 process_priority = 900
 process_physics_priority = 900
 script = ExtResource("1_2b6un")
+
+[node name="_Control" type="Node" parent="."]
+
+[node name="StartTimer" type="Timer" parent="_Control"]
+unique_name_in_owner = true
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
+[node name="CountdownTimer" type="Timer" parent="_Control"]
+unique_name_in_owner = true
+process_callback = 0
+wait_time = 3.0
+one_shot = true
+
+[node name="NextRaceTimer" type="Timer" parent="_Control"]
+unique_name_in_owner = true
+process_callback = 0
+wait_time = 25.0
+one_shot = true
+
+[node name="ReplayManager" parent="_Control" instance=ExtResource("2_u4tgh")]
+unique_name_in_owner = true
 
 [node name="Course" type="Node3D" parent="."]
 metadata/_edit_lock_ = true
@@ -53,21 +77,6 @@ current = true
 metadata/_edit_lock_ = true
 metadata/_edit_group_ = true
 
-[node name="StartTimer" type="Timer" parent="."]
-process_callback = 0
-wait_time = 3.0
-one_shot = true
-
-[node name="CountdownTimer" type="Timer" parent="."]
-process_callback = 0
-wait_time = 3.0
-one_shot = true
-
-[node name="NextRaceTimer" type="Timer" parent="."]
-process_callback = 0
-wait_time = 25.0
-one_shot = true
-
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("3_34w1p")
 
@@ -79,6 +88,6 @@ size = 600.0
 
 [node name="NetworkPathPoints" type="Node3D" parent="."]
 
-[connection signal="timeout" from="StartTimer" to="." method="_on_start_timer_timeout"]
-[connection signal="timeout" from="CountdownTimer" to="." method="_on_countdown_timer_timeout"]
-[connection signal="timeout" from="NextRaceTimer" to="." method="_on_next_race_timer_timeout"]
+[connection signal="timeout" from="_Control/StartTimer" to="." method="_on_start_timer_timeout"]
+[connection signal="timeout" from="_Control/CountdownTimer" to="." method="_on_countdown_timer_timeout"]
+[connection signal="timeout" from="_Control/NextRaceTimer" to="." method="_on_next_race_timer_timeout"]

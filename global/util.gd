@@ -202,6 +202,43 @@ func remove_children(node: Node) -> void:
 	for child in node.get_children():
 		child.queue_free()
 
+func save_string(path: String, data: String) -> void:
+	var store_file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
+	store_file.store_pascal_string(data)
+	store_file.close()
+
+func load_string(path: String) -> String:
+	var load_file: FileAccess = FileAccess.open(path, FileAccess.READ)
+	var data: String = load_file.get_pascal_string()
+	load_file.close()
+	return data
+
+func save_string_zip(path: String, data: String) -> void:
+	var writer := ZIPPacker.new()
+	var err := writer.open(path)
+	if err != OK:
+		print("ERR: Could not open zip file for writing " + path)
+		print(err)
+		return
+	
+	writer.start_file("data")
+	writer.write_file(data.to_utf8_buffer())
+	writer.close_file()
+	writer.close()
+	return
+
+func load_string_zip(path: String) -> String:
+	var reader := ZIPReader.new()
+	var err := reader.open(path)
+	if err != OK:
+		print("ERR: Could not open zip file for reading " + path)
+		print(err)
+		return ""
+	
+	var data := reader.read_file("data")
+	reader.close()
+	return data.get_string_from_utf8()
+
 func save_json(path: String, object: Variant) -> void:
 	var store_file: FileAccess = FileAccess.open(path, FileAccess.WRITE)
 	store_file.store_string(JSON.stringify(object))

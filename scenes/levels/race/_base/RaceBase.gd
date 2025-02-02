@@ -64,7 +64,7 @@ var cpu_avg_speed: float = 22.5
 
 var course_name: String = "default"
 
-@onready var countdown_timer: Timer = $CountdownTimer
+@onready var countdown_timer: Timer = %CountdownTimer
 
 var map_outline_color: Color = Color(0.37, 0.37, 0.37, 1.0)
 @export var map_outline_width: float = 2.5
@@ -126,6 +126,7 @@ var state: int = STATE_INITIAL
 
 @onready var map_camera: Camera3D = $MapCamera
 
+@onready var replay_manager: ReplayManager = %ReplayManager
 var replay: Array = []
 var replay_tick_interval: float = 3
 var replay_cur_tick: int = 0
@@ -296,16 +297,17 @@ func _process(delta: float) -> void:
 		UI.race_ui.update_countdown("")
 		
 	if state == STATE_COUNTING_DOWN:
-		advance_replay()
+		#advance_replay()
+		pass
 	
 	if state == STATE_RACE:
 		UI.race_ui.update_time(get_timer_seconds())
-		advance_replay()
+		#advance_replay()
 	
 	if state == STATE_SHOW_RANKINGS:
 		UI.race_ui.show_back_btn()
-		if !$NextRaceTimer.is_stopped():
-			UI.race_ui.update_timeleft($NextRaceTimer.time_left)
+		if !%NextRaceTimer.is_stopped():
+			UI.race_ui.update_timeleft(%NextRaceTimer.time_left)
 	
 	if spectate:
 		if !player_camera.target and players_dict:
@@ -433,8 +435,12 @@ func make_physical_item(key: String, player: Vehicle4) -> Node:
 	instance.world = self
 	physical_items[unique_key] = instance
 	$Items.add_child(instance)
+	
+	var spawn_data := {"uniqueId": unique_key, "type": key, "state": instance.get_state()}
 
-	Network.send_match_state(raceOp.CLIENT_SPAWN_ITEM, {"uniqueId": unique_key, "type": key, "state": instance.get_state()})
+	Network.send_match_state(raceOp.CLIENT_SPAWN_ITEM, spawn_data)
+	
+	replay_manager.spawn_item(spawn_data)
 
 	return instance
 
@@ -462,6 +468,8 @@ func spawn_physical_item(data: Dictionary):
 	physical_items[key] = instance
 	$Items.add_child(instance)
 	instance.set_state(item_state)
+	
+	replay_manager.spawn_item(data)
 
 
 func destroy_physical_item(key: String):
@@ -540,12 +548,16 @@ func _physics_process(_delta: float) -> void:
 				countdown_timer.start(3.0)
 			else:
 				countdown_timer.start(4.0)
+			replay_manager.setup_new_replay(self)
 			state = STATE_COUNTING_DOWN
 		STATE_RACE:
-			save_replay()
+			#save_replay()
+			replay_manager.save_state(self)
 		STATE_RACE_OVER:
-			save_replay(true)
-			write_replay()
+			#save_replay(true)
+			#write_replay()
+			replay_manager.save_state(self)
+			replay_manager.save_replay()
 			UI.race_ui.race_over()
 			if Global.MODE1 == Global.MODE1_OFFLINE:
 				# Race is over in offline mode.
@@ -557,7 +569,8 @@ func _physics_process(_delta: float) -> void:
 				change_state(STATE_JOINING_NEXT, join_next)
 			else:
 				UI.race_ui.race_over()
-				$NextRaceTimer.start(25)
+				# TODO: Make the server send how much time?
+				%NextRaceTimer.start(25)
 				state = STATE_SHOW_RANKINGS
 		STATE_SHOW_RANKINGS:
 			UI.race_ui.hide_time()
@@ -771,7 +784,9 @@ func check_finished():
 			state = STATE_RACE_OVER
 
 
-func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3):
+func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3, ignore_replay:=false):
+	if !ignore_replay:
+		replay_manager.spawn_vehicle(user_id, new_position, look_dir, up_dir)
 	var new_vehicle = player_scene.instantiate() as Vehicle4
 	players_dict[user_id] = new_vehicle
 	vehicles_node.add_child(new_vehicle)
@@ -1096,7 +1111,7 @@ func handle_race_start(data: Dictionary):
 	var tick_rate: int = data.tickRate as int
 
 	var seconds_left: float = Util.ticks_to_time_with_ping(ticks_to_start, tick_rate, pings[Network.session.user_id])
-	$StartTimer.start(seconds_left)
+	%StartTimer.start(seconds_left)
 
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):

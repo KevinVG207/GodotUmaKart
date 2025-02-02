@@ -14,7 +14,7 @@ lap_count = 1
 map_outline_width = 1.0
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
 
-[node name="Course" parent="." index="0"]
+[node name="Course" parent="." index="1"]
 metadata/_edit_group_ = true
 
 [node name="1test" parent="Course" index="0" instance=ExtResource("2_5k6we")]
@@ -24,7 +24,7 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 visible = false
 mesh = ExtResource("3_0eo7q")
 
-[node name="Checkpoints" parent="." index="2"]
+[node name="Checkpoints" parent="." index="3"]
 visible = false
 
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_864dc")]
@@ -55,7 +55,7 @@ is_key = true
 [node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_864dc")]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)
 
-[node name="EnemyPathPoints" parent="." index="3"]
+[node name="EnemyPathPoints" parent="." index="4"]
 visible = false
 
 [node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("4_qon5u")]
@@ -102,8 +102,5 @@ guaranteed_item = ExtResource("6_i62ff")
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)
 guaranteed_item = ExtResource("6_i62ff")
 
-[node name="CountdownTimer" parent="." index="14"]
-process_callback = 1
-
-[node name="MapCamera" parent="." index="17"]
+[node name="MapCamera" parent="." index="15"]
 size = 200.0
