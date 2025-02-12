@@ -14,7 +14,8 @@ func _physics_process(_delta: float) -> void:
 		var closest_point := path.to_global(curve.sample_baked(curve.get_closest_offset(local_pos)))
 		var diff := closest_point - vehicle.global_position
 		
-		if diff.length() > fall_distance:
+		if Util.v3_length_compare(diff, fall_distance) > 0:
+		# if diff.length() > fall_distance:
 			vehicle.respawn()
 		
 		new_params.direction = diff.normalized()

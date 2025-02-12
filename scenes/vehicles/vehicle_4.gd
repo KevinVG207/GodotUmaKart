@@ -468,7 +468,7 @@ func handle_countdown_gauge() -> void:
 
 func handle_sleep() -> void:
 	sleep = false
-	if !is_network and velocity.prop_vel.length() < 0.01 and prev_transform.origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
+	if !is_network and Util.v3_length_compare(velocity.prop_vel, 0.01) and prev_transform.origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
 		transform = prev_transform
 		sleep = true
 
@@ -686,7 +686,8 @@ func build_vehicle_collisions() -> void:
 		if do_damage_type != DamageType.NONE:
 			other.damage(do_damage_type)
 
-		if velocity.total().length() < other.velocity.total().length():
+		# if velocity.total().length() < other.velocity.total().length():
+		if Util.v3_length_compare_v3(velocity.total(), other.velocity.total()) < 0:
 			continue
 
 		var avg_point: Vector3 = Util.sum(colliding_vehicles[other]) / len(colliding_vehicles[other])
@@ -1165,7 +1166,8 @@ func apply_gravity() -> void:
 	velocity.rest_vel += gravity * delta
 
 	grav_component = velocity.grav_component(gravity)
-	if grav_component.length() >= terminal_velocity:
+	if Util.v3_length_compare(grav_component, terminal_velocity) >= 0:
+	# if grav_component.length() >= terminal_velocity:
 		velocity.rest_vel -= grav_component
 		velocity.rest_vel += gravity.normalized() * terminal_velocity
 
@@ -1317,7 +1319,8 @@ func apply_network_drift() -> void:
 
 	global_position += adjusted_movement
 	
-	if vertical_movement.length() > network.network_teleport_distance / 2 and !cpu_logic.moved_to_next:
+	if Util.v3_length_compare(vertical_movement, network.network_teleport_distance / 2) > 0 and !cpu_logic.moved_to_next:
+	# if vertical_movement.length() > network.network_teleport_distance / 2 and !cpu_logic.moved_to_next:
 		global_position = network_pos
 	
 	var cur_quat := Quaternion.from_euler(rotation)

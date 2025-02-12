@@ -66,7 +66,8 @@ var heads: Dictionary = {
 	"nice-nature": "res://assets/character/_nice-nature/head.tscn"
 }
 
-var selected_replay: String = "user://replays/Wicked_Woods/1738524227.sav"
+var selected_replay: String = ""
+#var selected_replay: String = "user://replays/Wicked_Woods/1738524227.sav"
 #var selected_replay: String = "user://replays/1test/1738524048.sav"
 
 func _enter_tree() -> void:

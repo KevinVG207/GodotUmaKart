@@ -295,3 +295,14 @@ func center_window(window_id: int = 0) -> void:
 	var new_pos := Vector2(pos.x + (siz.x - window_size.x) / 2, pos.y + (siz.y - window_size.y) / 2)
 
 	DisplayServer.window_set_position(new_pos, window_id)
+
+func v3_length_squared(v: Vector3) -> float:
+	return v.x * v.x + v.y * v.y + v.z * v.z
+
+func v3_length_compare(v: Vector3, length: float) -> float:
+	# Returns negative if v is shorter than length, 0 if equal, positive if longer
+	return v3_length_squared(v) - length * length
+
+func v3_length_compare_v3(v1: Vector3, v2: Vector3) -> float:
+	# Returns negative if v1 is shorter than v2, 0 if equal, positive if longer
+	return v3_length_squared(v1) - v3_length_squared(v2)

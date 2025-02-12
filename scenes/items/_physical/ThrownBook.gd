@@ -87,7 +87,8 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	if linear_velocity.normalized().dot(gravity.normalized()) > 0:
 		var vel_along_gravity := linear_velocity.project(gravity)
 		# Apply terminal velocity
-		if vel_along_gravity.length() > 20:
+		if Util.v3_length_compare(vel_along_gravity, 20) > 0:
+		# if vel_along_gravity.length() > 20:
 			linear_velocity = linear_velocity - vel_along_gravity + gravity.normalized() * 20
 	
 	angular_velocity = Vector3.ZERO
