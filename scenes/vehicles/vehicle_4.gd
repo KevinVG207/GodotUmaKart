@@ -298,12 +298,22 @@ var countdown_gauge_tick_size := 0.0
 
 var visual_event_queue := []
 
+static var failsafe_seconds: float = 10
+var failsafe_tick_max: int = 0
+var failsafe_tick: int = 0
+
+var prev_progress: float = -1000
+var cur_progress: float = -1000
+var max_progress: float = -1000
+
 func _ready() -> void:
 	# UI.show_race_ui()
 	
 	setup_floor_check_grid()
 	setup_head()
 	setup_colliders()
+
+	failsafe_tick_max = int(failsafe_seconds * Engine.physics_ticks_per_second)
 
 	setup_countdown_boost()
 
@@ -425,7 +435,9 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 
 	before_update.emit(delta)
 
+	update_progress()
 	handle_sleep()
+	handle_failsafe_timer()
 
 	if tick % 3 == 0:
 		visual_tick()
@@ -452,6 +464,30 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 
 	after_update.emit(delta)
 	return
+
+func update_progress() -> void:
+	prev_progress = cur_progress
+	cur_progress = world.get_vehicle_progress(self)
+	if cur_progress > max_progress:
+		max_progress = cur_progress
+
+func handle_failsafe_timer() -> void:
+	if !is_cpu or !started:
+		failsafe_tick = 0
+		return
+	
+	if (cur_progress - 100) >= max_progress:
+		failsafe_tick = 0
+		return
+	
+	if respawn_stage != RespawnStage.NONE:
+		failsafe_tick = 0
+		return
+	
+	failsafe_tick += 1
+
+	if failsafe_tick > failsafe_tick_max:
+		respawn()
 
 func handle_countdown_gauge() -> void:
 	if started:
@@ -492,6 +528,7 @@ func respawn() -> void:
 	else:
 		remove_item()
 	respawn_timer.start(respawn_time)
+	max_progress = 0
 	if is_player:
 		world.player_camera.do_respawn()
 
