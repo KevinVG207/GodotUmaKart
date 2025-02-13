@@ -301,10 +301,10 @@ var visual_event_queue := []
 static var failsafe_seconds: float = 10
 var failsafe_tick_max: int = 0
 var failsafe_tick: int = 0
+var failsafe_start_progress: float = -1000
 
 var prev_progress: float = -1000
 var cur_progress: float = -1000
-var max_progress: float = -1000
 
 func _ready() -> void:
 	# UI.show_race_ui()
@@ -468,19 +468,22 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 func update_progress() -> void:
 	prev_progress = cur_progress
 	cur_progress = world.get_vehicle_progress(self)
-	if cur_progress > max_progress:
-		max_progress = cur_progress
 
 func handle_failsafe_timer() -> void:
 	if !is_cpu or !started:
 		failsafe_tick = 0
 		return
 	
-	if (cur_progress - 100) >= max_progress:
+	if respawn_stage != RespawnStage.NONE:
 		failsafe_tick = 0
 		return
-	
-	if respawn_stage != RespawnStage.NONE:
+
+	if failsafe_tick == 0:
+		failsafe_start_progress = cur_progress
+
+	var diff := cur_progress - failsafe_start_progress
+
+	if diff > 0.5:
 		failsafe_tick = 0
 		return
 	
@@ -528,7 +531,6 @@ func respawn() -> void:
 	else:
 		remove_item()
 	respawn_timer.start(respawn_time)
-	max_progress = 0
 	if is_player:
 		world.player_camera.do_respawn()
 

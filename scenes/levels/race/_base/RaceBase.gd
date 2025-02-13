@@ -779,9 +779,9 @@ func handle_rankings() -> void:
 			
 		var cur_vehicle: Vehicle4 = players_dict[finish_order[cur_idx]]
 		
-		var end_position := Vector2(-403, 25 + (60+7)*cur_idx)
-		var start_position := end_position
-		start_position.x = 1000
+		var end_position = Vector2(-262, 16 + (40+5)*cur_idx)
+		var start_position = end_position
+		start_position.x = 800
 		var new_panel := rank_panel_scene.instantiate() as RankPanel
 		new_panel.set_rank(cur_idx)  # Util.make_ordinal(cur_idx+1)
 		new_panel.set_username(cur_vehicle.username)

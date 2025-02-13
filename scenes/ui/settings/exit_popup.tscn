@@ -22,8 +22,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
 color = Color(0.223529, 0.223529, 0.223529, 0.368627)
 
 [node name="PanelContainer" type="PanelContainer" parent="Background"]

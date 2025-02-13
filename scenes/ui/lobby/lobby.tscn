@@ -24,10 +24,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 38
-theme_override_constants/margin_top = 38
-theme_override_constants/margin_right = 38
-theme_override_constants/margin_bottom = 137
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 100
 metadata/_edit_lock_ = true
 
 [node name="PanelContainer" type="PanelContainer" parent="MarginContainer"]
@@ -47,11 +47,11 @@ columns = 2
 
 [node name="LobbyName" type="Label" parent="."]
 layout_mode = 0
-offset_left = 47.0
-offset_top = 45.0
-offset_right = 358.0
-offset_bottom = 108.0
-theme_override_font_sizes/font_size = 45
+offset_left = 34.0
+offset_top = 30.0
+offset_right = 241.0
+offset_bottom = 72.0
+theme_override_font_sizes/font_size = 30
 text = "LOBBY_LOBBY"
 metadata/_edit_lock_ = true
 
@@ -61,11 +61,11 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -46.0
-offset_top = 49.0
+offset_top = 40.0
 offset_right = 46.0
-offset_bottom = 102.0
+offset_bottom = 63.0
 grow_horizontal = 2
-theme_override_font_sizes/font_size = 38
+theme_override_font_sizes/font_size = 25
 horizontal_alignment = 1
 metadata/_edit_lock_ = true
 
@@ -74,17 +74,16 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -93.0
-offset_top = 44.0
-offset_right = -43.0
-offset_bottom = 79.0
+offset_left = -80.0
+offset_top = 26.0
+offset_right = -30.0
+offset_bottom = 61.0
 grow_horizontal = 0
 theme_override_font_sizes/font_size = 25
 text = "1:00"
 horizontal_alignment = 2
 
 [node name="MatchmakeButton" type="Button" parent="."]
-custom_minimum_size = Vector2(350, 0)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -99,13 +98,12 @@ grow_horizontal = 2
 grow_vertical = 0
 focus_neighbor_top = NodePath("../UsernameContainer/UsernameEdit")
 focus_neighbor_right = NodePath("../LeaveButton")
-theme_override_font_sizes/font_size = 38
+theme_override_font_sizes/font_size = 25
 text = "LOBBY_BTN_SEARCH"
 metadata/_edit_lock_ = true
 
 [node name="VoteButton" type="Button" parent="."]
 visible = false
-custom_minimum_size = Vector2(350, 0)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -119,13 +117,12 @@ offset_bottom = -40.31
 grow_horizontal = 2
 grow_vertical = 0
 focus_neighbor_right = NodePath("../LeaveButton")
-theme_override_font_sizes/font_size = 38
+theme_override_font_sizes/font_size = 25
 disabled = true
 text = "LOBBY_BTN_VOTE"
 metadata/_edit_lock_ = true
 
 [node name="LeaveButton" type="Button" parent="."]
-custom_minimum_size = Vector2(350, 0)
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -140,7 +137,7 @@ grow_horizontal = 2
 grow_vertical = 0
 focus_neighbor_left = NodePath("../MatchmakeButton")
 focus_neighbor_top = NodePath("../UsernameContainer/UsernameEdit")
-theme_override_font_sizes/font_size = 38
+theme_override_font_sizes/font_size = 25
 text = "LOBBY_BTN_BACK"
 
 [node name="VoteTimeout" type="Timer" parent="."]
@@ -176,15 +173,14 @@ alignment = 2
 
 [node name="Username" type="Label" parent="UsernameContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 30
 text = "LOBBY_USERNAME"
 
 [node name="UsernameEdit" parent="UsernameContainer" instance=ExtResource("3_l6cub")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(300, 0)
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 focus_neighbor_bottom = NodePath("../../LeaveButton")
-theme_override_font_sizes/font_size = 30
+theme_override_font_sizes/font_size = 20
 max_chars = 16
 
 [connection signal="pressed" from="MatchmakeButton" to="." method="_on_matchmake_button_pressed"]

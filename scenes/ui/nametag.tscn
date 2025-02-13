@@ -12,21 +12,19 @@ offset_bottom = 462.0
 script = ExtResource("1_6ywur")
 
 [node name="Username" type="Label" parent="."]
-layout_mode = 1
-offset_left = 16.0
-offset_top = -54.0
-offset_right = 192.0
-offset_bottom = -19.0
+layout_mode = 0
+offset_left = 12.0
+offset_top = -40.0
+offset_right = 107.0
+offset_bottom = -17.0
 theme_override_colors/font_outline_color = Color(0.485703, 0.485704, 0.485703, 1)
 theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 25
 text = "PLACEHOLDER"
 vertical_alignment = 2
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 0
-offset_left = 4.0
-offset_top = -3.0
-offset_right = 7.0
-offset_bottom = 19.0
+offset_left = 1.08
+offset_right = 3.08
+offset_bottom = 20.0
 rotation = -2.53073
