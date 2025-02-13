@@ -145,7 +145,8 @@ func _physics_process(delta: float) -> void:
 	if is_on_floor():
 		velocity = velocity - velocity.project(gravity)
 	
-	if velocity.length() < 0.01:
+	if Util.v3_length_compare(velocity, 0.01) < 0:
+	# if velocity.length() < 0.01:
 		velocity = Vector3(0.1, 0.1, 0.1)
 	
 	look_at(global_position + velocity.normalized(), -gravity.normalized())

@@ -31,6 +31,8 @@ const MODE2_MISSION = 3
 var MODE1: int = MODE1_OFFLINE
 var MODE2: int = MODE2_RACE
 
+var save_on_exit := true
+
 var trick_col_to_node = {
 	"trick": "NormalBoostTimer",
 	"small_trick": "SmallBoostTimer"
@@ -63,6 +65,10 @@ var heads: Dictionary = {
 	"special-week": "res://assets/character/head.tscn",
 	"nice-nature": "res://assets/character/_nice-nature/head.tscn"
 }
+
+var selected_replay: String = ""
+#var selected_replay: String = "user://replays/Wicked_Woods/1738524227.sav"
+#var selected_replay: String = "user://replays/1test/1738524048.sav"
 
 func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
@@ -105,6 +111,8 @@ func setup_items() -> void:
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		await Network.on_exit_async()
+		if save_on_exit:
+			Config.save_config(Config.make_config())
 		get_tree().quit()
 
 func _input(event: InputEvent) -> void:

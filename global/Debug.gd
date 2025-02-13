@@ -14,7 +14,7 @@ func print(input):
 	input = str(input)
 	var lines: PackedStringArray = rtl.text.split("\n")
 	lines.insert(0, input)
-	rtl.text = "\n".join(lines.slice(0, 10))
+	rtl.text = "\n".join(lines.slice(0, 15))
 	$EraseTimer.start()
 
 func _on_erase_timer_timeout():

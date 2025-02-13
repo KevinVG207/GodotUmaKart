@@ -43,6 +43,7 @@ func setup() -> void:
 	hide_race_over()
 	hide_roulette()
 	hide_time()
+	remove_all_nametags()
 	for c: Control in $Rankings.get_children():
 		c.queue_free()
 	back_btn.visible = false
@@ -239,6 +240,10 @@ func remove_nametag(user_id: String):
 		var nt = nametags[user_id]
 		nametags.erase(user_id)
 		nt.queue_free()
+
+func remove_all_nametags() -> void:
+	for key: String in nametags:
+		remove_nametag(key)
 
 func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle4, cam: Camera3D, delta: float):
 	if not object in alert_dict:

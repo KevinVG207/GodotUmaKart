@@ -26,6 +26,7 @@ func first_time_setup() -> void:
 
 func focus():
 	%BtnApply.grab_focus()
+	Global.save_on_exit = false
 
 func setup() -> void:
 	# Clear containers
@@ -50,10 +51,13 @@ func setup() -> void:
 	add_audio()
 
 
-func add_config_cyclesetting(container: VBoxContainer, config_array: Array, default: int, label_str: String, change_func: Callable) -> void:
+func add_config_cyclesetting(container: VBoxContainer, config_array: Array, default: int, label_str: String, change_func: Callable, direct_to_string: bool=false) -> void:
 	var ele: CycleSetting = SETTING_CYCLE.instantiate()
 	for i in range(len(config_array)):
-		ele.add_item(label_str + "_%d"%i)
+		var label: String = str(config_array[i])
+		if !direct_to_string:
+			label = label_str + "_%d"%i
+		ele.add_item(label)
 	ele.select(default)
 	ele.item_selected.connect(change_func)
 	add_setting(container, ele, label_str)
@@ -82,6 +86,9 @@ func add_general() -> void:
 func add_graphics() -> void:
 	# Window/fullscreen setting
 	add_config_cyclesetting(%Graphics, Config.window_modes, Config.window_mode, "SETTING_WINDOWMODE", _on_windowmode_change)
+	
+	# Monitor selection (visually offset by +1 for user-friendliness)
+	add_config_cyclesetting(%Graphics, range(1, DisplayServer.get_screen_count()+1), Config.current_screen_id, "SETTING_SCREEN_ID", _on_screen_id_change, true)
 	
 	# Vsync mode
 	add_config_cyclesetting(%Graphics, Config.vsync_modes, Config.vsync_mode, "SETTING_VSYNC", _on_vsync_change)
@@ -161,6 +168,7 @@ func _on_btn_apply_pressed() -> void:
 	Config.update_bindings()
 	given_focus = false
 	back.emit()
+	Global.save_on_exit = true
 
 
 func _on_btn_cancel_pressed() -> void:
@@ -173,6 +181,9 @@ func _on_language_change(index: int, _text: String) -> void:
 
 func _on_windowmode_change(index: int, _text: String) -> void:
 	Config.window_mode = index
+
+func _on_screen_id_change(index: int, _text: String) -> void:
+	Config.current_screen_id = index
 
 func _on_maxfps_change(index: int, _text: String) -> void:
 	Config.max_fps_mode = index

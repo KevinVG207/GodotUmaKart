@@ -48,11 +48,12 @@ func _process(_delta: float) -> void:
 		disable()
 		return
 
-func _on_btn_pause_continue_button_down() -> void:
-	disable()
-
 
 func _on_btn_pause_exit_button_down() -> void:
 	disable_buttons()
 	Global.menu_start_cam = mainmenu_cam_str
 	UI.change_scene(mainmenu_scene)
+
+
+func _on_btn_pause_continue_button_down() -> void:
+	disable()

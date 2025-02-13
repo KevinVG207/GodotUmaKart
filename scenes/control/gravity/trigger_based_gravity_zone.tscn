@@ -1,0 +1,59 @@
+[gd_scene load_steps=6 format=3 uid="uid://cpcbrivn0jwg5"]
+
+[ext_resource type="Script" path="res://scenes/control/gravity/trigger_based_gravity_zone.gd" id="2_lxqp1"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6k41s"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fbiqv"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qa4hw"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pkoec"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[node name="TriggerBasedGravityZone" type="Node3D"]
+script = ExtResource("2_lxqp1")
+
+[node name="AreaStart1" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 20)
+collision_layer = 2
+collision_mask = 14
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AreaStart1"]
+shape = SubResource("BoxShape3D_6k41s")
+
+[node name="AreaEnd1" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
+collision_layer = 2
+collision_mask = 14
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AreaEnd1"]
+shape = SubResource("BoxShape3D_fbiqv")
+
+[node name="AreaStart2" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20)
+collision_layer = 2
+collision_mask = 14
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AreaStart2"]
+shape = SubResource("BoxShape3D_qa4hw")
+
+[node name="AreaEnd2" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -30)
+collision_layer = 2
+collision_mask = 14
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AreaEnd2"]
+shape = SubResource("BoxShape3D_pkoec")
+
+[connection signal="body_entered" from="AreaStart1" to="." method="_on_body_start_entered"]
+[connection signal="body_entered" from="AreaEnd1" to="." method="_on_body_exit_entered"]
+[connection signal="body_entered" from="AreaStart2" to="." method="_on_body_start_entered"]
+[connection signal="body_entered" from="AreaEnd2" to="." method="_on_body_exit_entered"]

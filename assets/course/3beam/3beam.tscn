@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cw3524imqeugj"]
+
+[ext_resource type="PackedScene" uid="uid://bexvfry64dbyl" path="res://assets/course/3beam/3beam.blend" id="1_wcuin"]
+
+[node name="3beam" instance=ExtResource("1_wcuin")]
+
+[node name="StaticBody3D" parent="wall" index="0" groups=["col_wall"]]
+
+[node name="StaticBody3D" parent="road" index="0" groups=["col_floor"]]

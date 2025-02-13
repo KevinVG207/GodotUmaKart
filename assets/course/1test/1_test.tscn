@@ -1,11 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://xsnx2ivfgbbr"]
+[gd_scene load_steps=3 format=3 uid="uid://xsnx2ivfgbbr"]
 
 [ext_resource type="PackedScene" uid="uid://bh0j3hp34cn23" path="res://assets/course/1test/1test.blend" id="1_or65s"]
+[ext_resource type="ArrayMesh" uid="uid://dlyuwsp1u3v8s" path="res://scenes/levels/race/_1test/map_mash.tres" id="2_pkuhf"]
 
 [node name="1test" instance=ExtResource("1_or65s")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
 [node name="StaticBody3D" parent="grass" index="0" groups=["col_floor", "col_offroad"]]
+
+[node name="road" parent="." index="1"]
+mesh = ExtResource("2_pkuhf")
 
 [node name="StaticBody3D" parent="road" index="0" groups=["col_floor"]]
 

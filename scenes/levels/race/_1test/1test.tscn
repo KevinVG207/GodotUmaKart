@@ -1,22 +1,65 @@
-[gd_scene load_steps=8 format=3 uid="uid://tgm0tkbghr0c"]
+[gd_scene load_steps=11 format=3 uid="uid://tgm0tkbghr0c"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_2vsv6"]
 [ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_5k6we"]
+[ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/_1test/1test_map_Circle_001.res" id="3_0eo7q"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_864dc"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_qon5u"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_jv31a"]
 [ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="6_i62ff"]
 [ext_resource type="PackedScene" uid="uid://i7r86beliswl" path="res://scenes/items/3carrots.tscn" id="7_pi034"]
 
+[sub_resource type="BoxMesh" id="BoxMesh_hkgbi"]
+size = Vector3(5, 3, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5tueu"]
+size = Vector3(5, 3, 1)
+
 [node name="1test" instance=ExtResource("1_2vsv6")]
 lap_count = 1
+map_outline_width = 1.0
+map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
 
-[node name="Course" parent="." index="0"]
+[node name="Course" parent="." index="1"]
 metadata/_edit_group_ = true
 
 [node name="1test" parent="Course" index="0" instance=ExtResource("2_5k6we")]
 
-[node name="Checkpoints" parent="." index="2"]
+[node name="MapMesh" parent="Course" index="1"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+visible = false
+mesh = ExtResource("3_0eo7q")
+
+[node name="Node3D" type="Node3D" parent="Objects" index="0"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 24.9996, 0, -10.8081)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Objects/Node3D" index="0" groups=["col_wall"]]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Objects/Node3D/StaticBody3D" index="0"]
+mesh = SubResource("BoxMesh_hkgbi")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/Node3D/StaticBody3D" index="1"]
+shape = SubResource("BoxShape3D_5tueu")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="Objects/Node3D" index="1" groups=["col_wall"]]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -2.83846, 0, 2.67159)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Objects/Node3D/StaticBody3D2" index="0"]
+mesh = SubResource("BoxMesh_hkgbi")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/Node3D/StaticBody3D2" index="1"]
+shape = SubResource("BoxShape3D_5tueu")
+
+[node name="StaticBody3D3" type="StaticBody3D" parent="Objects/Node3D" index="2" groups=["col_wall"]]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 2.72704, 0, 2.67159)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Objects/Node3D/StaticBody3D3" index="0"]
+mesh = SubResource("BoxMesh_hkgbi")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/Node3D/StaticBody3D3" index="1"]
+shape = SubResource("BoxShape3D_5tueu")
+
+[node name="Checkpoints" parent="." index="3"]
 visible = false
 
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_864dc")]
@@ -47,7 +90,7 @@ is_key = true
 [node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_864dc")]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)
 
-[node name="EnemyPathPoints" parent="." index="3"]
+[node name="EnemyPathPoints" parent="." index="4"]
 visible = false
 
 [node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("4_qon5u")]
@@ -94,8 +137,5 @@ guaranteed_item = ExtResource("6_i62ff")
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)
 guaranteed_item = ExtResource("6_i62ff")
 
-[node name="CountdownTimer" parent="." index="14"]
-process_callback = 1
-
-[node name="MapCamera" parent="." index="17"]
+[node name="MapCamera" parent="." index="15"]
 size = 200.0

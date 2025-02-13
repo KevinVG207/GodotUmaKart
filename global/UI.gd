@@ -78,7 +78,7 @@ func start_loading_scene():
 	if is_loading or not _next_scene:
 		return
 	is_loading = true
-	ResourceLoader.load_threaded_request(_next_scene)
+	ResourceLoader.load_threaded_request(_next_scene, "", true)
 
 func _on_scene_transition_middle():
 	start_loading_scene()

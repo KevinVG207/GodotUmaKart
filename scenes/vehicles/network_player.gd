@@ -131,7 +131,8 @@ func should_teleport_to_network(network_pos: Vector3) -> bool:
 		return true
 		
 	var grav_component := (vehicle.global_position - network_pos).project(vehicle.gravity)
-	if grav_component.length() > network_teleport_distance / 3:
+	if Util.v3_length_compare(grav_component, network_teleport_distance / 3) > 0:
+	# if grav_component.length() > network_teleport_distance / 3:
 		return true
 	return false
 

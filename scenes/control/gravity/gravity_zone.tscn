@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cqng3bjv7wadr"]
+
+[ext_resource type="Script" path="res://scenes/control/gravity/gravity_zone.gd" id="1_m81ic"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sxxes"]
+resource_local_to_scene = true
+size = Vector3(50, 50, 50)
+
+[node name="GravityZone" type="Area3D"]
+collision_layer = 2
+collision_mask = 14
+script = ExtResource("1_m81ic")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_sxxes")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

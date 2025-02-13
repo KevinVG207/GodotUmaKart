@@ -1,5 +1,7 @@
 extends Area3D
 
+class_name WaterArea
+
 func _on_body_entered(body: Node) -> void:
 	if "water_entered" in body:
 		body.water_entered(self)

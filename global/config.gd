@@ -36,6 +36,16 @@ var window_mode: int = 0:
 		window_mode = value
 		DisplayServer.window_set_mode(window_modes[value])
 
+		if window_mode == 0:
+			_on_windowed_mode()
+
+var current_screen_id: int:
+	set(value):
+		if value < 0 or value >= DisplayServer.get_screen_count():
+			return
+		DisplayServer.window_set_current_screen(value, 0)
+	get():
+		return DisplayServer.window_get_current_screen(0)
 
 var max_fps_modes := [
 	60,
@@ -84,6 +94,7 @@ func make_config() -> Dictionary:
 	
 	config.language = locales[cur_locale]
 	config.window_mode = window_mode
+	config.current_screen_id = current_screen_id
 	config.max_fps_mode = max_fps_mode
 	config.vsync_mode = vsync_mode
 	config.online_username = online_username
@@ -102,6 +113,9 @@ func apply_config(config: Dictionary) -> void:
 			cur_locale = loc_idx
 	if "window_mode" in config:
 		window_mode = config.window_mode
+	if "current_screen_id" in config:
+		print("Setting current screen id: ", config.current_screen_id)
+		current_screen_id = config.current_screen_id
 	if "max_fps_mode" in config:
 		max_fps_mode = config.max_fps_mode
 	if "vsync_mode" in config:
@@ -256,3 +270,11 @@ func _ready() -> void:
 			apply_bindings(binds)
 	
 	save_bindings(current_bindings)
+
+	if window_mode == 0:
+		_on_windowed_mode()
+
+func _on_windowed_mode() -> void:
+	# Set window size to 1280x720
+	DisplayServer.window_set_size(Vector2i(1280, 720))
+	Util.center_window()

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://d01ajbl5oevb7"]
+
+[ext_resource type="Script" path="res://scenes/control/replay_manager.gd" id="1_2h0yq"]
+
+[node name="ReplayManager" type="Node"]
+script = ExtResource("1_2h0yq")

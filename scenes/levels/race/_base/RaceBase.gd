@@ -39,7 +39,9 @@ var lobby_cam_str: String = "%CamTrunk"
 var lobby_scene: String = "res://scenes/ui/academy/menu_academy.tscn"
 
 @export var lap_count: int = 3
-var finished = false
+var finished := false
+
+@export var base_gravity := Vector3(0, -18, 0)
 
 var path_point_scene: PackedScene = preload("res://scenes/control/path/EnemyPath.tscn")
 
@@ -62,8 +64,14 @@ var cpu_avg_speed: float = 22.5
 
 var course_name: String = "default"
 
-@onready var countdown_timer: Timer = $CountdownTimer
+@onready var countdown_timer: Timer = %CountdownTimer
 
+var map_outline_color: Color = Color(0.37, 0.37, 0.37, 1.0)
+@export var map_outline_width: float = 2.5
+@export var map_mesh_instances: Array[NodePath] = []
+var map_mesh_material: ShaderMaterial = preload("res://scenes/levels/race/_base/MapMaterial.tres")
+
+@export var fall_failsafe: float = -100
 
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
@@ -114,15 +122,26 @@ const UPDATE_STATES = [
 	STATE_JOIN_NEXT
 ]
 
+const REPLAY_STATES = [
+	STATE_COUNTING_DOWN,
+	STATE_RACE,
+	STATE_RACE_OVER,
+	STATE_READY_FOR_RANKINGS,
+	STATE_SHOW_RANKINGS
+]
+
 var state: int = STATE_INITIAL
 
 @onready var map_camera: Camera3D = $MapCamera
 
-var replay: Array = []
-var replay_tick_interval: float = 3
-var replay_cur_tick: int = 0
-var replay_last_time: float = -1
-var replay_tick_max_time: float = 0
+@onready var replay_manager: ReplayManager = %ReplayManager
+@onready var replay_vehicles: Node3D = $ReplayVehicles
+
+# var replay: Array = []
+# var replay_tick_interval: float = 3
+# var replay_cur_tick: int = 0
+# var replay_last_time: float = -1
+# var replay_tick_max_time: float = 0
 
 var loaded_replay: Array = []
 var loaded_replay_idx: int = 0
@@ -133,8 +152,8 @@ func _ready() -> void:
 	
 	# Setup ticks
 	Engine.physics_ticks_per_second = 180
-	replay_tick_interval = 6
-	replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
+	# replay_tick_interval = 6
+	# replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
 	frames_between_update = int(float(Engine.physics_ticks_per_second) / updates_to_server_per_second)
 	
 	#load_replay("user://replays/1test/1725744856.sav")
@@ -157,18 +176,34 @@ func _ready() -> void:
 	set_course_length()  # This also sets up checkpoint lengths.
 	
 	setup_enemy_path()
+
+	setup_map_meshes()
 	
 	#minimap_recursive($Course)
-	$Course/MapMesh.visible = true
+	# $Course/MapMesh.visible = true
 	UI.race_ui.set_map_camera(map_camera)
 	UI.race_ui.set_startline(checkpoints[0])
 
+	if Global.selected_replay:
+		replay_manager.load_replay(Global.selected_replay, self)
+		Global.selected_replay = ""
+
+func setup_map_meshes() -> void:
+	for path: NodePath in map_mesh_instances:
+		var mesh: MeshInstance3D = get_node(path)
+		mesh.layers = 0
+		mesh.set_layer_mask_value(19, true)
+		mesh.visible = true
+		map_mesh_material.set_shader_parameter("color", map_outline_color)
+		map_mesh_material.set_shader_parameter("outline_thickness", map_outline_width)
+		mesh.material_override = map_mesh_material
+
 func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 	var root: bool = len(prev_points) == 0
-	var path_points = parent.get_children()
-	var initial_points = []
+	var path_points := parent.get_children()
+	var initial_points := []
 	for i in range(len(path_points)):
-		var cur_point = path_points[i]
+		var cur_point := path_points[i]
 		
 		if i == 1:
 			initial_points = prev_points
@@ -182,12 +217,12 @@ func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 		
 		all_path_points.append(cur_point)
 		
-		for point in prev_points:
+		for point: EnemyPath in prev_points:
 			point.next_points.append(cur_point)
 		
 		prev_points = [cur_point]
 		
-		var next_i = i+1
+		var next_i := i+1
 		if next_i >= path_points.size():
 			if root:
 				cur_point.next_points = initial_points
@@ -197,8 +232,8 @@ func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 	return prev_points
 
 
-func setup_enemy_path():
-	var last_point: Array = recursive_path_link($EnemyPathPoints, [])
+func setup_enemy_path() -> void:
+	recursive_path_link($EnemyPathPoints, [])
 	
 	# Set up prev_points
 	for point: EnemyPath in all_path_points:
@@ -210,7 +245,7 @@ func setup_enemy_path():
 		var avg_normal: Vector3 = Util.sum(normals) / normals.size()
 		point.normal = avg_normal
 
-func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath):
+func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath) -> EnemyPath:
 	var cur_leaves: Array = target_point.prev_points
 	
 	while true:
@@ -222,9 +257,13 @@ func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath):
 				return leaf
 			new_leaves += leaf.prev_points
 		cur_leaves = new_leaves
+	
+	Debug.print("PANIC: Could not pick next point to target!")
+	print("PANIC: Could not pick next point to target!")
+	return cur_point
 
 
-func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false):
+func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false) -> EnemyPath:
 	var next_points: Array = cur_point.next_points
 	return next_points.pick_random()
 	
@@ -238,7 +277,7 @@ func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false):
 			#closest_pt = point
 	#return closest_pt
 
-func get_timer_seconds():
+func get_timer_seconds() -> float:
 	if race_start_time == 0:
 		return 0.0
 	return (Time.get_ticks_usec() - race_start_time) / 1000000.0
@@ -272,16 +311,17 @@ func _process(delta: float) -> void:
 		UI.race_ui.update_countdown("")
 		
 	if state == STATE_COUNTING_DOWN:
-		advance_replay()
+		#advance_replay()
+		pass
 	
 	if state == STATE_RACE:
 		UI.race_ui.update_time(get_timer_seconds())
-		advance_replay()
+		#advance_replay()
 	
 	if state == STATE_SHOW_RANKINGS:
 		UI.race_ui.show_back_btn()
-		if !$NextRaceTimer.is_stopped():
-			UI.race_ui.update_timeleft($NextRaceTimer.time_left)
+		if !%NextRaceTimer.is_stopped():
+			UI.race_ui.update_timeleft(%NextRaceTimer.time_left)
 	
 	if spectate:
 		if !player_camera.target and players_dict:
@@ -320,19 +360,19 @@ func _process(delta: float) -> void:
 			exclude_list.append(vehicle.get_rid())
 			
 		var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-		var nt_deadzone_sides = viewport_size.x / 10
-		var nt_deadzone_top = viewport_size.y / 14
-		var nt_deadzone_bottom = viewport_size.y / 3
+		var nt_deadzone_sides := viewport_size.x / 10
+		var nt_deadzone_top := viewport_size.y / 14
+		var nt_deadzone_bottom := viewport_size.y / 3
 		
 		for user_id: String in players_dict.keys():
-			var vehicle = players_dict[user_id] as Vehicle4
+			var vehicle := players_dict[user_id] as Vehicle4
 			if vehicle == player_vehicle:
 				continue
-			var nametag_pos = vehicle.transform.origin + (player_camera.transform.basis.y * 1.5) as Vector3
+			var nametag_pos := vehicle.transform.origin + (player_camera.transform.basis.y * 1.5) as Vector3
 			#var second_check = nametag_pos + (player_camera.transform.basis.z * -5.0)
-			var dist = nametag_pos.distance_to(player_camera.global_position)
-			var tag_visible = true
-			var force = false
+			var dist := nametag_pos.distance_to(player_camera.global_position)
+			var tag_visible := true
+			var force := false
 			#if dist > 75 or player_camera.is_position_behind(second_check):
 			if dist > 75:
 				tag_visible = false
@@ -343,16 +383,16 @@ func _process(delta: float) -> void:
 			
 			# Raycast between camera pos and nametag_pos. If anything is in-between, don't render the nametag.
 			if tag_visible:
-				var ray_result = space_state.intersect_ray(PhysicsRayQueryParameters3D.create(player_camera.global_position, nametag_pos, 0xFFFFFFFF, exclude_list))
+				var ray_result := space_state.intersect_ray(PhysicsRayQueryParameters3D.create(player_camera.global_position, nametag_pos, 0xFFFFFFFF, exclude_list))
 				if ray_result:
 					tag_visible = false
 			
-			var screen_pos = player_camera.unproject_position(nametag_pos)
+			var screen_pos := player_camera.unproject_position(nametag_pos)
 
 			if screen_pos.x < nt_deadzone_sides or screen_pos.x > viewport_size.x - nt_deadzone_sides or screen_pos.y < nt_deadzone_top or screen_pos.y > viewport_size.y - nt_deadzone_bottom:
 				tag_visible = false
 				
-			var opacity = 1.0
+			var opacity := 1.0
 			if dist > 60:
 				opacity = remap(dist, 60, 75, 1.0, 0.0)
 			
@@ -409,8 +449,12 @@ func make_physical_item(key: String, player: Vehicle4) -> Node:
 	instance.world = self
 	physical_items[unique_key] = instance
 	$Items.add_child(instance)
+	
+	var spawn_data := {"uniqueId": unique_key, "type": key, "state": instance.get_state()}
 
-	Network.send_match_state(raceOp.CLIENT_SPAWN_ITEM, {"uniqueId": unique_key, "type": key, "state": instance.get_state()})
+	Network.send_match_state(raceOp.CLIENT_SPAWN_ITEM, spawn_data)
+	
+	replay_manager.spawn_item(spawn_data)
 
 	return instance
 
@@ -438,6 +482,8 @@ func spawn_physical_item(data: Dictionary):
 	physical_items[key] = instance
 	$Items.add_child(instance)
 	instance.set_state(item_state)
+	
+	replay_manager.spawn_item(data)
 
 
 func destroy_physical_item(key: String):
@@ -516,24 +562,33 @@ func _physics_process(_delta: float) -> void:
 				countdown_timer.start(3.0)
 			else:
 				countdown_timer.start(4.0)
+			replay_manager.setup_new_replay(self)
 			state = STATE_COUNTING_DOWN
-		STATE_RACE:
-			save_replay()
+		# STATE_COUNTING_DOWN:
+		# 	handle_replay()
+		# STATE_RACE:
+			#save_replay()
 		STATE_RACE_OVER:
-			save_replay(true)
-			write_replay()
+			#save_replay(true)
+			#write_replay()
+			
 			UI.race_ui.race_over()
 			if Global.MODE1 == Global.MODE1_OFFLINE:
 				# Race is over in offline mode.
 				# Here we prepare the finishing times for all the CPUs and then show the rankings.
 				setup_finish_order()
 				state = STATE_SHOW_RANKINGS
+			
+			save_finish_times_to_replay()
+			replay_manager.save_state(self)
+			replay_manager.save_replay()
 		STATE_READY_FOR_RANKINGS:
 			if spectate:
 				change_state(STATE_JOINING_NEXT, join_next)
 			else:
 				UI.race_ui.race_over()
-				$NextRaceTimer.start(25)
+				# TODO: Make the server send how much time?
+				%NextRaceTimer.start(25)
 				state = STATE_SHOW_RANKINGS
 		STATE_SHOW_RANKINGS:
 			UI.race_ui.hide_time()
@@ -568,78 +623,90 @@ func _physics_process(_delta: float) -> void:
 						send_item_state(item)
 		
 		check_finished()
+	
+	if state in REPLAY_STATES:
+		handle_replay()
 
-func save_replay(force: bool=false) -> void:
-	return
-	# TODO: Save all vehicles.
-	# TODO: Include items.
-	var cur_time: float = get_timer_seconds()
-	if cur_time - replay_last_time < replay_tick_max_time and !force:
-		return
-	
-	replay_last_time = cur_time
-	
-	var frame := {
-		"time": cur_time,
-		"vehicle": player_vehicle.get_replay_state()
-	}
-	
-	replay.append(frame)
+func handle_replay() -> void:
+	if state < STATE_RACE_OVER:
+		replay_manager.save_state(self)
+	replay_manager.advance_loaded_state(self)
 
-func advance_replay() -> void:
-	if loaded_replay_idx+1 >= len(loaded_replay):
-		return
-	
-	# Load frame
-	var cur_time: float = get_timer_seconds()
-	
-	if cur_time >= loaded_replay[loaded_replay_idx+1].time:
-		loaded_replay_idx += 1
-	
-	var cur_frame: Dictionary = loaded_replay[loaded_replay_idx]
-	var next_frame = cur_frame
-	
-	if loaded_replay_idx+1 < len(loaded_replay):
-		next_frame = loaded_replay[loaded_replay_idx+1]
-	
-	#if loaded_replay_idx+1 < len(loaded_replay) and cur_time >= loaded_replay[loaded_replay_idx+1].time:
-		#next_frame = loaded_replay[loaded_replay_idx+1]
-		#loaded_replay_idx += 1
-	
-	# Create new vehicle if needed
-	if loaded_replay_vehicle == null:
-		loaded_replay_vehicle = player_scene.instantiate() as Vehicle4
-		loaded_replay_vehicle.world = self
-		loaded_replay_vehicle.setup_replay()
-		$ReplayVehicles.add_child(loaded_replay_vehicle)
-	
-	# Apply frame
-	var frame_time: float = next_frame.time - cur_frame.time
-	var factor: float
-	if abs(frame_time) < 0.000001:
-		factor = 1.0
-	else:
-		factor = clamp((cur_time - cur_frame.time) / frame_time, 0, 1)
-		#print(factor, " ", cur_time, " ", cur_frame.time, " ", next_frame.time, " ", frame_time)
-	
-	loaded_replay_vehicle.apply_replay_state(cur_frame.vehicle)
-	loaded_replay_vehicle.global_position = Util.to_vector3(cur_frame.vehicle.pos).lerp(Util.to_vector3(next_frame.vehicle.pos), factor)
-	loaded_replay_vehicle.quaternion = Util.array_to_quat(cur_frame.vehicle.rot).slerp(Util.array_to_quat(next_frame.vehicle.rot), factor)
+func save_finish_times_to_replay() -> void:
+	for user_id: String in players_dict.keys():
+		replay_manager.set_finish_time(user_id, players_dict[user_id].finish_time)
 
-func write_replay() -> void:
-	if not replay:
-		return
+# func save_replay(force: bool=false) -> void:
+# 	return
+# 	# TODO: Save all vehicles.
+# 	# TODO: Include items.
+# 	var cur_time := get_timer_seconds()
+# 	if cur_time - replay_last_time < replay_tick_max_time and !force:
+# 		return
 	
-	# TODO: Include course name
-	var file: String = str(round(Time.get_unix_time_from_system()))
-	var dir: String = "user://replays/" + course_name
-	var path = dir + "/" + file + ".sav"
+# 	replay_last_time = cur_time
 	
-	DirAccess.make_dir_recursive_absolute(dir)
-	Util.save_var(path, replay)
+# 	var frame := {
+# 		"time": cur_time,
+# 		"vehicle": player_vehicle.get_replay_state()
+# 	}
+	
+# 	replay.append(frame)
 
-func load_replay(path: String) -> void:
-	loaded_replay = Util.load_var(path)
+# func advance_replay() -> void:
+# 	if loaded_replay_idx+1 >= len(loaded_replay):
+# 		return
+	
+# 	# Load frame
+# 	var cur_time := get_timer_seconds()
+	
+# 	if cur_time >= loaded_replay[loaded_replay_idx+1].time:
+# 		loaded_replay_idx += 1
+	
+# 	var cur_frame: Dictionary = loaded_replay[loaded_replay_idx]
+# 	var next_frame = cur_frame
+	
+# 	if loaded_replay_idx+1 < len(loaded_replay):
+# 		next_frame = loaded_replay[loaded_replay_idx+1]
+	
+# 	#if loaded_replay_idx+1 < len(loaded_replay) and cur_time >= loaded_replay[loaded_replay_idx+1].time:
+# 		#next_frame = loaded_replay[loaded_replay_idx+1]
+# 		#loaded_replay_idx += 1
+	
+# 	# Create new vehicle if needed
+# 	if loaded_replay_vehicle == null:
+# 		loaded_replay_vehicle = player_scene.instantiate() as Vehicle4
+# 		loaded_replay_vehicle.world = self
+# 		loaded_replay_vehicle.setup_replay()
+# 		$ReplayVehicles.add_child(loaded_replay_vehicle)
+	
+# 	# Apply frame
+# 	var frame_time: float = next_frame.time - cur_frame.time
+# 	var factor: float
+# 	if abs(frame_time) < 0.000001:
+# 		factor = 1.0
+# 	else:
+# 		factor = clamp((cur_time - cur_frame.time) / frame_time, 0, 1)
+# 		#print(factor, " ", cur_time, " ", cur_frame.time, " ", next_frame.time, " ", frame_time)
+	
+# 	loaded_replay_vehicle.apply_replay_state(cur_frame.vehicle)
+# 	loaded_replay_vehicle.global_position = Util.to_vector3(cur_frame.vehicle.pos).lerp(Util.to_vector3(next_frame.vehicle.pos), factor)
+# 	loaded_replay_vehicle.quaternion = Util.array_to_quat(cur_frame.vehicle.rot).slerp(Util.array_to_quat(next_frame.vehicle.rot), factor)
+
+# func write_replay() -> void:
+# 	if not replay:
+# 		return
+	
+# 	# TODO: Include course name
+# 	var file: String = str(round(Time.get_unix_time_from_system()))
+# 	var dir: String = "user://replays/" + course_name
+# 	var path = dir + "/" + file + ".sav"
+	
+# 	DirAccess.make_dir_recursive_absolute(dir)
+# 	Util.save_var(path, replay)
+
+# func load_replay(path: String) -> void:
+# 	loaded_replay = Util.load_var(path)
 
 func get_vehicle_distance_from_start(vehicle: Vehicle4) -> float:
 	var cur_check: Checkpoint = checkpoints[vehicle.check_idx]
@@ -699,7 +766,7 @@ func setup_finish_order() -> void:
 	finish_order = finished_vehicles
 	
 
-func handle_rankings():
+func handle_rankings() -> void:
 	if stop_rankings:
 		return
 	
@@ -715,7 +782,7 @@ func handle_rankings():
 		var end_position = Vector2(-262, 16 + (40+5)*cur_idx)
 		var start_position = end_position
 		start_position.x = 800
-		var new_panel = rank_panel_scene.instantiate() as RankPanel
+		var new_panel := rank_panel_scene.instantiate() as RankPanel
 		new_panel.set_rank(cur_idx)  # Util.make_ordinal(cur_idx+1)
 		new_panel.set_username(cur_vehicle.username)
 		new_panel.set_time(cur_vehicle.finish_time, cur_vehicle.finished)
@@ -725,7 +792,7 @@ func handle_rankings():
 			new_panel.set_border()
 		
 		UI.race_ui.get_node("Rankings").add_child(new_panel)
-		var tween = create_tween()
+		var tween := create_tween()
 		tween.tween_property(new_panel, "position", end_position, 0.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	
 	rankings_timer += 1
@@ -747,8 +814,10 @@ func check_finished():
 			state = STATE_RACE_OVER
 
 
-func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3):
-	var new_vehicle = player_scene.instantiate() as Vehicle4
+func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3, ignore_replay:=false):
+	# if !ignore_replay:
+	# 	replay_manager.spawn_vehicle(user_id, new_position, look_dir, up_dir)
+	var new_vehicle := player_scene.instantiate() as Vehicle4
 	players_dict[user_id] = new_vehicle
 	vehicles_node.add_child(new_vehicle)
 	new_vehicle.teleport(new_position, look_dir, up_dir)
@@ -792,22 +861,22 @@ func _remove_vehicle(user_id: String):
 		UI.race_ui.remove_nametag(user_id)
 
 
-func setup_vehicles():
-	var start_checkpoint = checkpoints[0] as Checkpoint
-	var start_position = start_checkpoint.global_position
-	var start_direction = -start_checkpoint.transform.basis.z
-	var side_direction = start_checkpoint.transform.basis.x
-	var up_dir = start_checkpoint.transform.basis.y
+func setup_vehicles() -> void:
+	var start_checkpoint := checkpoints[0] as Checkpoint
+	var start_position := start_checkpoint.global_position
+	var start_direction := -start_checkpoint.transform.basis.z
+	var side_direction := start_checkpoint.transform.basis.x
+	var up_dir := start_checkpoint.transform.basis.y
 	start_position += up_dir * 1.0
 
 	for i in range(starting_order.size()):
-		var user_id = starting_order[i]
+		var user_id: String = starting_order[i]
 		
-		var side_multi = 1
+		var side_multi := 1
 		if i % 2 == 1:
 			side_multi = -1
 
-		var cur_pos = start_position + start_offset_z * (i + 3) * start_direction + side_multi * start_offset_x * side_direction
+		var cur_pos := start_position + start_offset_z * (i + 3) * start_direction + side_multi * start_offset_x * side_direction
 		_add_vehicle(user_id, cur_pos, -start_direction, up_dir)
 
 func get_starting_order():
@@ -877,7 +946,7 @@ func get_vehicle_progress(vehicle: Vehicle4) -> float:
 	var cur_progress: float = 10000 * vehicle.lap + check_idx + vehicle.check_progress
 	return cur_progress
 
-func update_ranks():
+func update_ranks() -> void:
 	var ranks := []
 	var ranks_vehicles := []
 
@@ -909,7 +978,7 @@ func update_ranks():
 		ranks_vehicles.append(vehicle)
 	
 	
-	finished_vehicles.sort_custom(func(a, b): return a.finish_time < b.finish_time)
+	finished_vehicles.sort_custom(func(a: Vehicle4, b: Vehicle4) -> bool: return a.finish_time < b.finish_time)
 
 	finished_vehicles.append_array(ranks_vehicles)
 
@@ -924,7 +993,7 @@ func update_ranks():
 	# print("===")
 
 func check_advance(player: Vehicle4) -> bool:
-	var next_idx = player.check_idx+1 % len(checkpoints)
+	var next_idx := player.check_idx+1 % len(checkpoints)
 	if next_idx >= len(checkpoints):
 		next_idx -= len(checkpoints)
 	if dist_to_checkpoint(player, next_idx) < 0:
@@ -934,8 +1003,8 @@ func check_advance(player: Vehicle4) -> bool:
 	
 	# Don't advance to next key checkpoint if the previous key checkpoint wasn't reached
 	if next_checkpoint.is_key:
-		var cur_key_idx = key_checkpoints[next_checkpoint]
-		var prev_key_idx = cur_key_idx - 1
+		var cur_key_idx: int = key_checkpoints[next_checkpoint]
+		var prev_key_idx := cur_key_idx - 1
 		if prev_key_idx < 0:
 			prev_key_idx = key_checkpoints.size()-1
 		if prev_key_idx != player.check_key_idx and player.check_key_idx != cur_key_idx:
@@ -948,21 +1017,21 @@ func check_advance(player: Vehicle4) -> bool:
 		player.lap += 1
 		if not player.finished and player.lap > lap_count and not player.is_network:
 			# var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
-			var time_after_finish = get_timer_seconds()
+			var time_after_finish := get_timer_seconds()
 			
 			var finish_plane_normal: Vector3 = checkpoints[0].transform.basis.z
 			var vehicle_vel: Vector3 = player.prev_velocity.total()
-			var seconds_per_tick = 1.0/Engine.physics_ticks_per_second
+			var seconds_per_tick := 1.0/Engine.physics_ticks_per_second
 
 			# Determine the ratio of the vehicle_vel to the finish_plane_normal, and determine how much time it had taken to cross the finish line since the last frame
-			var final_time = time_after_finish - clamp(dist_to_checkpoint(player, 0) / vehicle_vel.project(finish_plane_normal).length(), 0, seconds_per_tick)
+			var final_time := time_after_finish - clampf(dist_to_checkpoint(player, 0) / vehicle_vel.project(finish_plane_normal).length(), 0, seconds_per_tick)
 			print("Finishing ", player.username, " with time ", final_time, " ", player.finish_time, " ", time_after_finish, " ", seconds_per_tick, " ", time_after_finish - final_time)
 			player.set_finished(final_time)
 	
 	return true
 
 func check_reverse(player: Vehicle4) -> bool:
-	var prev_idx = (player.check_idx - 1) % len(checkpoints)
+	var prev_idx := (player.check_idx - 1) % len(checkpoints)
 	if prev_idx < 0:
 		prev_idx = len(checkpoints) + prev_idx
 
@@ -971,11 +1040,11 @@ func check_reverse(player: Vehicle4) -> bool:
 
 	var prev_checkpoint: Checkpoint = checkpoints[prev_idx]
 	if prev_checkpoint.is_key:
-		var cur_key = player.check_key_idx
+		var cur_key := player.check_key_idx
 		
 		#Debug.print([cur_key, key_checkpoints[prev_checkpoint]])
-		var prev_key = key_checkpoints[prev_checkpoint]
-		var subtract = 0
+		var prev_key: int = key_checkpoints[prev_checkpoint]
+		var subtract := 0
 		if prev_key == 0:
 			subtract = key_checkpoints.size()
 			prev_key += subtract
@@ -995,7 +1064,7 @@ func check_reverse(player: Vehicle4) -> bool:
 	
 	return true
 
-func update_checkpoint(player: Vehicle4):
+func update_checkpoint(player: Vehicle4) -> void:
 	#if player.respawn_stage:
 		#return
 	
@@ -1006,7 +1075,7 @@ func update_checkpoint(player: Vehicle4):
 
 
 func dist_to_checkpoint(player: Vehicle4, checkpoint_idx: int) -> float:
-	var checkpoint = checkpoints[checkpoint_idx % len(checkpoints)] as Node3D
+	var checkpoint := checkpoints[checkpoint_idx % len(checkpoints)] as Node3D
 	return Util.dist_to_plane(checkpoint.transform.basis.z, checkpoint.global_position, player.get_node("%Front").global_position)
 
 
@@ -1019,7 +1088,8 @@ func progress_in_cur_checkpoint(player: Vehicle4) -> float:
 func get_respawn_point(vehicle: Vehicle4) -> Dictionary:
 	var out: Dictionary = {
 		"position": Vector3.ZERO,
-		"rotation": Vector3.ZERO
+		"rotation": Vector3.ZERO,
+		"gravity_zone": null
 	}
 	
 	var cur_checkpoint := checkpoints[vehicle.check_idx] as Checkpoint
@@ -1039,6 +1109,8 @@ func get_respawn_point(vehicle: Vehicle4) -> Dictionary:
 	
 	out.position = spawn_pos
 	out.rotation = cur_checkpoint.basis.get_euler()
+	
+	out.gravity_zone = cur_checkpoint.gravity_zone
 	
 	return out
 
@@ -1069,7 +1141,7 @@ func handle_race_start(data: Dictionary):
 	var tick_rate: int = data.tickRate as int
 
 	var seconds_left: float = Util.ticks_to_time_with_ping(ticks_to_start, tick_rate, pings[Network.session.user_id])
-	$StartTimer.start(seconds_left)
+	%StartTimer.start(seconds_left)
 
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):

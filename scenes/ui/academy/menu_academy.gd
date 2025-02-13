@@ -4,7 +4,7 @@ class_name MenuAcademy
 
 var traveling: bool = false
 var travel_time: float = 2.5
-@onready var cam: Camera3D = $ActiveCamera
+@onready var cam: Camera3D = %ActiveCamera
 var cam_follow: PathFollow3D
 var from_cam: MenuCam
 @onready var to_cam: MenuCam = %CamInitial
@@ -34,7 +34,7 @@ func _ready() -> void:
 
 
 func hide_cams():
-	for camera: MenuCam in $Menus.get_children():
+	for camera: MenuCam in %Menus.get_children():
 		camera.visible = false
 		#camera.click_area.input_ray_pickable = false
 
@@ -43,8 +43,8 @@ func _process(delta):
 		charas_spawned = true
 		for i in range(no_map_charas):
 			var instance: MapCharacter = map_character_scene.instantiate()
-			$Characters.add_child(instance)
-			instance.global_position = NavigationServer3D.map_get_random_point($NavigationRegion3D.get_navigation_map(), 1, true)
+			%Characters.add_child(instance)
+			instance.global_position = NavigationServer3D.map_get_random_point(%NavigationRegion3D.get_navigation_map(), 1, true)
 			#instance.global_position += Vector3.UP * 100.0
 	
 	if traveling:
@@ -158,7 +158,7 @@ func _input(event: InputEvent):
 
 
 func _on_ee_timer_timeout():
-	$Menus/CamInitial/SubViewport/CamInitialMenu/PressKey.text = "PRESS_ANY2"
+	%Menus/CamInitial/SubViewport/CamInitialMenu/PressKey.text = "PRESS_ANY2"
 
 
 func _on_lobby_back() -> void:

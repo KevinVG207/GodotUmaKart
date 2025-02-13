@@ -4,4 +4,5 @@
 resource_name = "border"
 cull_mode = 2
 diffuse_mode = 3
-roughness = 0.5
+specular_mode = 1
+roughness = 0.0

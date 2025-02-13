@@ -1,0 +1,195 @@
+[gd_scene load_steps=15 format=3 uid="uid://b722awfk5rbbi"]
+
+[ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_2asln"]
+[ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/_1test/1test_map_Circle_001.res" id="3_cnu52"]
+[ext_resource type="PackedScene" uid="uid://cw3524imqeugj" path="res://assets/course/3beam/3beam.tscn" id="3_t6h0d"]
+[ext_resource type="PackedScene" uid="uid://nwhlgc3bmk5w" path="res://scenes/control/gravity/curve_based_gravity_zone.tscn" id="4_baukt"]
+[ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="4_rx1am"]
+[ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="5_chgo6"]
+[ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="6_piut6"]
+[ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="7_xqyu1"]
+[ext_resource type="PackedScene" uid="uid://i7r86beliswl" path="res://scenes/items/3carrots.tscn" id="8_t36un"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uvfwg"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_kt0kd"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vcya8"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_y3inl"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="Curve3D" id="Curve3D_foogg"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 25.358, 0, 10, 0, 0, 0, 0, 0, -64.163, 25.3576, 0, -5.39019, 23.3353, 0, 13.4217, -16.6007, 0, -9.54822, -4.144, 0, -109.06, -25.7111, 0, 31.0308, 20.3534, 0, -24.5646, -48.3662, 0, -191.761, -21.9448, 0, -14.4209, 40.7115, 0, 26.7533, 37.276, 0, -188.168, -58.1317, 0, 1.78743, 0, 0, 0, 157.989, 0, -157.639, 0, 0, 0, 0, 0, 0, 170, 0, -157.639),
+"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0, 0)
+}
+point_count = 7
+
+[node name="1test" instance=ExtResource("1_2asln")]
+lap_count = 1
+map_outline_width = 1.0
+map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
+
+[node name="Course" parent="." index="0"]
+metadata/_edit_group_ = true
+
+[node name="MapMesh" parent="Course" index="0"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+visible = false
+mesh = ExtResource("3_cnu52")
+
+[node name="3beam" parent="Course" index="2" instance=ExtResource("3_t6h0d")]
+transform = Transform3D(-5.24537e-07, 0, 12, 0, 12, 0, -12, 0, -5.24537e-07, 25.2962, -11.6991, -40.5612)
+
+[node name="CurveBasedGravityZone" parent="Course/3beam" index="3" instance=ExtResource("4_baukt")]
+transform = Transform3D(-5.46392e-09, 0, -0.125, 0, 0.125, 0, 0.125, 0, -5.46392e-09, -4.21556, 0.883712, -3.16202)
+gravity_multiplier = 2.0
+
+[node name="AreaStart1" parent="Course/3beam/CurveBasedGravityZone" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.477, 0, -19.9671)
+
+[node name="CollisionShape3D" parent="Course/3beam/CurveBasedGravityZone/AreaStart1" index="0"]
+shape = SubResource("BoxShape3D_uvfwg")
+
+[node name="AreaEnd1" parent="Course/3beam/CurveBasedGravityZone" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.477, 0, -8.68661)
+
+[node name="CollisionShape3D" parent="Course/3beam/CurveBasedGravityZone/AreaEnd1" index="0"]
+shape = SubResource("BoxShape3D_kt0kd")
+
+[node name="AreaStart2" parent="Course/3beam/CurveBasedGravityZone" index="2"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 140.424, 0, -158.754)
+
+[node name="CollisionShape3D" parent="Course/3beam/CurveBasedGravityZone/AreaStart2" index="0"]
+shape = SubResource("BoxShape3D_vcya8")
+
+[node name="AreaEnd2" parent="Course/3beam/CurveBasedGravityZone" index="3"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 150.569, 0, -158.754)
+
+[node name="CollisionShape3D" parent="Course/3beam/CurveBasedGravityZone/AreaEnd2" index="0"]
+shape = SubResource("BoxShape3D_y3inl")
+
+[node name="Path3D" parent="Course/3beam/CurveBasedGravityZone" index="4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.07851, 0)
+curve = SubResource("Curve3D_foogg")
+
+[node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("4_rx1am")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 26, 0, 0)
+is_key = true
+
+[node name="Checkpoint2" parent="Checkpoints" index="1" node_paths=PackedStringArray("gravity_zone") instance=ExtResource("4_rx1am")]
+transform = Transform3D(-0.913325, 0, -0.407231, 0, 1, 0, 0.407231, 0, -0.913325, 15.4883, 0.979493, -103.684)
+gravity_zone = NodePath("../../Course/3beam/CurveBasedGravityZone")
+
+[node name="Checkpoint3" parent="Checkpoints" index="2" node_paths=PackedStringArray("gravity_zone") instance=ExtResource("4_rx1am")]
+transform = Transform3D(-0.67269, 0, -0.739925, 0, 1, 0, 0.739925, 0, -0.67269, -45.6708, 0.771091, -172.488)
+gravity_zone = NodePath("../../Course/3beam/CurveBasedGravityZone")
+
+[node name="Checkpoint4" parent="Checkpoints" index="3" node_paths=PackedStringArray("gravity_zone") instance=ExtResource("4_rx1am")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, -97.2738, 0.755141, -251.326)
+is_key = true
+gravity_zone = NodePath("../../Course/3beam/CurveBasedGravityZone")
+
+[node name="Checkpoint5" parent="Checkpoints" index="4" node_paths=PackedStringArray("gravity_zone") instance=ExtResource("4_rx1am")]
+transform = Transform3D(-0.189558, 0, 0.98187, 0, 1, 0, -0.98187, 0, -0.189558, -54.2713, 0.702513, -296.717)
+gravity_zone = NodePath("../../Course/3beam/CurveBasedGravityZone")
+
+[node name="Checkpoint6" parent="Checkpoints" index="5" node_paths=PackedStringArray("gravity_zone") instance=ExtResource("4_rx1am")]
+transform = Transform3D(0.344938, 0, 0.938625, 0, 1, 0, -0.938625, 0, 0.344938, 13.5771, 0.915937, -288.117)
+gravity_zone = NodePath("../../Course/3beam/CurveBasedGravityZone")
+
+[node name="Checkpoint7" parent="Checkpoints" index="6" node_paths=PackedStringArray("gravity_zone") instance=ExtResource("4_rx1am")]
+transform = Transform3D(0.38914, 0, 0.921179, 0, 1, 0, -0.921179, 0, 0.38914, 100.538, 0.859097, -244.159)
+gravity_zone = NodePath("../../Course/3beam/CurveBasedGravityZone")
+
+[node name="Checkpoint8" parent="Checkpoints" index="7" node_paths=PackedStringArray("gravity_zone") instance=ExtResource("4_rx1am")]
+transform = Transform3D(0.055386, 0, 0.998465, 0, 1, 0, -0.998465, 0, 0.055386, 182.72, 0.809558, -226.958)
+gravity_zone = NodePath("../../Course/3beam/CurveBasedGravityZone")
+
+[node name="Checkpoint9" parent="Checkpoints" index="8" instance=ExtResource("4_rx1am")]
+transform = Transform3D(0.0748395, 0, 0.997196, 0, 1, 0, -0.997196, 0, 0.0748395, 229.545, 0, -226.958)
+is_key = true
+
+[node name="Checkpoint10" parent="Checkpoints" index="9" instance=ExtResource("4_rx1am")]
+transform = Transform3D(0.292789, 0, 0.956177, 0, 1, 0, -0.956177, 0, 0.292789, 285.926, 0, -226.958)
+
+[node name="Checkpoint11" parent="Checkpoints" index="10" instance=ExtResource("4_rx1am")]
+transform = Transform3D(0.999767, 0, -0.0215881, 0, 1, 0, 0.0215881, 0, 0.999767, 315.497, 0, -192.08)
+
+[node name="Checkpoint12" parent="Checkpoints" index="11" instance=ExtResource("4_rx1am")]
+transform = Transform3D(0.849082, 0, -0.528261, 0, 1, 0, 0.528261, 0, 0.849082, 315.497, 0, 77.8458)
+
+[node name="Checkpoint13" parent="Checkpoints" index="12" instance=ExtResource("4_rx1am")]
+transform = Transform3D(0.0295265, 0, -0.999564, 0, 1, 0, 0.999564, 0, 0.0295265, 259.389, 0, 124.097)
+is_key = true
+
+[node name="Checkpoint14" parent="Checkpoints" index="13" instance=ExtResource("4_rx1am")]
+transform = Transform3D(-0.346838, 0, -0.937925, 0, 1, 0, 0.937925, 0, -0.346838, 112.295, 0, 162.008)
+
+[node name="Checkpoint15" parent="Checkpoints" index="14" instance=ExtResource("4_rx1am")]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 27.3742, 0, 99.0759)
+
+[node name="EnemyPathPoints" parent="." index="3"]
+visible = false
+
+[node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("5_chgo6")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 24.4533, 0.00012207, -1.62639)
+
+[node name="EnemyPath4" parent="EnemyPathPoints" index="1" instance=ExtResource("5_chgo6")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 16.8846, -0.00012207, -16.6743)
+
+[node name="EnemyPath7" parent="EnemyPathPoints" index="2" instance=ExtResource("5_chgo6")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0.378935, 0.00012207, -23.835)
+
+[node name="EnemyPath10" parent="EnemyPathPoints" index="3" instance=ExtResource("5_chgo6")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -17.6754, -0.000244141, -15.973)
+
+[node name="EnemyPath13" parent="EnemyPathPoints" index="4" instance=ExtResource("5_chgo6")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -24.1485, 0.00012207, -0.0945807)
+
+[node name="EnemyPath2" parent="EnemyPathPoints" index="5" instance=ExtResource("5_chgo6")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -17.2244, 0, 15.5187)
+
+[node name="EnemyPath3" parent="EnemyPathPoints" index="6" instance=ExtResource("5_chgo6")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -0.121189, 0.000244141, 23.9498)
+
+[node name="EnemyPath5" parent="EnemyPathPoints" index="7" instance=ExtResource("5_chgo6")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 18.7887, 0.000244141, 14.5551)
+
+[node name="ItemPickup" parent="." index="8" instance=ExtResource("6_piut6")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.7305, 1.90735e-06, -19.2348)
+guaranteed_item = ExtResource("7_xqyu1")
+
+[node name="ItemPickup2" parent="." index="9" instance=ExtResource("6_piut6")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.181, 1.90735e-06, -19.8046)
+guaranteed_item = ExtResource("8_t36un")
+
+[node name="ItemPickup3" parent="." index="10" instance=ExtResource("6_piut6")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 10.7742, -1.90735e-06, -23.0451)
+guaranteed_item = ExtResource("7_xqyu1")
+
+[node name="ItemPickup4" parent="." index="11" instance=ExtResource("6_piut6")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 14.0165, -1.90735e-06, -23.6097)
+guaranteed_item = ExtResource("7_xqyu1")
+
+[node name="ItemPickup5" parent="." index="12" instance=ExtResource("6_piut6")]
+transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)
+guaranteed_item = ExtResource("7_xqyu1")
+
+[node name="CountdownTimer" parent="." index="14"]
+process_callback = 1
+
+[node name="MapCamera" parent="." index="17"]
+size = 200.0
+
+[editable path="Course/3beam"]
+[editable path="Course/3beam/CurveBasedGravityZone"]

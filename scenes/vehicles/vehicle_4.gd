@@ -21,8 +21,8 @@ var world: RaceBase = null
 var physics_state: PhysicsDirectBodyState3D
 var prev_transform: Transform3D = Transform3D.IDENTITY
 
-var max_displacement_for_sleep := 0.003
-var max_degrees_change_for_sleep := 0.5
+static var max_displacement_for_sleep := 0.003
+static var max_degrees_change_for_sleep := 0.5
 
 @onready var respawn_timer: Timer = %RespawnTimer
 
@@ -47,7 +47,8 @@ var item: Node = null
 var can_use_item : = false
 var has_dragged_item := false
 
-var gravity := Vector3.DOWN * 18
+var gravity := Vector3.ZERO
+var gravity_zones: Dictionary = {}
 @export var terminal_velocity: float = 3000
 var air_frames := 0
 
@@ -182,8 +183,8 @@ var along_ground_dec := 5.0
 var min_angle_to_detach := 10.0
 
 var respawn_stage := RespawnStage.NONE
-var respawn_time: float = 3.5
-var respawn_stage2_time: float = 1.0
+static var respawn_time: float = 3.5
+static var respawn_stage2_time: float = 1.0
 var respawn_data := {}
 
 enum RespawnStage {
@@ -208,7 +209,7 @@ enum ContactType {
 	FALL
 }
 
-var floor_types := [
+static var floor_types := [
 	ContactType.UNKNOWN,
 	ContactType.FLOOR,
 	ContactType.TRICK,
@@ -263,10 +264,10 @@ var turn_speed := 0.0
 @export var base_turn_accel: float = 1800
 var turn_accel := base_turn_accel
 
-var replay_transparency := 0.75
+static var replay_transparency := 0.75
 var standard_colliders: Array = []
 
-var trick_safezone_frames := 30
+static var trick_safezone_frames := 30
 var trick_input_frames := 0
 var trick_timer := 0
 var trick_timer_length := int(180 * 0.4)
@@ -289,7 +290,7 @@ var in_water := false
 var water_bodies: Dictionary = {}
 
 var countdown_gauge := 0.0
-var countdown_timer := 1.5
+static var countdown_timer := 1.5
 var countdown_gauge_max := 0.0
 var countdown_gauge_min := 0.0
 var countdown_gauge_middle := 0.0
@@ -297,16 +298,27 @@ var countdown_gauge_tick_size := 0.0
 
 var visual_event_queue := []
 
+static var failsafe_seconds: float = 10
+var failsafe_tick_max: int = 0
+var failsafe_tick: int = 0
+var failsafe_start_progress: float = -1000
+
+var prev_progress: float = -1000
+var cur_progress: float = -1000
+
 func _ready() -> void:
 	# UI.show_race_ui()
+	
 	setup_floor_check_grid()
 	setup_head()
 	setup_colliders()
 
+	failsafe_tick_max = int(failsafe_seconds * Engine.physics_ticks_per_second)
+
 	setup_countdown_boost()
-	
+
 	if is_replay:
-		recursive_set_transparency($Visual)
+		recursive_set_transparency(%Visual)
 
 func setup_countdown_boost() -> void:
 	# Countdown boost
@@ -418,9 +430,14 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	delta = new_physics_state.step
 	visual_delta += delta
 
+	if is_replay:
+		return
+
 	before_update.emit(delta)
 
+	update_progress()
 	handle_sleep()
+	handle_failsafe_timer()
 
 	if tick % 3 == 0:
 		visual_tick()
@@ -429,6 +446,7 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	respawn_if_too_low()
 
 	detect_collisions()
+	determine_gravity()
 
 	handle_item()
 
@@ -447,8 +465,38 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	after_update.emit(delta)
 	return
 
+func update_progress() -> void:
+	prev_progress = cur_progress
+	cur_progress = world.get_vehicle_progress(self)
+
+func handle_failsafe_timer() -> void:
+	if !is_cpu or !started:
+		failsafe_tick = 0
+		return
+	
+	if respawn_stage != RespawnStage.NONE:
+		failsafe_tick = 0
+		return
+
+	if failsafe_tick == 0:
+		failsafe_start_progress = cur_progress
+
+	var diff := cur_progress - failsafe_start_progress
+
+	if diff > 0.5:
+		failsafe_tick = 0
+		return
+	
+	failsafe_tick += 1
+
+	if failsafe_tick > failsafe_tick_max:
+		respawn()
+
 func handle_countdown_gauge() -> void:
 	if started:
+		return
+	
+	if world.state != world.STATE_COUNTING_DOWN:
 		return
 	
 	if input.accel:
@@ -459,12 +507,12 @@ func handle_countdown_gauge() -> void:
 
 func handle_sleep() -> void:
 	sleep = false
-	if !is_network and velocity.prop_vel.length() < 0.01 and prev_transform.origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
+	if !is_network and Util.v3_length_compare(velocity.prop_vel, 0.01) and prev_transform.origin.distance_to(transform.origin) < max_displacement_for_sleep and prev_transform.basis.x.angle_to(transform.basis.x) < max_degrees_change_for_sleep and prev_transform.basis.y.angle_to(transform.basis.y) < max_degrees_change_for_sleep and prev_transform.basis.z.angle_to(transform.basis.z) < max_degrees_change_for_sleep:
 		transform = prev_transform
 		sleep = true
 
 func respawn_if_too_low() -> void:
-	if global_position.y < -100:
+	if global_position.y < world.fall_failsafe:
 		respawn()
 
 func respawn() -> void:
@@ -546,6 +594,16 @@ func detect_collisions() -> void:
 
 	determine_floor_normal()
 	return
+
+func determine_gravity() -> void:
+	gravity = world.base_gravity
+
+	if gravity_zones.is_empty():
+		return
+
+	var zones := gravity_zones.values()
+	zones.sort_custom(func(a: GravityZone.GravityZoneParams, b: GravityZone.GravityZoneParams) -> bool: return a.priority > b.priority)
+	gravity = zones[0].direction * world.base_gravity.length() * zones[0].multiplier
 
 func determine_grounded() -> void:
 	prev_grounded = grounded
@@ -667,7 +725,8 @@ func build_vehicle_collisions() -> void:
 		if do_damage_type != DamageType.NONE:
 			other.damage(do_damage_type)
 
-		if velocity.total().length() < other.velocity.total().length():
+		# if velocity.total().length() < other.velocity.total().length():
+		if Util.v3_length_compare_v3(velocity.total(), other.velocity.total()) < 0:
 			continue
 
 		var avg_point: Vector3 = Util.sum(colliding_vehicles[other]) / len(colliding_vehicles[other])
@@ -1001,6 +1060,13 @@ func handle_respawn() -> void:
 	if respawn_stage == RespawnStage.FALLING and $RespawnTimer.time_left <= respawn_stage2_time:
 		respawn_stage = RespawnStage.RESPAWNING
 		respawn_data = world.get_respawn_point(self)
+		
+		for zone: Node3D in gravity_zones:
+			zone.remove_vehicle(self)
+		
+		if respawn_data.gravity_zone:
+			respawn_data.gravity_zone.add_vehicle(self)
+		
 		if is_player:
 			world.player_camera.instant = true
 			world.player_camera.undo_respawn()
@@ -1009,6 +1075,8 @@ func handle_respawn() -> void:
 		stop_movement()
 		global_position = respawn_data.position
 		global_rotation = respawn_data.rotation
+		if world.player_camera.target == self:
+			world.player_camera.target_gravity = gravity
 
 func handle_trick() -> void:
 	trick_input_frames = maxi(trick_input_frames - 1, 0)
@@ -1137,7 +1205,8 @@ func apply_gravity() -> void:
 	velocity.rest_vel += gravity * delta
 
 	grav_component = velocity.grav_component(gravity)
-	if grav_component.length() >= terminal_velocity:
+	if Util.v3_length_compare(grav_component, terminal_velocity) >= 0:
+	# if grav_component.length() >= terminal_velocity:
 		velocity.rest_vel -= grav_component
 		velocity.rest_vel += gravity.normalized() * terminal_velocity
 
@@ -1289,7 +1358,8 @@ func apply_network_drift() -> void:
 
 	global_position += adjusted_movement
 	
-	if vertical_movement.length() > network.network_teleport_distance / 2 and !cpu_logic.moved_to_next:
+	if Util.v3_length_compare(vertical_movement, network.network_teleport_distance / 2) > 0 and !cpu_logic.moved_to_next:
+	# if vertical_movement.length() > network.network_teleport_distance / 2 and !cpu_logic.moved_to_next:
 		global_position = network_pos
 	
 	var cur_quat := Quaternion.from_euler(rotation)
@@ -1513,3 +1583,22 @@ func _on_item_roulette_timer_timeout() -> void:
 
 func _on_roulette_stop() -> void:
 	can_use_item = true
+
+func apply_gravity_zone(zone: Node3D, params: GravityZone.GravityZoneParams) -> void:
+	gravity_zones[zone] = params
+
+func remove_gravity_zone(zone: Node3D) -> void:
+	if zone not in gravity_zones:
+		return
+	
+	gravity_zones.erase(zone)
+
+func setup_replay() -> void:
+	is_player = false
+	is_network = false
+	is_cpu = false
+	is_replay = true
+	freeze_mode = FREEZE_MODE_STATIC
+	freeze = true
+	collision_layer = 0
+	collision_mask = 0

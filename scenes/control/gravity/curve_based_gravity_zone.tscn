@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3 uid="uid://nwhlgc3bmk5w"]
+
+[ext_resource type="PackedScene" uid="uid://cpcbrivn0jwg5" path="res://scenes/control/gravity/trigger_based_gravity_zone.tscn" id="1_rnapm"]
+[ext_resource type="Script" path="res://scenes/control/gravity/curve_based_gravity_zone.gd" id="2_22l2k"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1fg70"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0jswp"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_u3sgx"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bpd5x"]
+resource_local_to_scene = true
+size = Vector3(20, 20, 0.5)
+
+[sub_resource type="Curve3D" id="Curve3D_vgwqt"]
+resource_local_to_scene = true
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 15, 0, 0, -30, 0, 0, -15, 0, 0, 0, 0, 0, 30),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[node name="CurveBasedGravityZone" instance=ExtResource("1_rnapm")]
+script = ExtResource("2_22l2k")
+fall_distance = 25.0
+
+[node name="CollisionShape3D" parent="AreaStart1" index="0"]
+shape = SubResource("BoxShape3D_1fg70")
+
+[node name="CollisionShape3D" parent="AreaEnd1" index="0"]
+shape = SubResource("BoxShape3D_0jswp")
+
+[node name="CollisionShape3D" parent="AreaStart2" index="0"]
+shape = SubResource("BoxShape3D_u3sgx")
+
+[node name="CollisionShape3D" parent="AreaEnd2" index="0"]
+shape = SubResource("BoxShape3D_bpd5x")
+
+[node name="Path3D" type="Path3D" parent="." index="4"]
+unique_name_in_owner = true
+curve = SubResource("Curve3D_vgwqt")
