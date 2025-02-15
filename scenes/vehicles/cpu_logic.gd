@@ -13,6 +13,13 @@ var moved_to_next := false
 
 var network: NetworkPlayer
 
+var rubber_band_range: float = 100
+var rubber_band_minimum := 0.75
+var rubber_band_maximum := 1.5
+
+var speed_multi := 1.0
+var turn_speed_multi := 1.0
+
 func _ready() -> void:
 	network = parent.network
 
@@ -22,6 +29,10 @@ func set_inputs() -> void:
 	
 	if not target:
 		return
+
+	do_rubberband()
+
+	# return
 
 	update_target()
 	
@@ -56,6 +67,37 @@ func _process(_delta: float) -> void:
 
 	if parent.respawn_stage != Vehicle4.RespawnStage.NONE:
 		progress = -100000
+
+func do_rubberband() -> void:
+	speed_multi = 1.0
+	turn_speed_multi = 1.0
+
+	if parent.cur_boost_type != Vehicle4.BoostType.NONE:
+		return
+	
+	if parent.is_controlled:
+		return
+
+	var dist_to_player := parent.global_position.distance_to(parent.world.player_vehicle.global_position)
+	var no_checkpoints_between := parent.world.checkpoints_between_players(parent, parent.world.player_vehicle)
+
+	if dist_to_player < rubber_band_range:
+		return
+	
+	# var rubberband_multi = clampf(remap(no_checkpoints_between, -10, 10, rubber_band_maximum, rubber_band_minimum), rubber_band_minimum, rubber_band_maximum)
+	var rubberband_multi := 1.0
+	if no_checkpoints_between < 0:
+		rubberband_multi = remap(no_checkpoints_between, -10, 0, rubber_band_maximum, 1.0)
+	else:
+		rubberband_multi = remap(no_checkpoints_between, 0, 10, 1.0, rubber_band_minimum)
+	rubberband_multi = clampf(rubberband_multi, rubber_band_minimum, rubber_band_maximum)
+	speed_multi = rubberband_multi
+	turn_speed_multi = maxf(1.0, remap(rubberband_multi, 1.0, rubber_band_maximum, 1.0, rubber_band_maximum * 1.5))
+
+	# if no_checkpoints_between >= 0:
+	# 	do_rubberband_slow(no_checkpoints_between)
+	# else:
+	# 	do_rubberband_fast(no_checkpoints_between)
 
 func get_random_target_offset() -> Vector3:
 	return Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))

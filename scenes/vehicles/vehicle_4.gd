@@ -255,7 +255,8 @@ var in_trick := false
 var trick_boost_type: BoostType = BoostType.NONE
 
 var steering := 0.0
-@export var max_turn_speed: float = 80.0
+@export var base_max_turn_speed: float = 80.0
+var max_turn_speed := base_max_turn_speed
 @export var steer_speed_decrease: float = 0.025
 @export var drift_turn_multiplier: float = 1.2
 @export var drift_turn_min_multiplier: float = 0.5
@@ -363,6 +364,9 @@ func _process(delta: float) -> void:
 		event.call()
 	
 	handle_particles()
+
+	if is_cpu:
+		Debug.print([Util.round_to_dec(cpu_logic.speed_multi, 2), Util.round_to_dec(cpu_logic.turn_speed_multi, 2), Util.round_to_dec(velocity.total().length(), 1)])
 	
 	if is_player:
 		UI.race_ui.update_speed(velocity.total().length())
@@ -626,6 +630,7 @@ func determine_max_speed_and_accel() -> void:
 	if in_hop and air_frames < 30:
 		return
 	max_speed = base_max_speed
+	max_speed *= cpu_logic.speed_multi
 	initial_accel = base_initial_accel
 	accel_exponent = base_accel_exponent
 	grip = base_grip
@@ -886,6 +891,8 @@ func handle_steer() -> void:
 	if in_drift:
 		steering = drift_dir * remap(steering * drift_dir, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
 
+	max_turn_speed = base_max_turn_speed
+	max_turn_speed *= cpu_logic.turn_speed_multi
 	var cur_max_turn_speed: float = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
 	var turn_target := steering * cur_max_turn_speed * wall_turn_multi
 

@@ -306,3 +306,6 @@ func v3_length_compare(v: Vector3, length: float) -> float:
 func v3_length_compare_v3(v1: Vector3, v2: Vector3) -> float:
 	# Returns negative if v1 is shorter than v2, 0 if equal, positive if longer
 	return v3_length_squared(v1) - v3_length_squared(v2)
+
+func round_to_dec(num: Variant, digit: int) -> float:
+	return roundf(num * pow(10.0, digit)) / pow(10.0, digit)

@@ -563,6 +563,10 @@ func _physics_process(_delta: float) -> void:
 			else:
 				countdown_timer.start(4.0)
 			replay_manager.setup_new_replay(self)
+
+			#TODO: Remove this!
+			# player_vehicle.lap += 1
+			
 			state = STATE_COUNTING_DOWN
 		# STATE_COUNTING_DOWN:
 		# 	handle_replay()
@@ -945,6 +949,25 @@ func get_vehicle_progress(vehicle: Vehicle4) -> float:
 		check_idx = checkpoints.size() - check_idx - 2
 	var cur_progress: float = 10000 * vehicle.lap + check_idx + vehicle.check_progress
 	return cur_progress
+
+func checkpoints_between_players(v1: Vehicle4, v2: Vehicle4) -> int:
+	var v1_progress := get_vehicle_progress(v1)
+	var v2_progress := get_vehicle_progress(v2)
+	
+	var diff := 0
+	var amount_of_checkpoints := checkpoints.size()
+
+	var v1_lap := floori(v1_progress / 10000)
+	var v2_lap := floori(v2_progress / 10000)
+
+	diff += (v1_lap - v2_lap) * amount_of_checkpoints
+
+	var v1_check := floori(v1_progress) % 10000
+	var v2_check := floori(v2_progress) % 10000
+
+	diff += v1_check - v2_check
+
+	return diff
 
 func update_ranks() -> void:
 	var ranks := []
