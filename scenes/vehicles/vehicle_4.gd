@@ -302,6 +302,12 @@ var visual_event_queue := []
 var prev_progress: float = -1000
 var cur_progress: float = -1000
 
+var respawn_boost_enable: bool = false
+var respawn_boost_accel_frames: int = 0
+var respawn_boost_landed_frames: int = 0
+var respawn_boost_safezone_frames: int = 0
+static var respawn_boost_safezone_seconds: float = 0.1
+
 func _ready() -> void:
 	# UI.show_race_ui()
 	
@@ -310,6 +316,9 @@ func _ready() -> void:
 	setup_colliders()
 
 	setup_countdown_boost()
+
+	respawn_boost_safezone_frames = int(respawn_boost_safezone_seconds * Engine.physics_ticks_per_second)
+
 
 	if is_replay:
 		recursive_set_transparency(%Visual)
@@ -1031,6 +1040,9 @@ func bounce_walls() -> void:
 
 func handle_respawn() -> void:
 	freeze = false
+
+	handle_respawn_boost()
+
 	if respawn_stage == RespawnStage.NONE:
 		return
 	
@@ -1058,6 +1070,33 @@ func handle_respawn() -> void:
 		global_rotation = respawn_data.rotation
 		if world.player_camera.target == self:
 			world.player_camera.target_gravity = gravity
+
+func handle_respawn_boost() -> void:
+	if !respawn_boost_enable and respawn_stage == RespawnStage.RESPAWNING:
+		respawn_boost_enable = true
+		respawn_boost_accel_frames = 0
+		respawn_boost_landed_frames = 0
+	
+	if !respawn_boost_enable:
+		return
+	
+	if input.accel:
+		respawn_boost_accel_frames += 1
+	else:
+		respawn_boost_accel_frames = 0
+	
+	var landed := contacts.has(ContactType.FLOOR)
+
+	if landed or respawn_boost_landed_frames > 0:
+		respawn_boost_landed_frames += 1
+	
+	if respawn_boost_landed_frames > respawn_boost_safezone_frames:
+		respawn_boost_enable = false
+		return
+	
+	if landed and respawn_boost_accel_frames and respawn_boost_accel_frames < respawn_boost_safezone_frames:
+		apply_boost(BoostType.SMALL)
+
 
 func handle_trick() -> void:
 	trick_input_frames = maxi(trick_input_frames - 1, 0)

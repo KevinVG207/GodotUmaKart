@@ -1127,7 +1127,7 @@ func get_respawn_point(vehicle: Vehicle4) -> Dictionary:
 	if side_multi < 0:
 		side_multi = -1
 	
-	var offset := spawn_dir * player_idx * 1 + side_direction * 1.5 * side_multi + up_dir * 3.0
+	var offset := spawn_dir * player_idx * 0.2 + side_direction * 1 * side_multi + up_dir * 3.0
 	spawn_pos += offset
 	
 	out.position = spawn_pos
