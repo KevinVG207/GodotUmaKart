@@ -26,7 +26,7 @@ static var max_degrees_change_for_sleep := 0.5
 
 @onready var respawn_timer: Timer = %RespawnTimer
 
-@export var vehicle_height_below: float = 0.5
+@export var vehicle_height_below: float = 0
 @export var vehicle_length_ahead: float = 1.5
 @export var vehicle_length_behind: float = 1.5
 
@@ -69,6 +69,7 @@ var username := "Player"
 @export var weight: float = 1.0
 var push_force: float = 12.0
 
+@onready var visual_node: Node3D = %Visual
 @onready var cpu_logic: CPULogic = %CPULogic
 @onready var audio: VehicleAudio = %VehicleAudio
 @onready var network: NetworkPlayer = %NetworkPlayer
@@ -176,8 +177,13 @@ var drift_gauge: float = 0
 var drift_gauge_max: float = 100
 @export var drift_gauge_multi: float = 55.0
 var drift_offset: float = 0.0
-var max_drift_offset: float = PI / 4
+@export var outside_drift_slide_angle: float = 45
+@onready var max_drift_offset: float = deg_to_rad(outside_drift_slide_angle)
 var drift_offset_multi: float = 1.0
+@export var drift_tilt: bool = false
+@export var drift_tilt_degrees: float = 20.0
+var drift_tilt_max := deg_to_rad(drift_tilt_degrees)
+var drift_tilt_speed: float = 3.0
 # var drift_grip: float = 1.0
 # @export var outside_drift_recover_speed: float = 0.2
 # @export var ouside_drift_max_grip: float = 0.3
@@ -329,7 +335,7 @@ func _ready() -> void:
 
 
 	if is_replay:
-		recursive_set_transparency(%Visual)
+		recursive_set_transparency(visual_node)
 
 func setup_countdown_boost() -> void:
 	# Countdown boost
@@ -473,6 +479,8 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	apply_velocities()
 
 	apply_rotations()
+
+	apply_drift_tilt()
 
 	apply_network_drift()
 
@@ -886,8 +894,8 @@ func handle_steer() -> void:
 
 	max_turn_speed = base_max_turn_speed
 	max_turn_speed *= cpu_logic.turn_speed_multi
-	var cur_max_turn_speed: float = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
-	var turn_target := steering * cur_max_turn_speed * wall_turn_multi
+	max_turn_speed = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
+	var turn_target := steering * max_turn_speed * wall_turn_multi
 
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
 
@@ -1590,13 +1598,13 @@ func damage(damage_type: DamageType) -> void:
 			vani.animation = vani.Type.dmg_spin
 
 func hide_kart() -> void:
-	%Kart.visible = false
+	%VehicleBody.visible = false
 	%Wheels.visible = false
 	%DriftParticles.visible = false
 	%ExhaustParticles.visible = false
 
 func show_kart() -> void:
-	%Kart.visible = true
+	%VehicleBody.visible = true
 	%Wheels.visible = true
 	%DriftParticles.visible = true
 	%ExhaustParticles.visible = true
@@ -1665,3 +1673,18 @@ func setup_replay() -> void:
 	freeze = true
 	collision_layer = 0
 	collision_mask = 0
+
+func apply_drift_tilt() -> void:
+	if !drift_tilt:
+		visual_node.rotation = Vector3.ZERO
+		return
+	
+	var tilt := 0.0
+
+	if grounded:
+		var speed_multi := clampf(remap(cur_speed, 0, max_speed / 2, -0.5, 1), 0, 1)
+		speed_multi *= clampf(remap(cur_speed, 0, base_max_speed, 0, 1), 0, 1)
+		var steer_multi := remap(turn_speed, -max_turn_speed, max_turn_speed, -1, 1)
+		tilt = -steer_multi * speed_multi * drift_tilt_max
+	
+	visual_node.rotation.z = move_toward(visual_node.rotation.z, tilt, delta * drift_tilt_speed)

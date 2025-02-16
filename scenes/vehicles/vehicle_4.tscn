@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=3 uid="uid://ds7es8al63u4p"]
+[gd_scene load_steps=24 format=3 uid="uid://ds7es8al63u4p"]
 
 [ext_resource type="Script" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
@@ -6,12 +6,6 @@
 [ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="4_gc5eh"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_6rco1"]
 [ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="6_6ard6"]
-[ext_resource type="PackedScene" uid="uid://qy0ee3o43y7b" path="res://assets/vehicles/kart/kart.tscn" id="7_o06fs"]
-[ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="8_f4b6f"]
-[ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="10_65ivf"]
-[ext_resource type="Script" path="res://scenes/vehicles/wheel.gd" id="11_73o1g"]
-[ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="11_dx2bk"]
-[ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="12_dgcfk"]
 [ext_resource type="Script" path="res://scenes/vehicles/cpu_logic.gd" id="12_u6ron"]
 [ext_resource type="PackedScene" uid="uid://kbseqbudkntg" path="res://scenes/vehicles/vehicle_audio.tscn" id="13_jx4i7"]
 [ext_resource type="Script" path="res://scenes/vehicles/network_player.gd" id="14_284x6"]
@@ -27,12 +21,6 @@ albedo_color = Color(0.366667, 1, 0, 1)
 [sub_resource type="PrismMesh" id="PrismMesh_gb5ec"]
 material = SubResource("StandardMaterial3D_s5qxb")
 size = Vector3(0.5, 1, 0.2)
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_80jr0"]
-height = 2.74023
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ltuck"]
-height = 2.86926
 
 [sub_resource type="Animation" id="Animation_2t2a3"]
 length = 0.001
@@ -588,168 +576,12 @@ tracks/38/loop_wrap = true
 tracks/38/keys = PackedFloat32Array()
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_54306"]
+resource_local_to_scene = true
 _data = {
 "RESET": SubResource("Animation_2t2a3"),
 "running_shoes_run": ExtResource("5_6rco1"),
 "sit": SubResource("Animation_ywfgf")
 }
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_43ekg"]
-angle_min = -90.0
-angle_max = 90.0
-direction = Vector3(-1, 1, 0)
-flatness = 1.0
-initial_velocity_max = 1.0
-radial_velocity_max = 1.0
-gravity = Vector3(0, 0, 0)
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_iwpgy"]
-load_path = "res://.godot/imported/muzzle_05.png-d41c9b52abb346bcced8fcce4a8b9ea8.s3tc.ctex"
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jhnn2"]
-transparency = 1
-shading_mode = 0
-albedo_color = Color(0.984314, 1, 0.901961, 1)
-albedo_texture = SubResource("CompressedTexture2D_iwpgy")
-billboard_mode = 3
-billboard_keep_scale = true
-particles_anim_h_frames = 1
-particles_anim_v_frames = 1
-particles_anim_loop = false
-
-[sub_resource type="QuadMesh" id="QuadMesh_yxijc"]
-material = SubResource("StandardMaterial3D_jhnn2")
-size = Vector2(0.5, 0.5)
-center_offset = Vector3(0, 0.2, 0)
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_il5qp"]
-angle_min = -90.0
-angle_max = 90.0
-direction = Vector3(-1, 1, 0)
-flatness = 1.0
-initial_velocity_max = 1.0
-radial_velocity_max = 1.0
-gravity = Vector3(0, 0, 0)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s4sj8"]
-transparency = 1
-shading_mode = 0
-albedo_color = Color(1, 0.714868, 0.669018, 1)
-albedo_texture = ExtResource("10_65ivf")
-billboard_mode = 3
-billboard_keep_scale = true
-particles_anim_h_frames = 1
-particles_anim_v_frames = 1
-particles_anim_loop = false
-
-[sub_resource type="QuadMesh" id="QuadMesh_5glm5"]
-material = SubResource("StandardMaterial3D_s4sj8")
-size = Vector2(0.6, 0.6)
-center_offset = Vector3(0, 0.25, 0)
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_su7a1"]
-angle_min = -135.0
-angle_max = 45.0
-direction = Vector3(-1, 1, 0)
-flatness = 1.0
-initial_velocity_max = 1.0
-radial_velocity_max = 1.0
-gravity = Vector3(0, 0, 0)
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ndrdy"]
-angle_min = -135.0
-angle_max = 45.0
-direction = Vector3(-1, 1, 0)
-flatness = 1.0
-initial_velocity_max = 1.0
-radial_velocity_max = 1.0
-gravity = Vector3(0, 0, 0)
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7jsrh"]
-angle_min = -45.0
-angle_max = 135.0
-direction = Vector3(-1, 1, 0)
-flatness = 1.0
-initial_velocity_max = 1.0
-radial_velocity_max = 1.0
-gravity = Vector3(0, 0, 0)
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_og57c"]
-angle_min = -45.0
-angle_max = 135.0
-direction = Vector3(-1, 1, 0)
-flatness = 1.0
-initial_velocity_max = 1.0
-radial_velocity_max = 1.0
-gravity = Vector3(0, 0, 0)
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dok70"]
-angle_min = -720.0
-angle_max = 720.0
-direction = Vector3(-1, -0.25, 0)
-spread = 10.0
-initial_velocity_min = 1.5
-initial_velocity_max = 2.0
-angular_velocity_min = -1.60933e-05
-angular_velocity_max = -1.60933e-05
-gravity = Vector3(0, 0, 0)
-linear_accel_min = -2.23517e-06
-linear_accel_max = -2.23517e-06
-tangential_accel_min = -2.23517e-06
-tangential_accel_max = -2.23517e-06
-scale_min = 0.2
-scale_max = 0.2
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oii2s"]
-transparency = 1
-shading_mode = 0
-albedo_color = Color(1, 1, 1, 0.290196)
-albedo_texture = ExtResource("11_dx2bk")
-billboard_mode = 3
-billboard_keep_scale = true
-particles_anim_h_frames = 1
-particles_anim_v_frames = 1
-particles_anim_loop = false
-
-[sub_resource type="QuadMesh" id="QuadMesh_beh0s"]
-material = SubResource("StandardMaterial3D_oii2s")
-
-[sub_resource type="Curve" id="Curve_a16or"]
-_data = [Vector2(0, 1), 0.0, -0.0787312, 0, 0, Vector2(1, 0), -2.36673, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_owppn"]
-curve = SubResource("Curve_a16or")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hs8oo"]
-angle_min = -360.0
-angle_max = 360.0
-direction = Vector3(-1, -0.5, 0)
-spread = 5.0
-initial_velocity_min = 3.0
-initial_velocity_max = 3.0
-gravity = Vector3(0, 0, 0)
-scale_min = 0.5
-scale_max = 0.5
-scale_curve = SubResource("CurveTexture_owppn")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bwgu6"]
-transparency = 1
-diffuse_mode = 3
-albedo_color = Color(0.764224, 0.389651, 0, 1)
-albedo_texture = ExtResource("12_dgcfk")
-emission_enabled = true
-emission = Color(0.93091, 0.631411, 7.70092e-07, 1)
-emission_energy_multiplier = 1.5
-disable_receive_shadows = true
-billboard_mode = 3
-billboard_keep_scale = true
-particles_anim_h_frames = 1
-particles_anim_v_frames = 1
-particles_anim_loop = false
-
-[sub_resource type="QuadMesh" id="QuadMesh_ebj2w"]
-material = SubResource("StandardMaterial3D_bwgu6")
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xypq3"]
 animation = &"RESET"
@@ -826,7 +658,7 @@ icon = ExtResource("2_r88gu")
 visible = false
 
 [node name="GravityVisualizer" type="Node3D" parent="Debug" node_paths=PackedStringArray("vehicle")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.09302, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 script = ExtResource("3_dqbc0")
 vehicle = NodePath("../..")
 
@@ -863,31 +695,7 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.001
 
 [node name="PlayerCollision" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164605, 0, 0.00164604)
-
-[node name="ShapeCast3D" type="ShapeCast3D" parent="Visual/PlayerCollision"]
-transform = Transform3D(-4.34798e-08, -0.994703, -0.102793, 1, -4.37114e-08, 0, -4.4932e-09, -0.102793, 0.994703, 0.0972483, 4.39723e-09, -0.340266)
-visible = false
-shape = SubResource("CapsuleShape3D_80jr0")
-target_position = Vector3(0, 0, 0)
-max_results = 10
-collision_mask = 6
-
-[node name="ShapeCast3D2" type="ShapeCast3D" parent="Visual/PlayerCollision"]
-transform = Transform3D(-4.34798e-08, -0.994703, 0.102793, 1, -4.37114e-08, 0, 4.4932e-09, 0.102793, 0.994703, 0.097, 0, 0.34)
-visible = false
-shape = SubResource("CapsuleShape3D_80jr0")
-target_position = Vector3(0, 0, 0)
-max_results = 10
-collision_mask = 6
-
-[node name="ShapeCast3D3" type="ShapeCast3D" parent="Visual/PlayerCollision"]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.0250288, -5.33405e-09, 0)
-visible = false
-shape = SubResource("CapsuleShape3D_ltuck")
-target_position = Vector3(0, 0, 0)
-max_results = 10
-collision_mask = 6
+transform = Transform3D(1, 0, -1.06581e-14, 0, 1, 0, 1.06581e-14, 0, 1, -0.00164605, 0, -0.998354)
 
 [node name="Character" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
@@ -1000,9 +808,8 @@ transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, 0, 9.262
 [node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
 transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, -9.98328e-14, 15.1167, 6.20428e-07)
 
-[node name="Kart" parent="Visual" instance=ExtResource("7_o06fs")]
+[node name="VehicleBody" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
-transform = Transform3D(0.16, 0, -2.22045e-15, 0, 0.16, 0, 8.88178e-16, 0, 0.16, -0.00164604, -0.292819, -0.0262525)
 
 [node name="DriftParticles" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
@@ -1012,167 +819,25 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.001
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftCenterCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.7)
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_43ekg")
-draw_pass_1 = SubResource("QuadMesh_yxijc")
-
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftCenterCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.7)
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_43ekg")
-draw_pass_1 = SubResource("QuadMesh_yxijc")
-
 [node name="DriftCenterCharged" type="Node3D" parent="Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
-
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftCenterCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.7)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_il5qp")
-draw_pass_1 = SubResource("QuadMesh_5glm5")
-
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftCenterCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.7)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_il5qp")
-draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="DriftRightCharging" type="Node3D" parent="Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftRightCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.85)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_su7a1")
-draw_pass_1 = SubResource("QuadMesh_yxijc")
-
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftRightCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.55)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_su7a1")
-draw_pass_1 = SubResource("QuadMesh_yxijc")
-
 [node name="DriftRightCharged" type="Node3D" parent="Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
-
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftRightCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.85)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_ndrdy")
-draw_pass_1 = SubResource("QuadMesh_5glm5")
-
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftRightCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.55)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_ndrdy")
-draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="DriftLeftCharging" type="Node3D" parent="Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
 
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftLeftCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.55)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_7jsrh")
-draw_pass_1 = SubResource("QuadMesh_yxijc")
-
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftLeftCharging"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.85)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_7jsrh")
-draw_pass_1 = SubResource("QuadMesh_yxijc")
-
 [node name="DriftLeftCharged" type="Node3D" parent="Visual/DriftParticles"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.116348, 0, 0)
-
-[node name="Particles" type="GPUParticles3D" parent="Visual/DriftParticles/DriftLeftCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, -0.55)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_og57c")
-draw_pass_1 = SubResource("QuadMesh_5glm5")
-
-[node name="Particles2" type="GPUParticles3D" parent="Visual/DriftParticles/DriftLeftCharged"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, -0.4, 0.85)
-emitting = false
-amount = 6
-lifetime = 0.01
-randomness = 0.1
-collision_base_size = 0.1
-visibility_aabb = AABB(-2.60762, -0.866728, -1.44073, 4.16861, 2.57525, 2.88147)
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_og57c")
-draw_pass_1 = SubResource("QuadMesh_5glm5")
 
 [node name="ExhaustParticles" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
@@ -1181,44 +846,8 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.001
 [node name="ExhaustIdle" type="Node3D" parent="Visual/ExhaustParticles"]
 unique_name_in_owner = true
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustIdle"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.46145, 0.029854, -0.500729)
-amount = 3
-lifetime = 0.15
-randomness = 0.1
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_dok70")
-draw_pass_1 = SubResource("QuadMesh_beh0s")
-
-[node name="GPUParticles3D2" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustIdle"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.461, 0.0294046, 0.501)
-amount = 3
-lifetime = 0.15
-randomness = 0.1
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_dok70")
-draw_pass_1 = SubResource("QuadMesh_beh0s")
-
 [node name="ExhaustBoost" type="Node3D" parent="Visual/ExhaustParticles"]
 unique_name_in_owner = true
-
-[node name="GPUParticles3D" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustBoost"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.46145, 0.029854, -0.500729)
-emitting = false
-amount = 4
-lifetime = 0.2
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_hs8oo")
-draw_pass_1 = SubResource("QuadMesh_ebj2w")
-
-[node name="GPUParticles3D2" type="GPUParticles3D" parent="Visual/ExhaustParticles/ExhaustBoost"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.461, 0.03, 0.501)
-emitting = false
-amount = 4
-lifetime = 0.2
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_hs8oo")
-draw_pass_1 = SubResource("QuadMesh_ebj2w")
 
 [node name="VehicleAudio" parent="Visual" node_paths=PackedStringArray("parent") instance=ExtResource("13_jx4i7")]
 unique_name_in_owner = true
@@ -1228,24 +857,6 @@ parent = NodePath("../..")
 [node name="Wheels" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164605, 0, 0.00164604)
-
-[node name="wheel" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
-transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, -0.72)
-script = ExtResource("11_73o1g")
-
-[node name="wheel2" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
-transform = Transform3D(-1.22392e-08, 0, -0.28, 0, 0.28, 0, 0.28, 0, -1.22392e-08, -0.908, -0.229, 0.72)
-script = ExtResource("11_73o1g")
-
-[node name="wheel3" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
-transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, -0.624835)
-script = ExtResource("11_73o1g")
-steer = true
-
-[node name="wheel4" parent="Visual/Wheels" instance=ExtResource("8_f4b6f")]
-transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, 0.625)
-script = ExtResource("11_73o1g")
-steer = true
 
 [node name="VehicleAnimationTree" type="AnimationTree" parent="."]
 unique_name_in_owner = true
@@ -1299,18 +910,6 @@ one_shot = true
 unique_name_in_owner = true
 process_callback = 0
 one_shot = true
-
-[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
-transform = Transform3D(1.5255e-09, 0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, -0.0348995, 0.3, 0, 0.106)
-shape = SubResource("CapsuleShape3D_80jr0")
-
-[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
-transform = Transform3D(-1.52551e-09, -0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, 0.0348995, -0.3, 0, 0.106)
-shape = SubResource("CapsuleShape3D_80jr0")
-
-[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
-transform = Transform3D(1.9107e-15, 4.37112e-08, -1, 1, -4.37114e-08, 0, -4.37114e-08, -1, -4.37112e-08, -0.000177331, -5.33405e-09, 0.0315605)
-shape = SubResource("CapsuleShape3D_ltuck")
 
 [node name="CPULogic" type="Node" parent="." node_paths=PackedStringArray("parent")]
 unique_name_in_owner = true

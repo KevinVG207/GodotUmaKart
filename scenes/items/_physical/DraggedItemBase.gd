@@ -44,7 +44,7 @@ func update_position() -> void:
 	var ray_start: Vector3 = vehicle.prev_transform.origin + (-vehicle.prev_transform.basis.z * (vehicle.vehicle_length_behind + 0.5))
 	ray_start += vehicle.prev_transform.basis.y * 0.5
 	var ray_end := ray_start + -vehicle.prev_transform.basis.y * (0.5 + vehicle.vehicle_height_below + 0.1)
-	var ray_hit := Util.raycast_for_group(world.space_state, ray_start, ray_end, "floor", [self])
+	var ray_hit := Util.raycast_for_group(world.space_state, ray_start, ray_end, "col_floor", [self])
 	var new_pos := ray_end
 	if ray_hit:
 		new_pos = ray_hit["position"]
