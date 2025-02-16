@@ -31,7 +31,7 @@ var network_path_points: Dictionary = {}
 @onready var vehicles_node: Node3D = $Vehicles
 
 # var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_4.tscn")
-var player_scene: PackedScene = preload("res://scenes/vehicles/list/bike_inside.tscn")
+var player_scene: PackedScene = preload("res://scenes/vehicles/list/kart_outside.tscn")
 var rank_panel_scene: PackedScene = preload("res://scenes/ui/rank_panel.tscn")
 
 var menu_cam_str: String = "%CamFountain"

@@ -21,7 +21,7 @@ var world: RaceBase = null
 var physics_state: PhysicsDirectBodyState3D
 var prev_transform: Transform3D = Transform3D.IDENTITY
 
-static var max_displacement_for_sleep := 0.003
+static var max_displacement_for_sleep := 0.01
 static var max_degrees_change_for_sleep := 0.5
 
 @onready var respawn_timer: Timer = %RespawnTimer
@@ -935,6 +935,8 @@ func apply_velocities() -> void:
 
 		apply_acceleration()
 
+		outside_drift_force()
+
 		var grip_multi := pow(grip / base_grip, 2)
 
 		if started:
@@ -942,7 +944,6 @@ func apply_velocities() -> void:
 
 		rotate_accel_along_floor()
 
-		outside_drift_force()
 
 	linear_velocity = velocity.total()
 
@@ -1254,7 +1255,7 @@ func apply_acceleration() -> void:
 
 	var speed_delta: float = 0.0
 	if input.accel and input.brake and !in_hop and !in_drift and cur_boost_type == BoostType.NONE:
-		if abs(cur_speed) <= still_turbo_max_speed:
+		if started and abs(cur_speed) <= still_turbo_max_speed:
 			speed_delta = get_standstill_turbo_speed()
 			start_standstill_turbo()
 		elif cur_speed > 0:
@@ -1318,10 +1319,11 @@ func outside_drift_force() -> void:
 		return
 
 	if !in_drift:
+		var multi := 1.0
 		if !grounded:
-			return
+			multi = 0.5
 
-		drift_offset = move_toward(drift_offset, 0.0, delta * drift_offset_multi)
+		drift_offset = move_toward(drift_offset, 0.0, delta * drift_offset_multi * multi)
 		return
 	
 	drift_offset = move_toward(drift_offset, max_drift_offset * -drift_dir, delta * drift_offset_multi * 2)

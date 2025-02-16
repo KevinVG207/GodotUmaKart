@@ -653,6 +653,7 @@ contact_monitor = true
 max_contacts_reported = 16
 script = ExtResource("1_p7mde")
 icon = ExtResource("2_r88gu")
+vehicle_height_below = 0.5
 
 [node name="Debug" type="Node3D" parent="."]
 visible = false

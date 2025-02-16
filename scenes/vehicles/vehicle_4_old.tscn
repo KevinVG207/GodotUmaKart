@@ -821,6 +821,7 @@ contact_monitor = true
 max_contacts_reported = 16
 script = ExtResource("1_quy61")
 icon = ExtResource("2_ibpqs")
+vehicle_height_below = 0.5
 
 [node name="Debug" type="Node3D" parent="."]
 visible = false
@@ -995,10 +996,10 @@ bones/37/rest = Transform3D(0.965855, 0.258416, -0.0185844, -0.258416, 0.95574, 
 bones/37/rotation = Quaternion(0.0711162, -1.73859e-08, -0.130662, 0.988873)
 
 [node name="BaseAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="1"]
-transform = Transform3D(1, 1.13135e-08, 2.39907e-07, -7.30204e-08, 0.965926, 0.258819, -2.28804e-07, -0.258819, 0.965926, 0, 9.26224, 0)
+transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, 0, 9.26224, 0)
 
 [node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
-transform = Transform3D(1, -2.98428e-13, 2.38418e-07, 2.95763e-13, 1, -8.40613e-27, -2.38418e-07, 0, 1, 2.20769e-08, 15.0502, -0.505082)
+transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, -9.98328e-14, 15.1167, 6.20428e-07)
 
 [node name="Kart" parent="Visual" instance=ExtResource("6_yg0q6")]
 unique_name_in_owner = true
