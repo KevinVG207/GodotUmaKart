@@ -299,11 +299,6 @@ var countdown_gauge_tick_size := 0.0
 
 var visual_event_queue := []
 
-static var failsafe_seconds: float = 10
-var failsafe_tick_max: int = 0
-var failsafe_tick: int = 0
-var failsafe_start_progress: float = -1000
-
 var prev_progress: float = -1000
 var cur_progress: float = -1000
 
@@ -313,8 +308,6 @@ func _ready() -> void:
 	setup_floor_check_grid()
 	setup_head()
 	setup_colliders()
-
-	failsafe_tick_max = int(failsafe_seconds * Engine.physics_ticks_per_second)
 
 	setup_countdown_boost()
 
@@ -365,8 +358,8 @@ func _process(delta: float) -> void:
 	
 	handle_particles()
 
-	if is_cpu:
-		Debug.print([Util.round_to_dec(cpu_logic.speed_multi, 2), Util.round_to_dec(cpu_logic.turn_speed_multi, 2), Util.round_to_dec(velocity.total().length(), 1)])
+	# if is_cpu:
+	# 	Debug.print([Util.round_to_dec(cpu_logic.speed_multi, 2), Util.round_to_dec(cpu_logic.turn_speed_multi, 2), Util.round_to_dec(velocity.total().length(), 1)])
 	
 	if is_player:
 		UI.race_ui.update_speed(velocity.total().length())
@@ -425,8 +418,8 @@ func handle_drift_particles() -> void:
 	elif still_turbo_ready:
 		Util.multi_emit(%DriftCenterCharged, true)
 
-func visual_tick() -> void:
-	set_inputs()
+func visual_tick(d: float) -> void:
+	set_inputs(d)
 
 func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	physics_state = new_physics_state
@@ -444,7 +437,7 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	handle_failsafe_timer()
 
 	if tick % 3 == 0:
-		visual_tick()
+		visual_tick(visual_delta)
 		visual_delta = 0.0
 
 	respawn_if_too_low()
@@ -474,27 +467,8 @@ func update_progress() -> void:
 	cur_progress = world.get_vehicle_progress(self)
 
 func handle_failsafe_timer() -> void:
-	if !is_cpu or !started:
-		failsafe_tick = 0
-		return
-	
-	if respawn_stage != RespawnStage.NONE:
-		failsafe_tick = 0
-		return
-
-	if failsafe_tick == 0:
-		failsafe_start_progress = cur_progress
-
-	var diff := cur_progress - failsafe_start_progress
-
-	if diff > 0.5:
-		failsafe_tick = 0
-		return
-	
-	failsafe_tick += 1
-
-	if failsafe_tick > failsafe_tick_max:
-		respawn()
+	if is_cpu:
+		cpu_logic.handle_failsafe_timer()
 
 func handle_countdown_gauge() -> void:
 	if started:
@@ -538,7 +512,7 @@ func respawn() -> void:
 	if is_player:
 		world.player_camera.do_respawn()
 
-func set_inputs() -> void:
+func set_inputs(d: float) -> void:
 	prev_input = input
 	input = VehicleInput.new()
 
@@ -559,7 +533,7 @@ func set_inputs() -> void:
 		return
 
 	if is_cpu or use_cpu_logic:
-		cpu_logic.set_inputs()
+		cpu_logic.set_inputs(d)
 		return
 
 	if is_controlled:

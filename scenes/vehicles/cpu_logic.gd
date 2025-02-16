@@ -16,21 +16,28 @@ var network: NetworkPlayer
 var rubber_band_range: float = 100
 var rubber_band_minimum := 0.75
 var rubber_band_maximum := 1.5
+var prev_rubber_band_multi := 1.0
 
 var speed_multi := 1.0
 var turn_speed_multi := 1.0
 
+static var failsafe_seconds: float = 10
+var failsafe_tick_max: int = 0
+var failsafe_tick: int = 0
+var failsafe_start_progress: float = -1000
+
 func _ready() -> void:
 	network = parent.network
+	failsafe_tick_max = int(failsafe_seconds * Engine.physics_ticks_per_second)
 
-func set_inputs() -> void:
+func set_inputs(delta: float) -> void:
 	# if parent.in_damage:
 	# 	return
 	
 	if not target:
 		return
 
-	do_rubberband()
+	do_rubberband(delta)
 
 	# return
 
@@ -68,20 +75,25 @@ func _process(_delta: float) -> void:
 	if parent.respawn_stage != Vehicle4.RespawnStage.NONE:
 		progress = -100000
 
-func do_rubberband() -> void:
+func do_rubberband(delta: float) -> void:
 	speed_multi = 1.0
 	turn_speed_multi = 1.0
 
 	if parent.cur_boost_type != Vehicle4.BoostType.NONE:
+		prev_rubber_band_multi = 1.0
 		return
 	
 	if parent.is_controlled:
+		prev_rubber_band_multi = 1.0
 		return
 
+	# TODO: Use "race distance" instead of checkpoints. Checkpoint system will have to be reworked
+	# Each checkpoint should have a distance value.
 	var dist_to_player := parent.global_position.distance_to(parent.world.player_vehicle.global_position)
 	var no_checkpoints_between := parent.world.checkpoints_between_players(parent, parent.world.player_vehicle)
 
 	if dist_to_player < rubber_band_range:
+		prev_rubber_band_multi = 1.0
 		return
 	
 	# var rubberband_multi = clampf(remap(no_checkpoints_between, -10, 10, rubber_band_maximum, rubber_band_minimum), rubber_band_minimum, rubber_band_maximum)
@@ -91,8 +103,12 @@ func do_rubberband() -> void:
 	else:
 		rubberband_multi = remap(no_checkpoints_between, 0, 10, 1.0, rubber_band_minimum)
 	rubberband_multi = clampf(rubberband_multi, rubber_band_minimum, rubber_band_maximum)
+	if rubberband_multi < prev_rubber_band_multi:
+		rubberband_multi = move_toward(prev_rubber_band_multi, rubberband_multi, delta * 0.5)
+	
+	prev_rubber_band_multi = rubberband_multi
 	speed_multi = rubberband_multi
-	turn_speed_multi = maxf(1.0, remap(rubberband_multi, 1.0, rubber_band_maximum, 1.0, rubber_band_maximum * 1.5))
+	turn_speed_multi = maxf(1.0, remap(rubberband_multi, 1.0, rubber_band_maximum, 1.0, rubber_band_maximum * 1.2))
 
 	# if no_checkpoints_between >= 0:
 	# 	do_rubberband_slow(no_checkpoints_between)
@@ -226,3 +242,26 @@ func perform_default_item(perform: bool) -> void:
 		perform = true if randf() < 0.25 else false
 	parent.input.item = perform
 	return
+
+func handle_failsafe_timer() -> void:
+	if !parent.is_cpu or !parent.started:
+		failsafe_tick = 0
+		return
+	
+	if parent.respawn_stage != Vehicle4.RespawnStage.NONE:
+		failsafe_tick = 0
+		return
+
+	if failsafe_tick == 0:
+		failsafe_start_progress = parent.cur_progress
+
+	var diff: float = parent.cur_progress - failsafe_start_progress
+
+	if diff > 0.5:
+		failsafe_tick = 0
+		return
+	
+	failsafe_tick += 1
+
+	if failsafe_tick > failsafe_tick_max:
+		parent.respawn()
