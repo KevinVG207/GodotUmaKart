@@ -1,8 +1,0 @@
-[gd_scene load_steps=3 format=3 uid="uid://bt2x70ay6juoo"]
-
-[ext_resource type="PackedScene" uid="uid://nomey8ht6xwd" path="res://scenes/vehicles/vehicle_3.tscn" id="1_kgin4"]
-[ext_resource type="Texture2D" uid="uid://cyf02un6um450" path="res://assets/vehicles/outside_drift.png" id="2_npwol"]
-
-[node name="OutsideDrift" instance=ExtResource("1_kgin4")]
-list_image = ExtResource("2_npwol")
-outside_drift = true

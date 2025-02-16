@@ -16,7 +16,7 @@ void vertex() {
 
 		// Adjust vertex position to create a consistent outline
 		VERTEX += NORMAL * (outline_thickness / scale_factor);
-	//VERTEX += NORMAL*outline_thickness; // apply the outlines thickness	
+	//VERTEX += NORMAL*outline_thickness; // apply the outlines thickness
 	}
 }
 

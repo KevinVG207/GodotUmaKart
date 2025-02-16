@@ -31,7 +31,9 @@ visible = false
 mesh = ExtResource("3_0eo7q")
 
 [node name="Node3D" type="Node3D" parent="Objects" index="0"]
+process_mode = 4
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 24.9996, 0, -10.8081)
+visible = false
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Objects/Node3D" index="0" groups=["col_wall"]]
 

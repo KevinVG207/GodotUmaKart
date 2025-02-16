@@ -168,11 +168,19 @@ var in_bounce := false
 var bounce_force: float = 5.0
 var bounce_frames: int = 0
 
+@export var outside_drift := false
 var in_drift := false
+var prev_in_drift := false
 var drift_dir := 0
 var drift_gauge: float = 0
 var drift_gauge_max: float = 100
 @export var drift_gauge_multi: float = 55.0
+var drift_offset: float = 0.0
+var max_drift_offset: float = PI / 4
+var drift_offset_multi: float = 1.0
+# var drift_grip: float = 1.0
+# @export var outside_drift_recover_speed: float = 0.2
+# @export var ouside_drift_max_grip: float = 0.3
 
 var still_turbo_charge_time: float = drift_gauge_multi / 36.666
 var still_turbo_max_speed: float = 1
@@ -427,14 +435,16 @@ func handle_drift_particles() -> void:
 	elif still_turbo_ready:
 		Util.multi_emit(%DriftCenterCharged, true)
 
-func visual_tick(d: float) -> void:
-	set_inputs(d)
+func visual_tick() -> void:
+	set_inputs()
 
 func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	physics_state = new_physics_state
 	tick += 1
 	delta = new_physics_state.step
 	visual_delta += delta
+
+	prev_in_drift = in_drift
 
 	if is_replay:
 		return
@@ -446,7 +456,7 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	handle_failsafe_timer()
 
 	if tick % 3 == 0:
-		visual_tick(visual_delta)
+		visual_tick()
 		visual_delta = 0.0
 
 	respawn_if_too_low()
@@ -521,7 +531,7 @@ func respawn() -> void:
 	if is_player:
 		world.player_camera.do_respawn()
 
-func set_inputs(d: float) -> void:
+func set_inputs() -> void:
 	prev_input = input
 	input = VehicleInput.new()
 
@@ -542,7 +552,7 @@ func set_inputs(d: float) -> void:
 		return
 
 	if is_cpu or use_cpu_logic:
-		cpu_logic.set_inputs(d)
+		cpu_logic.set_inputs(visual_delta)
 		return
 
 	if is_controlled:
@@ -616,7 +626,7 @@ func determine_max_speed_and_accel() -> void:
 	max_speed *= cpu_logic.speed_multi
 	initial_accel = base_initial_accel
 	accel_exponent = base_accel_exponent
-	grip = base_grip
+	grip = base_grip # * drift_grip
 	apply_offroad_speed_multi()
 	apply_water_grip()
 	apply_boost_speed_multi()
@@ -920,7 +930,7 @@ func apply_velocities() -> void:
 		var grip_multi := pow(grip / base_grip, 2)
 
 		if started:
-			velocity.prop_vel = prev_velocity.prop_vel.slerp(transform.basis.z.normalized() * cur_speed, clampf(grip_multi, 0, 1))
+			velocity.prop_vel = prev_velocity.prop_vel.slerp(transform.basis.z.normalized().rotated(transform.basis.y.normalized(), drift_offset) * cur_speed, clampf(grip_multi, 0, 1))
 
 		rotate_accel_along_floor()
 
@@ -1275,6 +1285,39 @@ func rotate_accel_along_floor() -> void:
 	return
 
 func outside_drift_force() -> void:
+	# if !in_drift or !outside_drift:
+	# 	drift_grip = 1.0
+	# 	return
+	
+	# if !prev_in_drift:
+	# 	# Just entered drift
+	# 	drift_grip = 0.0
+	
+	# drift_grip = move_toward(drift_grip, ouside_drift_max_grip, delta * outside_drift_recover_speed)
+
+	# Attempt 2
+	# if !in_drift:
+	# 	drift_offset = 0.0
+	# 	return
+	
+	# drift_offset = move_toward(drift_offset, max_drift_offset * -drift_dir, delta * drift_offset_multi)
+	
+	
+	Debug.print(rad_to_deg(drift_offset))
+
+	if !outside_drift or in_cannon or contacts.has(ContactType.WALL):
+		drift_offset = 0.0
+		return
+
+	if !in_drift:
+		if !grounded:
+			return
+
+		drift_offset = move_toward(drift_offset, 0.0, delta * drift_offset_multi)
+		return
+	
+	drift_offset = move_toward(drift_offset, max_drift_offset * -drift_dir, delta * drift_offset_multi * 2)
+
 	return
 
 func get_standstill_turbo_speed() -> float:
