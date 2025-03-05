@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_ecs37"]
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="2_cairb"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_02dhb"]
-[ext_resource type="Script" path="res://scenes/control/Water.gd" id="3_6mpm6"]
+[ext_resource type="Script" uid="uid://dp4gbpw6ry5pn" path="res://scenes/control/Water.gd" id="3_6mpm6"]
 [ext_resource type="PackedScene" uid="uid://clsclqt1h0fjf" path="res://scenes/objects/cannon_trigger.tscn" id="3_te5xt"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_6gkg7"]
 [ext_resource type="PackedScene" uid="uid://bhpncku0ylcxx" path="res://scenes/items/RunningShoes/running_shoes.tscn" id="6_7pr3j"]
@@ -158,7 +158,7 @@ transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
 visible = false
 
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_02dhb")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 5.90238e-06, 83.3827, 67.5153)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 5.90444e-06, 83.3827, 67.5388)
 is_key = true
 
 [node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("3_02dhb")]

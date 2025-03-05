@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://2ani3pyd27xg"]
 
-[ext_resource type="Script" path="res://scenes/ui/nametag.gd" id="1_6ywur"]
+[ext_resource type="Script" uid="uid://b1r1uril63lax" path="res://scenes/ui/nametag.gd" id="1_6ywur"]
 
 [node name="Nametag" type="Control"]
 layout_mode = 3

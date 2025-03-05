@@ -170,8 +170,8 @@ tracks/6/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4jejv"]
 _data = {
-"RESET": SubResource("Animation_hwxfe"),
-"camEnter": SubResource("Animation_f5bnu")
+&"RESET": SubResource("Animation_hwxfe"),
+&"camEnter": SubResource("Animation_f5bnu")
 }
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_5bsr1"]

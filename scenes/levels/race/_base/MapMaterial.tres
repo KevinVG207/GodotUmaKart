@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://c0453n1hsktoe"]
 
-[ext_resource type="Shader" path="res://addons/3D Outline/Outline.gdshader" id="1_x7bea"]
+[ext_resource type="Shader" uid="uid://b0u7entjqvxbo" path="res://addons/3D Outline/Outline.gdshader" id="1_x7bea"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8a7sg"]
 shading_mode = 0

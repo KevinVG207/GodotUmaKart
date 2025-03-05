@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://hrarg7jikf1q"]
 
-[ext_resource type="Script" path="res://scenes/objects/item_pickup.gd" id="1_xq878"]
+[ext_resource type="Script" uid="uid://53h300un27pd" path="res://scenes/objects/item_pickup.gd" id="1_xq878"]
 [ext_resource type="PackedScene" uid="uid://dq1aer8ffbbkx" path="res://assets/items/pickup/ItemPickup.blend" id="3_7axpt"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_t2465"]
@@ -65,8 +65,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_fb0da"]
 _data = {
-"RESET": SubResource("Animation_aw7da"),
-"hover": SubResource("Animation_fn0sn")
+&"RESET": SubResource("Animation_aw7da"),
+&"hover": SubResource("Animation_fn0sn")
 }
 
 [node name="ItemPickup" type="Area3D"]

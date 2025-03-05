@@ -1,9 +1,9 @@
 [gd_scene load_steps=46 format=3 uid="uid://nomey8ht6xwd"]
 
-[ext_resource type="Script" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
+[ext_resource type="Script" uid="uid://n1cxwk08ovts" path="res://scenes/vehicles/vehicle_3.gd" id="1_lrmky"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_6jcjm"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="2_b5ade"]
-[ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="2_v00a1"]
+[ext_resource type="Script" uid="uid://dk33wleda3xba" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="2_v00a1"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="3_2njw6"]
 [ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="5_awqsk"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_jjayf"]
@@ -69,8 +69,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_yrkfx"]
 _data = {
-"RESET": SubResource("Animation_8ksb3"),
-"dmg_spin": SubResource("Animation_oqrol")
+&"RESET": SubResource("Animation_8ksb3"),
+&"dmg_spin": SubResource("Animation_oqrol")
 }
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_80jr0"]
@@ -634,9 +634,9 @@ tracks/38/keys = PackedFloat32Array()
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_54306"]
 _data = {
-"RESET": SubResource("Animation_2t2a3"),
-"running_shoes_run": ExtResource("5_jjayf"),
-"sit": SubResource("Animation_ywfgf")
+&"RESET": SubResource("Animation_2t2a3"),
+&"running_shoes_run": ExtResource("5_jjayf"),
+&"sit": SubResource("Animation_ywfgf")
 }
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_43ekg"]

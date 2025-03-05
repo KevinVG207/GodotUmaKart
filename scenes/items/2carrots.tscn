@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dq1cquty4g2wa"]
 
-[ext_resource type="Script" path="res://scenes/items/2carrots.gd" id="1_l2vkl"]
+[ext_resource type="Script" uid="uid://78gsjh1e23kj" path="res://scenes/items/2carrots.gd" id="1_l2vkl"]
 [ext_resource type="Texture2D" uid="uid://3vkb0ad3d77u" path="res://assets/items/2carrots.png" id="2_e7wnb"]
 
 [node name="2Carrots" type="Node"]

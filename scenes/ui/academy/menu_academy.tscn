@@ -1,7 +1,7 @@
 [gd_scene load_steps=28 format=3 uid="uid://b5o18sbk4ypar"]
 
 [ext_resource type="PackedScene" uid="uid://ddwe67q5fgedw" path="res://assets/ui/tracen/tracen_academy.tscn" id="1_2jrec"]
-[ext_resource type="Script" path="res://scenes/ui/academy/menu_academy.gd" id="1_ueiln"]
+[ext_resource type="Script" uid="uid://ditjue1ac1yyr" path="res://scenes/ui/academy/menu_academy.gd" id="1_ueiln"]
 [ext_resource type="PackedScene" uid="uid://d2pr13dqnvme2" path="res://scenes/ui/academy/cam_initial_menu.tscn" id="4_j2yy8"]
 [ext_resource type="PackedScene" uid="uid://doyxcgm8r6edh" path="res://scenes/ui/academy/cam_fountain_menu.tscn" id="5_dswq1"]
 [ext_resource type="PackedScene" uid="uid://b7pfkfsy5a05" path="res://scenes/ui/academy/menu_camera.tscn" id="5_t5vkb"]

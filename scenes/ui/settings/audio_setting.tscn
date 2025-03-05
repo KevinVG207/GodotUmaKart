@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bekgugo01swgn"]
 
-[ext_resource type="Script" path="res://scenes/ui/settings/audio_setting.gd" id="1_r0dmi"]
+[ext_resource type="Script" uid="uid://cg0g5233d4bop" path="res://scenes/ui/settings/audio_setting.gd" id="1_r0dmi"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_pegqj"]
 font_size = 20

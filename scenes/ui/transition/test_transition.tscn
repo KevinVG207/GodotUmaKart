@@ -53,9 +53,9 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vu2cq"]
 _data = {
-"RESET": SubResource("Animation_huhvf"),
-"begin": SubResource("Animation_momd2"),
-"end": SubResource("Animation_atkxt")
+&"RESET": SubResource("Animation_huhvf"),
+&"begin": SubResource("Animation_momd2"),
+&"end": SubResource("Animation_atkxt")
 }
 
 [node name="SceneTransition" instance=ExtResource("1_i4fwq")]

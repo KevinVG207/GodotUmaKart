@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cjye7hx3jcwd5" path="res://assets/course/wicked-woods/WickedWoods.blend" id="1_6dn3j"]
 [ext_resource type="Material" uid="uid://byw0trjuog32i" path="res://assets/course/wicked-woods/mat/new_standard_material_3d.tres" id="2_alxyx"]
-[ext_resource type="Script" path="res://scenes/levels/FallBoundary.gd" id="3_v8x6k"]
+[ext_resource type="Script" uid="uid://bbvlusdblsyr2" path="res://scenes/levels/FallBoundary.gd" id="3_v8x6k"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_vexeb"]
 bounce = 0.5

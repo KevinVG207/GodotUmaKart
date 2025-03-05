@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://b7pfkfsy5a05"]
 
-[ext_resource type="Script" path="res://scenes/ui/academy/MenuCam.gd" id="1_w8mpw"]
+[ext_resource type="Script" uid="uid://b0h5b18pu1ylt" path="res://scenes/ui/academy/MenuCam.gd" id="1_w8mpw"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_isl1y"]
 

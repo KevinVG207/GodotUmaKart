@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://b3weoxg0yjr52"]
 
-[ext_resource type="Script" path="res://scenes/items/_physical/ThrownGreenBean.gd" id="1_fg0ij"]
+[ext_resource type="Script" uid="uid://b5osg5231pjcy" path="res://scenes/items/_physical/ThrownGreenBean.gd" id="1_fg0ij"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_v8qc4"]
 height = 1.32048

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cy2up81bu68aj"]
 
-[ext_resource type="Script" path="res://scenes/ui/_elements/CustomLineEdit/custom_line_edit.gd" id="1_svhlo"]
+[ext_resource type="Script" uid="uid://butq0emd0r65m" path="res://scenes/ui/_elements/CustomLineEdit/custom_line_edit.gd" id="1_svhlo"]
 
 [node name="CustomLineEdit" type="Button"]
 offset_right = 67.0625

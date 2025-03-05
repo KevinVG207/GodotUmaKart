@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://qy0ee3o43y7b" path="res://assets/vehicles/kart/kart.tscn" id="3_uba5b"]
 [ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="4_1c8lg"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="4_ahmek"]
-[ext_resource type="Script" path="res://scenes/vehicles/wheel.gd" id="5_ql6u7"]
+[ext_resource type="Script" uid="uid://c3talds3icqia" path="res://scenes/vehicles/wheel.gd" id="5_ql6u7"]
 [ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="5_rhipp"]
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="6_ek8ye"]
 
@@ -573,9 +573,9 @@ tracks/38/keys = PackedFloat32Array()
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_54306"]
 resource_local_to_scene = true
 _data = {
-"RESET": SubResource("Animation_2t2a3"),
-"running_shoes_run": ExtResource("2_232j7"),
-"sit": SubResource("Animation_ywfgf")
+&"RESET": SubResource("Animation_2t2a3"),
+&"running_shoes_run": ExtResource("2_232j7"),
+&"sit": SubResource("Animation_ywfgf")
 }
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kwknf"]
@@ -837,7 +837,7 @@ shape = SubResource("CapsuleShape3D_kdjxj")
 
 [node name="CharacterAnimationPlayer" parent="Visual/Character" index="0"]
 libraries = {
-"": SubResource("AnimationLibrary_54306")
+&"": SubResource("AnimationLibrary_54306")
 }
 
 [node name="Skeleton3D" parent="Visual/Character/Body/Armature" index="0"]
@@ -874,12 +874,6 @@ bones/34/rotation = Quaternion(0.0872144, 7.06411e-08, 0.120514, 0.988873)
 bones/35/rotation = Quaternion(0.670662, 0.00194509, -0.560386, 0.485979)
 bones/36/rotation = Quaternion(0.309057, -0.0245651, -0.191239, 0.931294)
 bones/37/rotation = Quaternion(0.0711162, -1.73859e-08, -0.130662, 0.988873)
-
-[node name="BaseAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="1"]
-transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, 0, 9.26224, 0)
-
-[node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
-transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, -9.98328e-14, 15.1167, 6.20428e-07)
 
 [node name="Kart" parent="Visual/VehicleBody" index="0" instance=ExtResource("3_uba5b")]
 unique_name_in_owner = true

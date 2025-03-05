@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://ch6mq875u88ck"]
 
-[ext_resource type="Script" path="res://scenes/levels/race/_base/race_base_old.gd" id="1_j3o6r"]
+[ext_resource type="Script" uid="uid://bvuaf547v1opd" path="res://scenes/levels/race/_base/race_base_old.gd" id="1_j3o6r"]
 [ext_resource type="Material" uid="uid://c0453n1hsktoe" path="res://scenes/levels/race/_base/MapMaterial.tres" id="2_londu"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_nu7uk"]
 [ext_resource type="Environment" uid="uid://bkllq0dgr17en" path="res://scenes/levels/race/_base/base_env.tres" id="4_dvknr"]

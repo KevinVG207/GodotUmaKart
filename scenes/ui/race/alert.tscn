@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://ttgvsua40ods"]
 
 [ext_resource type="Texture2D" uid="uid://erydpxumv1kq" path="res://assets/race/alert.png" id="1_0jnmo"]
-[ext_resource type="Script" path="res://scenes/ui/race/alert.gd" id="1_hqohf"]
+[ext_resource type="Script" uid="uid://dh33qd4qhy20l" path="res://scenes/ui/race/alert.gd" id="1_hqohf"]
 [ext_resource type="Texture2D" uid="uid://b1nt4eb84f0d4" path="res://assets/items/jellybean.png" id="2_l6h3u"]
 
 [node name="Alert" type="Control"]

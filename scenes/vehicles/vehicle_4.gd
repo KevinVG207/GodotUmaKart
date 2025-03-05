@@ -378,6 +378,8 @@ func _process(delta: float) -> void:
 	while visual_event_queue.size() > 0:
 		var event: Callable = visual_event_queue.pop_at(0)
 		event.call()
+		
+	print(Engine.physics_ticks_per_second)
 	
 	handle_particles()
 

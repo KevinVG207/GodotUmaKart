@@ -1,14 +1,14 @@
 [gd_scene load_steps=24 format=3 uid="uid://ds7es8al63u4p"]
 
-[ext_resource type="Script" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
+[ext_resource type="Script" uid="uid://cam4qnh4qwq5x" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
-[ext_resource type="Script" path="res://scenes/vehicles/gravity_visualizer.gd" id="3_dqbc0"]
-[ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="4_gc5eh"]
+[ext_resource type="Script" uid="uid://dbektq8qfd52i" path="res://scenes/vehicles/gravity_visualizer.gd" id="3_dqbc0"]
+[ext_resource type="Script" uid="uid://dk33wleda3xba" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="4_gc5eh"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_6rco1"]
 [ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="6_6ard6"]
-[ext_resource type="Script" path="res://scenes/vehicles/cpu_logic.gd" id="12_u6ron"]
+[ext_resource type="Script" uid="uid://nm5tp16uwelq" path="res://scenes/vehicles/cpu_logic.gd" id="12_u6ron"]
 [ext_resource type="PackedScene" uid="uid://kbseqbudkntg" path="res://scenes/vehicles/vehicle_audio.tscn" id="13_jx4i7"]
-[ext_resource type="Script" path="res://scenes/vehicles/network_player.gd" id="14_284x6"]
+[ext_resource type="Script" uid="uid://c28myxhfdqeow" path="res://scenes/vehicles/network_player.gd" id="14_284x6"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -578,9 +578,9 @@ tracks/38/keys = PackedFloat32Array()
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_54306"]
 resource_local_to_scene = true
 _data = {
-"RESET": SubResource("Animation_2t2a3"),
-"running_shoes_run": ExtResource("5_6rco1"),
-"sit": SubResource("Animation_ywfgf")
+&"RESET": SubResource("Animation_2t2a3"),
+&"running_shoes_run": ExtResource("5_6rco1"),
+&"sit": SubResource("Animation_ywfgf")
 }
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xypq3"]
@@ -635,8 +635,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_yrkfx"]
 _data = {
-"RESET": SubResource("Animation_8ksb3"),
-"dmg_spin": SubResource("Animation_oqrol")
+&"RESET": SubResource("Animation_8ksb3"),
+&"dmg_spin": SubResource("Animation_oqrol")
 }
 
 [node name="Vehicle4" type="RigidBody3D" groups=["vehicle"]]
@@ -705,7 +705,7 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.001
 [node name="CharacterAnimationPlayer" type="AnimationPlayer" parent="Visual/Character"]
 unique_name_in_owner = true
 libraries = {
-"": SubResource("AnimationLibrary_54306")
+&"": SubResource("AnimationLibrary_54306")
 }
 autoplay = "sit"
 
@@ -870,7 +870,7 @@ script = ExtResource("4_gc5eh")
 unique_name_in_owner = true
 root_node = NodePath("../Visual")
 libraries = {
-"": SubResource("AnimationLibrary_yrkfx")
+&"": SubResource("AnimationLibrary_yrkfx")
 }
 
 [node name="Collision" type="Node3D" parent="."]

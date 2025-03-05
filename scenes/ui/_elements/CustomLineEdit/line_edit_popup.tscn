@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://e07p6iw4dudo"]
 
-[ext_resource type="Script" path="res://scenes/ui/_elements/CustomLineEdit/line_edit_popup.gd" id="1_tgsju"]
+[ext_resource type="Script" uid="uid://03ij6gho41p5" path="res://scenes/ui/_elements/CustomLineEdit/line_edit_popup.gd" id="1_tgsju"]
 
 [node name="LineEditPopup" type="CanvasLayer"]
 layer = 50

@@ -152,7 +152,7 @@ func _ready() -> void:
 	course_name = Util.get_race_course_name_from_path(scene_file_path)
 	
 	# Setup ticks
-	Engine.physics_ticks_per_second = 180
+	Engine.physics_ticks_per_second = 60
 	# replay_tick_interval = 6
 	# replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
 	frames_between_update = int(float(Engine.physics_ticks_per_second) / updates_to_server_per_second)

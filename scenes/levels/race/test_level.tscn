@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bs4xxwi8savoj" path="res://scenes/vehicles/vehicle.tscn" id="1_j11o3"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="1_qx5ne"]
-[ext_resource type="Script" path="res://scenes/levels/race/test_level.gd" id="1_xifvm"]
+[ext_resource type="Script" uid="uid://cnem4rt2h8t1w" path="res://scenes/levels/race/test_level.gd" id="1_xifvm"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_pxxh4"]
 size = Vector3(100, 1, 100)
