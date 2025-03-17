@@ -74,6 +74,8 @@ var map_mesh_material: ShaderMaterial = preload("res://scenes/levels/race/_base/
 
 @export var fall_failsafe: float = -100
 
+const PHYSICS_TICKS_PER_SECOND: int = 60
+
 class raceOp:
 	const SERVER_UPDATE_VEHICLE_STATE = 1
 	const CLIENT_UPDATE_VEHICLE_STATE = 2
@@ -152,7 +154,7 @@ func _ready() -> void:
 	course_name = Util.get_race_course_name_from_path(scene_file_path)
 	
 	# Setup ticks
-	Engine.physics_ticks_per_second = 60
+	Engine.physics_ticks_per_second = PHYSICS_TICKS_PER_SECOND
 	# replay_tick_interval = 6
 	# replay_tick_max_time = 1.0/(Engine.physics_ticks_per_second/float(replay_tick_interval))
 	frames_between_update = int(float(Engine.physics_ticks_per_second) / updates_to_server_per_second)

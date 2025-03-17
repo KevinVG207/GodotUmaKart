@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cebfl5gjim7kp"]
+[gd_scene load_steps=12 format=3 uid="uid://cebfl5gjim7kp"]
 
 [ext_resource type="PackedScene" uid="uid://ds7es8al63u4p" path="res://scenes/vehicles/vehicle_4.tscn" id="1_8ayt3"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="2_1s2p3"]
@@ -8,9 +8,9 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_e6xmb"]
 height = 2.9
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_i65c5"]
-radius = 0.25
-height = 2.2
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8uo50"]
+radius = 0.3
+height = 2.5
 
 [sub_resource type="Animation" id="Animation_2t2a3"]
 length = 0.001
@@ -577,6 +577,10 @@ _data = {
 resource_local_to_scene = true
 height = 2.9
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_i65c5"]
+radius = 0.25
+height = 2.2
+
 [node name="Vehicle4" instance=ExtResource("1_8ayt3")]
 vehicle_height_below = 0.682
 drift_tilt = true
@@ -605,15 +609,14 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.001
 [node name="CollisionShape3D" type="ShapeCast3D" parent="Visual/PlayerCollision" index="0"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.886, 1.99985)
 shape = SubResource("CapsuleShape3D_e6xmb")
+max_results = 10
 collision_mask = 6
 
 [node name="CollisionShape3D2" type="ShapeCast3D" parent="Visual/PlayerCollision" index="1"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, -0.155149, 0.251515, 0)
-shape = SubResource("CapsuleShape3D_i65c5")
-
-[node name="CollisionShape3D3" type="ShapeCast3D" parent="Visual/PlayerCollision" index="2"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0.157334, 0.251878, 0)
-shape = SubResource("CapsuleShape3D_i65c5")
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.331652, 1.99985)
+shape = SubResource("CapsuleShape3D_8uo50")
+max_results = 10
+collision_mask = 6
 
 [node name="Character" parent="Visual" index="7"]
 visible = false
@@ -657,6 +660,12 @@ bones/34/rotation = Quaternion(0.0872144, 7.06411e-08, 0.120514, 0.988873)
 bones/35/rotation = Quaternion(0.670662, 0.00194509, -0.560386, 0.485979)
 bones/36/rotation = Quaternion(0.309057, -0.0245651, -0.191239, 0.931294)
 bones/37/rotation = Quaternion(0.0711162, -1.73859e-08, -0.130662, 0.988873)
+
+[node name="BaseAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="1"]
+transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, 0, 9.26224, 0)
+
+[node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
+transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, -9.98328e-14, 15.1167, 6.20428e-07)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Visual/VehicleBody" index="0"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.886182, 0)

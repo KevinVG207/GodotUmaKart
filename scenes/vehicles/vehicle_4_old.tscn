@@ -897,7 +897,7 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.001
 [node name="CharacterAnimationPlayer" type="AnimationPlayer" parent="Visual/Character"]
 unique_name_in_owner = true
 libraries = {
-"": SubResource("AnimationLibrary_54306")
+&"": SubResource("AnimationLibrary_54306")
 }
 autoplay = "sit"
 
@@ -1259,7 +1259,7 @@ script = ExtResource("13_gge3k")
 unique_name_in_owner = true
 root_node = NodePath("../Visual")
 libraries = {
-"": SubResource("AnimationLibrary_yrkfx")
+&"": SubResource("AnimationLibrary_yrkfx")
 }
 
 [node name="Collision" type="Node3D" parent="."]

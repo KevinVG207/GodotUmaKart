@@ -378,8 +378,6 @@ func _process(delta: float) -> void:
 	while visual_event_queue.size() > 0:
 		var event: Callable = visual_event_queue.pop_at(0)
 		event.call()
-		
-	print(Engine.physics_ticks_per_second)
 	
 	handle_particles()
 
@@ -562,7 +560,7 @@ func set_inputs() -> void:
 		return
 
 	if is_cpu or use_cpu_logic:
-		cpu_logic.set_inputs(visual_delta)
+		# cpu_logic.set_inputs(visual_delta)
 		return
 
 	if is_controlled:
@@ -749,8 +747,8 @@ func build_vehicle_collisions() -> void:
 		var their_force: float = push_force * their_weight_ratio
 
 		
-		var my_dir: Vector3 = global_transform.basis.x.project(global_transform.origin - avg_point).normalized()
-		var their_dir: Vector3 = other.global_transform.basis.x.project(other.global_transform.origin - avg_point).normalized()
+		var my_dir: Vector3 = (global_transform.origin - avg_point).project(global_transform.basis.x).normalized()
+		var their_dir: Vector3 = (other.global_transform.origin - avg_point).project(other.global_transform.basis.x).normalized()
 		# var my_dir: Vector3 = Plane(prev_transform.basis.y).project(prev_transform.origin - avg_point).normalized()
 		# var their_dir: Vector3 = Plane(other.prev_transform.basis.y).project(other.prev_transform.origin - avg_point).normalized()
 		
@@ -781,7 +779,6 @@ func get_colliding_vehicles() -> Dictionary:
 			if collider == self:
 				continue
 			if collider is Vehicle4:
-				print("COLLISION", self, collider)
 				if collider not in colliding_vehicles:
 					colliding_vehicles[collider] = []
 				colliding_vehicles[collider].append(shape.get_collision_point(i))
@@ -1317,7 +1314,7 @@ func outside_drift_force() -> void:
 	# drift_offset = move_toward(drift_offset, max_drift_offset * -drift_dir, delta * drift_offset_multi)
 	
 	
-	Debug.print(rad_to_deg(drift_offset))
+	# Debug.print(rad_to_deg(drift_offset))
 
 	if !outside_drift or in_cannon or contacts.has(ContactType.WALL):
 		drift_offset = 0.0
