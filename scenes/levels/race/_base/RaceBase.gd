@@ -309,7 +309,7 @@ func _process(delta: float) -> void:
 	UI.race_ui.set_startline(checkpoints[0])
 	
 	if not countdown_timer.is_stopped() and countdown_timer.time_left <= 3.0:
-		UI.race_ui.update_countdown(str(ceil(countdown_timer.time_left)))
+		UI.race_ui.update_countdown(str(ceili(countdown_timer.time_left)))
 	else:
 		UI.race_ui.update_countdown("")
 		
