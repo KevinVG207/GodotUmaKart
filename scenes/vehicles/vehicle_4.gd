@@ -749,8 +749,10 @@ func build_vehicle_collisions() -> void:
 		var their_force: float = push_force * their_weight_ratio
 
 		
-		var my_dir: Vector3 = Plane(prev_transform.basis.y).project(prev_transform.origin - avg_point).normalized()
-		var their_dir: Vector3 = Plane(other.prev_transform.basis.y).project(other.prev_transform.origin - avg_point).normalized()
+		var my_dir: Vector3 = global_transform.basis.x.project(global_transform.origin - avg_point).normalized()
+		var their_dir: Vector3 = other.global_transform.basis.x.project(other.global_transform.origin - avg_point).normalized()
+		# var my_dir: Vector3 = Plane(prev_transform.basis.y).project(prev_transform.origin - avg_point).normalized()
+		# var their_dir: Vector3 = Plane(other.prev_transform.basis.y).project(other.prev_transform.origin - avg_point).normalized()
 		
 		apply_push(my_force * my_dir, other)
 		other.apply_push(their_force * their_dir, self)
@@ -773,12 +775,13 @@ func get_colliding_vehicles() -> Dictionary:
 	for shape: ShapeCast3D in %PlayerCollision.get_children():
 		if !shape.enabled:
 			continue
-		shape.force_shapecast_update()
+		#shape.force_shapecast_update()
 		for i in range(shape.get_collision_count()):
 			var collider: Node3D = shape.get_collider(i)
 			if collider == self:
 				continue
 			if collider is Vehicle4:
+				print("COLLISION", self, collider)
 				if collider not in colliding_vehicles:
 					colliding_vehicles[collider] = []
 				colliding_vehicles[collider].append(shape.get_collision_point(i))
