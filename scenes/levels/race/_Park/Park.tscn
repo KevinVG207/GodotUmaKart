@@ -9,7 +9,7 @@
 
 [node name="park" parent="Course" index="0" instance=ExtResource("2_xpcoo")]
 
-[node name="Checkpoints" parent="." index="2"]
+[node name="Checkpoints" parent="." index="3"]
 visible = false
 
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_xk2ml")]
@@ -102,6 +102,9 @@ transform = Transform3D(0.964225, 0, 0.265085, 0, 1, 0, -0.265085, 0, 0.964225, 
 
 [node name="Checkpoint41" parent="Checkpoints" index="27" instance=ExtResource("3_xk2ml")]
 transform = Transform3D(0.999943, 0, 0.0107341, 0, 1, 0, -0.0107341, 0, 0.999943, 0.585045, 0, -20.8763)
+
+[node name="EnemyPathPoints" parent="." index="4"]
+visible = false
 
 [node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("4_emh6j")]
 
