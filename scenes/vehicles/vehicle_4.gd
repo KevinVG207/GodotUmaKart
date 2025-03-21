@@ -162,6 +162,8 @@ var stick_speed: float = 5
 var in_hop := false
 var hop_force: float = 3.5
 var hop_frames := 0
+var max_hop_frames := 0
+var hop_time: float = 0.15
 var min_hop_speed := base_max_speed * 0.33
 var min_drift_speed := base_max_speed * 0.42
 var in_bounce := false
@@ -332,6 +334,8 @@ func _ready() -> void:
 	setup_countdown_boost()
 
 	respawn_boost_safezone_frames = int(respawn_boost_safezone_seconds * Engine.physics_ticks_per_second)
+
+	max_hop_frames = int(hop_time * Engine.physics_ticks_per_second)
 
 
 	if is_replay:
@@ -1139,7 +1143,7 @@ func handle_trick() -> void:
 		in_trick = true
 		start_hop()
 	
-	if ground_contacts and in_trick and hop_frames > 30:
+	if ground_contacts and in_trick:
 		in_trick = false
 		trick_boost_type = BoostType.NONE
 		apply_boost(BoostType.NORMAL)
@@ -1155,24 +1159,25 @@ func handle_hop() -> void:
 		start_hop()
 
 	if in_hop:
-		hop_frames += 1
+		hop_frames = max(0, hop_frames - 1)
 
-		if air_frames and hop_frames < 2:
-			if in_trick:
-				hop_frames = 4
-			else:
-				hop_frames = 30
+		# if hop_frames < 9:
+		# 	velocity.rest_vel += -gravity * 0.03
+		# 	is_stick = false
 
-		if hop_frames < 9:
-			velocity.rest_vel += -gravity * 0.03
-			is_stick = false
+		var hop_distance: float = 0.05 * (float(hop_frames) / max_hop_frames) * (delta / (1.0 / Engine.physics_ticks_per_second))
+		global_position += global_transform.basis.y * hop_distance
 		
 		# if input.steer != 0 and drift_dir == 0 and hop_frames > 30:
 		if input.steer != 0 and !in_drift:
 			drift_dir = 1 if input.steer > 0 else -1
 
-		if hop_frames > 30 and ground_contacts:
+		if hop_frames == max_hop_frames - 1:
+			return
+
+		if ground_contacts:
 			in_hop = false
+			hop_frames = 0
 			if input.brake and cur_speed > min_drift_speed and drift_dir != 0:
 				in_drift = true
 				drift_gauge = 0
@@ -1193,7 +1198,13 @@ func start_hop() -> void:
 	if in_hop:
 		return
 	in_hop = true
-	hop_frames = -1
+	hop_frames = max_hop_frames
+	
+	if air_frames and hop_frames < 2:
+		if in_trick:
+			hop_frames = int(max_hop_frames * 0.5)
+		else:
+			hop_frames = 0
 	return
 
 func handle_drift() -> void:
@@ -1244,6 +1255,9 @@ func apply_gravity() -> void:
 	# 	velocity.rest_vel += gravity / 4
 
 	velocity.rest_vel += gravity * delta
+
+	if hop_frames > 0:
+		velocity.rest_vel = -velocity.grav_component(gravity)
 
 	grav_component = velocity.grav_component(gravity)
 	if Util.v3_length_compare(grav_component, terminal_velocity) >= 0:
@@ -1321,7 +1335,7 @@ func outside_drift_force() -> void:
 		return
 
 	if !in_drift:
-		var multi := 1.0
+		var multi := 1.5
 		if !grounded:
 			multi = 0.5
 

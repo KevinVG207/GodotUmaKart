@@ -14,7 +14,7 @@
 
 [node name="StaticBody3D" parent="course_004" index="0" groups=["col_wall"]]
 
-[node name="StaticBody3D" parent="course_005" index="0" groups=["col_wall"]]
+[node name="StaticBody3D" parent="course_005" index="0" groups=["col_bonk", "col_wall"]]
 
 [node name="StaticBody3D" parent="course_006" index="0" groups=["col_floor"]]
 
