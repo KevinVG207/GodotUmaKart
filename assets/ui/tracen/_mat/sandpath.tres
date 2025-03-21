@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dnbx8mnl2qpjc"]
+
+[resource]
+resource_name = "sandpath"
+cull_mode = 2
+albedo_color = Color(0.878431, 0.733333, 0.407843, 1)

@@ -32,7 +32,74 @@ animation/trimming=false
 animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
 import_script/path=""
-_subresources={}
+_subresources={
+"materials": {
+"concrete": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/concrete.tres"
+},
+"coursegrass1": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/coursegrass1.tres"
+},
+"default": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/default.tres"
+},
+"dirt": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/dirt.tres"
+},
+"dirtpath1": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/dirtpath1.tres"
+},
+"dirtpath2": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/dirtpath2.tres"
+},
+"dirtpath3": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/dirtpath3.tres"
+},
+"fence": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/fence.tres"
+},
+"grass": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/grass.tres"
+},
+"grasspath1": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/grasspath1.tres"
+},
+"path": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/path.tres"
+},
+"red-asphalt": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/red-asphalt.tres"
+},
+"sandpath": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/sandpath.tres"
+},
+"water": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/water.tres"
+},
+"wood": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/wood.tres"
+},
+"woodchip": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/ui/tracen/_mat/woodchip.tres"
+}
+}
+}
 blender/nodes/visible=1
 blender/nodes/active_collection_only=false
 blender/nodes/punctual_lights=true

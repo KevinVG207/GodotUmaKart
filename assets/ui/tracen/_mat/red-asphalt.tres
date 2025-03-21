@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://durqcdtun4qvq"]
+
+[resource]
+resource_name = "red-asphalt"
+cull_mode = 2
+albedo_color = Color(0.639992, 0.194456, 0.318505, 1)

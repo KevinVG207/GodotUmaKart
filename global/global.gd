@@ -5,7 +5,7 @@ signal goto_settings_screen
 
 signal camera_switched
 
-var default_player_count: int = 2
+var default_player_count: int = 1
 var player_count: int = default_player_count:
 	set(value):
 		player_count = value
