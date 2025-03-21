@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://ccg70l5fqbqq3"]
+
+[resource]
+resource_name = "woodchip"
+cull_mode = 2
+albedo_color = Color(0.839216, 0.709804, 0.568628, 1)

@@ -1,0 +1,120 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://clqhicw4wef27"
+path="res://.godot/imported/tracen-course-col.blend-acc289724f03d56fbe8e5c3331221dcd.scn"
+
+[deps]
+
+source_file="res://assets/course/tracen-course/tracen-course-col.blend"
+dest_files=["res://.godot/imported/tracen-course-col.blend-acc289724f03d56fbe8e5c3331221dcd.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=false
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=true
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+_subresources={
+"materials": {
+"arrows": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/arrows.tres"
+},
+"concrete": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/concrete.tres"
+},
+"coursegrass1": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/coursegrass1.tres"
+},
+"default": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/default.tres"
+},
+"dirtpath1": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/dirtpath1.tres"
+},
+"dirtpath2": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/dirtpath2.tres"
+},
+"dirtpath3": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/dirtpath3.tres"
+},
+"fence": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/fence.tres"
+},
+"fenceblue": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/fenceblue.tres"
+},
+"fencebrown": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/fencebrown.tres"
+},
+"grass": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/grass.tres"
+},
+"grasspath1": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/grasspath1.tres"
+},
+"path": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/path.tres"
+},
+"red-asphalt": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/red-asphalt.tres"
+},
+"sandpath": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/sandpath.tres"
+},
+"woodchip": {
+"use_external/enabled": true,
+"use_external/path": "res://assets/course/tracen-course/_mat/woodchip.tres"
+}
+}
+}
+blender/nodes/visible=1
+blender/nodes/active_collection_only=false
+blender/nodes/punctual_lights=true
+blender/nodes/cameras=true
+blender/nodes/custom_properties=true
+blender/nodes/modifiers=1
+blender/meshes/colors=false
+blender/meshes/uvs=true
+blender/meshes/normals=true
+blender/meshes/export_geometry_nodes_instances=false
+blender/meshes/tangents=true
+blender/meshes/skins=2
+blender/meshes/export_bones_deforming_mesh_only=false
+blender/materials/unpack_enabled=true
+blender/materials/export_materials=1
+blender/animation/limit_playback=true
+blender/animation/always_sample=true
+blender/animation/group_tracks=true

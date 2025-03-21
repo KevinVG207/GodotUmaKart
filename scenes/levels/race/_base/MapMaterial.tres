@@ -10,5 +10,5 @@ render_priority = 0
 next_pass = SubResource("StandardMaterial3D_8a7sg")
 shader = ExtResource("1_x7bea")
 shader_parameter/enable = true
-shader_parameter/outline_thickness = 0.5
+shader_parameter/outline_thickness = 0.05
 shader_parameter/color = Color(0.376471, 0.376471, 0.376471, 1)
