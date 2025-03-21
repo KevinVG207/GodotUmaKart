@@ -1,39 +1,41 @@
-[gd_scene load_steps=2 format=3 uid="uid://qldml8k4v22a"]
+[gd_scene load_steps=3 format=3 uid="uid://qldml8k4v22a"]
 
 [ext_resource type="PackedScene" uid="uid://clqhicw4wef27" path="res://assets/course/tracen-course/tracen-course-col.blend" id="1_7xndb"]
+[ext_resource type="Script" uid="uid://b1f0roby7mndd" path="res://scripts/course_col_fixer.gd" id="2_5gmbx"]
 
 [node name="tracen-course-col" instance=ExtResource("1_7xndb")]
+script = ExtResource("2_5gmbx")
 
-[node name="StaticBody3D" parent="course" index="0" groups=["col_wall"]]
+[node name="CollisionShape3D" parent="course/StaticBody3D" index="0" groups=["col_wall"]]
 
-[node name="StaticBody3D" parent="course_001" index="0" groups=["col_floor"]]
+[node name="CollisionShape3D" parent="course_001/StaticBody3D" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="course_002" index="0" groups=["col_floor", "col_offroad"]]
+[node name="CollisionShape3D" parent="course_002/StaticBody3D" index="0" groups=["col_floor", "col_offroad"]]
 
-[node name="StaticBody3D" parent="course_003" index="0" groups=["col_floor"]]
+[node name="CollisionShape3D" parent="course_003/StaticBody3D" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="course_004" index="0" groups=["col_wall"]]
+[node name="CollisionShape3D" parent="course_004/StaticBody3D" index="0" groups=["col_wall"]]
 
-[node name="StaticBody3D" parent="course_005" index="0" groups=["col_bonk", "col_wall"]]
+[node name="CollisionShape3D" parent="course_005/StaticBody3D" index="0" groups=["col_bonk", "col_wall"]]
 
-[node name="StaticBody3D" parent="course_006" index="0" groups=["col_floor"]]
+[node name="CollisionShape3D" parent="course_006/StaticBody3D" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="course_007" index="0" groups=["col_floor"]]
+[node name="CollisionShape3D" parent="course_007/StaticBody3D" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="course_008" index="0" groups=["col_floor"]]
+[node name="CollisionShape3D" parent="course_008/StaticBody3D" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="course_009" index="0" groups=["col_floor"]]
+[node name="CollisionShape3D" parent="course_009/StaticBody3D" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="course_010" index="0" groups=["col_floor"]]
+[node name="CollisionShape3D" parent="course_010/StaticBody3D" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="course_011" index="0" groups=["col_floor"]]
+[node name="CollisionShape3D" parent="course_011/StaticBody3D" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="course_012" index="0" groups=["col_floor"]]
+[node name="CollisionShape3D" parent="course_012/StaticBody3D" index="0" groups=["col_floor"]]
 
-[node name="StaticBody3D" parent="course_013" index="0" groups=["col_wall"]]
+[node name="CollisionShape3D" parent="course_013/StaticBody3D" index="0" groups=["col_wall"]]
 
-[node name="StaticBody3D" parent="course_014" index="0" groups=["col_wall"]]
+[node name="CollisionShape3D" parent="course_014/StaticBody3D" index="0" groups=["col_wall"]]
 
-[node name="StaticBody3D" parent="course_015" index="0" groups=["col_wall"]]
+[node name="CollisionShape3D" parent="course_015/StaticBody3D" index="0" groups=["col_wall"]]
 
-[node name="StaticBody3D" parent="course_002_001" index="0" groups=["col_boost", "col_floor", "col_trick"]]
+[node name="CollisionShape3D" parent="course_002_001/StaticBody3D" index="0" groups=["col_boost", "col_floor", "col_trick"]]

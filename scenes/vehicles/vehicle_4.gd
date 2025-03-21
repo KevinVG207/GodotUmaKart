@@ -796,8 +796,15 @@ func build_contacts() -> void:
 
 	for i in range(physics_state.get_contact_count()):
 		var cur_ground_contact := false
-		var collider := physics_state.get_contact_collider_object(i) as Node3D
-		var groups := collider.get_groups()
+		var collider := physics_state.get_contact_collider_object(i) as CollisionObject3D
+
+		var shape_index := physics_state.get_contact_collider_shape(i)
+		var shape_owner := collider.shape_find_owner(shape_index)
+		var shape_owner_object := collider.shape_owner_get_owner(shape_owner) as CollisionShape3D
+		print("AAAA")
+		print(shape_owner_object)
+
+		var groups := shape_owner_object.get_groups()
 		if groups.is_empty():
 			groups.append("COL_UNKNOWN")
 		for group_raw in groups:
@@ -829,12 +836,13 @@ func build_contacts() -> void:
 					
 					# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
 					var dist_above_floor := Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
-					if dist_above_floor < 0.05 and not collider.is_in_group("col_bonk"):
+					if dist_above_floor < 0.05 and not shape_owner_object.is_in_group("col_bonk"):
 						continue
 
 					contact = WallContact.new()
-					if collider.get("physics_material_override") and collider.physics_material_override.get("bounce"):
-						contact.bounce = collider.physics_material_override.bounce
+					# TODO: Find a new way to do this without the shape3ds
+					#if collider.get("physics_material_override") and collider.physics_material_override.get("bounce"):
+						#contact.bounce = collider.physics_material_override.bounce
 				ContactType.OFFROAD:
 					contact = OffroadContact.new()
 					if !settings.is_empty():
@@ -857,7 +865,7 @@ func build_contacts() -> void:
 			if contact == null:
 				contact = Contact.new()
 
-			contact.collider = collider
+			contact.collider = shape_owner_object
 			contact.position = physics_state.get_contact_local_position(i)
 			contact.normal = physics_state.get_contact_local_normal(i)
 			contact.type = contact_type
@@ -869,7 +877,7 @@ func build_contacts() -> void:
 		
 		if cur_ground_contact:
 			var contact := Contact.new()
-			contact.collider = collider
+			contact.collider = shape_owner_object
 			contact.position = physics_state.get_contact_local_position(i)
 			contact.normal = physics_state.get_contact_local_normal(i)
 			contact.type = ContactType.FLOOR
