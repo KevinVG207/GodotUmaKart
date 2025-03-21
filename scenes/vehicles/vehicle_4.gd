@@ -801,8 +801,6 @@ func build_contacts() -> void:
 		var shape_index := physics_state.get_contact_collider_shape(i)
 		var shape_owner := collider.shape_find_owner(shape_index)
 		var shape_owner_object := collider.shape_owner_get_owner(shape_owner) as CollisionShape3D
-		print("AAAA")
-		print(shape_owner_object)
 
 		var groups := shape_owner_object.get_groups()
 		if groups.is_empty():
