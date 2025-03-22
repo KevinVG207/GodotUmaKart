@@ -162,7 +162,7 @@ var stick_speed: float = 5
 var in_hop := false
 var hop_force: float = 3.5
 var hop_frames := 0
-var max_hop_frames := 0
+var max_hop_frames := 1
 var hop_time: float = 0.15
 var min_hop_speed := base_max_speed * 0.33
 var min_drift_speed := base_max_speed * 0.42
@@ -278,7 +278,7 @@ var max_turn_speed := base_max_turn_speed
 @export var drift_turn_min_multiplier: float = 0.5
 @export var air_turn_multiplier: float = 0.5
 var turn_speed := 0.0
-@export var base_turn_accel: float = 1800
+@export var base_turn_accel: float = 800
 var turn_accel := base_turn_accel
 
 static var replay_transparency := 0.75
@@ -908,8 +908,17 @@ func handle_steer() -> void:
 	max_turn_speed *= cpu_logic.turn_speed_multi
 	max_turn_speed = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
 	var turn_target := steering * max_turn_speed * wall_turn_multi
+	
+	if hop_frames > 0:
+		var multi := (float(hop_frames) / max_hop_frames) * 0.5 + 1
+		#Debug.print(multi)
+		turn_target *= multi
+		turn_accel *= multi
+		#Debug.print("TURN SNAP")
 
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
+	
+	Debug.print(turn_speed)
 
 	var multi := 1.0 if grounded else air_turn_multiplier
 
@@ -1175,8 +1184,8 @@ func handle_hop() -> void:
 		global_position += global_transform.basis.y * hop_distance
 		
 		# if input.steer != 0 and drift_dir == 0 and hop_frames > 30:
-		if input.steer != 0 and !in_drift:
-			drift_dir = 1 if input.steer > 0 else -1
+		if turn_speed != 0 and !in_drift:
+			drift_dir = 1 if turn_speed > 0 else -1
 
 		if hop_frames == max_hop_frames - 1:
 			return
@@ -1273,6 +1282,9 @@ func apply_gravity() -> void:
 
 func apply_acceleration() -> void:
 	if !grounded:
+		return
+		
+	if in_bounce:
 		return
 
 	var speed_delta: float = 0.0
