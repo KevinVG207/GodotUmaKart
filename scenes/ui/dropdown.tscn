@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://b803ylwret27a"]
 
-[ext_resource type="Script" path="res://scenes/ui/dropdown.gd" id="1_o6i68"]
+[ext_resource type="Script" uid="uid://bk5txah06h4ll" path="res://scenes/ui/dropdown.gd" id="1_o6i68"]
 [ext_resource type="PackedScene" uid="uid://dq1sft53mtb5q" path="res://scenes/ui/dropdown_button.tscn" id="2_x0fxl"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_pgi47"]

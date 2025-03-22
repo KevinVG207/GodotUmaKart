@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c751hrd13mc7e"]
 
-[ext_resource type="Script" path="res://scenes/items/Book.gd" id="1_ox0ic"]
+[ext_resource type="Script" uid="uid://c7abbjgsp7d6q" path="res://scenes/items/Book.gd" id="1_ox0ic"]
 [ext_resource type="Texture2D" uid="uid://e1s7fkmo1d0h" path="res://assets/items/book.png" id="2_bmapf"]
 
 [node name="Book" type="Node"]

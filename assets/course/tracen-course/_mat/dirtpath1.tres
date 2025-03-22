@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://4ou7c6vqj4wq"]
+
+[resource]
+resource_name = "dirtpath1"
+cull_mode = 2
+albedo_color = Color(0.760784, 0.560784, 0.34902, 1)

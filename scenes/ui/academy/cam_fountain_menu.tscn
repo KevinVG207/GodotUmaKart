@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://doyxcgm8r6edh"]
 
-[ext_resource type="Script" path="res://scenes/ui/academy/cam_fountain_menu.gd" id="1_1cqih"]
+[ext_resource type="Script" uid="uid://i2o3wk6yte5i" path="res://scenes/ui/academy/cam_fountain_menu.gd" id="1_1cqih"]
 [ext_resource type="PackedScene" uid="uid://685o3qwltpv8" path="res://scenes/ui/settings/exit_popup.tscn" id="2_hjtk7"]
 
 [node name="CamFountainMenu" type="Control"]

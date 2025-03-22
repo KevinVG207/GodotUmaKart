@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://w4pcjmmn0rkr"]
 
-[ext_resource type="Script" path="res://scenes/ui/academy/map_character.gd" id="1_fp7q5"]
+[ext_resource type="Script" uid="uid://cl6rdvcjuhncl" path="res://scenes/ui/academy/map_character.gd" id="1_fp7q5"]
 [ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="2_4h3nu"]
 [ext_resource type="Animation" uid="uid://cxdmgp7rodc4c" path="res://assets/character/RESET.res" id="3_ma21s"]
 [ext_resource type="Animation" uid="uid://bcps6u7qcsqry" path="res://assets/character/walk.res" id="4_hiyc5"]
@@ -19,8 +19,8 @@ material = SubResource("StandardMaterial3D_0w345")
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_b8bd4"]
 _data = {
-"RESET": ExtResource("3_ma21s"),
-"walk": ExtResource("4_hiyc5")
+&"RESET": ExtResource("3_ma21s"),
+&"walk": ExtResource("4_hiyc5")
 }
 
 [node name="MapCharacter" type="RigidBody3D"]

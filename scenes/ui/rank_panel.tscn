@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dgixlmwcrip5n"]
 
 [ext_resource type="StyleBox" uid="uid://c78ruixdxx7m7" path="res://scenes/ui/_styles/rank_panel.tres" id="1_6dcjx"]
-[ext_resource type="Script" path="res://scenes/ui/rank_panel.gd" id="1_hlk7g"]
+[ext_resource type="Script" uid="uid://dt63kl20efu0k" path="res://scenes/ui/rank_panel.gd" id="1_hlk7g"]
 [ext_resource type="Texture2D" uid="uid://53pqjniwp6x1" path="res://icon.svg" id="1_rpa2e"]
 [ext_resource type="StyleBox" uid="uid://b5xrlhbcyne1q" path="res://scenes/ui/_styles/rank_panel_outline.tres" id="3_14arv"]
 

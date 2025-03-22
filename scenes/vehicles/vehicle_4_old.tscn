@@ -1,8 +1,8 @@
 [gd_scene load_steps=51 format=3 uid="uid://cfjocpr1fdumh"]
 
-[ext_resource type="Script" path="res://scenes/vehicles/vehicle_4.gd" id="1_quy61"]
+[ext_resource type="Script" uid="uid://cam4qnh4qwq5x" path="res://scenes/vehicles/vehicle_4.gd" id="1_quy61"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_ibpqs"]
-[ext_resource type="Script" path="res://scenes/vehicles/gravity_visualizer.gd" id="3_gf4u6"]
+[ext_resource type="Script" uid="uid://dbektq8qfd52i" path="res://scenes/vehicles/gravity_visualizer.gd" id="3_gf4u6"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="4_lsgew"]
 [ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="5_jcohl"]
 [ext_resource type="PackedScene" uid="uid://qy0ee3o43y7b" path="res://assets/vehicles/kart/kart.tscn" id="6_yg0q6"]
@@ -11,10 +11,10 @@
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="9_k7hrc"]
 [ext_resource type="PackedScene" uid="uid://kbseqbudkntg" path="res://scenes/vehicles/vehicle_audio.tscn" id="10_w3t3o"]
 [ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="11_st7l6"]
-[ext_resource type="Script" path="res://scenes/vehicles/wheel.gd" id="12_aa5jn"]
-[ext_resource type="Script" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="13_gge3k"]
-[ext_resource type="Script" path="res://scenes/vehicles/cpu_logic.gd" id="14_u28co"]
-[ext_resource type="Script" path="res://scenes/vehicles/network_player.gd" id="15_yf1pp"]
+[ext_resource type="Script" uid="uid://c3talds3icqia" path="res://scenes/vehicles/wheel.gd" id="12_aa5jn"]
+[ext_resource type="Script" uid="uid://dk33wleda3xba" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="13_gge3k"]
+[ext_resource type="Script" uid="uid://nm5tp16uwelq" path="res://scenes/vehicles/cpu_logic.gd" id="14_u28co"]
+[ext_resource type="Script" uid="uid://c28myxhfdqeow" path="res://scenes/vehicles/network_player.gd" id="15_yf1pp"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_b3vot"]
 friction = 0.0
@@ -589,9 +589,9 @@ tracks/38/keys = PackedFloat32Array()
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_54306"]
 _data = {
-"RESET": SubResource("Animation_2t2a3"),
-"running_shoes_run": ExtResource("4_lsgew"),
-"sit": SubResource("Animation_ywfgf")
+&"RESET": SubResource("Animation_2t2a3"),
+&"running_shoes_run": ExtResource("4_lsgew"),
+&"sit": SubResource("Animation_ywfgf")
 }
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_43ekg"]
@@ -803,8 +803,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_yrkfx"]
 _data = {
-"RESET": SubResource("Animation_8ksb3"),
-"dmg_spin": SubResource("Animation_oqrol")
+&"RESET": SubResource("Animation_8ksb3"),
+&"dmg_spin": SubResource("Animation_oqrol")
 }
 
 [node name="Vehicle4" type="RigidBody3D" groups=["vehicle"]]
@@ -897,7 +897,7 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.001
 [node name="CharacterAnimationPlayer" type="AnimationPlayer" parent="Visual/Character"]
 unique_name_in_owner = true
 libraries = {
-"": SubResource("AnimationLibrary_54306")
+&"": SubResource("AnimationLibrary_54306")
 }
 autoplay = "sit"
 
@@ -1259,7 +1259,7 @@ script = ExtResource("13_gge3k")
 unique_name_in_owner = true
 root_node = NodePath("../Visual")
 libraries = {
-"": SubResource("AnimationLibrary_yrkfx")
+&"": SubResource("AnimationLibrary_yrkfx")
 }
 
 [node name="Collision" type="Node3D" parent="."]

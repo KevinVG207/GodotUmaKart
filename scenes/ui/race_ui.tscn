@@ -1,13 +1,13 @@
 [gd_scene load_steps=30 format=3 uid="uid://b62d811jwymmd"]
 
-[ext_resource type="Script" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
+[ext_resource type="Script" uid="uid://g5ppq8xvvwsd" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
 [ext_resource type="PackedScene" uid="uid://b4ktan2k4miry" path="res://scenes/ui/item_roulette.tscn" id="3_xg3tb"]
 [ext_resource type="PackedScene" uid="uid://2ani3pyd27xg" path="res://scenes/ui/nametag.tscn" id="4_5a5qs"]
 [ext_resource type="Texture2D" uid="uid://cf2x8b1awq2b5" path="res://assets/race/startline.png" id="5_s54dk"]
 [ext_resource type="PackedScene" uid="uid://ttgvsua40ods" path="res://scenes/ui/race/alert.tscn" id="6_1cm01"]
 [ext_resource type="LabelSettings" uid="uid://dg8cn7dsip001" path="res://scenes/ui/_styles/basic_text.tres" id="7_fx38p"]
-[ext_resource type="Script" path="res://scenes/ui/pause_menu.gd" id="8_getyi"]
+[ext_resource type="Script" uid="uid://v6kfnxwflqaj" path="res://scenes/ui/pause_menu.gd" id="8_getyi"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_5eh43"]
 viewport_path = NodePath("ItemBox/Viewport")
@@ -63,8 +63,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ux71x"]
 _data = {
-"RESET": SubResource("Animation_jux7s"),
-"rotate": SubResource("Animation_sqxjf")
+&"RESET": SubResource("Animation_jux7s"),
+&"rotate": SubResource("Animation_sqxjf")
 }
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_i2ab8"]
@@ -174,8 +174,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_k88iy"]
 _data = {
-"RESET": SubResource("Animation_wlpck"),
-"change": SubResource("Animation_eman3")
+&"RESET": SubResource("Animation_wlpck"),
+&"change": SubResource("Animation_eman3")
 }
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_13nhv"]
@@ -238,7 +238,7 @@ light_cull_mask = 4294443008
 deterministic = true
 callback_mode_method = 1
 libraries = {
-"": SubResource("AnimationLibrary_ux71x")
+&"": SubResource("AnimationLibrary_ux71x")
 }
 
 [node name="MapContainer" type="Control" parent="."]
@@ -487,7 +487,7 @@ label_settings = SubResource("LabelSettings_pqt07")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Rank"]
 libraries = {
-"": SubResource("AnimationLibrary_k88iy")
+&"": SubResource("AnimationLibrary_k88iy")
 }
 
 [node name="BackToLobby" type="Button" parent="."]
@@ -510,6 +510,7 @@ text = "RACE_BTN_BACK"
 [node name="PauseMenu" type="Control" parent="."]
 unique_name_in_owner = true
 process_mode = 2
+visible = false
 z_index = 100
 layout_mode = 3
 anchors_preset = 15

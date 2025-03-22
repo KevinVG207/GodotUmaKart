@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://crersi2gg0o1o"]
 
-[ext_resource type="Script" path="res://scenes/levels/race/_base/RaceBase.gd" id="1_2b6un"]
+[ext_resource type="Script" uid="uid://18ebmydgwycr" path="res://scenes/levels/race/_base/RaceBase.gd" id="1_2b6un"]
 [ext_resource type="Material" uid="uid://c0453n1hsktoe" path="res://scenes/levels/race/_base/MapMaterial.tres" id="2_hkcxl"]
 [ext_resource type="PackedScene" uid="uid://d01ajbl5oevb7" path="res://scenes/control/replay_manager.tscn" id="2_u4tgh"]
 [ext_resource type="Environment" uid="uid://bkllq0dgr17en" path="res://scenes/levels/race/_base/base_env.tres" id="3_34w1p"]

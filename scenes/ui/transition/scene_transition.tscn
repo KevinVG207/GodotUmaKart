@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b4gkyhsv3o7vf"]
 
-[ext_resource type="Script" path="res://scenes/ui/transition/scene_transition.gd" id="1_au52u"]
+[ext_resource type="Script" uid="uid://dsckaf7oo0acj" path="res://scenes/ui/transition/scene_transition.gd" id="1_au52u"]
 
 [node name="SceneTransition" type="Control"]
 custom_minimum_size = Vector2(1280, 720)

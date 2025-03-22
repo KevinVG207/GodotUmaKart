@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://camku2r2888iy"]
 
-[ext_resource type="Script" path="res://scenes/items/GreenBean.gd" id="1_64f5y"]
+[ext_resource type="Script" uid="uid://c4vmwto6r0ac1" path="res://scenes/items/GreenBean.gd" id="1_64f5y"]
 [ext_resource type="Texture2D" uid="uid://b1nt4eb84f0d4" path="res://assets/items/jellybean.png" id="2_66lp2"]
 
 [node name="GreenBean" type="Node" groups=["item_draggable"]]

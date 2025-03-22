@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://nwhlgc3bmk5w"]
 
 [ext_resource type="PackedScene" uid="uid://cpcbrivn0jwg5" path="res://scenes/control/gravity/trigger_based_gravity_zone.tscn" id="1_rnapm"]
-[ext_resource type="Script" path="res://scenes/control/gravity/curve_based_gravity_zone.gd" id="2_22l2k"]
+[ext_resource type="Script" uid="uid://dsnnwmbpy06gx" path="res://scenes/control/gravity/curve_based_gravity_zone.gd" id="2_22l2k"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_1fg70"]
 resource_local_to_scene = true

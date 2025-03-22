@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://cj81tjgt7appr"]
 
-[ext_resource type="Script" path="res://scenes/items/_physical/DraggedItemBase.gd" id="1_13gny"]
+[ext_resource type="Script" uid="uid://byxtjtuqlrr1t" path="res://scenes/items/_physical/DraggedItemBase.gd" id="1_13gny"]
 [ext_resource type="PackedScene" uid="uid://5i10cjnedc8f" path="res://assets/items/book/book.blend" id="2_0c5ik"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_0kdv5"]

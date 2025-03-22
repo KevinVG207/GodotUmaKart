@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bb0jvif2q2o5n"]
 
-[ext_resource type="Script" path="res://scenes/objects/cannon_path_follow.gd" id="1_qbwm2"]
+[ext_resource type="Script" uid="uid://bg42ahniv3o22" path="res://scenes/objects/cannon_path_follow.gd" id="1_qbwm2"]
 
 [node name="CannonPathFollow" type="PathFollow3D"]
 script = ExtResource("1_qbwm2")

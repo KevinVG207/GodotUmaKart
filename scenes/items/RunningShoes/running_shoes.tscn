@@ -1,6 +1,6 @@
 [gd_scene load_steps=16 format=3 uid="uid://bhpncku0ylcxx"]
 
-[ext_resource type="Script" path="res://scenes/items/RunningShoes/running_shoes.gd" id="1_8no7a"]
+[ext_resource type="Script" uid="uid://cr1mhfwspi7xh" path="res://scenes/items/RunningShoes/running_shoes.gd" id="1_8no7a"]
 [ext_resource type="Texture2D" uid="uid://3vkb0ad3d77u" path="res://assets/items/2carrots.png" id="2_0sa5c"]
 [ext_resource type="PackedScene" uid="uid://cwws1emkikujg" path="res://assets/items/gate/gate.blend" id="2_fv2r1"]
 [ext_resource type="Texture2D" uid="uid://c66bdprwoihkr" path="res://assets/particles/kenney/smoke_07_strong.png" id="3_q0mvr"]
@@ -252,10 +252,10 @@ tracks/2/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_crjtl"]
 _data = {
-"RESET": SubResource("Animation_ksinb"),
-"disappear": SubResource("Animation_jqhg0"),
-"fall": SubResource("Animation_c485k"),
-"invisible": SubResource("Animation_he87j")
+&"RESET": SubResource("Animation_ksinb"),
+&"disappear": SubResource("Animation_jqhg0"),
+&"fall": SubResource("Animation_c485k"),
+&"invisible": SubResource("Animation_he87j")
 }
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8i6yf"]

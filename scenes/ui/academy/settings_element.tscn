@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://b04ntxjohna2"]
 
-[ext_resource type="Script" path="res://scenes/ui/academy/settings_element.gd" id="1_q6i62"]
+[ext_resource type="Script" uid="uid://cy88gnxde1rea" path="res://scenes/ui/academy/settings_element.gd" id="1_q6i62"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_c0jli"]
 font_size = 20

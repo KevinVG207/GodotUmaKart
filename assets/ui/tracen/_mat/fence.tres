@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://xeltopgi8lpk"]
+
+[ext_resource type="Texture2D" uid="uid://pycyxu6r8ao" path="res://assets/ui/tracen/fence.png" id="1_wyqu8"]
+
+[resource]
+resource_name = "fence"
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+albedo_texture = ExtResource("1_wyqu8")

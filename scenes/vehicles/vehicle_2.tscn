@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://cu2lapnist235"]
 
-[ext_resource type="Script" path="res://scenes/vehicles/vehicle_2.gd" id="1_xb8tc"]
+[ext_resource type="Script" uid="uid://bwsjbixc0olwc" path="res://scenes/vehicles/vehicle_2.gd" id="1_xb8tc"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_h8cte"]
 

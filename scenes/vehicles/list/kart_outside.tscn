@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://qy0ee3o43y7b" path="res://assets/vehicles/kart/kart.tscn" id="3_uba5b"]
 [ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="4_1c8lg"]
 [ext_resource type="Texture2D" uid="uid://b34q38l0hkdqw" path="res://assets/particles/kenney/muzzle_05.png" id="4_ahmek"]
-[ext_resource type="Script" path="res://scenes/vehicles/wheel.gd" id="5_ql6u7"]
+[ext_resource type="Script" uid="uid://c3talds3icqia" path="res://scenes/vehicles/wheel.gd" id="5_ql6u7"]
 [ext_resource type="Texture2D" uid="uid://b7e8cuncv8f6" path="res://assets/particles/kenney/smoke_04.png" id="5_rhipp"]
 [ext_resource type="Texture2D" uid="uid://phkklfo03y6r" path="res://assets/particles/kenney/smoke_07.png" id="6_ek8ye"]
 
@@ -573,9 +573,9 @@ tracks/38/keys = PackedFloat32Array()
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_54306"]
 resource_local_to_scene = true
 _data = {
-"RESET": SubResource("Animation_2t2a3"),
-"running_shoes_run": ExtResource("2_232j7"),
-"sit": SubResource("Animation_ywfgf")
+&"RESET": SubResource("Animation_2t2a3"),
+&"running_shoes_run": ExtResource("2_232j7"),
+&"sit": SubResource("Animation_ywfgf")
 }
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kwknf"]
@@ -825,19 +825,28 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0035522, 0)
 
 [node name="CollisionShape3D6" type="ShapeCast3D" parent="Visual/PlayerCollision" index="0"]
 transform = Transform3D(1.5255e-09, 0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, -0.0348995, 0.333, 0, 0.106)
+visible = false
 shape = SubResource("CapsuleShape3D_16281")
+max_results = 10
+collision_mask = 6
 
 [node name="CollisionShape3D7" type="ShapeCast3D" parent="Visual/PlayerCollision" index="1"]
 transform = Transform3D(-1.52551e-09, -0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, 0.0348995, -0.333, 0, 0.106)
+visible = false
 shape = SubResource("CapsuleShape3D_16281")
+max_results = 10
+collision_mask = 6
 
 [node name="CollisionShape3D8" type="ShapeCast3D" parent="Visual/PlayerCollision" index="2"]
 transform = Transform3D(1.9107e-15, 4.37112e-08, -1, 1, -4.37114e-08, 0, -4.37114e-08, -1, -4.37112e-08, -0.000177331, -5.33405e-09, 0.0315605)
+visible = false
 shape = SubResource("CapsuleShape3D_kdjxj")
+max_results = 10
+collision_mask = 6
 
 [node name="CharacterAnimationPlayer" parent="Visual/Character" index="0"]
 libraries = {
-"": SubResource("AnimationLibrary_54306")
+&"": SubResource("AnimationLibrary_54306")
 }
 
 [node name="Skeleton3D" parent="Visual/Character/Body/Armature" index="0"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bs4xxwi8savoj"]
 
-[ext_resource type="Script" path="res://scenes/vehicles/vehicle.gd" id="1_tu73a"]
+[ext_resource type="Script" uid="uid://bw7srqvi7ao64" path="res://scenes/vehicles/vehicle.gd" id="1_tu73a"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i10c5"]
 albedo_color = Color(1, 0, 0, 1)

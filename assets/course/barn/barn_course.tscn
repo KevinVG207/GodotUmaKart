@@ -37,8 +37,8 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_h1eff"]
 _data = {
-"RESET": SubResource("Animation_t5qgo"),
-"rotate": SubResource("Animation_dmnkx")
+&"RESET": SubResource("Animation_t5qgo"),
+&"rotate": SubResource("Animation_dmnkx")
 }
 
 [node name="barn_course" instance=ExtResource("1_qkepo")]

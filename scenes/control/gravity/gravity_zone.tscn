@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cqng3bjv7wadr"]
 
-[ext_resource type="Script" path="res://scenes/control/gravity/gravity_zone.gd" id="1_m81ic"]
+[ext_resource type="Script" uid="uid://bettpig8a0d1u" path="res://scenes/control/gravity/gravity_zone.gd" id="1_m81ic"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_sxxes"]
 resource_local_to_scene = true

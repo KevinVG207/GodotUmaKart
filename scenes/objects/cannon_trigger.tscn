@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://clsclqt1h0fjf"]
 
-[ext_resource type="Script" path="res://scenes/objects/cannon_trigger.gd" id="1_njyfg"]
+[ext_resource type="Script" uid="uid://bxi055dkrgxem" path="res://scenes/objects/cannon_trigger.gd" id="1_njyfg"]
 
 [sub_resource type="Gradient" id="Gradient_vfr6p"]
 resource_local_to_scene = true

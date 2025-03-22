@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dj5me24rsutei"]
 
 [ext_resource type="PackedScene" uid="uid://b6ka26iis3guu" path="res://scenes/ui/select_vehicle/vehicle_button.tscn" id="1_d5jwh"]
-[ext_resource type="Script" path="res://scenes/ui/select_vehicle/VehicleSelectScene.gd" id="1_y2q76"]
+[ext_resource type="Script" uid="uid://eb5fwpx0o7y5" path="res://scenes/ui/select_vehicle/VehicleSelectScene.gd" id="1_y2q76"]
 
 [node name="VehicleSelectScene" type="Control"]
 layout_mode = 3

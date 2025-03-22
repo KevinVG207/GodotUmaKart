@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://kbseqbudkntg"]
 
-[ext_resource type="Script" path="res://scenes/vehicles/vehicle_audio.gd" id="1_rm5v2"]
+[ext_resource type="Script" uid="uid://dnes5ugacpuf6" path="res://scenes/vehicles/vehicle_audio.gd" id="1_rm5v2"]
 [ext_resource type="AudioStream" uid="uid://ddp6gh8rv8qu8" path="res://assets/audio/sfx/vehicle/engine.wav" id="2_clbko"]
 [ext_resource type="AudioStream" uid="uid://d0xn0hynf8bk3" path="res://assets/audio/sfx/vehicle/engine-idle.wav" id="3_tllqt"]
 [ext_resource type="AudioStream" uid="uid://b3ibb1wq3hysi" path="res://assets/audio/sfx/vehicle/skid.wav" id="4_c8ne5"]

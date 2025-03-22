@@ -1,27 +1,29 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=5 format=3 uid="uid://dwbg5tswi2g0t"]
 
-[ext_resource path="res://addons/3D Outline/Toggle Outline.gd" type="Script" id=1]
-[ext_resource path="res://addons/3D Outline/Test/Outlined Mesh.tscn" type="PackedScene" id=2]
+[ext_resource type="PackedScene" uid="uid://d0gpb0qc4jiaf" path="res://addons/3D Outline/Test/Outlined Mesh.tscn" id="2"]
 
-[sub_resource type="Environment" id=1]
-ambient_light_color = Color( 0.12549, 0.12549, 0.12549, 1 )
+[sub_resource type="Resource" id="Resource_bm2ta"]
+metadata/__load_path__ = "res://addons/3D Outline/Toggle Outline.gd"
 
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0, 0, 0, 0.25098 )
+[sub_resource type="Environment" id="1"]
+ambient_light_color = Color(0.12549, 0.12549, 0.12549, 1)
+
+[sub_resource type="StyleBoxFlat" id="2"]
+bg_color = Color(0, 0, 0, 0.25098)
 
 [node name="Test View" type="Spatial"]
-script = ExtResource( 1 )
+script = SubResource("Resource_bm2ta")
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4 )
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4)
 
-[node name="MeshInstance" parent="." instance=ExtResource( 2 )]
+[node name="MeshInstance" parent="." instance=ExtResource("2")]
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 0, 0, 0 )
+transform = Transform3D(0.866025, -0.25, 0.433013, 0, 0.866025, 0.5, -0.5, -0.433013, 0.75, 0, 0, 0)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource( 1 )
+environment = SubResource("1")
 
 [node name="Test GUI" type="CanvasLayer" parent="."]
 
@@ -38,7 +40,7 @@ anchor_bottom = 0.5
 margin_top = -64.0
 margin_right = 256.0
 margin_bottom = 64.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource("2")
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -66,4 +68,5 @@ margin_right = 240.0
 margin_bottom = 58.0
 pressed = true
 text = "Enable Outline"
+
 [connection signal="toggled" from="Test GUI/Control/Panel/VBoxContainer/CheckButton" to="." method="_toggle_outline"]

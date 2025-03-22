@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://b1k75qqx23vj2"]
 
-[ext_resource type="Script" path="res://scenes/items/_physical/ThrownRedBean.gd" id="1_ieo53"]
+[ext_resource type="Script" uid="uid://cjylmo303wx2o" path="res://scenes/items/_physical/ThrownRedBean.gd" id="1_ieo53"]
 [ext_resource type="Texture2D" uid="uid://chjvxxnrtrfvk" path="res://assets/items/jellybean_red.png" id="2_yaknc"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_v8qc4"]

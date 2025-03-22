@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://b6ka26iis3guu"]
 
-[ext_resource type="Script" path="res://scenes/ui/select_vehicle/vehicle_button.gd" id="1_lcowd"]
+[ext_resource type="Script" uid="uid://cvmdvke2srrxc" path="res://scenes/ui/select_vehicle/vehicle_button.gd" id="1_lcowd"]
 [ext_resource type="Texture2D" uid="uid://0blkvtglnpdv" path="res://assets/vehicles/_default.png" id="2_ynech"]
 
 [node name="VehicleButton" type="MarginContainer"]

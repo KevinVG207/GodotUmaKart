@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://bdqjcdostqotu"]
 
-[ext_resource type="Script" path="res://scenes/control/checkpoint.gd" id="1_wtfq1"]
+[ext_resource type="Script" uid="uid://busvuo6hrs08h" path="res://scenes/control/checkpoint.gd" id="1_wtfq1"]
 [ext_resource type="Material" uid="uid://dcx57dy3bd4vy" path="res://scenes/control/checkpoint_mat.tres" id="2_4cqlq"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bvlq5"]

@@ -16,7 +16,7 @@ run/main_scene="res://scenes/ui/academy/menu_academy.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="KevinVG207/UmaKart"
 config/auto_accept_quit=false
-config/features=PackedStringArray("4.3", "Mobile")
+config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -215,6 +215,7 @@ locale/translations=PackedStringArray("res://loc/text.en.translation", "res://lo
 
 common/physics_ticks_per_second=180
 common/max_physics_steps_per_frame=18
+3d/physics_engine="Jolt Physics"
 3d/default_gravity=20.0
 
 [rendering]

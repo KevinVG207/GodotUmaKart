@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://c1v5bpox4q5m5"]
 
-[ext_resource type="Script" path="res://scenes/items/_physical/ThrownBook.gd" id="1_ibqwy"]
+[ext_resource type="Script" uid="uid://mjt1dn7m14fu" path="res://scenes/items/_physical/ThrownBook.gd" id="1_ibqwy"]
 [ext_resource type="PackedScene" uid="uid://5i10cjnedc8f" path="res://assets/items/book/book.blend" id="2_fhwbd"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8fn56"]
