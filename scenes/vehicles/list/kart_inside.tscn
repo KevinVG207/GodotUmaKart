@@ -823,6 +823,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.506384, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0035522, 0)
 
 [node name="BlobShadow" parent="Visual" index="6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.324, 0)
 size = Vector3(4.5, 8, 4)
 texture_albedo = ExtResource("2_5r0yj")
 

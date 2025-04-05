@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://ds7es8al63u4p"]
+[gd_scene load_steps=26 format=3 uid="uid://ds7es8al63u4p"]
 
 [ext_resource type="Script" uid="uid://cam4qnh4qwq5x" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dk33wleda3xba" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="4_gc5eh"]
 [ext_resource type="Texture2D" uid="uid://ccawlfa3j8bex" path="res://assets/vehicles/blobshadow.png" id="4_piqwu"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_6rco1"]
+[ext_resource type="Script" uid="uid://cof1jjm2q2w8x" path="res://scenes/vehicles/blob_shadow.gd" id="5_x7a0q"]
 [ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="6_6ard6"]
 [ext_resource type="Script" uid="uid://nm5tp16uwelq" path="res://scenes/vehicles/cpu_logic.gd" id="12_u6ron"]
 [ext_resource type="PackedScene" uid="uid://kbseqbudkntg" path="res://scenes/vehicles/vehicle_audio.tscn" id="13_jx4i7"]
@@ -695,9 +696,8 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.001
 unique_name_in_owner = true
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -0.00164598, 0, -1.46002)
 
-[node name="BlobShadow" type="Decal" parent="Visual"]
+[node name="BlobShadow" type="Decal" parent="Visual" node_paths=PackedStringArray("vehicle")]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.378324, 0)
 layers = 2
 size = Vector3(4, 8, 4)
 texture_albedo = ExtResource("4_piqwu")
@@ -705,6 +705,8 @@ emission_energy = 0.5
 upper_fade = 20.0
 lower_fade = 0.5
 cull_mask = 2
+script = ExtResource("5_x7a0q")
+vehicle = NodePath("../..")
 
 [node name="PlayerCollision" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
