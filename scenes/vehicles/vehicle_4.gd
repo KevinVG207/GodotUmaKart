@@ -918,7 +918,7 @@ func handle_steer() -> void:
 
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
 	
-	Debug.print(turn_speed)
+	#Debug.print(turn_speed)
 
 	var multi := 1.0 if grounded else air_turn_multiplier
 

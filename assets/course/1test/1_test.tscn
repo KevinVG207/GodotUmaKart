@@ -8,9 +8,15 @@ transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
 [node name="StaticBody3D" parent="grass" index="0" groups=["col_floor", "col_offroad"]]
 
+[node name="CollisionShape3D" parent="grass/StaticBody3D" index="0" groups=["col_floor", "col_offroad"]]
+
 [node name="road" parent="." index="1"]
 mesh = ExtResource("2_pkuhf")
 
 [node name="StaticBody3D" parent="road" index="0" groups=["col_floor"]]
 
+[node name="CollisionShape3D" parent="road/StaticBody3D" index="0" groups=["col_floor"]]
+
 [node name="StaticBody3D" parent="startline" index="0" groups=["col_floor"]]
+
+[node name="CollisionShape3D" parent="startline/StaticBody3D" index="0" groups=["col_floor"]]
