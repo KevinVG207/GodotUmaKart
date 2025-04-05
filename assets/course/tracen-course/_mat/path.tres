@@ -1,6 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://cg0ej23nllh4y"]
-
-[resource]
-resource_name = "path"
-cull_mode = 2
-albedo_color = Color(0.813325, 0.813325, 0.813325, 1)

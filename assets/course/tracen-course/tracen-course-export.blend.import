@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://q6sa03xsf0qn"
-path="res://.godot/imported/tracen-course.blend-769a1ff7c37a9dab533bd7112a741762.scn"
+uid="uid://dcv4ee0tpswc8"
+path="res://.godot/imported/tracen-course-export.blend-b3447cdcf45352ae04cb03eeb733ea9c.scn"
 
 [deps]
 
-source_file="res://assets/course/tracen-course/tracen-course.blend"
-dest_files=["res://.godot/imported/tracen-course.blend-769a1ff7c37a9dab533bd7112a741762.scn"]
+source_file="res://assets/course/tracen-course/tracen-course-export.blend"
+dest_files=["res://.godot/imported/tracen-course-export.blend-b3447cdcf45352ae04cb03eeb733ea9c.scn"]
 
 [params]
 
@@ -31,7 +31,7 @@ animation/fps=30
 animation/trimming=false
 animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
-import_script/path=""
+import_script/path="uid://dlf26inwjqgew"
 _subresources={}
 blender/nodes/visible=0
 blender/nodes/active_collection_only=false

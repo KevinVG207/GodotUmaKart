@@ -1,7 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://c7c0h7m1v1jkl"]
-
-[resource]
-resource_name = "concrete"
-cull_mode = 2
-albedo_color = Color(0.773325, 0.711729, 0.681289, 1)
-roughness = 0.5
