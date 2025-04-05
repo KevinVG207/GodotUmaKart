@@ -229,7 +229,8 @@ static var floor_types := [
 	ContactType.UNKNOWN,
 	ContactType.FLOOR,
 	ContactType.TRICK,
-	ContactType.BOOST
+	ContactType.BOOST,
+	ContactType.OFFROAD
 	]
 
 class WallContact extends Contact:
@@ -1168,7 +1169,7 @@ func handle_trick() -> void:
 		trick_timer = 0
 
 func handle_hop() -> void:
-	if !in_hop and input.accel and input.brake and !prev_input.brake and cur_speed > min_hop_speed:
+	if !in_hop and grounded and input.accel and input.brake and !prev_input.brake and cur_speed > min_hop_speed:
 		# Perform hop
 		prev_input.brake = true
 		start_hop()

@@ -205,6 +205,7 @@ locale/translations=PackedStringArray("res://loc/text.en.translation", "res://lo
 
 [layer_names]
 
+3d_render/layer_2="Receives Drop Shadow"
 3d_physics/layer_1="Static"
 3d_physics/layer_2="Player"
 3d_physics/layer_3="Opponents"
@@ -213,10 +214,11 @@ locale/translations=PackedStringArray("res://loc/text.en.translation", "res://lo
 
 [physics]
 
-common/physics_ticks_per_second=180
-common/max_physics_steps_per_frame=18
+common/max_physics_steps_per_frame=60
 3d/physics_engine="Jolt Physics"
+jolt_physics_3d/queries/use_enhanced_internal_edge_removal=true
 3d/default_gravity=20.0
+3d/solver/contact_max_allowed_penetration=0.02
 
 [rendering]
 

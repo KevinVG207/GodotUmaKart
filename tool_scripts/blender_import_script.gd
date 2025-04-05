@@ -7,11 +7,14 @@ var global_scene: Node
 func _post_import(scene: Node) -> Node:
 	global_scene = scene
 
+	iterate(scene)
+
 	var visual_node: Node3D = Node3D.new()
 	visual_node.name = "Visual"
 
 	for child: Node in scene.get_children():
 		child.reparent(visual_node)
+		child.set_meta("_edit_lock_", true)
 
 	scene.add_child(visual_node)
 	visual_node.set_owner(scene)
@@ -31,6 +34,12 @@ func _post_import(scene: Node) -> Node:
 		generate_collision_shapes(child as MeshInstance3D)
 
 	return scene
+
+func iterate(node: Node) -> void:
+	for child: Node in node.get_children():
+		if child is MeshInstance3D:
+			var mesh_instance: MeshInstance3D = child as MeshInstance3D
+			mesh_instance.set_layer_mask_value(2, true)  # Enable drop shadows
 
 func generate_collision_shapes(mesh_instance: MeshInstance3D) -> void:
 	mesh_instance.name = mesh_instance.mesh.get("surface_0/name")

@@ -52,7 +52,7 @@ shadow_bias = 0.05
 shadow_normal_bias = 1.0
 shadow_opacity = 0.75
 directional_shadow_blend_splits = true
-directional_shadow_max_distance = 500.0
+directional_shadow_max_distance = 200.0
 
 [node name="Objects" type="Node3D" parent="."]
 

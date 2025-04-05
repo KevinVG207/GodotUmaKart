@@ -136,7 +136,7 @@ func do_occlusion(delta):
 	var occlusion_target := 1.0
 	
 	# Ignore parent
-	if parent != parent.world.player_scene:
+	if parent != parent.world.player_vehicle:
 		var ray_start = global_position
 		var ray_end = cam.global_position
 		var result = parent.world.space_state.intersect_ray(PhysicsRayQueryParameters3D.create(ray_start, ray_end, 1))
@@ -144,7 +144,6 @@ func do_occlusion(delta):
 			occlusion_target = 0.5
 	
 	occlusion_multi = move_toward(occlusion_multi, occlusion_target, delta * occlusion_effect_speed)
-	#print("occlusion ", occlusion_target, " ", occlusion_multi)
 	
 
 func do_doppler(delta) -> void:
