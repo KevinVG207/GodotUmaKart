@@ -31,7 +31,7 @@ var network_path_points: Dictionary = {}
 @onready var vehicles_node: Node3D = $Vehicles
 
 # var player_scene: PackedScene = preload("res://scenes/vehicles/vehicle_4.tscn")
-var player_scene: PackedScene = preload("res://scenes/vehicles/list/bike_inside.tscn")
+var player_scene: PackedScene = preload("res://scenes/vehicles/list/kart_inside.tscn")
 var rank_panel_scene: PackedScene = preload("res://scenes/ui/rank_panel.tscn")
 
 var menu_cam_str: String = "%CamFountain"
@@ -73,6 +73,12 @@ var map_outline_color: Color = Color(0.37, 0.37, 0.37, 1.0)
 var map_mesh_material: ShaderMaterial = preload("res://scenes/levels/race/_base/MapMaterial.tres")
 
 @export var fall_failsafe: float = -100
+
+@export_category("Music")
+@export var music_volume_multi: float = 1.0
+static var base_music_volume_multi: float = 0.7
+@export var final_lap_speed_multi: float = 1.2
+@export var music: AudioStreamSynchronized
 
 const PHYSICS_TICKS_PER_SECOND: int = 60
 
@@ -819,6 +825,7 @@ func check_finished():
 		finished = is_finished
 		if finished:
 			state = STATE_RACE_OVER
+			Music.race_music_stop()
 
 
 func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3, ignore_replay:=false):
@@ -1041,6 +1048,10 @@ func check_advance(player: Vehicle4) -> bool:
 	if next_idx == 0:
 		# Crossed the finish line
 		player.lap += 1
+		
+		if player == player_vehicle && player.lap == lap_count:
+			Music.start_final_lap(final_lap_speed_multi)
+		
 		if not player.finished and player.lap > lap_count and not player.is_network:
 			# var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
 			var time_after_finish := get_timer_seconds()
@@ -1211,6 +1222,7 @@ func _on_start_timer_timeout():
 func _on_countdown_timer_timeout():
 	state = STATE_RACE
 	race_start_time = Time.get_ticks_usec()
+	Music.play_race_music(music, music_volume_multi * base_music_volume_multi)
 	print("START: ", race_start_time)
 	for vehicle: Vehicle4 in players_dict.values():
 		# vehicle.axis_unlock()

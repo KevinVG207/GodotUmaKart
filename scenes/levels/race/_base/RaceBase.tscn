@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://crersi2gg0o1o"]
+[gd_scene load_steps=7 format=3 uid="uid://crersi2gg0o1o"]
 
 [ext_resource type="Script" uid="uid://18ebmydgwycr" path="res://scenes/levels/race/_base/RaceBase.gd" id="1_2b6un"]
 [ext_resource type="Material" uid="uid://c0453n1hsktoe" path="res://scenes/levels/race/_base/MapMaterial.tres" id="2_hkcxl"]
@@ -6,10 +6,14 @@
 [ext_resource type="Environment" uid="uid://bkllq0dgr17en" path="res://scenes/levels/race/_base/base_env.tres" id="3_34w1p"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_70vu5"]
 
+[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_fpcj0"]
+resource_local_to_scene = true
+
 [node name="RaceBase" type="Node3D"]
 process_priority = 900
 process_physics_priority = 900
 script = ExtResource("1_2b6un")
+music = SubResource("AudioStreamSynchronized_fpcj0")
 
 [node name="_Control" type="Node" parent="."]
 

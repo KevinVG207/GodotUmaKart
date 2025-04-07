@@ -1,13 +1,20 @@
-[gd_scene load_steps=14 format=3 uid="uid://tgm0tkbghr0c"]
+[gd_scene load_steps=16 format=3 uid="uid://tgm0tkbghr0c"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_2vsv6"]
 [ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_5k6we"]
+[ext_resource type="AudioStream" uid="uid://dcgxdsiyqjgav" path="res://assets/course/tracen-course/music/AfterHaze.wav" id="2_s5c32"]
 [ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/_1test/1test_map_Circle_001.res" id="3_0eo7q"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_864dc"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_qon5u"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_jv31a"]
 [ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="6_i62ff"]
 [ext_resource type="PackedScene" uid="uid://i7r86beliswl" path="res://scenes/items/3carrots.tscn" id="7_pi034"]
+
+[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_wwo5q"]
+resource_local_to_scene = true
+stream_count = 1
+stream_0/stream = ExtResource("2_s5c32")
+stream_0/volume = 0.0
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wwo5q"]
 load_path = "res://.godot/imported/red-x.png-b5a62187d4ffd97d68cf59b005bde08c.s3tc.ctex"
@@ -36,9 +43,10 @@ size = Vector3(5, 3, 1)
 size = Vector3(5, 3, 1)
 
 [node name="1test" instance=ExtResource("1_2vsv6")]
-lap_count = 1
+lap_count = 2
 map_outline_width = 1.0
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
+music = SubResource("AudioStreamSynchronized_wwo5q")
 
 [node name="Course" parent="." index="1"]
 metadata/_edit_group_ = true

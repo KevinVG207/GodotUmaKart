@@ -13,3 +13,6 @@ Quad Bike_ATV Engine.wav by Alex_hears_things -- https://freesound.org/s/379915/
 car park skiding corner.wav by martian -- https://freesound.org/s/178889/ -- License: Creative Commons 0
 socket_connect_disconnect.mp3 by JustHallowed -- https://freesound.org/s/691007/ -- License: Attribution 4.0
 SPLASH.wav by petenice -- https://freesound.org/s/9508/ -- License: Creative Commons 0
+
+# Music
+AfterHaze composed by t12ya -- https://dova-s.jp/EN/bgm/play21959.html -- DOVA-SYNDROME License https://dova-s.jp/EN/_contents/license/

@@ -1,13 +1,21 @@
-[gd_scene load_steps=6 format=3 uid="uid://c7ahqrhul0gpx"]
+[gd_scene load_steps=8 format=3 uid="uid://c7ahqrhul0gpx"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_n65nj"]
 [ext_resource type="ArrayMesh" uid="uid://b6e1rva1cf2ml" path="res://assets/course/tracen-course/_map/tracen-course-map_Plane.res" id="2_m36vl"]
+[ext_resource type="AudioStream" uid="uid://dcgxdsiyqjgav" path="res://assets/course/tracen-course/music/AfterHaze.wav" id="2_r71dd"]
 [ext_resource type="PackedScene" uid="uid://v6g3injy5b0m" path="res://assets/course/tracen-course/tracen_course_export.tscn" id="3_m36vl"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_yb4ep"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_4vv2t"]
 
+[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_xes7l"]
+resource_local_to_scene = true
+stream_count = 1
+stream_0/stream = ExtResource("2_r71dd")
+stream_0/volume = 0.0
+
 [node name="TracenCourse" instance=ExtResource("1_n65nj")]
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
+music = SubResource("AudioStreamSynchronized_xes7l")
 
 [node name="MapMesh" parent="Course" index="0"]
 transform = Transform3D(18, 0, 0, 0, 18, 0, 0, 0, 18, 0, 0, 451.746)
