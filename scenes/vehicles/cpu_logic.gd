@@ -153,7 +153,7 @@ func accel_decel() -> void:
 		parent.input.accel = true
 		return
 
-	if parent.world.countdown_timer.time_left < parent.countdown_timer and randf() < 0.01:
+	if parent.world.countdown_timer * parent.world.PHYSICS_TICKS_PER_SECOND < parent.countdown_timer and randf() < 0.01:
 		parent.input.accel = true
 		return
 

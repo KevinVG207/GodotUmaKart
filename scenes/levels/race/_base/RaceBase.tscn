@@ -23,12 +23,6 @@ process_callback = 0
 wait_time = 3.0
 one_shot = true
 
-[node name="CountdownTimer" type="Timer" parent="_Control"]
-unique_name_in_owner = true
-process_callback = 0
-wait_time = 3.0
-one_shot = true
-
 [node name="NextRaceTimer" type="Timer" parent="_Control"]
 unique_name_in_owner = true
 process_callback = 0
@@ -93,5 +87,4 @@ size = 600.0
 [node name="NetworkPathPoints" type="Node3D" parent="."]
 
 [connection signal="timeout" from="_Control/StartTimer" to="." method="_on_start_timer_timeout"]
-[connection signal="timeout" from="_Control/CountdownTimer" to="." method="_on_countdown_timer_timeout"]
 [connection signal="timeout" from="_Control/NextRaceTimer" to="." method="_on_next_race_timer_timeout"]

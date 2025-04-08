@@ -65,7 +65,10 @@ var cpu_avg_speed: float = 22.5
 
 var course_name: String = "default"
 
-@onready var countdown_timer: Timer = %CountdownTimer
+var countdown_timer: int = 0
+var countdown_state: int = 3
+var countdown_gap: float = 1.5
+var countdown_seconds_total := (countdown_state-1) * countdown_gap + 1
 
 var map_outline_color: Color = Color(0.37, 0.37, 0.37, 1.0)
 @export var map_outline_width: float = 2.5
@@ -166,6 +169,7 @@ func _ready() -> void:
 	frames_between_update = int(float(Engine.physics_ticks_per_second) / updates_to_server_per_second)
 	
 	#load_replay("user://replays/1test/1725744856.sav")
+	countdown_timer = PHYSICS_TICKS_PER_SECOND * countdown_gap * countdown_seconds_total
 	
 	UI.race_ui.set_max_laps(lap_count)
 	UI.race_ui.set_cur_lap(0)
@@ -313,11 +317,6 @@ func _process(delta: float) -> void:
 	update_ranks()
 	
 	UI.race_ui.set_startline(checkpoints[0])
-	
-	if not countdown_timer.is_stopped() and countdown_timer.time_left <= 3.0:
-		UI.race_ui.update_countdown(str(ceili(countdown_timer.time_left)))
-	else:
-		UI.race_ui.update_countdown("")
 		
 	if state == STATE_COUNTING_DOWN:
 		#advance_replay()
@@ -567,18 +566,17 @@ func _physics_process(_delta: float) -> void:
 		STATE_CAN_READY:
 			change_state(STATE_READY_FOR_START, send_ready)
 		STATE_COUNTDOWN:
-			if Global.MODE1 == Global.MODE1_ONLINE:
-				countdown_timer.start(3.0)
-			else:
-				countdown_timer.start(4.0)
 			replay_manager.setup_new_replay(self)
-
-			#TODO: Remove this!
-			# player_vehicle.lap += 1
-			
 			state = STATE_COUNTING_DOWN
-		# STATE_COUNTING_DOWN:
-		# 	handle_replay()
+		STATE_COUNTING_DOWN:
+			var ticks_to_switch := countdown_gap * (countdown_state-1) * PHYSICS_TICKS_PER_SECOND + PHYSICS_TICKS_PER_SECOND * 0.3
+			if countdown_timer < ticks_to_switch:
+				countdown_state -= 1
+				UI.race_ui.update_countdown(countdown_state)
+			
+			if countdown_timer <= 0:
+				start_race()
+			countdown_timer -= 1
 		# STATE_RACE:
 			#save_replay()
 		STATE_RACE_OVER:
@@ -1219,7 +1217,7 @@ func _on_start_timer_timeout():
 	state = STATE_COUNTDOWN
 
 
-func _on_countdown_timer_timeout():
+func start_race():
 	state = STATE_RACE
 	race_start_time = Time.get_ticks_usec()
 	Music.play_race_music(music, music_volume_multi * base_music_volume_multi)

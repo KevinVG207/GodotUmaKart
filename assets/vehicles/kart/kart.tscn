@@ -3,3 +3,15 @@
 [ext_resource type="PackedScene" uid="uid://ds8vqrm05m0py" path="res://assets/vehicles/kart/kart.blend" id="1_4vkh6"]
 
 [node name="kart" instance=ExtResource("1_4vkh6")]
+
+[node name="Wheel" parent="." index="1"]
+visible = false
+
+[node name="Wheel_001" parent="." index="2"]
+visible = false
+
+[node name="Wheel_002" parent="." index="4"]
+visible = false
+
+[node name="Wheel_003" parent="." index="5"]
+visible = false

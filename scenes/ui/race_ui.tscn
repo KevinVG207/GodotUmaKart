@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=33 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" uid="uid://g5ppq8xvvwsd" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
@@ -75,9 +75,91 @@ font_size = 50
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="Animation" id="Animation_ctci6"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Countdown:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Countdown:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Countdown:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_0oqbo"]
+resource_name = "countdown"
+length = 1.3
+step = 0.1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Countdown:scale:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(3, -0.25, 1, 0.135, -0.5, 0.8, -0.180167, 0.028899, 0.234549, -0.0239945, 0.5, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.3, 1.3)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Countdown:scale:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(3, -0.25, 0, 0.135, -0.5, 0.8, -0.180167, 0.028899, 0.234549, -0.0239945, 0.5, -0.365451, 0.0336907, 0.25, 0),
+"times": PackedFloat32Array(0, 0.3, 1.3)
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Countdown:modulate")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.7, 1.1),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1fj4o"]
+_data = {
+&"RESET": SubResource("Animation_ctci6"),
+&"countdown": SubResource("Animation_0oqbo")
+}
+
 [sub_resource type="LabelSettings" id="LabelSettings_esb4h"]
 font_size = 100
-outline_size = 15
+outline_size = 25
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_7j71x"]
@@ -316,22 +398,27 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 20
 vertical_alignment = 2
 
+[node name="CountdownAnimation" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+libraries = {
+&"": SubResource("AnimationLibrary_1fj4o")
+}
+
 [node name="Countdown" type="Label" parent="."]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
+unique_name_in_owner = true
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "1"
+pivot_offset = Vector2(640, 360)
+size_flags_horizontal = 4
+text = "位置について"
 label_settings = SubResource("LabelSettings_esb4h")
 horizontal_alignment = 1
 vertical_alignment = 1
+clip_text = true
 
 [node name="LapCountContainer" type="HBoxContainer" parent="."]
 anchors_preset = 1
@@ -590,5 +677,6 @@ focus_neighbor_bottom = NodePath("../BtnPauseContinue")
 theme_override_font_sizes/font_size = 30
 text = "RACE_PAUSE_EXIT"
 
+[connection signal="animation_finished" from="CountdownAnimation" to="." method="_on_countdown_animation_animation_finished"]
 [connection signal="button_down" from="PauseMenu/ColorRect/PanelContainer/VBoxContainer/BtnPauseContinue" to="PauseMenu" method="_on_btn_pause_continue_button_down"]
 [connection signal="button_down" from="PauseMenu/ColorRect/PanelContainer/VBoxContainer/BtnPauseExit" to="PauseMenu" method="_on_btn_pause_exit_button_down"]

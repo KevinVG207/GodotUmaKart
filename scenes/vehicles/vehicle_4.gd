@@ -565,7 +565,7 @@ func set_inputs() -> void:
 		return
 
 	if is_cpu or use_cpu_logic:
-		# cpu_logic.set_inputs(visual_delta)
+		cpu_logic.set_inputs(visual_delta)
 		return
 
 	if is_controlled:
@@ -1414,6 +1414,7 @@ func rotate_stick() -> void:
 	# if below_normals:
 	# 	multi = float(len(below_normals)) / len(floor_check_grid)
 
+	# FIXME: This is garbage
 	var tmp := transform
 	look_at(global_position + floor_normal, -global_transform.basis.z.normalized(), true)
 	var rotated_transform := global_transform.rotated(global_transform.basis.x.normalized(), 0.5*PI)

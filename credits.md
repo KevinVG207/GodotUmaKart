@@ -1,3 +1,4 @@
+# Textures
 p0ss	117 Stone Wall Tilable Textures in 8 Themes	GPL 2.0
 arikel	Seamless 2	CC0
 Cethiel	Tileable Bricks Ground Textures - Set 1	CC0
@@ -7,6 +8,8 @@ Cethiel	Tileable Brick Ground Textures - Set 2	CC0
 Keith333	Clocks & Watches - Old Clock - Seamless Texture with Normalmap	CC-BY 3.0
 Kenney	Particle Pack	CC0
 timlesch	Horse Shoe (openclipart)	CC0
+
+# Sounds
 engine_idle.wav by mhad -- https://freesound.org/s/390788/ -- License: Creative Commons 0
 engine_ignition.wav by mhad -- https://freesound.org/s/390793/ -- License: Creative Commons 0
 Quad Bike_ATV Engine.wav by Alex_hears_things -- https://freesound.org/s/379915/ -- License: Creative Commons 0
