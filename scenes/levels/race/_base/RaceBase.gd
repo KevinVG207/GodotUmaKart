@@ -569,10 +569,14 @@ func _physics_process(_delta: float) -> void:
 			replay_manager.setup_new_replay(self)
 			state = STATE_COUNTING_DOWN
 		STATE_COUNTING_DOWN:
-			var ticks_to_switch := countdown_gap * (countdown_state-1) * PHYSICS_TICKS_PER_SECOND + PHYSICS_TICKS_PER_SECOND * 0.3
+			var ticks_to_switch := countdown_gap * (countdown_state-1) * PHYSICS_TICKS_PER_SECOND + PHYSICS_TICKS_PER_SECOND * 0.1
 			if countdown_timer < ticks_to_switch:
 				countdown_state -= 1
 				UI.race_ui.update_countdown(countdown_state)
+				if countdown_state > 0:
+					Audio.play_countdown_normal()
+				else:
+					Audio.play_race_music(music, music_volume_multi * base_music_volume_multi)
 			
 			if countdown_timer <= 0:
 				start_race()
@@ -823,7 +827,7 @@ func check_finished():
 		finished = is_finished
 		if finished:
 			state = STATE_RACE_OVER
-			Music.race_music_stop()
+			Audio.race_music_stop()
 
 
 func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3, ignore_replay:=false):
@@ -1048,7 +1052,7 @@ func check_advance(player: Vehicle4) -> bool:
 		player.lap += 1
 		
 		if player == player_vehicle && player.lap == lap_count:
-			Music.start_final_lap(final_lap_speed_multi)
+			Audio.start_final_lap(final_lap_speed_multi)
 		
 		if not player.finished and player.lap > lap_count and not player.is_network:
 			# var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
@@ -1220,7 +1224,6 @@ func _on_start_timer_timeout():
 func start_race():
 	state = STATE_RACE
 	race_start_time = Time.get_ticks_usec()
-	Music.play_race_music(music, music_volume_multi * base_music_volume_multi)
 	print("START: ", race_start_time)
 	for vehicle: Vehicle4 in players_dict.values():
 		# vehicle.axis_unlock()

@@ -28,7 +28,7 @@ UI="*res://global/UI.tscn"
 Debug="*res://global/Debug.tscn"
 Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
 Network="*res://global/network.gd"
-Music="*res://global/music.gd"
+Audio="*res://global/audio.gd"
 
 [debug]
 
