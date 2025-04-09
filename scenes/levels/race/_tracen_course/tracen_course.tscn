@@ -31,8 +31,11 @@ transform = Transform3D(18, 0, 0, 0, 18, 0, 0, 0, 18, 0, 0, 0)
 [node name="tracen-course-export" parent="Course/Model" index="0" instance=ExtResource("3_m36vl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 27.7424)
 
+[node name="Checkpoints" parent="." index="3"]
+visible = false
+
 [node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_yb4ep")]
-transform = Transform3D(0.241922, 0, 0.970296, 0, 1, 0, -0.970296, 0, 0.241922, 35.2813, -2.38419e-07, 7.18457)
+transform = Transform3D(0.241922, 0, 0.970296, 0, 1, 0, -0.970296, 0, 0.241922, 26.6377, 0.81721, 4.94433)
 
 [node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.760054, 0, 0.649859, 0, 1, 0, -0.649859, 0, 0.760054, 99.073, 0, 40.0154)

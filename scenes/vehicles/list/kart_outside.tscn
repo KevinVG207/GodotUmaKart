@@ -1089,11 +1089,13 @@ script = ExtResource("5_ql6u7")
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, -0.624835)
 script = ExtResource("5_ql6u7")
 steer = true
+drive = false
 
 [node name="wheel4" parent="Visual/Wheels" index="3" instance=ExtResource("4_1c8lg")]
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, 0.625)
 script = ExtResource("5_ql6u7")
 steer = true
+drive = false
 
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="." index="15"]
 transform = Transform3D(1.5255e-09, 0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, -0.0348995, 0.3, -0.0035522, 0.106)

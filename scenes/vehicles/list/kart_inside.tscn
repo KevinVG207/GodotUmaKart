@@ -850,47 +850,6 @@ libraries = {
 &"": SubResource("AnimationLibrary_54306")
 }
 
-[node name="Skeleton3D" parent="Visual/Character/Body/Armature" index="0"]
-bones/3/rotation = Quaternion(-2.69043e-07, -1.62795e-09, 0.864071, 0.503369)
-bones/4/rotation = Quaternion(1.17567e-07, -7.83734e-09, -0.258688, 0.965961)
-bones/5/rotation = Quaternion(-4.75167e-09, 7.46895e-09, 0.0104701, 0.999945)
-bones/7/rotation = Quaternion(-0.0111182, -0.00647702, -0.864, 0.503328)
-bones/8/rotation = Quaternion(0.0066567, 1.79934e-08, 0.258603, 0.965961)
-bones/9/rotation = Quaternion(-0.000269429, -5.14545e-07, -0.0104667, 0.999945)
-bones/10/rotation = Quaternion(0.566588, -0.423058, -0.566588, -0.423058)
-bones/11/rotation = Quaternion(-0.588622, 1.32982e-08, -7.08847e-08, 0.808408)
-bones/12/rotation = Quaternion(-0.00777966, 1.00328e-08, -1.15477e-09, 0.99997)
-bones/13/rotation = Quaternion(-0.0366224, -6.6562e-08, 0.706313, 0.706951)
-bones/15/rotation = Quaternion(0.588622, 1.52756e-08, 3.30823e-09, 0.808408)
-bones/16/rotation = Quaternion(0.00777966, -1.04308e-08, 1.46498e-11, 0.99997)
-bones/17/rotation = Quaternion(0.00598546, 0.0306302, 0.707237, 0.706288)
-bones/18/rotation = Quaternion(0.740318, -0.0235958, -0.460389, -0.4893)
-bones/19/rotation = Quaternion(-0.310634, -0.0117922, 0.13795, 0.940392)
-bones/20/rotation = Quaternion(-0.0451647, 0.00102211, 0.0500403, 0.997725)
-bones/21/rotation = Quaternion(-0.0846229, -1.49135e-08, 0.0586614, 0.994685)
-bones/22/rotation = Quaternion(0.740318, 0.0235959, 0.460389, -0.4893)
-bones/23/rotation = Quaternion(-0.310634, 0.0117921, -0.13795, 0.940392)
-bones/24/rotation = Quaternion(-0.0451647, -0.00102211, -0.0500403, 0.997725)
-bones/25/rotation = Quaternion(-0.084623, 3.52082e-08, -0.0586614, 0.994685)
-bones/26/rotation = Quaternion(-0.00160188, -0.00242559, 0.846825, 0.531864)
-bones/27/rotation = Quaternion(0.00420795, 0.00201629, 0.373702, 0.927537)
-bones/28/rotation = Quaternion(-0.00331914, -2.2332e-08, 0.17687, 0.984229)
-bones/29/rotation = Quaternion(-0.00160128, 0.00242571, -0.846825, 0.531864)
-bones/30/rotation = Quaternion(0.0042083, -0.0020163, -0.373702, 0.927537)
-bones/31/rotation = Quaternion(-0.00331897, 3.01547e-08, -0.17687, 0.984229)
-bones/32/rotation = Quaternion(0.705131, -0.0330245, 0.516343, 0.48486)
-bones/33/rotation = Quaternion(0.330942, 0.0245652, 0.150221, 0.931294)
-bones/34/rotation = Quaternion(0.0872144, 7.06411e-08, 0.120514, 0.988873)
-bones/35/rotation = Quaternion(0.670662, 0.00194509, -0.560386, 0.485979)
-bones/36/rotation = Quaternion(0.309057, -0.0245651, -0.191239, 0.931294)
-bones/37/rotation = Quaternion(0.0711162, -1.73859e-08, -0.130662, 0.988873)
-
-[node name="BaseAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="1"]
-transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, 0, 9.26224, 0)
-
-[node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
-transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, -9.98328e-14, 15.1167, 6.20428e-07)
-
 [node name="Kart" parent="Visual/VehicleBody" index="0" instance=ExtResource("3_wdhta")]
 unique_name_in_owner = true
 transform = Transform3D(0.16, 0, -2.22045e-15, 0, 0.16, 0, 8.88178e-16, 0, 0.16, -0.00164604, -0.292819, -0.0262525)
@@ -1085,11 +1044,13 @@ script = ExtResource("8_mpnrf")
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, -0.624835)
 script = ExtResource("8_mpnrf")
 steer = true
+drive = false
 
 [node name="wheel4" parent="Visual/Wheels" index="3" instance=ExtResource("7_5am2u")]
 transform = Transform3D(-9.83506e-09, 0, -0.225, 0, 0.225, 0, 0.225, 0, -9.83506e-09, 0.62, -0.29, 0.625)
 script = ExtResource("8_mpnrf")
 steer = true
+drive = false
 
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="." index="15"]
 transform = Transform3D(1.5255e-09, 0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, -0.0348995, 0.3, -0.0035522, 0.106)

@@ -63,6 +63,10 @@ col_boost=""
 col_bonk=""
 item_draggable=""
 
+[gui]
+
+common/snap_controls_to_pixels=false
+
 [input]
 
 ui_accept={

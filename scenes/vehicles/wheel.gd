@@ -6,18 +6,30 @@ extends Node3D
 @onready var radius := scale.x
 var anchor := Vector3.ZERO
 @onready var initial_rotation := rotation_degrees
+var initial_scale := Vector3.ZERO
 
 @export var steer := false
 var cur_steer_deg := 0.0
 var steer_multi := 300.0
 var cur_rot := 0.0
 
+@export var drive := true
+
 func _ready() -> void:
 	anchor = position
+	initial_scale = scale
 
 func _process(delta: float) -> void:
 	# Roll over the ground.
 	var new_rot := initial_rotation
+	
+	var cur_speed := parent.cur_speed
+	
+	scale = initial_scale
+	if !parent.started and drive:
+		var multi := clampf(parent.countdown_gauge / parent.countdown_gauge_max, 0, 1.5)
+		cur_speed = parent.base_max_speed * multi
+		scale = initial_scale * max(remap(multi, 0, 1.5, 1.0, 1.1), 1.0)
 	
 	var dist_travelled := parent.cur_speed * delta
 	var circum := 2.0 * PI * radius

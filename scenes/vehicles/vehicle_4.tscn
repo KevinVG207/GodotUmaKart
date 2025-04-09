@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://ds7es8al63u4p"]
+[gd_scene load_steps=31 format=3 uid="uid://ds7es8al63u4p"]
 
 [ext_resource type="Script" uid="uid://cam4qnh4qwq5x" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
@@ -585,26 +585,46 @@ _data = {
 &"sit": SubResource("Animation_ywfgf")
 }
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_xypq3"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_0tp0h"]
+animation = &"Chargeup"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_x7a0q"]
 animation = &"RESET"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_f8g0e"]
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_x7a0q"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_0tp0h"]
+graph_offset = Vector2(-354.432, -7.93605)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_x7a0q")
+nodes/Animation/position = Vector2(-40, 40)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_0tp0h")
+"nodes/Animation 2/position" = Vector2(-200, 240)
+nodes/Chargeup/node = SubResource("AnimationNodeBlend2_f8g0e")
+nodes/Chargeup/position = Vector2(180, 0)
+nodes/ChargeupSpeed/node = SubResource("AnimationNodeTimeScale_x7a0q")
+nodes/ChargeupSpeed/position = Vector2(-20, 240)
+nodes/output/position = Vector2(420, 20)
+node_connections = [&"Chargeup", 0, &"Animation", &"Chargeup", 1, &"ChargeupSpeed", &"ChargeupSpeed", 0, &"Animation 2", &"output", 0, &"Chargeup"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bleu3"]
 animation = &"dmg_spin"
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kfx7h"]
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_x7a0q"]
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kjaip"]
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_0tp0h"]
 switch_mode = 2
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_nguqk"]
-states/RESET/node = SubResource("AnimationNodeAnimation_xypq3")
-states/RESET/position = Vector2(551, 93)
-states/Start/position = Vector2(279, 93)
+states/Rest/node = SubResource("AnimationNodeBlendTree_0tp0h")
+states/Rest/position = Vector2(551, 93)
+states/Start/position = Vector2(280, 93)
 states/dmg_spin/node = SubResource("AnimationNodeAnimation_bleu3")
 states/dmg_spin/position = Vector2(551, 208)
-transitions = ["Start", "RESET", SubResource("AnimationNodeStateMachineTransition_kfx7h"), "dmg_spin", "RESET", SubResource("AnimationNodeStateMachineTransition_kjaip")]
+transitions = ["Start", "Rest", SubResource("AnimationNodeStateMachineTransition_x7a0q"), "dmg_spin", "Rest", SubResource("AnimationNodeStateMachineTransition_0tp0h")]
 graph_offset = Vector2(-19, -37)
 
 [sub_resource type="Animation" id="Animation_8ksb3"]
@@ -635,8 +655,24 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 1)
 }
 
+[sub_resource type="Animation" id="Animation_x7a0q"]
+resource_name = "Chargeup"
+loop_mode = 1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.1, -0.25, 0, 0.25, 0, -0.1, -0.25, 0, 0.25, 0, 0.1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5, 1)
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_yrkfx"]
 _data = {
+&"Chargeup": SubResource("Animation_x7a0q"),
 &"RESET": SubResource("Animation_8ksb3"),
 &"dmg_spin": SubResource("Animation_oqrol")
 }
@@ -878,6 +914,8 @@ unique_name_in_owner = true
 root_node = NodePath("%Visual")
 tree_root = SubResource("AnimationNodeStateMachine_nguqk")
 anim_player = NodePath("../VehicleAnimationPlayer")
+parameters/Rest/Chargeup/blend_amount = 0.0
+parameters/Rest/ChargeupSpeed/scale = 1.0
 script = ExtResource("4_gc5eh")
 
 [node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="."]
