@@ -48,7 +48,7 @@ var path_point_scene: PackedScene = preload("res://scenes/control/path/EnemyPath
 
 var finish_order: Array = []
 var rankings_timer: int = 0
-var rankings_delay: int = 30
+var rankings_delay: int = 1
 var stop_rankings: bool = false
 
 var debug_window: Window = null
@@ -171,6 +171,8 @@ func _ready() -> void:
 	#load_replay("user://replays/1test/1725744856.sav")
 	countdown_timer = PHYSICS_TICKS_PER_SECOND * countdown_gap * countdown_seconds_total
 	
+	rankings_delay = PHYSICS_TICKS_PER_SECOND / 6
+	
 	UI.race_ui.set_max_laps(lap_count)
 	UI.race_ui.set_cur_lap(0)
 	
@@ -192,6 +194,8 @@ func _ready() -> void:
 
 	setup_map_meshes()
 	
+	setup_course_default_collision_type()
+	
 	#minimap_recursive($Course)
 	# $Course/MapMesh.visible = true
 	UI.race_ui.set_map_camera(map_camera)
@@ -210,6 +214,31 @@ func setup_map_meshes() -> void:
 		map_mesh_material.set_shader_parameter("color", map_outline_color)
 		map_mesh_material.set_shader_parameter("outline_thickness", map_outline_width)
 		mesh.material_override = map_mesh_material
+
+func setup_course_default_collision_type() -> void:
+	recursive_set_floor(%Course)
+
+func recursive_set_floor(node: Node) -> void:
+	for child: Node in node.get_children():
+		recursive_set_floor(child)
+	
+	if not node is CollisionShape3D:
+		return
+	
+	if node.get_groups().is_empty():
+		node.add_to_group("col_floor")
+		return
+	
+	var wall := false
+	for group in node.get_groups():
+		if group == "col_wall":
+			wall = true
+			break
+	
+	if not wall:
+		node.add_to_group("col_floor")
+	
+	return
 
 func recursive_path_link(parent: Node, prev_points: Array) -> Array:
 	var root: bool = len(prev_points) == 0
