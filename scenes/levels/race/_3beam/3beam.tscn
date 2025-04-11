@@ -39,7 +39,7 @@ lap_count = 1
 map_outline_width = 1.0
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
 
-[node name="Course" parent="." index="0"]
+[node name="Course" parent="." index="1"]
 metadata/_edit_group_ = true
 
 [node name="MapMesh" parent="Course" index="0"]
@@ -49,6 +49,12 @@ mesh = ExtResource("3_cnu52")
 
 [node name="3beam" parent="Course" index="2" instance=ExtResource("3_t6h0d")]
 transform = Transform3D(-5.24537e-07, 0, 12, 0, 12, 0, -12, 0, -5.24537e-07, 25.2962, -11.6991, -40.5612)
+
+[node name="wall" parent="Course/3beam" index="1"]
+layers = 3
+
+[node name="road" parent="Course/3beam" index="2"]
+layers = 3
 
 [node name="CurveBasedGravityZone" parent="Course/3beam" index="3" instance=ExtResource("4_baukt")]
 transform = Transform3D(-5.46392e-09, 0, -0.125, 0, 0.125, 0, 0.125, 0, -5.46392e-09, -4.21556, 0.883712, -3.16202)
@@ -138,7 +144,7 @@ transform = Transform3D(-0.346838, 0, -0.937925, 0, 1, 0, 0.937925, 0, -0.346838
 [node name="Checkpoint15" parent="Checkpoints" index="14" instance=ExtResource("4_rx1am")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 27.3742, 0, 99.0759)
 
-[node name="EnemyPathPoints" parent="." index="3"]
+[node name="EnemyPathPoints" parent="." index="4"]
 visible = false
 
 [node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("5_chgo6")]
@@ -185,10 +191,7 @@ guaranteed_item = ExtResource("7_xqyu1")
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)
 guaranteed_item = ExtResource("7_xqyu1")
 
-[node name="CountdownTimer" parent="." index="14"]
-process_callback = 1
-
-[node name="MapCamera" parent="." index="17"]
+[node name="MapCamera" parent="." index="15"]
 size = 200.0
 
 [editable path="Course/3beam"]

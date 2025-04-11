@@ -1,9 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://b31g7ankqwl6t"]
-
-[ext_resource type="Texture2D" uid="uid://d1o7jf6fc8ut7" path="res://assets/course/tracen-course/arrow.png" id="1_wc3nn"]
-
-[resource]
-resource_name = "arrows"
-cull_mode = 2
-albedo_texture = ExtResource("1_wc3nn")
-roughness = 0.5

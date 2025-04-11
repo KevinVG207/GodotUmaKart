@@ -229,7 +229,8 @@ static var floor_types := [
 	ContactType.UNKNOWN,
 	ContactType.FLOOR,
 	ContactType.TRICK,
-	ContactType.BOOST
+	ContactType.BOOST,
+	ContactType.OFFROAD
 	]
 
 class WallContact extends Contact:
@@ -564,7 +565,7 @@ func set_inputs() -> void:
 		return
 
 	if is_cpu or use_cpu_logic:
-		# cpu_logic.set_inputs(visual_delta)
+		cpu_logic.set_inputs(visual_delta)
 		return
 
 	if is_controlled:
@@ -796,13 +797,9 @@ func build_contacts() -> void:
 
 	for i in range(physics_state.get_contact_count()):
 		var cur_ground_contact := false
-		var collider := physics_state.get_contact_collider_object(i) as CollisionObject3D
+		var collision_shape := Util.get_contact_collision_shape(physics_state, i)
 
-		var shape_index := physics_state.get_contact_collider_shape(i)
-		var shape_owner := collider.shape_find_owner(shape_index)
-		var shape_owner_object := collider.shape_owner_get_owner(shape_owner) as CollisionShape3D
-
-		var groups := shape_owner_object.get_groups()
+		var groups := collision_shape.get_groups()
 		if groups.is_empty():
 			groups.append("COL_UNKNOWN")
 		for group_raw in groups:
@@ -834,7 +831,7 @@ func build_contacts() -> void:
 					
 					# var dist_above_floor = transform.basis.y.dot(physics_state.get_contact_local_position(i) - point)
 					var dist_above_floor := Util.dist_to_plane(transform.basis.y, point, physics_state.get_contact_local_position(i))
-					if dist_above_floor < 0.05 and not shape_owner_object.is_in_group("col_bonk"):
+					if dist_above_floor < 0.05 and not collision_shape.is_in_group("col_bonk"):
 						continue
 
 					contact = WallContact.new()
@@ -863,7 +860,7 @@ func build_contacts() -> void:
 			if contact == null:
 				contact = Contact.new()
 
-			contact.collider = shape_owner_object
+			contact.collider = collision_shape
 			contact.position = physics_state.get_contact_local_position(i)
 			contact.normal = physics_state.get_contact_local_normal(i)
 			contact.type = contact_type
@@ -875,7 +872,7 @@ func build_contacts() -> void:
 		
 		if cur_ground_contact:
 			var contact := Contact.new()
-			contact.collider = shape_owner_object
+			contact.collider = collision_shape
 			contact.position = physics_state.get_contact_local_position(i)
 			contact.normal = physics_state.get_contact_local_normal(i)
 			contact.type = ContactType.FLOOR
@@ -918,7 +915,7 @@ func handle_steer() -> void:
 
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
 	
-	Debug.print(turn_speed)
+	#Debug.print(turn_speed)
 
 	var multi := 1.0 if grounded else air_turn_multiplier
 
@@ -1168,7 +1165,7 @@ func handle_trick() -> void:
 		trick_timer = 0
 
 func handle_hop() -> void:
-	if !in_hop and input.accel and input.brake and !prev_input.brake and cur_speed > min_hop_speed:
+	if !in_hop and grounded and input.accel and input.brake and !prev_input.brake and cur_speed > min_hop_speed:
 		# Perform hop
 		prev_input.brake = true
 		start_hop()
@@ -1413,6 +1410,7 @@ func rotate_stick() -> void:
 	# if below_normals:
 	# 	multi = float(len(below_normals)) / len(floor_check_grid)
 
+	# FIXME: This is garbage
 	var tmp := transform
 	look_at(global_position + floor_normal, -global_transform.basis.z.normalized(), true)
 	var rotated_transform := global_transform.rotated(global_transform.basis.x.normalized(), 0.5*PI)

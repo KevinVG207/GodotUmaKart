@@ -1,6 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3 uid="uid://v4660q5rtbxf"]
-
-[resource]
-resource_name = "dirtpath3"
-cull_mode = 2
-albedo_color = Color(0.807843, 0.537255, 0.247059, 1)

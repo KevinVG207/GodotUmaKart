@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://djkncdwh507k1"]
+[gd_scene load_steps=19 format=3 uid="uid://djkncdwh507k1"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_ecs37"]
 [ext_resource type="PackedScene" uid="uid://dp430o1purg1h" path="res://assets/course/wicked-woods/wicked_woods.tscn" id="2_cairb"]
@@ -12,6 +12,9 @@
 [ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="8_u35rw"]
 [ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="9_gxv84"]
 [ext_resource type="PackedScene" uid="uid://b70opqruhfce3" path="res://scenes/control/path/Split.tscn" id="9_nmbxv"]
+
+[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_urmko"]
+resource_local_to_scene = true
 
 [sub_resource type="Gradient" id="Gradient_vd50w"]
 resource_local_to_scene = true
@@ -41,6 +44,7 @@ size = Vector3(300, 33.77, 141.27)
 start_offset_x = 2.5
 lap_count = 2
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
+music = SubResource("AudioStreamSynchronized_urmko")
 
 [node name="Course" parent="." index="1"]
 metadata/_edit_group_ = true

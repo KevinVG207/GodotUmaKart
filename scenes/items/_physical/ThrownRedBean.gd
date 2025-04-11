@@ -153,7 +153,10 @@ func _physics_process(delta: float) -> void:
 
 	for i in get_slide_collision_count():
 		var col_data := get_slide_collision(i)
-		var collider := col_data.get_collider(0)
+		var collider := Util.get_collision_shape(col_data, i)
+		if collider == null:
+			continue
+		
 		if collider.is_in_group("col_wall"):
 			# Break on walls
 			var col_pos: Vector3 = to_local(col_data.get_position())

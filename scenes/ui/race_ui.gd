@@ -31,7 +31,6 @@ var alert_max_dist: float = 50
 
 @onready var pause_menu: PauseMenu = %PauseMenu
 
-
 func setup() -> void:
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item2").texture = Global.item_tex.pick_random()
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = Global.item_tex.pick_random()
@@ -102,8 +101,12 @@ func move_map_sprite(sprite: Sprite2D, global_pos: Vector3, direction: Vector2 =
 func update_speed(speed):
 	$Speed.text = str(int(speed))
 
-func update_countdown(cd):
-	$Countdown.text = str(cd)
+func update_countdown(count: int):
+	$Countdown.text = tr("RACE_COUNTDOWN_" + str(count))
+	%CountdownAnimation.stop()
+	%CountdownAnimation.play("countdown")
+	%CountdownAnimation.advance(0)
+	%Countdown.visible = true
 
 func set_max_laps(laps):
 	$LapCountContainer/MarginContainer/MaxLaps.text = "/%d" % int(max(laps, 1))
@@ -270,3 +273,7 @@ func remove_alert(object: Node3D):
 		var alert = alert_dict[object]
 		alert_dict.erase(object)
 		alert.queue_free()
+
+
+func _on_countdown_animation_animation_finished(anim_name: StringName) -> void:
+	$Countdown.visible = false

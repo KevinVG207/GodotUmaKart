@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://crersi2gg0o1o"]
+[gd_scene load_steps=7 format=3 uid="uid://crersi2gg0o1o"]
 
 [ext_resource type="Script" uid="uid://18ebmydgwycr" path="res://scenes/levels/race/_base/RaceBase.gd" id="1_2b6un"]
 [ext_resource type="Material" uid="uid://c0453n1hsktoe" path="res://scenes/levels/race/_base/MapMaterial.tres" id="2_hkcxl"]
@@ -6,20 +6,18 @@
 [ext_resource type="Environment" uid="uid://bkllq0dgr17en" path="res://scenes/levels/race/_base/base_env.tres" id="3_34w1p"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_70vu5"]
 
+[sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_fpcj0"]
+resource_local_to_scene = true
+
 [node name="RaceBase" type="Node3D"]
 process_priority = 900
 process_physics_priority = 900
 script = ExtResource("1_2b6un")
+music = SubResource("AudioStreamSynchronized_fpcj0")
 
 [node name="_Control" type="Node" parent="."]
 
 [node name="StartTimer" type="Timer" parent="_Control"]
-unique_name_in_owner = true
-process_callback = 0
-wait_time = 3.0
-one_shot = true
-
-[node name="CountdownTimer" type="Timer" parent="_Control"]
 unique_name_in_owner = true
 process_callback = 0
 wait_time = 3.0
@@ -35,6 +33,7 @@ one_shot = true
 unique_name_in_owner = true
 
 [node name="Course" type="Node3D" parent="."]
+unique_name_in_owner = true
 metadata/_edit_lock_ = true
 
 [node name="MapMesh" type="MeshInstance3D" parent="Course"]
@@ -52,7 +51,7 @@ shadow_bias = 0.05
 shadow_normal_bias = 1.0
 shadow_opacity = 0.75
 directional_shadow_blend_splits = true
-directional_shadow_max_distance = 500.0
+directional_shadow_max_distance = 200.0
 
 [node name="Objects" type="Node3D" parent="."]
 
@@ -89,5 +88,4 @@ size = 600.0
 [node name="NetworkPathPoints" type="Node3D" parent="."]
 
 [connection signal="timeout" from="_Control/StartTimer" to="." method="_on_start_timer_timeout"]
-[connection signal="timeout" from="_Control/CountdownTimer" to="." method="_on_countdown_timer_timeout"]
 [connection signal="timeout" from="_Control/NextRaceTimer" to="." method="_on_next_race_timer_timeout"]

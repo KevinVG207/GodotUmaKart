@@ -284,6 +284,19 @@ func doppler_sigmoid(dist_delta: float, max_distance: float) -> float:
 	#var object: Variant = bytes_to_var(gzip.get_data(gzip.get_available_bytes())[1])
 	#load_file.close()
 	#return object
+func get_contact_collision_shape(physics_state: PhysicsDirectBodyState3D, idx: int) -> CollisionShape3D:
+		var collider := physics_state.get_contact_collider_object(idx) as CollisionObject3D
+		var shape_index := physics_state.get_contact_collider_shape(idx)
+		var shape_owner := collider.shape_find_owner(shape_index)
+		return collider.shape_owner_get_owner(shape_owner) as CollisionShape3D
+
+func get_collision_shape(collision: KinematicCollision3D, idx: int) -> CollisionShape3D:
+	var collider := collision.get_collider(idx) as CollisionObject3D
+	if collider == null:
+		return null
+	var shape_index := collision.get_collider_shape_index(idx)
+	var shape_owner := collider.shape_find_owner(shape_index)
+	return collider.shape_owner_get_owner(shape_owner) as CollisionShape3D
 
 func center_window(window_id: int = 0) -> void:
 	var scr := DisplayServer.window_get_current_screen(window_id)
