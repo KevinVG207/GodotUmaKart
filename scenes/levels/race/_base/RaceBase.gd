@@ -81,7 +81,7 @@ var map_mesh_material: ShaderMaterial = preload("res://scenes/levels/race/_base/
 
 @export_category("Music")
 @export var music_volume_multi: float = 1.0
-static var base_music_volume_multi: float = 0.7
+static var base_music_volume_multi: float = 0.65
 @export var final_lap_speed_multi: float = 1.2
 @export var music: AudioStreamSynchronized
 
