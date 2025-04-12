@@ -15,8 +15,9 @@ stream_count = 1
 stream_0/stream = ExtResource("2_r71dd")
 stream_0/volume = 0.0
 
-[node name="TracenCourse" instance=ExtResource("1_n65nj")]
+[node name="TracenCourse" node_paths=PackedStringArray("start_enemy_points") instance=ExtResource("1_n65nj")]
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
+start_enemy_points = [NodePath("EnemyPathPoints/EnemyPath")]
 music = SubResource("AudioStreamSynchronized_xes7l")
 
 [node name="MapMesh" parent="Course" index="0"]
@@ -242,154 +243,216 @@ transform = Transform3D(0.317569, 0, 0.948235, 0, 1, 0, -0.948235, 0, 0.317569, 
 is_key = true
 
 [node name="EnemyPathPoints" parent="." index="4"]
+unique_name_in_owner = true
 visible = false
 
-[node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.0165, 0.162177, 9.39199)
+[node name="EnemyPath" parent="EnemyPathPoints" index="0" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.408195, 0, 1.95563, 0, 1.99777, 0, -1.95563, 0, 0.408195, 40.0165, 0.162177, 9.39199)
+next_points = [NodePath("../EnemyPath2")]
 
-[node name="EnemyPath2" parent="EnemyPathPoints" index="1" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.5437, 0.162177, 34.2)
+[node name="EnemyPath2" parent="EnemyPathPoints" index="1" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(1.68835, 0, 1.0375, 0, 1.98165, 0, -1.0375, 0, 1.68835, 64.9737, 0.162177, 32.0922)
+next_points = [NodePath("../EnemyPath3")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath3" parent="EnemyPathPoints" index="2" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 74.179, 0.162177, 57.5014)
+[node name="EnemyPath3" parent="EnemyPathPoints" index="2" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.984811, 0, -0.173631, 0, 1, 0, 0.173631, 0, 0.984811, 74.179, 0.162177, 57.5014)
+next_points = [NodePath("../EnemyPath4")]
 
-[node name="EnemyPath4" parent="EnemyPathPoints" index="3" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.382, 0.162177, 107.013)
+[node name="EnemyPath4" parent="EnemyPathPoints" index="3" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.966479, 0, -0.256745, 0, 1, 0, 0.256745, 0, 0.966479, 63.382, 0.162177, 107.013)
+next_points = [NodePath("../EnemyPath5")]
 
-[node name="EnemyPath5" parent="EnemyPathPoints" index="4" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54.5942, 0.162177, 140.7)
+[node name="EnemyPath5" parent="EnemyPathPoints" index="4" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.977944, 0, -0.208868, 0, 1, 0, 0.208868, 0, 0.977944, 53.4883, 0.162177, 145.878)
+next_points = [NodePath("../EnemyPath6")]
+curve_out = 4.0
 
-[node name="EnemyPath6" parent="EnemyPathPoints" index="5" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.7564, 0.162177, 158.712)
+[node name="EnemyPath6" parent="EnemyPathPoints" index="5" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.225342, 0, 0.97428, 0, 1, 0, -0.97428, 0, 0.225342, 61.8631, 0.162177, 154.477)
+next_points = [NodePath("../EnemyPath8")]
 
-[node name="EnemyPath7" parent="EnemyPathPoints" index="6" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.7564, 0.162177, 158.712)
+[node name="EnemyPath8" parent="EnemyPathPoints" index="6" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.286458, 0, 0.958093, 0, 1, 0, -0.958093, 0, 0.286458, 113.592, 0.162177, 168.312)
+next_points = [NodePath("../EnemyPath9")]
 
-[node name="EnemyPath8" parent="EnemyPathPoints" index="7" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.592, 0.162177, 168.312)
+[node name="EnemyPath9" parent="EnemyPathPoints" index="7" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.233157, 0, 0.972439, 0, 1, 0, -0.972439, 0, 0.233157, 155.343, 0.162177, 179.571)
+next_points = [NodePath("../EnemyPath11")]
+curve_out = 5.0
 
-[node name="EnemyPath9" parent="EnemyPathPoints" index="8" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 152.896, 0.162177, 178.592)
+[node name="EnemyPath11" parent="EnemyPathPoints" index="8" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.0377599, 0, 0.999287, 0, 1, 0, -0.999287, 0, -0.0377599, 169.189, 0.162177, 163.55)
+next_points = [NodePath("../EnemyPath13")]
+curve_in = 5.0
 
-[node name="EnemyPath11" parent="EnemyPathPoints" index="9" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 166.559, 0.162177, 163.856)
+[node name="EnemyPath13" parent="EnemyPathPoints" index="9" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.0339049, 0, 0.665155, 0, 0.666019, 0, -0.665155, 0, -0.0339049, 205.559, 0.162177, 172.856)
+next_points = [NodePath("../EnemyPath14")]
+curve_out = 5.0
 
-[node name="EnemyPath13" parent="EnemyPathPoints" index="10" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(0.666019, 0, 0, 0, 0.666019, 0, 0, 0, 0.666019, 205.559, 0.162177, 172.856)
+[node name="EnemyPath14" parent="EnemyPathPoints" index="10" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.161775, 0, 0.538302, 0, 0.562086, 0, -0.538302, 0, -0.161775, 220.634, 0.162177, 169.257)
+next_points = [NodePath("../EnemyPath15")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath14" parent="EnemyPathPoints" index="11" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(0.562086, 0, 0, 0, 0.562086, 0, 0, 0, 0.562086, 220.634, 0.162177, 169.257)
+[node name="EnemyPath15" parent="EnemyPathPoints" index="11" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.0153661, 0, 0.804667, 0, 0.804814, 0, -0.804667, 0, 0.0153661, 241.559, 0.162177, 163.856)
+next_points = [NodePath("../EnemyPath16")]
 
-[node name="EnemyPath15" parent="EnemyPathPoints" index="12" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(0.804814, 0, 0, 0, 0.804814, 0, 0, 0, 0.804814, 241.559, 0.162177, 163.856)
+[node name="EnemyPath16" parent="EnemyPathPoints" index="12" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.319489, 0, 0.94759, 0, 1, 0, -0.94759, 0, 0.319489, 264.559, 0.162177, 169.856)
+next_points = [NodePath("../EnemyPath18")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath16" parent="EnemyPathPoints" index="13" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 264.559, 0.162177, 169.856)
+[node name="EnemyPath18" parent="EnemyPathPoints" index="13" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.450706, 0, 0.892672, 0, 1, 0, -0.892672, 0, -0.450706, 288.496, 0.162177, 170.331)
+next_points = [NodePath("../EnemyPath19")]
+curve_out = 5.0
 
-[node name="EnemyPath17" parent="EnemyPathPoints" index="14" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 264.559, 0.162177, 169.856)
+[node name="EnemyPath19" parent="EnemyPathPoints" index="14" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.999977, 0, 0.00678931, 0, 1, 0, -0.00678931, 0, -0.999977, 298.331, 0.162177, 154.293)
+next_points = [NodePath("../EnemyPath20")]
+curve_in = 5.0
 
-[node name="EnemyPath18" parent="EnemyPathPoints" index="15" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 287.331, 0.162177, 168.293)
+[node name="EnemyPath20" parent="EnemyPathPoints" index="15" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.988756, 0.05207, -0.140177, 0, 0.937416, 0.348212, 0.149535, 0.344297, -0.926876, 297.438, 4.01799, 136.657)
+next_points = [NodePath("../EnemyPath21")]
 
-[node name="EnemyPath19" parent="EnemyPathPoints" index="16" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 298.331, 0.162177, 154.293)
+[node name="EnemyPath21" parent="EnemyPathPoints" index="16" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.977637, 0.101259, -0.184318, 0, 0.87645, 0.481494, 0.210301, 0.470726, -0.856849, 290.456, 19.3303, 97.6255)
+next_points = [NodePath("../EnemyPath22")]
+curve_out = 30.0
 
-[node name="EnemyPath20" parent="EnemyPathPoints" index="17" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 297.438, 4.01799, 136.657)
+[node name="EnemyPath22" parent="EnemyPathPoints" index="17" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.364958, 0, -0.931024, 0, 1, 0, 0.931024, 0, -0.364958, 244.151, 0.162177, -1.21238)
+next_points = [NodePath("../EnemyPath24")]
+curve_in = 20.0
 
-[node name="EnemyPath21" parent="EnemyPathPoints" index="18" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 290.456, 19.3303, 97.6255)
+[node name="EnemyPath24" parent="EnemyPathPoints" index="18" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.632102, 0, -0.445965, 0, 0.773588, 0, 0.445965, 0, 0.632102, 221.331, 0.162177, 3.95231)
+next_points = [NodePath("../EnemyPath25")]
 
-[node name="EnemyPath22" parent="EnemyPathPoints" index="19" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 244.151, 0.162177, -1.21238)
+[node name="EnemyPath25" parent="EnemyPathPoints" index="19" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.186713, 0, -0.982415, 0, 1, 0, 0.982415, 0, 0.186713, 201.832, 0.162177, 17.6131)
+next_points = [NodePath("../EnemyPath28")]
+curve_out = 5.0
 
-[node name="EnemyPath24" parent="EnemyPathPoints" index="20" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(0.773588, 0, 0, 0, 0.773588, 0, 0, 0, 0.773588, 221.331, 0.162177, 3.95231)
+[node name="EnemyPath28" parent="EnemyPathPoints" index="20" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.734014, 0, 0.679134, 0, 1, 0, -0.679134, 0, -0.734014, 193.249, 0.162177, -1.57855)
+next_points = [NodePath("../EnemyPath29")]
+curve_in = 5.0
 
-[node name="EnemyPath25" parent="EnemyPathPoints" index="21" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 205.309, 0.162177, 16.9523)
+[node name="EnemyPath29" parent="EnemyPathPoints" index="21" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.803919, 0, 0.594739, 0, 1, 0, -0.594739, 0, -0.803919, 213.579, 0.162177, -21.0014)
+next_points = [NodePath("../EnemyPath30")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath26" parent="EnemyPathPoints" index="22" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(0.531943, 0, 0, 0, 0.531943, 0, 0, 0, 0.531943, 193.868, 0.162177, 13.9991)
+[node name="EnemyPath30" parent="EnemyPathPoints" index="22" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.991839, 0, -0.127497, 0, 1, 0, 0.127497, 0, -0.991839, 222.849, 0.162177, -40.5707)
+next_points = [NodePath("../EnemyPath32")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath27" parent="EnemyPathPoints" index="23" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(0.508455, 0, 0, 0, 0.508455, 0, 0, 0, 0.508455, 190.801, 0.162177, 3.21144)
+[node name="EnemyPath32" parent="EnemyPathPoints" index="23" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.170055, 0, -0.985435, 0, 1, 0, 0.985435, 0, -0.170055, 199.579, 0.162177, -55.0014)
+next_points = [NodePath("../EnemyPath33")]
+curve_out = 5.0
 
-[node name="EnemyPath28" parent="EnemyPathPoints" index="24" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 198.309, 0.162177, -7.04769)
+[node name="EnemyPath33" parent="EnemyPathPoints" index="24" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.779972, 0, -0.625815, 0, 1, 0, 0.625815, 0, 0.779972, 183.579, 0.162177, -55.0014)
+next_points = [NodePath("../EnemyPath34")]
+curve_in = 5.0
 
-[node name="EnemyPath29" parent="EnemyPathPoints" index="25" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 213.579, 0.162177, -21.0014)
+[node name="EnemyPath34" parent="EnemyPathPoints" index="25" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.610394, 0, -0.792098, 0, 1, 0, 0.792098, 0, 0.610394, 171.579, 0.162177, -46.0014)
+next_points = [NodePath("../EnemyPath35")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath30" parent="EnemyPathPoints" index="26" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 221.579, 0.162177, -37.0014)
+[node name="EnemyPath35" parent="EnemyPathPoints" index="26" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.251442, 0, -1.46683, 0, 1.48823, 0, 1.46683, 0, 0.251442, 154.579, 0.162177, -39.0014)
+next_points = [NodePath("../EnemyPath36")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath32" parent="EnemyPathPoints" index="27" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 199.579, 0.162177, -55.0014)
+[node name="EnemyPath36" parent="EnemyPathPoints" index="27" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.200815, 0, -1.45409, 0, 1.46789, 0, 1.45409, 0, -0.200815, 136.579, 0.162177, -40.0014)
+next_points = [NodePath("../EnemyPath37")]
 
-[node name="EnemyPath33" parent="EnemyPathPoints" index="28" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 183.579, 0.162177, -55.0014)
+[node name="EnemyPath37" parent="EnemyPathPoints" index="28" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.481415, 0, -1.59202, 0, 1.66321, 0, 1.59202, 0, -0.481415, 99.5793, 0.162177, -48.0014)
+next_points = [NodePath("../EnemyPath38")]
 
-[node name="EnemyPath34" parent="EnemyPathPoints" index="29" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 171.579, 0.162177, -46.0014)
+[node name="EnemyPath38" parent="EnemyPathPoints" index="29" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.722423, 0, -1.38052, 0, 1.55811, 0, 1.38052, 0, -0.722423, 61.5793, 0.162177, -60.0014)
+next_points = [NodePath("../EnemyPath39")]
 
-[node name="EnemyPath35" parent="EnemyPathPoints" index="30" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 154.579, 0.162177, -39.0014)
+[node name="EnemyPath39" parent="EnemyPathPoints" index="30" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.865554, 0, -0.500816, 0, 1, 0, 0.500816, 0, -0.865554, 47.6855, 0.162177, -74.3178)
+next_points = [NodePath("../EnemyPath40")]
 
-[node name="EnemyPath36" parent="EnemyPathPoints" index="31" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 136.579, 0.162177, -40.0014)
+[node name="EnemyPath40" parent="EnemyPathPoints" index="31" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.998747, 0, -0.0500526, 0, 1, 0, 0.0500526, 0, -0.998747, 41.6855, 0.162177, -92.3178)
+next_points = [NodePath("../EnemyPath42")]
 
-[node name="EnemyPath37" parent="EnemyPathPoints" index="32" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 99.5793, 0.162177, -48.0014)
+[node name="EnemyPath42" parent="EnemyPathPoints" index="32" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.999615, 0, -0.0277297, 0, 1, 0, 0.0277297, 0, -0.999615, 41.6659, 0.162177, -117.682)
+next_points = [NodePath("../EnemyPath43")]
 
-[node name="EnemyPath38" parent="EnemyPathPoints" index="33" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.5793, 0.162177, -60.0014)
+[node name="EnemyPath43" parent="EnemyPathPoints" index="33" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.152054, 0, -0.988372, 0, 1, 0, 0.988372, 0, -0.152054, 27.6786, 0.162177, -141.639)
+next_points = [NodePath("../EnemyPath44")]
 
-[node name="EnemyPath39" parent="EnemyPathPoints" index="34" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47.6855, 0.162177, -74.3178)
+[node name="EnemyPath44" parent="EnemyPathPoints" index="34" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.152054, 0, -0.988372, 0, 1, 0, 0.988372, 0, -0.152054, -2.32138, 0.162177, -149.639)
+next_points = [NodePath("../EnemyPath45")]
 
-[node name="EnemyPath40" parent="EnemyPathPoints" index="35" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.6855, 0.162177, -92.3178)
+[node name="EnemyPath45" parent="EnemyPathPoints" index="35" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(-0.152054, 0, -0.988372, 0, 1, 0, 0.988372, 0, -0.152054, -30.3214, 0.162177, -155.639)
+next_points = [NodePath("../EnemyPath46")]
 
-[node name="EnemyPath42" parent="EnemyPathPoints" index="36" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.6659, 0.162177, -117.682)
-
-[node name="EnemyPath43" parent="EnemyPathPoints" index="37" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.6786, 0.162177, -141.639)
-
-[node name="EnemyPath44" parent="EnemyPathPoints" index="38" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.32138, 0.162177, -149.639)
-
-[node name="EnemyPath45" parent="EnemyPathPoints" index="39" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30.3214, 0.162177, -155.639)
-
-[node name="EnemyPath46" parent="EnemyPathPoints" index="40" instance=ExtResource("4_4vv2t")]
+[node name="EnemyPath46" parent="EnemyPathPoints" index="36" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45.3214, 0.162177, -146.639)
+next_points = [NodePath("../EnemyPath47")]
 
-[node name="EnemyPath47" parent="EnemyPathPoints" index="41" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.3214, 0.162177, -129.639)
+[node name="EnemyPath47" parent="EnemyPathPoints" index="37" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(1.14534, 0, 0, 0, 1.14534, 0, 0, 0, 1.14534, -46.3214, 0.162177, -129.639)
+next_points = [NodePath("../EnemyPath48")]
 
-[node name="EnemyPath48" parent="EnemyPathPoints" index="42" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -47.3214, 0.162177, -111.639)
+[node name="EnemyPath48" parent="EnemyPathPoints" index="38" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(1.35557, 0, -0.130932, 0, 1.36188, 0, 0.130932, 0, 1.35557, -43.5335, 0.162177, -111.273)
+next_points = [NodePath("../EnemyPath49")]
 
-[node name="EnemyPath49" parent="EnemyPathPoints" index="43" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -49.3214, 0.162177, -90.6388)
+[node name="EnemyPath49" parent="EnemyPathPoints" index="39" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(1.40151, 0, -0.248108, 0, 1.42331, 0, 0.248108, 0, 1.40151, -49.3214, 0.162177, -90.6388)
+next_points = [NodePath("../EnemyPath50")]
 
-[node name="EnemyPath50" parent="EnemyPathPoints" index="44" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -53.3214, 0.162177, -68.6388)
+[node name="EnemyPath50" parent="EnemyPathPoints" index="40" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(1.54528, 0, -0.370362, 0, 1.58905, 0, 0.370362, 0, 1.54528, -53.3214, 0.162177, -68.6388)
+next_points = [NodePath("../EnemyPath51")]
 
-[node name="EnemyPath51" parent="EnemyPathPoints" index="45" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.3214, 0.162177, -42.6388)
+[node name="EnemyPath51" parent="EnemyPathPoints" index="41" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(1.2164, 0, 0, 0, 1.2164, 0, 0, 0, 1.2164, -58.3214, 0.162177, -42.6388)
+next_points = [NodePath("../EnemyPath52")]
 
-[node name="EnemyPath52" parent="EnemyPathPoints" index="46" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.3214, 0.162177, -23.6388)
+[node name="EnemyPath52" parent="EnemyPathPoints" index="42" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(1.20611, 0, 0, 0, 1.20611, 0, 0, 0, 1.20611, -58.3214, 0.162177, -23.6388)
+next_points = [NodePath("../EnemyPath53")]
 
-[node name="EnemyPath53" parent="EnemyPathPoints" index="47" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.3214, 0.162177, -11.6388)
+[node name="EnemyPath53" parent="EnemyPathPoints" index="43" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.475985, 0, 1.81848, 0, 1.87975, 0, -1.81848, 0, 0.475985, -40.3214, 0.162177, -11.6388)
+next_points = [NodePath("../EnemyPath54")]
 
-[node name="EnemyPath54" parent="EnemyPathPoints" index="48" instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.32138, 0.162177, -2.63881)
+[node name="EnemyPath54" parent="EnemyPathPoints" index="44" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
+transform = Transform3D(0.404406, 0, 1.89235, 0, 1.93508, 0, -1.89235, 0, 0.404406, -6.32138, 0.162177, -2.63881)
+next_points = [NodePath("../EnemyPath")]
+curve_in = 5.0
+curve_out = 5.0
 
 [node name="MapCamera" parent="." index="10"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 138.473, 1000, 0)

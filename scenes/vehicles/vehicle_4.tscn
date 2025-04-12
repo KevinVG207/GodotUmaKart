@@ -1,8 +1,9 @@
-[gd_scene load_steps=31 format=3 uid="uid://ds7es8al63u4p"]
+[gd_scene load_steps=34 format=3 uid="uid://ds7es8al63u4p"]
 
 [ext_resource type="Script" uid="uid://cam4qnh4qwq5x" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
 [ext_resource type="Script" uid="uid://dbektq8qfd52i" path="res://scenes/vehicles/gravity_visualizer.gd" id="3_dqbc0"]
+[ext_resource type="Script" uid="uid://rq22v3wqjslr" path="res://scenes/vehicles/path_point_visualizer.gd" id="4_0tp0h"]
 [ext_resource type="Script" uid="uid://dk33wleda3xba" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="4_gc5eh"]
 [ext_resource type="Texture2D" uid="uid://ccawlfa3j8bex" path="res://assets/vehicles/blobshadow.png" id="4_piqwu"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_6rco1"]
@@ -23,6 +24,15 @@ albedo_color = Color(0.366667, 1, 0, 1)
 [sub_resource type="PrismMesh" id="PrismMesh_gb5ec"]
 material = SubResource("StandardMaterial3D_s5qxb")
 size = Vector3(0.5, 1, 0.2)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0tp0h"]
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_f8g0e"]
+material = SubResource("StandardMaterial3D_0tp0h")
+size = Vector3(0.2, 0.4, 0.2)
 
 [sub_resource type="Animation" id="Animation_2t2a3"]
 length = 0.001
@@ -627,6 +637,21 @@ states/dmg_spin/position = Vector2(551, 208)
 transitions = ["Start", "Rest", SubResource("AnimationNodeStateMachineTransition_x7a0q"), "dmg_spin", "Rest", SubResource("AnimationNodeStateMachineTransition_0tp0h")]
 graph_offset = Vector2(-19, -37)
 
+[sub_resource type="Animation" id="Animation_x7a0q"]
+resource_name = "Chargeup"
+loop_mode = 1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0),
+"points": PackedFloat32Array(0.1, -0.25, 0, 0.25, 0, -0.1, -0.25, 0, 0.25, 0, 0.1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5, 1)
+}
+
 [sub_resource type="Animation" id="Animation_8ksb3"]
 length = 0.001
 tracks/0/type = "bezier"
@@ -653,21 +678,6 @@ tracks/0/keys = {
 "handle_modes": PackedInt32Array(0, 0),
 "points": PackedFloat32Array(6.283, -0.25, 0, 0.05, -4.33713, 0, -0.5, 0, 0.25, 0),
 "times": PackedFloat32Array(0, 1)
-}
-
-[sub_resource type="Animation" id="Animation_x7a0q"]
-resource_name = "Chargeup"
-loop_mode = 1
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation:y")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0, 0),
-"points": PackedFloat32Array(0.1, -0.25, 0, 0.25, 0, -0.1, -0.25, 0, 0.25, 0, 0.1, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 0.5, 1)
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_yrkfx"]
@@ -704,6 +714,14 @@ vehicle = NodePath("../..")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Debug/GravityVisualizer"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 mesh = SubResource("PrismMesh_gb5ec")
+
+[node name="PathPointVisualizer" type="Node3D" parent="Debug" node_paths=PackedStringArray("vehicle")]
+script = ExtResource("4_0tp0h")
+vehicle = NodePath("../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Debug/PathPointVisualizer"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("PrismMesh_f8g0e")
 
 [node name="Visual" type="Node3D" parent="."]
 unique_name_in_owner = true

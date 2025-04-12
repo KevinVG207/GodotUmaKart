@@ -1435,7 +1435,7 @@ func apply_network_drift() -> void:
 	if !network.prev_state:
 		return
 
-	var network_pos: Vector3 = cpu_logic.target.global_position
+	var network_pos: Vector3 = cpu_logic.next_target_1.global_position
 	var network_rot: Quaternion = Util.array_to_quat(network.prev_state.rot)
 	var move_multi := 0.0
 	var rot_multi := 1.0
