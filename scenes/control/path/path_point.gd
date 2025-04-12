@@ -10,8 +10,8 @@ var radius: float = 6.0:
 	get:
 		return radius * scale.x
 
-@export var curve_out: float = 3
-@export var curve_in: float = 3
+@export var curve_in: float = 10
+@export var curve_out: float = 10
 
 func link_points(points_array: Array[Variant]) -> void:
 	if set_up:

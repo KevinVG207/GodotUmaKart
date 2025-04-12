@@ -32,24 +32,32 @@ func _forward_3d_draw_over_viewport(overlay: Control) -> void:
 func draw_point_lines(point: EnemyPath, overlay: Control) -> void:
 	if point == null:
 		return
-	
-	var cam = EditorInterface.get_editor_viewport_3d().get_camera_3d()
-	var start_coords = cam.unproject_position(point.global_position)
-	if cam.is_position_behind(point.global_position):
-		return
-	
+
 	for next_point in point.next_points:
 		if next_point == null:
 			continue
 		
-		if !cam.is_position_in_frustum(point.global_position) and !cam.is_position_in_frustum(next_point.global_position):
+		draw_sampled_curve(RaceUtil.make_curve_between_pathpoints(point, next_point), overlay)
+
+func draw_sampled_curve(curve: Curve3D, overlay: Control) -> void:
+	#print("draw sampled curve: ", curve)
+	var points := curve.get_baked_points()
+	var cam = EditorInterface.get_editor_viewport_3d().get_camera_3d()
+	
+	for i in range(points.size()-1):
+		var p1 := points[i]
+		var p2 := points[i+1]
+		
+		if cam.is_position_behind(p1) or cam.is_position_behind(p2):
+			continue
+		if !cam.is_position_in_frustum(p1) and !cam.is_position_in_frustum(p2):
 			continue
 		
-		var end_coords = cam.unproject_position(next_point.global_position)
-		if cam.is_position_behind(next_point.global_position):
-			continue
+		var p1_2d = cam.unproject_position(p1)
+		var p2_2d = cam.unproject_position(p2)
 		
-		overlay.draw_line(start_coords, end_coords, LINE_COLOR, 1, true)
+		overlay.draw_line(p1_2d, p2_2d, LINE_COLOR, 1, true)
+	return
 
 func recursive_find_points(node: Node, list: Array) -> void:
 	for child in node.get_children():
