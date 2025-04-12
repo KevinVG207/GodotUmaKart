@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c7ahqrhul0gpx"]
+[gd_scene load_steps=10 format=3 uid="uid://c7ahqrhul0gpx"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_n65nj"]
 [ext_resource type="ArrayMesh" uid="uid://b6e1rva1cf2ml" path="res://assets/course/tracen-course/_map/tracen-course-map_Plane.res" id="2_m36vl"]
@@ -14,13 +14,6 @@ resource_local_to_scene = true
 stream_count = 1
 stream_0/stream = ExtResource("2_r71dd")
 stream_0/volume = 0.0
-
-[sub_resource type="Curve3D" id="Curve3D_ncb5a"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, -4.07412, -0.0133696, -6.04339, 4.07412, 0.0133696, 6.04339, 16.45, 0, 0, 0, 0, 0, 0, 0, 0, 12.02, 0, 19.555),
-"tilts": PackedFloat32Array(0, 0, 0)
-}
-point_count = 3
 
 [node name="TracenCourse" node_paths=PackedStringArray("start_enemy_points") instance=ExtResource("1_n65nj")]
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
@@ -472,6 +465,3 @@ curve_out = 5.0
 
 [node name="MapCamera" parent="." index="10"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 138.473, 1000, 0)
-
-[node name="Path3D" type="Path3D" parent="." index="12"]
-curve = SubResource("Curve3D_ncb5a")

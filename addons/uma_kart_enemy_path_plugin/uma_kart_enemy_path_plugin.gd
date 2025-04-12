@@ -20,11 +20,11 @@ func _forward_3d_draw_over_viewport(overlay: Control) -> void:
 	if base is RaceBase:
 		recursive_find_points(base, points)
 	else:
-		var container = base.find_parent("EnemyPathPoints")
-		if container == null:
+		var real_base := find_race_base_parent(base)
+		if real_base == null:
 			print("Not found")
 			return
-		recursive_find_points(container.get_parent(), points)
+		recursive_find_points(real_base, points)
 		
 	for point in points:
 		draw_point_lines(point, overlay)
@@ -64,3 +64,13 @@ func recursive_find_points(node: Node, list: Array) -> void:
 		recursive_find_points(child, list)
 	if node is EnemyPath:
 		list.append(node)
+
+func find_race_base_parent(node: Node) -> RaceBase:
+	var max_iter := 10
+	var iter := 0
+	while iter < max_iter:
+		node = node.get_parent()
+		if node is RaceBase:
+			return node
+		iter += 1
+	return null
