@@ -1,6 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://cfkme45oihnt7"]
+[gd_scene load_steps=6 format=3 uid="uid://bfwv7wcvgtmlb"]
 
-[ext_resource type="Script" uid="uid://ca5sgth48g582" path="res://scenes/control/path/enemy_path.gd" id="1_mujn6"]
+[ext_resource type="Script" uid="uid://bqh2mo6s54p6o" path="res://scenes/control/path/path_point.gd" id="1_gxd2i"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pqhth"]
 albedo_color = Color(0, 0.752941, 0, 1)
@@ -17,9 +17,8 @@ material = SubResource("StandardMaterial3D_o0wxo")
 radius = 6.0
 height = 12.0
 
-[node name="EnemyPath" type="Node3D"]
-script = ExtResource("1_mujn6")
-metadata/_custom_type_script = "uid://bqh2mo6s54p6o"
+[node name="PathPoint" type="Node3D"]
+script = ExtResource("1_gxd2i")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_303pk")

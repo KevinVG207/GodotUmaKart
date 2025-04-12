@@ -29,6 +29,7 @@ Debug="*res://global/Debug.tscn"
 Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
 Network="*res://global/network.gd"
 Audio="*res://global/audio.gd"
+RaceUtil="*res://global/RaceUtil.gd"
 
 [debug]
 
@@ -48,7 +49,7 @@ movie_writer/movie_file="E:/Dev/GodotArcadeRacerTest/_movie/movie.avi"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/material_modifier/plugin.cfg")
+enabled=PackedStringArray("res://addons/material_modifier/plugin.cfg", "res://addons/uma_kart_enemy_path_plugin/plugin.cfg")
 
 [global_group]
 

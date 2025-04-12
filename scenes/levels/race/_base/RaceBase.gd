@@ -21,7 +21,7 @@ var race_start_time: float = 0
 var physical_item_counter := 0
 var physical_items: Dictionary = {}
 var deleted_physical_items: Array = []
-var all_path_points: Array = []
+var all_enemy_points: Array[EnemyPath] = []
 var network_path_points: Dictionary = {}
 @onready var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 
@@ -76,6 +76,8 @@ var map_outline_color: Color = Color(0.37, 0.37, 0.37, 1.0)
 var map_mesh_material: ShaderMaterial = preload("res://scenes/levels/race/_base/MapMaterial.tres")
 
 @export var fall_failsafe: float = -100
+
+@export var start_enemy_points: Array[EnemyPath] = []
 
 @export_category("Music")
 @export var music_volume_multi: float = 1.0
@@ -240,52 +242,20 @@ func recursive_set_floor(node: Node) -> void:
 	
 	return
 
-func recursive_path_link(parent: Node, prev_points: Array) -> Array:
-	var root: bool = len(prev_points) == 0
-	var path_points := parent.get_children()
-	var initial_points := []
-	for i in range(len(path_points)):
-		var cur_point := path_points[i]
-		
-		if i == 1:
-			initial_points = prev_points
-		
-		if cur_point is PathSplit:
-			var new_prev_points: Array = []
-			for branch in cur_point.get_children():
-				new_prev_points += recursive_path_link(branch, prev_points)
-			prev_points = new_prev_points
-			continue
-		
-		all_path_points.append(cur_point)
-		
-		for point: EnemyPath in prev_points:
-			point.next_points.append(cur_point)
-		
-		prev_points = [cur_point]
-		
-		var next_i := i+1
-		if next_i >= path_points.size():
-			if root:
-				cur_point.next_points = initial_points
-			
-			return prev_points
-	
-	return prev_points
-
 
 func setup_enemy_path() -> void:
-	recursive_path_link($EnemyPathPoints, [])
+	for point in start_enemy_points:
+		point.link_points(all_enemy_points)
 	
 	# Set up prev_points
-	for point: EnemyPath in all_path_points:
+	# TODO: Remove this
+	for point in all_enemy_points:
 		var normals: PackedVector3Array = []
-		for next_point: EnemyPath in point.next_points:
-			next_point.prev_points.append(point)
+		for next_point in point.next_points:
 			normals.append((next_point.global_position - point.global_position).normalized())
 		
 		var avg_normal: Vector3 = Util.sum(normals) / normals.size()
-		point.normal = avg_normal
+		point.normal = avg_normal.normalized()
 
 func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath) -> EnemyPath:
 	var cur_leaves: Array = target_point.prev_points
@@ -306,13 +276,17 @@ func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath) ->
 
 
 func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false) -> EnemyPath:
-	var next_points: Array = cur_point.next_points
-	return next_points.pick_random()
+	var next_points := cur_point.next_points
+	if next_points.is_empty():
+		return cur_point
+	var next_point = next_points.pick_random()
+	Debug.print(next_point)
+	return next_point
 	
 #func find_closest_enemy_point(player: Vehicle4) -> EnemyPath:
-	#var closest_pt: EnemyPath = all_path_points[0]
+	#var closest_pt: EnemyPath = all_enemy_points[0]
 	#var closest_dist: float = closest_pt.global_position.distance_to(player.global_position)
-	#for point: EnemyPath in all_path_points.slice(1):
+	#for point: EnemyPath in all_enemy_points.slice(1):
 		#var dist: float = point.global_position.distance_to(player.global_position)
 		#if dist < closest_dist:
 			#closest_dist = dist
@@ -885,7 +859,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 			path_point.visible = false
 			$NetworkPathPoints.add_child(path_point)
 	
-	new_vehicle.cpu_logic.target = $EnemyPathPoints.get_child(0)
+	new_vehicle.cpu_logic.target = start_enemy_points.pick_random()
 	
 	if user_id == player_user_id:
 		new_vehicle.initialize_player()
