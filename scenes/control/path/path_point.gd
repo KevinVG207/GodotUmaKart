@@ -6,7 +6,7 @@ var set_up: bool = false
 @export var next_points: Array[PathPoint] = []
 var prev_points: Array[PathPoint] = []
 
-var radius: float = 6.0:
+var radius: float = 4.0:
 	get:
 		return radius * scale.x
 
@@ -23,3 +23,9 @@ func link_points(points_array: Array[Variant]) -> void:
 		if self not in point.prev_points:
 			point.prev_points.append(self)
 		point.link_points(points_array)
+
+func get_in_vector() -> Vector3:
+	return -global_transform.basis.z.normalized() * curve_in
+
+func get_out_vector() -> Vector3:
+	return global_transform.basis.z.normalized() * curve_out

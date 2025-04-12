@@ -275,12 +275,11 @@ func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath) ->
 	return cur_point
 
 
-func pick_next_path_point(cur_point: EnemyPath, use_boost: bool=false) -> EnemyPath:
+func pick_next_path_point(cur_point: EnemyPath, _use_boost: bool=false) -> EnemyPath:
 	var next_points := cur_point.next_points
 	if next_points.is_empty():
 		return cur_point
-	var next_point = next_points.pick_random()
-	Debug.print(next_point)
+	var next_point := next_points.pick_random() as EnemyPath
 	return next_point
 	
 #func find_closest_enemy_point(player: Vehicle4) -> EnemyPath:
@@ -859,7 +858,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 			path_point.visible = false
 			$NetworkPathPoints.add_child(path_point)
 	
-	new_vehicle.cpu_logic.target = start_enemy_points.pick_random()
+	new_vehicle.cpu_logic.next_target_1 = start_enemy_points.pick_random()
 	
 	if user_id == player_user_id:
 		new_vehicle.initialize_player()

@@ -104,7 +104,7 @@ func apply_simple(state: Dictionary) -> void:
 
 func set_path_point(state: Dictionary) -> void:
 	var network_path := vehicle.world.network_path_points[vehicle] as EnemyPath
-	vehicle.cpu_logic.target = network_path
+	vehicle.cpu_logic.new_target(network_path)
 	network_path.global_position = Util.to_vector3(state.pos)
 	network_path.quaternion = Util.array_to_quat(state.rot)
 	network_path.normal = network_path.transform.basis.z
@@ -112,7 +112,6 @@ func set_path_point(state: Dictionary) -> void:
 		network_path.global_position += network_path.transform.basis.z * state.cur_speed * (1 + ((vehicle.world.pings[vehicle.user_id] + vehicle.world.pings[vehicle.world.player_user_id])/1000)) * 0.35
 	# network_path.next_points = [Util.get_path_point_ahead_of_player(vehicle)]
 	# network_path.prev_points = network_path.next_points[0].prev_points
-	vehicle.cpu_logic.target_offset = Vector3.ZERO
 	vehicle.cpu_logic.moved_to_next = false
 
 func teleport_to_network(state: Dictionary) -> void:

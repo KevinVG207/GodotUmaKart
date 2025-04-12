@@ -22,7 +22,6 @@ func _forward_3d_draw_over_viewport(overlay: Control) -> void:
 	else:
 		var real_base := find_race_base_parent(base)
 		if real_base == null:
-			print("Not found")
 			return
 		recursive_find_points(real_base, points)
 		

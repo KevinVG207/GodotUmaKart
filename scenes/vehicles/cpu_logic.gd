@@ -3,9 +3,9 @@ extends Node
 class_name CPULogic
 
 @export var parent: Vehicle4
-var target: EnemyPath = null
-var target_offset := get_random_target_offset()
-var target_pos := Vector3.ZERO
+# var target: EnemyPath = null
+# var target_offset := get_random_target_offset()
+# var target_pos := Vector3.ZERO
 
 var respawning := false
 var progress: float = -100000
@@ -26,6 +26,16 @@ var failsafe_tick_max: int = 0
 var failsafe_tick: int = 0
 var failsafe_start_progress: float = -1000
 
+var next_target_1: EnemyPath = null
+var next_target_2: EnemyPath = null
+var target_2_offset: Vector3
+var curve: Curve3D = null
+var curve_point_position: Vector3 = Vector3.ZERO
+var curve_point_forward: Vector3 = Vector3.ZERO
+var natural_start_point: Vector3
+const CURVE_SAMPLE_DISTANCE: float = 10.0
+const CURVE_SAMPLE_OFFSET: float = 0.05
+
 func _ready() -> void:
 	network = parent.network
 	failsafe_tick_max = int(failsafe_seconds * Engine.physics_ticks_per_second)
@@ -34,14 +44,18 @@ func set_inputs(delta: float) -> void:
 	# if parent.in_damage:
 	# 	return
 	
-	if not target:
+	if not next_target_1:
 		return
+	
+	if not next_target_2:
+		new_target(next_target_1)
 
 	do_rubberband(delta)
 
 	# return
 
 	update_target()
+	update_curve_point()
 	
 	if !parent.is_network:
 		try_trick()
@@ -66,8 +80,9 @@ func set_inputs(delta: float) -> void:
 func _process(_delta: float) -> void:
 	if !respawning and parent.respawn_stage == Vehicle4.RespawnStage.RESPAWNING:
 		respawning = true
-		target = Util.get_path_point_ahead_of_player(parent)
-		target_offset = get_random_target_offset()
+		new_target(Util.get_path_point_ahead_of_player(parent))
+		# target = Util.get_path_point_ahead_of_player(parent)
+		# target_offset = get_random_target_offset()
 	
 	if respawning and parent.respawn_stage != Vehicle4.RespawnStage.RESPAWNING:
 		respawning = false
@@ -115,21 +130,76 @@ func do_rubberband(delta: float) -> void:
 	# else:
 	# 	do_rubberband_fast(no_checkpoints_between)
 
-func get_random_target_offset() -> Vector3:
-	return Vector3(randf_range(-1, 1), randf_range(-1, 1), randf_range(-1, 1))
+func get_random_target_offset(radius:float=1.0) -> Vector3:
+	return Vector3(randf_range(-radius, radius), randf_range(-radius, radius), randf_range(-radius, radius))
 
-func update_target(should_exit: bool = false) -> void:
-	target_pos = target.global_position + (target_offset * target.dist / 3)
-	if parent.global_position.distance_to(target_pos) < target.dist or Util.dist_to_plane(target.normal, target.global_position, parent.global_position) > 0:
-		# Get next target
-		if !moved_to_next and parent.is_network:
-			target = Util.get_path_point_ahead_of_player(parent)
-		else:
-			target = parent.world.pick_next_path_point(target)
-		target_offset = get_random_target_offset()
-		moved_to_next = true
-		if !should_exit:
-			update_target(true)
+func update_target() -> void:
+	if passed_target(next_target_1):
+		new_target(next_target_2, true)
+	return
+
+func new_target(target: EnemyPath, natural: bool = false) -> void:
+	if target == null:
+		return
+	
+	next_target_1 = target
+	next_target_2 = parent.world.pick_next_path_point(next_target_1)
+
+	new_curve(natural)
+
+func passed_target(target: EnemyPath) -> bool:
+	if target == null:
+		return false
+	
+	if parent.global_position.distance_to(target.global_position) < target.radius:
+		return true
+	
+	if Util.dist_to_plane(target.global_basis.z, target.global_position, parent.global_position) >= 0:
+		return true
+	
+	return false
+
+func new_curve(natural: bool = false) -> void:
+	var in1 := next_target_1.get_in_vector()
+	var out1 := next_target_1.get_out_vector()
+	var in2 := next_target_2.get_in_vector()
+
+	var start_point := parent.global_position
+	if natural and natural_start_point:
+		start_point = natural_start_point
+	
+	var offset1 := target_2_offset if target_2_offset != Vector3.ZERO else get_random_target_offset(next_target_1.radius)
+	var offset2 := get_random_target_offset(next_target_2.radius)
+	natural_start_point = next_target_1.global_position + offset1
+	target_2_offset = offset2
+
+	in1 *= minf(1.0, parent.global_position.distance_to(next_target_1.global_position) / next_target_1.radius)
+
+	curve = RaceUtil.make_curve_double(
+		start_point,
+		natural_start_point,
+		next_target_2.global_position + offset2,
+		Vector3.ZERO,
+		in1,
+		out1,
+		in2
+	)
+
+func update_curve_point() -> void:
+	var curve_sample_distance := 20.0
+	curve_sample_distance = clampf(curve_sample_distance * (parent.cur_speed / parent.max_speed), 3, curve_sample_distance)
+	var curve_current_distance := curve.get_closest_offset(parent.global_position) + curve_sample_distance
+
+	if curve_current_distance + CURVE_SAMPLE_OFFSET > curve.get_baked_length():
+		curve_current_distance = curve.get_baked_length() - CURVE_SAMPLE_OFFSET
+
+	var p1 := curve.sample_baked(curve_current_distance - CURVE_SAMPLE_OFFSET)
+	var p2 := curve.sample_baked(curve_current_distance + CURVE_SAMPLE_OFFSET)
+	curve_point_position = (p1 + p2) * 0.5
+	curve_point_forward = (p2 - p1).normalized()
+
+func passed_curve_point() -> bool:
+	return Util.dist_to_plane(curve_point_forward, curve_point_position, parent.global_position) >= 0
 
 func try_trick() -> void:
 	if !parent.trick_timer:
@@ -181,10 +251,13 @@ func steer() -> void:
 
 
 func hold_drift(angle: float) -> void:
-	if abs(angle) > 0.5 and parent.cur_speed > parent.min_hop_speed and randf() < (2.0 / Engine.physics_ticks_per_second):
+	if abs(angle) > 0.2 and parent.cur_speed > parent.min_hop_speed: # and randf() < (2.0 / Engine.physics_ticks_per_second):
 		parent.input.brake = true
 	
-	if (parent.in_drift or parent.in_hop or parent.air_frames > Engine.physics_ticks_per_second/4.0) and (parent.drift_gauge >= 75 or abs(angle) > 0.2):
+	if !parent.input.brake and abs(angle) > 0.3 and parent.cur_speed > parent.min_hop_speed and randf() < (1.0 / (Engine.physics_ticks_per_second * 0.2)):
+		parent.input.brake = true
+	
+	if (parent.in_drift or parent.in_hop or parent.air_frames > Engine.physics_ticks_per_second/4.0) and parent.drift_gauge < 100:
 		parent.input.brake = true
 
 func try_release_drift() -> void:
@@ -192,12 +265,12 @@ func try_release_drift() -> void:
 		parent.input.brake = false
 
 func get_target_dir() -> Vector3:
-	return (target_pos - parent.global_position).normalized()
+	return (curve_point_position - parent.global_position).normalized()
 
 func get_angle_to_target(target_dir: Vector3) -> float:
 	return (-parent.global_transform.basis.x).angle_to(target_dir) - PI/2
 func get_max_angle_to_target() -> float:
-	return target.dist/2 / parent.global_position.distance_to(target_pos)
+	return next_target_1.radius*0.25 / parent.global_position.distance_to(next_target_1.global_position)
 
 
 func try_use_item() -> void:

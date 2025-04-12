@@ -5,24 +5,24 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pqhth"]
 albedo_color = Color(0, 0.752941, 0, 1)
 
-[sub_resource type="SphereMesh" id="SphereMesh_303pk"]
+[sub_resource type="SphereMesh" id="SphereMesh_mujn6"]
 material = SubResource("StandardMaterial3D_pqhth")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o0wxo"]
 transparency = 1
 albedo_color = Color(0, 0.752941, 0, 0.337255)
 
-[sub_resource type="SphereMesh" id="SphereMesh_0qdvt"]
+[sub_resource type="SphereMesh" id="SphereMesh_bwk1g"]
 material = SubResource("StandardMaterial3D_o0wxo")
-radius = 6.0
-height = 12.0
+radius = 4.0
+height = 8.0
 
 [node name="EnemyPath" type="Node3D"]
 script = ExtResource("1_mujn6")
 metadata/_custom_type_script = "uid://bqh2mo6s54p6o"
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("SphereMesh_303pk")
+mesh = SubResource("SphereMesh_mujn6")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
-mesh = SubResource("SphereMesh_0qdvt")
+mesh = SubResource("SphereMesh_bwk1g")
