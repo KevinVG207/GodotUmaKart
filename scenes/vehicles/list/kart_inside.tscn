@@ -10,13 +10,11 @@
 [ext_resource type="PackedScene" uid="uid://nrac2wfwh7vt" path="res://assets/vehicles/kart/wheel.blend" id="7_5am2u"]
 [ext_resource type="Script" uid="uid://c3talds3icqia" path="res://scenes/vehicles/wheel.gd" id="8_mpnrf"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_16281"]
-resource_local_to_scene = true
-height = 2.74023
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5r0yj"]
+height = 3.0
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_kdjxj"]
-resource_local_to_scene = true
-height = 2.86926
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sv7n8"]
+height = 3.0
 
 [sub_resource type="Animation" id="Animation_2t2a3"]
 length = 0.001
@@ -827,21 +825,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.324, 0)
 size = Vector3(4.5, 8, 4)
 texture_albedo = ExtResource("2_5r0yj")
 
-[node name="CollisionShape3D6" type="ShapeCast3D" parent="Visual/PlayerCollision" index="0"]
-transform = Transform3D(1.5255e-09, 0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, -0.0348995, 0.333, 0, 0.106)
-shape = SubResource("CapsuleShape3D_16281")
+[node name="ShapeCast3D" type="ShapeCast3D" parent="Visual/PlayerCollision" index="0"]
+transform = Transform3D(0.997233, 0.0743348, -3.24928e-09, 0, -4.37114e-08, -1, -0.0743348, 0.997233, -4.35905e-08, -0.309343, 0, 0)
+shape = SubResource("CapsuleShape3D_5r0yj")
+target_position = Vector3(0, 0, 0)
 max_results = 10
 collision_mask = 6
 
-[node name="CollisionShape3D7" type="ShapeCast3D" parent="Visual/PlayerCollision" index="1"]
-transform = Transform3D(-1.52551e-09, -0.0348995, -0.999391, 1, -4.37114e-08, 0, -4.36848e-08, -0.999391, 0.0348995, -0.333, 0, 0.106)
-shape = SubResource("CapsuleShape3D_16281")
-max_results = 10
-collision_mask = 6
-
-[node name="CollisionShape3D8" type="ShapeCast3D" parent="Visual/PlayerCollision" index="2"]
-transform = Transform3D(1.9107e-15, 4.37112e-08, -1, 1, -4.37114e-08, 0, -4.37114e-08, -1, -4.37112e-08, -0.000177331, -5.33405e-09, 0.0315605)
-shape = SubResource("CapsuleShape3D_kdjxj")
+[node name="ShapeCast3D2" type="ShapeCast3D" parent="Visual/PlayerCollision" index="1"]
+transform = Transform3D(0.997185, -0.0749787, 3.27742e-09, 0, -4.37114e-08, -1, 0.0749787, 0.997185, -4.35883e-08, 0.309, 0, 0)
+shape = SubResource("CapsuleShape3D_sv7n8")
+target_position = Vector3(0, 0, 0)
 max_results = 10
 collision_mask = 6
 

@@ -7,7 +7,7 @@ var updates_to_server_per_second: int = 6
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
 var players_dict: Dictionary = {}
-var frames_between_update: int = 45
+var frames_between_update: int = 60
 var update_wait_frames: int = 0
 var should_exit: bool = false
 var update_thread: Thread
@@ -560,6 +560,8 @@ func apply_item_state(data: Dictionary):
 	
 	if owner_id == player_user_id:
 		return
+		
+	#Debug.print(["state", origin_id, owner_id])
 	
 	var instance = physical_items[key]
 	instance.owner_id = owner_id
@@ -648,8 +650,8 @@ func _physics_process(_delta: float) -> void:
 					#player_vehicle.call_deferred("upload_data")
 				
 				for unique_id: String in physical_items.keys():
-					var item = physical_items[unique_id]
-					if not item.no_updates and item.owner_id == player_user_id:
+					var item := physical_items[unique_id]
+					if not item.no_updates and item.owned_by == player_vehicle:
 						send_item_state(item)
 		
 		check_finished()

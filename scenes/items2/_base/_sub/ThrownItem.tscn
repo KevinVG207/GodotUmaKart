@@ -4,4 +4,5 @@
 
 [node name="ThrownItem" type="Node"]
 script = ExtResource("1_6xw3l")
+no_updates = true
 metadata/_custom_type_script = "uid://difslb44mei5n"

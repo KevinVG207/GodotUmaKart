@@ -764,7 +764,6 @@ vehicle = NodePath("../..")
 
 [node name="PlayerCollision" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, -1.06581e-14, 0, 1, 0, 1.06581e-14, 0, 1, -0.00164605, 0, -0.998354)
 
 [node name="Character" type="Node3D" parent="Visual"]
 unique_name_in_owner = true
