@@ -16,7 +16,8 @@ func _ready() -> void:
 	# TODO: GravityZone implementation
 	gravity = origin.gravity
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	super(delta)
 	grace_ticks -= 1
 	despawn_ticks -= 1
 	if despawn_ticks <= 0:

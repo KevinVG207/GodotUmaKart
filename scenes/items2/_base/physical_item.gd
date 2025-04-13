@@ -24,6 +24,11 @@ func setup(new_key: String, new_world: RaceBase, new_origin: Vehicle4) -> void:
 	origin_id = new_origin.user_id
 	owner_id = new_origin.user_id
 
+func _physics_process(_delta: float) -> void:
+	if key in world.deleted_physical_items:
+		self.queue_free()
+		return
+
 func destroy() -> void:
 	world.destroy_physical_item(key)
 

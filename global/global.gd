@@ -5,7 +5,7 @@ signal goto_settings_screen
 
 signal camera_switched
 
-var default_player_count: int = 1
+var default_player_count: int = 2
 var player_count: int = default_player_count:
 	set(value):
 		player_count = value
@@ -41,7 +41,9 @@ var trick_col_to_node = {
 var items: Array[PackedScene] = [
 	load("res://scenes/items2/usable/carrot/1Carrot.tscn"),
 	load("res://scenes/items2/usable/carrot/3Carrots.tscn"),
-	load("res://scenes/items2/usable/book/Book.tscn")
+	load("res://scenes/items2/usable/book/Book.tscn"),
+	load("res://scenes/items2/usable/green_bean/GreenBean.tscn"),
+	load("res://scenes/items2/usable/red_bean/RedBean.tscn")
 	#load("res://scenes/items/1carrot.tscn"),
 	#preload("res://scenes/items/2carrots.tscn"),
 	#load("res://scenes/items/3carrots.tscn"),
@@ -55,7 +57,11 @@ var item_distributions: Dictionary[PackedScene, Curve] = {}
 
 var physical_items: Dictionary[String, PackedScene] = {
 	"DraggedBook": load("res://scenes/items2/physical/book/DraggedBook.tscn"),
-	"ThrownBook": load("res://scenes/items2/physical/book/ThrownBook.tscn")
+	"ThrownBook": load("res://scenes/items2/physical/book/ThrownBook.tscn"),
+	"DraggedGreenBean": load("res://scenes/items2/physical/green_bean/DraggedGreenBean.tscn"),
+	"ThrownGreenBean": load("res://scenes/items2/physical/green_bean/ThrownGreenBean.tscn"),
+	"DraggedRedBean": load("res://scenes/items2/physical/red_bean/DraggedRedBean.tscn"),
+	"ThrownRedBean": load("res://scenes/items2/physical/red_bean/ThrownRedBean.tscn")
 	#"green_bean": load("res://scenes/items/_physical/DraggedGreenBean.tscn"),
 	#"thrown_green_bean": load("res://scenes/items/_physical/ThrownGreenBean.tscn"),
 	#"book": load("res://scenes/items/_physical/DraggedBook.tscn"),

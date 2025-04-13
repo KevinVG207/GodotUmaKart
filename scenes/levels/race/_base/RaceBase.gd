@@ -458,12 +458,13 @@ func make_physical_item(key: String, player: Vehicle4) -> PhysicalItem:
 	physical_items[unique_key] = instance
 	$Items.add_child(instance)
 	
+	var item_state := instance.get_state()
 	var spawn_data := {
 		"originId": instance.origin_id,
 		"ownerId": instance.owner_id,
 		"uniqueId": unique_key,
 		"type": key,
-		"state": instance.get_state()
+		"state": item_state
 	}
 
 	Network.send_match_state(raceOp.CLIENT_SPAWN_ITEM, spawn_data)
