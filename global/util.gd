@@ -1,5 +1,7 @@
 extends Node3D
 
+const uuid = preload('res://addons/uuid/uuid.gd')
+
 var version: String:
 	get():
 		var tmp: String = ProjectSettings.get_setting("application/config/version")

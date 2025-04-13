@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://bi2og1u3yqr4i"]
+
+[ext_resource type="Script" uid="uid://c6q0gs28m68xq" path="res://scenes/items2/usable/book/book.gd" id="1_l7il8"]
+[ext_resource type="Texture2D" uid="uid://e1s7fkmo1d0h" path="res://assets/items/book.png" id="2_tmt81"]
+
+[sub_resource type="Curve" id="Curve_nwa1n"]
+_data = [Vector2(0, 0.2), 0.0, 0.0, 0, 0, Vector2(0.4, 0.2), 0.0, 0.0, 0, 0, Vector2(0.6, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="Book" type="Node"]
+script = ExtResource("1_l7il8")
+wheel_image = ExtResource("2_tmt81")
+probability = SubResource("Curve_nwa1n")
+physical_item_key = "DraggedBook"
+metadata/_custom_type_script = "uid://crmwq1v6djfdl"

@@ -5,7 +5,7 @@ signal goto_settings_screen
 
 signal camera_switched
 
-var default_player_count: int = 12
+var default_player_count: int = 1
 var player_count: int = default_player_count:
 	set(value):
 		player_count = value
@@ -38,25 +38,29 @@ var trick_col_to_node = {
 	"small_trick": "SmallBoostTimer"
 }
 
-var items: Array = [
-	load("res://scenes/items/1carrot.tscn"),
+var items: Array[PackedScene] = [
+	load("res://scenes/items2/usable/carrot/1Carrot.tscn"),
+	load("res://scenes/items2/usable/carrot/3Carrots.tscn"),
+	load("res://scenes/items2/usable/book/Book.tscn")
+	#load("res://scenes/items/1carrot.tscn"),
 	#preload("res://scenes/items/2carrots.tscn"),
-	load("res://scenes/items/3carrots.tscn"),
-	load("res://scenes/items/GreenBean.tscn"),
-	load("res://scenes/items/RedBean.tscn"),
-	load("res://scenes/items/Book.tscn"),
-	# load("res://scenes/items/RunningShoes/running_shoes.tscn")
+	#load("res://scenes/items/3carrots.tscn"),
+	#load("res://scenes/items/GreenBean.tscn"),
+	#load("res://scenes/items/RedBean.tscn"),
+	#load("res://scenes/items/Book.tscn"),
+	#load("res://scenes/items/RunningShoes/running_shoes.tscn")
 ]
 
-var item_dist: Array = []
+var item_distributions: Dictionary[PackedScene, Curve] = {}
 
-var physical_items: Dictionary = {
-	"green_bean": load("res://scenes/items/_physical/DraggedGreenBean.tscn"),
-	"thrown_green_bean": load("res://scenes/items/_physical/ThrownGreenBean.tscn"),
-	"book": load("res://scenes/items/_physical/DraggedBook.tscn"),
-	"thrown_book": load("res://scenes/items/_physical/ThrownBook.tscn"),
-	"red_bean": load("res://scenes/items/_physical/DraggedRedBean.tscn"),
-	"thrown_red_bean": load("res://scenes/items/_physical/ThrownRedBean.tscn")
+var physical_items: Dictionary[String, PackedScene] = {
+	"DraggedBook": load("res://scenes/items2/physical/book/DraggedBook.tscn")
+	#"green_bean": load("res://scenes/items/_physical/DraggedGreenBean.tscn"),
+	#"thrown_green_bean": load("res://scenes/items/_physical/ThrownGreenBean.tscn"),
+	#"book": load("res://scenes/items/_physical/DraggedBook.tscn"),
+	#"thrown_book": load("res://scenes/items/_physical/ThrownBook.tscn"),
+	#"red_bean": load("res://scenes/items/_physical/DraggedRedBean.tscn"),
+	#"thrown_red_bean": load("res://scenes/items/_physical/ThrownRedBean.tscn")
 }
 
 var item_tex: Array = []
@@ -75,22 +79,30 @@ func _enter_tree() -> void:
 
 func setup_items() -> void:
 	print("Setting up items...")
-	item_dist.clear()
-	for _i in range(player_count):
-		item_dist.append([])
+	item_distributions.clear()
 	
-	for item: PackedScene in items:
-		var instance = item.instantiate()
-		item_tex.append(instance.texture)
-		var new_from: int = ceil(remap(instance.from_pos, 1, 12, 1, player_count))
-		var new_to: int = ceil(remap(instance.to_pos, 1, 12, 1, player_count))
-		print(instance.name, " ", new_from, " ", new_to)
-		for i in range(new_from-1, new_to):
-			if i < player_count:
-				item_dist[i].append(item)
-		instance.queue_free()
-
+	for item in items:
+		var scene = item.instantiate() as UsableItem
+		item_distributions[item] = scene.probability
+		item_tex.append(scene.wheel_image)
+	
 	UI.race_ui.setup()
+
+func sample_item(player: Vehicle4) -> PackedScene:
+	var distributions: Array[float] = []
+	for item in item_distributions:
+		var offset := float(player.rank) / player_count
+		var weight := maxf(0, item_distributions[item].sample(offset))
+		distributions.append(weight)
+	
+	var rnd = RandomNumberGenerator.new()
+	var choice := rnd.rand_weighted(distributions)
+	
+	if choice == -1:
+		print("WARN: Failed to sample item")
+		return items[0]
+
+	return item_distributions.keys()[choice]
 
 #func _ready():
 	#var gravity := Vector3(0, -1, 0)

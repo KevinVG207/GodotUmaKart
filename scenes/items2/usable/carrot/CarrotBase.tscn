@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhwfkoskphwrx"]
+
+[ext_resource type="Script" uid="uid://dp3iwxl00o0qa" path="res://scenes/items2/usable/carrot/carrot_base.gd" id="1_ao1wi"]
+
+[node name="CarrotBase" type="Node"]
+script = ExtResource("1_ao1wi")
+metadata/_custom_type_script = "uid://crmwq1v6djfdl"

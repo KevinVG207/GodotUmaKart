@@ -243,7 +243,6 @@ transform = Transform3D(0.317569, 0, 0.948235, 0, 1, 0, -0.948235, 0, 0.317569, 
 is_key = true
 
 [node name="EnemyPathPoints" parent="." index="4"]
-unique_name_in_owner = true
 visible = false
 
 [node name="EnemyPath" parent="EnemyPathPoints" index="0" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]

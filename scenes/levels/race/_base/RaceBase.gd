@@ -19,8 +19,8 @@ var spectate: bool = false
 # var timer_tick: int = 0
 var race_start_time: float = 0
 var physical_item_counter := 0
-var physical_items: Dictionary = {}
-var deleted_physical_items: Array = []
+var physical_items: Dictionary[String, PhysicalItem] = {}
+var deleted_physical_items: Array[String] = []
 var all_enemy_points: Array[EnemyPath] = []
 var network_path_points: Dictionary = {}
 @onready var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
@@ -447,20 +447,24 @@ func change_state(new_state: int, state_func: Callable = Callable()):
 	state = new_state
 	state_func.call()
 
-func make_physical_item(key: String, player: Vehicle4) -> Node:
+func make_physical_item(key: String, player: Vehicle4) -> PhysicalItem:
 	if player.is_network:
 		return
 
 	physical_item_counter += 1
-	var unique_key := player_user_id + str(physical_item_counter)
-	var instance: Node = Global.physical_items[key].instantiate()
-	instance.item_id = unique_key
-	instance.owner_id = player.user_id
-	instance.world = self
+	var unique_key := Util.uuid.v4()
+	var instance := Global.physical_items[key].instantiate() as PhysicalItem
+	instance.setup(unique_key, self, player)
 	physical_items[unique_key] = instance
 	$Items.add_child(instance)
 	
-	var spawn_data := {"uniqueId": unique_key, "type": key, "state": instance.get_state()}
+	var spawn_data := {
+		"originId": instance.origin_id,
+		"ownerId": instance.owner_id,
+		"uniqueId": unique_key,
+		"type": key,
+		"state": instance.get_state()
+	}
 
 	Network.send_match_state(raceOp.CLIENT_SPAWN_ITEM, spawn_data)
 	
@@ -471,6 +475,7 @@ func make_physical_item(key: String, player: Vehicle4) -> Node:
 
 func spawn_physical_item(data: Dictionary):
 	var key = data["uniqueId"]
+	var origin_id = data["originId"]
 	var owner_id = data["ownerId"]
 	var item_type = data["type"]
 	var item_state = data["state"]
@@ -485,10 +490,9 @@ func spawn_physical_item(data: Dictionary):
 	if key in physical_items.keys():
 		return
 	
-	var instance = Global.physical_items[item_type].instantiate()
-	instance.item_id = key
+	var instance = Global.physical_items[item_type].instantiate() as PhysicalItem
+	instance.setup(key, self, players_dict[origin_id])
 	instance.owner_id = owner_id
-	instance.world = self
 	physical_items[key] = instance
 	$Items.add_child(instance)
 	instance.set_state(item_state)
@@ -502,6 +506,7 @@ func destroy_physical_item(key: String):
 	var instance = physical_items[key]
 
 	physical_items.erase(key)
+	instance.on_destroy()
 	instance.queue_free()
 	deleted_physical_items.append(key)
 	Network.send_match_state(raceOp.CLIENT_DESTROY_ITEM, {"uniqueId": key})
@@ -517,11 +522,12 @@ func server_destroy_physical_item(data: Dictionary):
 
 	var instance = physical_items[key]
 	physical_items.erase(key)
+	instance.on_destroy()
 	instance.queue_free()
 	deleted_physical_items.append(key)
 
 
-func send_item_state(item: Node):
+func send_item_state(item: PhysicalItem):
 	# Only the owner can send the state
 	if not item.owner_id == player_user_id:
 		return
@@ -533,11 +539,17 @@ func send_item_state(item: Node):
 		return
 	
 	#print(player_user_id, " sends ", item.item_id)
-	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {"uniqueId": item.item_id, "state": item_state})
+	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {
+		"uniqueId": item.item_id,
+		"originId": item.origin_id,
+		"ownerId": item.owner_id,
+		"state": item_state
+	})
 
 
 func apply_item_state(data: Dictionary):
 	var key = data["uniqueId"]
+	var origin_id = data["originId"]
 	var owner_id = data["ownerId"]
 	var item_state = data["state"]
 
@@ -551,6 +563,8 @@ func apply_item_state(data: Dictionary):
 		return
 	
 	var instance = physical_items[key]
+	instance.owner_id = owner_id
+	instance.origin_id = origin_id
 	instance.set_state(item_state)
 	#print(player_user_id, " receives ", key)
 	#print("New owner ", instance.owner_id)

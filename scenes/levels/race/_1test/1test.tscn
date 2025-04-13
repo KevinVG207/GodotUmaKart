@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://tgm0tkbghr0c"]
+[gd_scene load_steps=15 format=3 uid="uid://tgm0tkbghr0c"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_2vsv6"]
 [ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_5k6we"]
@@ -7,8 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_864dc"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_qon5u"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_jv31a"]
-[ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="6_i62ff"]
-[ext_resource type="PackedScene" uid="uid://i7r86beliswl" path="res://scenes/items/3carrots.tscn" id="7_pi034"]
+[ext_resource type="PackedScene" uid="uid://bi2og1u3yqr4i" path="res://scenes/items2/usable/book/Book.tscn" id="8_wwo5q"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_wwo5q"]
 resource_local_to_scene = true
@@ -42,10 +41,11 @@ size = Vector3(5, 3, 1)
 [sub_resource type="BoxShape3D" id="BoxShape3D_5tueu"]
 size = Vector3(5, 3, 1)
 
-[node name="1test" instance=ExtResource("1_2vsv6")]
+[node name="1test" node_paths=PackedStringArray("start_enemy_points") instance=ExtResource("1_2vsv6")]
 lap_count = 2
 map_outline_width = 1.0
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
+start_enemy_points = [NodePath("EnemyPathPoints/EnemyPath")]
 music = SubResource("AudioStreamSynchronized_wwo5q")
 
 [node name="Course" parent="." index="1"]
@@ -59,12 +59,12 @@ visible = false
 mesh = ExtResource("3_0eo7q")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Objects" index="0"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.8315, 1.03543, -1.609)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.8669, 1.03543, -1.609)
 mesh = SubResource("PlaneMesh_l0faj")
 skeleton = NodePath("")
 
 [node name="Node3D" type="Node3D" parent="Objects" index="1"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 24.9996, 0, -10.8081)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 42.035, 0, -10.8081)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Objects/Node3D" index="0" groups=["col_wall"]]
 
@@ -126,49 +126,69 @@ transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107
 [node name="EnemyPathPoints" parent="." index="4"]
 visible = false
 
-[node name="EnemyPath" parent="EnemyPathPoints" index="0" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 24.4533, 0.00012207, -1.62639)
+[node name="EnemyPath" parent="EnemyPathPoints" index="0" node_paths=PackedStringArray("next_points") instance=ExtResource("4_qon5u")]
+transform = Transform3D(-0.698601, 0, -0.0442338, 0, 0.7, 0, 0.0442338, 0, -0.698601, 24.4533, 0.00012207, -1.62639)
+next_points = [NodePath("../EnemyPath4")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath4" parent="EnemyPathPoints" index="1" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 16.8846, -0.00012207, -16.6743)
+[node name="EnemyPath4" parent="EnemyPathPoints" index="1" node_paths=PackedStringArray("next_points") instance=ExtResource("4_qon5u")]
+transform = Transform3D(-0.503869, 0, -0.485918, 0, 0.7, 0, 0.485918, 0, -0.503869, 16.8846, -0.00012207, -16.6743)
+next_points = [NodePath("../EnemyPath7")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath7" parent="EnemyPathPoints" index="2" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0.378935, 0.00012207, -23.835)
+[node name="EnemyPath7" parent="EnemyPathPoints" index="2" node_paths=PackedStringArray("next_points") instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.0382943, 0, -0.698952, 0, 0.7, 0, 0.698952, 0, 0.0382943, 0.378935, 0.00012207, -23.835)
+next_points = [NodePath("../EnemyPath10")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath10" parent="EnemyPathPoints" index="3" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -17.6754, -0.000244141, -15.973)
+[node name="EnemyPath10" parent="EnemyPathPoints" index="3" node_paths=PackedStringArray("next_points") instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.581417, 0, -0.389813, 0, 0.7, 0, 0.389813, 0, 0.581417, -17.6754, -0.000244141, -15.973)
+next_points = [NodePath("../EnemyPath13")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath13" parent="EnemyPathPoints" index="4" instance=ExtResource("4_qon5u")]
+[node name="EnemyPath13" parent="EnemyPathPoints" index="4" node_paths=PackedStringArray("next_points") instance=ExtResource("4_qon5u")]
 transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -24.1485, 0.00012207, -0.0945807)
+next_points = [NodePath("../EnemyPath2")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath2" parent="EnemyPathPoints" index="5" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -17.2244, 0, 15.5187)
+[node name="EnemyPath2" parent="EnemyPathPoints" index="5" node_paths=PackedStringArray("next_points") instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.543964, 0, 0.440572, 0, 0.7, 0, -0.440572, 0, 0.543964, -17.2244, 0, 15.5187)
+next_points = [NodePath("../EnemyPath3")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath3" parent="EnemyPathPoints" index="6" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, -0.121189, 0.000244141, 23.9498)
+[node name="EnemyPath3" parent="EnemyPathPoints" index="6" node_paths=PackedStringArray("next_points") instance=ExtResource("4_qon5u")]
+transform = Transform3D(0.0275796, 0, 0.699456, 0, 0.7, 0, -0.699456, 0, 0.0275796, -0.121189, 0.000244141, 23.9498)
+next_points = [NodePath("../EnemyPath5")]
+curve_in = 5.0
+curve_out = 5.0
 
-[node name="EnemyPath5" parent="EnemyPathPoints" index="7" instance=ExtResource("4_qon5u")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 18.7887, 0.000244141, 14.5551)
+[node name="EnemyPath5" parent="EnemyPathPoints" index="7" node_paths=PackedStringArray("next_points") instance=ExtResource("4_qon5u")]
+transform = Transform3D(-0.527173, 0, 0.460531, 0, 0.7, 0, -0.460531, 0, -0.527173, 18.7887, 0.000244141, 14.5551)
+next_points = [NodePath("../EnemyPath")]
+curve_in = 5.0
+curve_out = 5.0
 
 [node name="ItemPickup" parent="." index="8" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.7305, 1.90735e-06, -19.2348)
-guaranteed_item = ExtResource("6_i62ff")
 
 [node name="ItemPickup2" parent="." index="9" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.181, 1.90735e-06, -19.8046)
-guaranteed_item = ExtResource("7_pi034")
+guaranteed_item = ExtResource("8_wwo5q")
 
 [node name="ItemPickup3" parent="." index="10" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 10.7742, -1.90735e-06, -23.0451)
-guaranteed_item = ExtResource("6_i62ff")
 
 [node name="ItemPickup4" parent="." index="11" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 14.0165, -1.90735e-06, -23.6097)
-guaranteed_item = ExtResource("6_i62ff")
 
 [node name="ItemPickup5" parent="." index="12" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)
-guaranteed_item = ExtResource("6_i62ff")
 
 [node name="MapCamera" parent="." index="15"]
 size = 200.0

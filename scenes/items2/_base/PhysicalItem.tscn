@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://q1ty8iomdt21"]
+
+[ext_resource type="Script" uid="uid://d0q6undmijpp3" path="res://scenes/items2/_base/physical_item.gd" id="1_ka3dj"]
+
+[node name="PhysicalItem" type="Node"]
+script = ExtResource("1_ka3dj")
