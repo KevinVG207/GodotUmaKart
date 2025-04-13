@@ -1,4 +1,4 @@
-extends PhysicalItem
+extends DetachedItem
 
 class_name SlidingItem
 

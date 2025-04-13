@@ -327,6 +327,7 @@ static var respawn_boost_safezone_seconds: float = 0.1
 
 func _ready() -> void:
 	# UI.show_race_ui()
+	custom_integrator = true
 	
 	setup_floor_check_grid()
 	setup_head()

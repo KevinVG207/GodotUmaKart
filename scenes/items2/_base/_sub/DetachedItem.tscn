@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cbn33l6k3onro"]
+
+[ext_resource type="Script" uid="uid://difslb44mei5n" path="res://scenes/items2/_base/_sub/detached_item.gd" id="1_5mhk7"]
+
+[node name="DetachedItem" type="Node"]
+script = ExtResource("1_5mhk7")
+metadata/_custom_type_script = "uid://d0q6undmijpp3"

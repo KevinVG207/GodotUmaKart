@@ -54,7 +54,8 @@ var items: Array[PackedScene] = [
 var item_distributions: Dictionary[PackedScene, Curve] = {}
 
 var physical_items: Dictionary[String, PackedScene] = {
-	"DraggedBook": load("res://scenes/items2/physical/book/DraggedBook.tscn")
+	"DraggedBook": load("res://scenes/items2/physical/book/DraggedBook.tscn"),
+	"ThrownBook": load("res://scenes/items2/physical/book/ThrownBook.tscn")
 	#"green_bean": load("res://scenes/items/_physical/DraggedGreenBean.tscn"),
 	#"thrown_green_bean": load("res://scenes/items/_physical/ThrownGreenBean.tscn"),
 	#"book": load("res://scenes/items/_physical/DraggedBook.tscn"),

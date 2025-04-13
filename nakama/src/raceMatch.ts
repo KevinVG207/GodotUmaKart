@@ -26,6 +26,7 @@ enum finishType {
 
 interface PhysicalItem {
     uniqueId: string;
+    originId: string;
     ownerId: string;
     type: string;
     state: any;
@@ -401,6 +402,7 @@ function handle_spawn_item(message: nkruntime.MatchMessage, data: any, state: nk
 
     let item: PhysicalItem = {
         uniqueId: uniqueId,
+        originId: data.originId,
         ownerId: message.sender.userId,
         type: data.type,
         state: data.state

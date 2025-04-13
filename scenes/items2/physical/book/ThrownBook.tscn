@@ -1,0 +1,42 @@
+[gd_scene load_steps=6 format=3 uid="uid://cauixng7wy2ut"]
+
+[ext_resource type="Script" uid="uid://sba62feqb3wf" path="res://scenes/items2/physical/book/thrown_book.gd" id="1_cdbfi"]
+[ext_resource type="Script" uid="uid://cxxhma1b2xqgf" path="res://scenes/items2/_base/_sub/thrown_item_body.gd" id="2_2843k"]
+[ext_resource type="PackedScene" uid="uid://5i10cjnedc8f" path="res://assets/items/book/book.blend" id="2_nrfo5"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8fn56"]
+friction = 0.0
+bounce = 1.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lemdn"]
+size = Vector3(0.917725, 0.721001, 0.93457)
+
+[node name="ThrownBook" type="Node" node_paths=PackedStringArray("body", "area")]
+script = ExtResource("1_cdbfi")
+body = NodePath("ThrownBook")
+area = NodePath("ThrownBook/Area3D")
+metadata/_custom_type_script = "uid://bvaap4p81lp84"
+
+[node name="ThrownBook" type="RigidBody3D" parent="."]
+collision_layer = 0
+physics_material_override = SubResource("PhysicsMaterial_8fn56")
+gravity_scale = 0.0
+continuous_cd = true
+contact_monitor = true
+max_contacts_reported = 10
+script = ExtResource("2_2843k")
+
+[node name="book" parent="ThrownBook" instance=ExtResource("2_nrfo5")]
+transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ThrownBook"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.400978, 0)
+shape = SubResource("BoxShape3D_lemdn")
+
+[node name="Area3D" type="Area3D" parent="ThrownBook"]
+collision_layer = 8
+collision_mask = 14
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ThrownBook/Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.340694, 0)
+shape = SubResource("BoxShape3D_lemdn")

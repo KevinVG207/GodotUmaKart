@@ -538,9 +538,8 @@ func send_item_state(item: PhysicalItem):
 	if not state:
 		return
 	
-	#print(player_user_id, " sends ", item.item_id)
 	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {
-		"uniqueId": item.item_id,
+		"uniqueId": item.key,
 		"originId": item.origin_id,
 		"ownerId": item.owner_id,
 		"state": item_state

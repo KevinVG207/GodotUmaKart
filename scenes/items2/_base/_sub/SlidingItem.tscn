@@ -4,3 +4,4 @@
 
 [node name="SlidingItem" type="Node"]
 script = ExtResource("1_8ihoi")
+metadata/_custom_type_script = "uid://difslb44mei5n"
