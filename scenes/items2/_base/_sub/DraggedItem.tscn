@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://clxjrwru045fi"]
+
+[ext_resource type="Script" uid="uid://ci3rabmu3lfwm" path="res://scenes/items2/_base/_sub/dragged_item.gd" id="1_ps74a"]
+
+[node name="DraggedItem" type="Node"]
+script = ExtResource("1_ps74a")

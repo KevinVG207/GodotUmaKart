@@ -129,6 +129,7 @@ script = ExtResource("1_ueiln")
 
 [node name="Classroom" parent="." instance=ExtResource("8_fa8g2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.75572, 88.2997, -28.1476)
+visible = false
 
 [node name="Academy" type="Node3D" parent="."]
 

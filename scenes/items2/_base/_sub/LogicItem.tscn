@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c10ntec5uuuev"]
+
+[ext_resource type="Script" uid="uid://cb5xcivhejvpr" path="res://scenes/items2/_base/_sub/logic_item.gd" id="1_5qcrs"]
+
+[node name="LogicItem" type="Node"]
+script = ExtResource("1_5qcrs")

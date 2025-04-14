@@ -43,7 +43,7 @@ var grip := base_grip
 
 var cur_speed := 0.0
 
-var item: Node = null
+var item: UsableItem = null
 var can_use_item : = false
 var has_dragged_item := false
 
@@ -290,7 +290,7 @@ var trick_input_frames := 0
 var trick_timer := 0
 var trick_timer_length := int(180 * 0.4)
 
-var collided_with := {}
+var collided_with: Dictionary[Vehicle4, int] = {}
 
 enum DamageType {
 	NONE,
@@ -327,6 +327,7 @@ static var respawn_boost_safezone_seconds: float = 0.1
 
 func _ready() -> void:
 	# UI.show_race_ui()
+	custom_integrator = true
 	
 	setup_floor_check_grid()
 	setup_head()
@@ -768,7 +769,7 @@ func apply_push(force: Vector3, vehicle: Vehicle4) -> void:
 	if vehicle in collided_with:
 		return
 	
-	collided_with[vehicle] = 10
+	collided_with[vehicle] = roundi(0.05 * Engine.physics_ticks_per_second)
 
 	velocity.rest_vel += force
 
@@ -1012,6 +1013,10 @@ func bounce_walls() -> void:
 	
 	if ContactType.WALL not in contacts:
 		return
+	
+	#if is_network:
+		#network.teleport_to_network_now()
+		#return
 	
 	var avg_normal := Vector3.ZERO
 	var wall_contacts: Array = contacts[ContactType.WALL]
@@ -1555,18 +1560,28 @@ func get_item(guaranteed_item: PackedScene = null) -> void:
 	if guaranteed_item:
 		item = guaranteed_item.instantiate()
 	else:
-		var item_rank: int = round(remap(rank, 0, world.players_dict.size(), 0, Global.player_count))
-		item = Global.item_dist[item_rank].pick_random().instantiate()
-	if "parent" in item:
-		item.parent = self
-	if not "local" in item or not item.local:
-		world.add_child(item)
-	else:
-		%Items.add_child(item)
+		item = Global.sample_item(self).instantiate()
+	
+	if not item is UsableItem:
+		print("ERR: Object not of type UsableItem: ", item)
+		return
+	
+	item.setup(self, world)
+	%Items.add_child(item)
 	
 	%ItemRouletteTimer.start(4)
 	if is_player and !finished:
 		UI.race_ui.start_roulette()
+	
+	#else:
+		#var item_rank: int = round(remap(rank, 0, world.players_dict.size(), 0, Global.player_count))
+		#item = Global.item_dist[item_rank].pick_random().instantiate()
+	#if "parent" in item:
+		#item.parent = self
+	#if not "local" in item or not item.local:
+		#world.add_child(item)
+	#else:
+		#%Items.add_child(item)
 
 
 func handle_item() -> void:
@@ -1593,15 +1608,8 @@ func handle_item() -> void:
 	if not item:
 		return
 	
-	item = item.use(self, world)
+	item.use()
 	prev_input.item = true
-	
-	if not item:
-		remove_item()
-	else:
-		can_use_item = true
-		if is_player and !finished:
-			UI.race_ui.set_item_texture(item.texture)
 
 
 func remove_item() -> void:
@@ -1684,7 +1692,7 @@ func _on_item_roulette_timer_timeout() -> void:
 		can_use_item = true
 		return
 	
-	UI.race_ui.stop_roulette(item.texture)
+	UI.race_ui.stop_roulette(item.wheel_image)
 
 func _on_roulette_stop() -> void:
 	can_use_item = true

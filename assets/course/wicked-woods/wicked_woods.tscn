@@ -271,6 +271,7 @@ transform = Transform3D(4.5, 0, 0, 0, 4.5, 0, 0, 0, 4.5, 0, 0, 0)
 [node name="StaticBody3D" parent="Course_tower" index="0" groups=["col_wall"]]
 
 [node name="Course_castle-road" parent="." index="1" groups=["map"]]
+layers = 3
 
 [node name="StaticBody3D" parent="Course_castle-road" index="0" groups=["col_floor"]]
 

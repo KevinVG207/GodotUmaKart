@@ -1,0 +1,15 @@
+[gd_scene load_steps=6 format=3 uid="uid://bbw6p8qpx646r"]
+
+[ext_resource type="PackedScene" uid="uid://dhwfkoskphwrx" path="res://scenes/items2/usable/carrot/CarrotBase.tscn" id="1_nxr6c"]
+[ext_resource type="Texture2D" uid="uid://b134jwnm6l5qe" path="res://assets/items/1carrot.png" id="2_5c3of"]
+[ext_resource type="Texture2D" uid="uid://3vkb0ad3d77u" path="res://assets/items/2carrots.png" id="3_a2s07"]
+[ext_resource type="Texture2D" uid="uid://5v883badau8r" path="res://assets/items/3carrots.png" id="4_txkoa"]
+
+[sub_resource type="Curve" id="Curve_5c3of"]
+_data = [Vector2(0.390244, 0), 0.0, 0.0, 0, 0, Vector2(0.504065, 1), 0.0, 0.0, 0, 0, Vector2(0.715447, 1), 0.0, 0.0, 0, 0, Vector2(0.853659, 0.247191), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[node name="3Carrots" instance=ExtResource("1_nxr6c")]
+images = Array[CompressedTexture2D]([ExtResource("2_5c3of"), ExtResource("3_a2s07")])
+wheel_image = ExtResource("4_txkoa")
+probability = SubResource("Curve_5c3of")

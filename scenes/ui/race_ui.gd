@@ -179,6 +179,10 @@ func stop_roulette(item_texture: CompressedTexture2D):
 func set_item_texture(item_texture: CompressedTexture2D):
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = item_texture
 
+func update_item_image(img: CompressedTexture2D) -> void:
+	# TODO: Add animation
+	set_item_texture(img)
+
 func _on_rotate_end():
 	if roulette_stop:
 		return

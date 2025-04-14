@@ -20,10 +20,12 @@ func _ready() -> void:
 func _on_body_entered(body: Node3D) -> void:
 	if body is Vehicle4:
 		body.apply_gravity_zone(self, params)
+		return
 
 func _on_body_exited(body: Node3D) -> void:
 	if body is Vehicle4:
 		body.remove_gravity_zone(self)
+		return
 
 func remove_vehicle(vehicle: Vehicle4) -> void:
 	return

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dkhw51htobfu7"]
+
+[ext_resource type="Script" uid="uid://bbvgp5b1h7yam" path="res://scenes/items2/_base/_sub/sliding_item.gd" id="1_8ihoi"]
+
+[node name="SlidingItem" type="Node"]
+script = ExtResource("1_8ihoi")
+metadata/_custom_type_script = "uid://difslb44mei5n"

@@ -16,12 +16,14 @@
 
 [node name="red-asphalt" parent="Colliders" index="6" groups=["col_offroad_weak"]]
 
-[node name="concrete" parent="Colliders" index="8" groups=["col_wall"]]
+[node name="wall-concrete" parent="Colliders" index="8" groups=["col_bonk", "col_wall"]]
 
-[node name="arrows" parent="Colliders" index="17" groups=["col_wall"]]
+[node name="road_concrete" parent="Colliders" index="9" groups=["col_floor"]]
 
-[node name="redcar" parent="Colliders" index="18" groups=["col_wall"]]
+[node name="arrows" parent="Colliders" index="18" groups=["col_wall"]]
 
-[node name="wheel" parent="Colliders" index="19" groups=["col_wall"]]
+[node name="redcar" parent="Colliders" index="19" groups=["col_wall"]]
 
-[node name="bluecar" parent="Colliders" index="20" groups=["col_wall"]]
+[node name="wheel" parent="Colliders" index="20" groups=["col_wall"]]
+
+[node name="bluecar" parent="Colliders" index="21" groups=["col_wall"]]

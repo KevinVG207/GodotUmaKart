@@ -1,6 +1,6 @@
 extends Node3D
 
-class_name PhysicalItem
+class_name PhysicalItemOld
 
 var item_id: String
 var owner_id: String

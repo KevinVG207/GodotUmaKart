@@ -3,6 +3,8 @@ extends Area3D
 class_name CannonTrigger
 
 @export var speed: float = 50.0
+
+# FIXME: Use Curve type
 @export var gradient: GradientTexture1D
 
 func _on_body_entered(body: Node3D) -> void:

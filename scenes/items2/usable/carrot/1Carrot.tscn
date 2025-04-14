@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://36a36xox0dfp"]
+
+[ext_resource type="PackedScene" uid="uid://dhwfkoskphwrx" path="res://scenes/items2/usable/carrot/CarrotBase.tscn" id="1_8nhti"]
+[ext_resource type="Texture2D" uid="uid://b134jwnm6l5qe" path="res://assets/items/1carrot.png" id="2_io00f"]
+
+[sub_resource type="Curve" id="Curve_io00f"]
+_data = [Vector2(0.097561, 0.123596), 0.0, 0.0, 0, 0, Vector2(0.333333, 1), 0.0, 0.0, 0, 0, Vector2(0.504065, 1), 0.0, 0.0, 0, 0, Vector2(0.756098, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[node name="1Carrot" instance=ExtResource("1_8nhti")]
+uses_left = 1
+wheel_image = ExtResource("2_io00f")
+probability = SubResource("Curve_io00f")

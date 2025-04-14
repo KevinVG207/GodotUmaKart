@@ -1,5 +1,7 @@
 extends Node3D
 
+const uuid = preload('res://addons/uuid/uuid.gd')
+
 var version: String:
 	get():
 		var tmp: String = ProjectSettings.get_setting("application/config/version")
@@ -108,6 +110,7 @@ func get_race_courses() -> Array:
 		if course_name[0] == "_":
 			continue
 		courses.append(course_name)
+	courses.sort_custom(func(a: String, b: String) -> bool: return a.to_lower()<b.to_lower())
 	return courses
 
 func get_race_course_path(course_name: String) -> String:

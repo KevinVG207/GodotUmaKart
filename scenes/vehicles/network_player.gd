@@ -114,6 +114,9 @@ func set_path_point(state: Dictionary) -> void:
 	# network_path.prev_points = network_path.next_points[0].prev_points
 	vehicle.cpu_logic.moved_to_next = false
 
+func teleport_to_network_now() -> void:
+	teleport_to_network(prev_state)
+
 func teleport_to_network(state: Dictionary) -> void:
 		vehicle.global_position = Util.to_vector3(state.pos)
 		vehicle.quaternion = Util.array_to_quat(state.rot)
