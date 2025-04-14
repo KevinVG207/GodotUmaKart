@@ -12,6 +12,7 @@ enum TargetMode {
 	HOMING
 }
 
+var is_transferring_ownership := false
 var target_mode: int = TargetMode.FOLLOW
 var target_player: Vehicle4 = null:
 	set(value):
@@ -22,7 +23,7 @@ var target_player: Vehicle4 = null:
 		target_player = value
 var target_point: EnemyPath
 var target_pos: Vector3
-var dist_to_homing: float = 20.0
+var dist_to_homing: float = 30.0
 var new_owner: String = ""
 
 func _ready() -> void:
@@ -64,16 +65,19 @@ func _physics_process(delta: float) -> void:
 	var dist_to_target_player: float = 10000
 	if target_player:
 		dist_to_target_player = body.global_position.distance_to(target_player.global_position)
-		if target_mode == TargetMode.FOLLOW and dist_to_target_player < dist_to_homing and (Global.MODE1 == Global.MODE1_OFFLINE or (Global.MODE1 == Global.MODE1_ONLINE and owner == world.player_vehicle)):
+		if target_mode == TargetMode.FOLLOW and dist_to_target_player < dist_to_homing and (Global.MODE1 == Global.MODE1_OFFLINE or (Global.MODE1 == Global.MODE1_ONLINE and owned_by == world.player_vehicle)):
 			target_mode = TargetMode.HOMING
-			new_owner = target_player.user_id
-			#print("SETTING OWNER: ", new_owner)
+			if owned_by == world.player_vehicle:
+				new_owner = target_player.user_id
+				is_transferring_ownership = true
 	
 	# FIXME: Switching target/online is broken
 	match target_mode:
 		TargetMode.HOMING:
 			target_pos = target_player.global_position
 			target_speed = remap(clamp(dist_to_target_player, 0.0, 20.0), 0.0, 20.0, max(target_player.max_speed/2, target_player.velocity.prop_vel.length()), start_speed)
+			if is_transferring_ownership:
+				target_speed = max(target_player.velocity.prop_vel.length(), 1.0)
 	
 		TargetMode.FOLLOW:
 			# First, change the target player.
@@ -118,23 +122,38 @@ func on_destroy() -> void:
 		target_player.remove_targeted(body)
 
 func get_state() -> Dictionary:
-	if new_owner:
-		owner_id = new_owner
-		new_owner = ""
-	
-	return {
+	var out := {
 		"p": Util.to_array(body.global_position),
 		"r": Util.to_array(body.global_rotation),
 		"v": Util.to_array(body.velocity),
 		"g": Util.to_array(gravity),
-		"t": target_mode,
-		"o": owner_id
+		"m": target_mode,
+		"o": new_owner,
+		"t": target_player.user_id if target_player else null
 	}
 	
+	if new_owner:
+		owner_id = new_owner
+		new_owner = ""
+	
+	return out
+	
 func set_state(state: Dictionary) -> void:
-	body.global_position = Util.to_vector3(state.p)
-	body.global_rotation = Util.to_vector3(state.r)
-	body.velocity = Util.to_vector3(state.v)
-	gravity = Util.to_vector3(state.g)
-	target_mode = state.t
-	owner_id = state.o
+	is_transferring_ownership = false
+	var update_pos := true
+	if target_player:
+		var dist_to_vector := (target_pos - body.global_position).length_squared()
+		var translation_dist := (Util.to_vector3(state.p) - body.global_position).length_squared()
+		if translation_dist > dist_to_vector:
+			update_pos = false
+	
+	if update_pos:
+		body.global_position = Util.to_vector3(state.p)
+		body.global_rotation = Util.to_vector3(state.r)
+		body.velocity = Util.to_vector3(state.v)
+		gravity = Util.to_vector3(state.g)
+	target_mode = state.m
+	if state.t:
+		target_player = world.players_dict[state.t]
+	if state.o:
+		owner_id = state.o

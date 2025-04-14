@@ -61,7 +61,7 @@ func _physics_process(delta: float) -> void:
 
 	for i in body.get_slide_collision_count():
 		var col_data := body.get_slide_collision(i)
-		var collider := Util.get_collision_shape(col_data, i)
+		var collider := Util.get_collision_shape(col_data, 0)
 		if collider == null:
 			continue
 		
@@ -105,7 +105,7 @@ func _on_area_3d_body_entered(body: Variant) -> void:
 	if vehicle.is_network:
 		return
 	
-	if vehicle == owned_by and grace_ticks > 0:
+	if vehicle == origin and grace_ticks > 0:
 		return
 	
 	vehicle.damage(Vehicle4.DamageType.SPIN)

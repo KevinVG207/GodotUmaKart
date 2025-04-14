@@ -112,7 +112,7 @@ func _on_area_3d_body_entered(body: Variant) -> void:
 	if vehicle.is_network:
 		return
 	
-	if vehicle == owned_by and grace_ticks > 0:
+	if vehicle == origin and grace_ticks > 0:
 		return
 	
 	vehicle.damage(Vehicle4.DamageType.SPIN)

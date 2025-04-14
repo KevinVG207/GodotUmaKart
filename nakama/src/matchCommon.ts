@@ -13,7 +13,7 @@ interface userData {
 }
 
 const config = {
-    maxPing: 1000
+    maxPing: 2000
 }
 
 function updateLabel(state: nkruntime.MatchState, dispatcher: nkruntime.MatchDispatcher) {

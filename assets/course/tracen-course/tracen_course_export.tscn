@@ -16,7 +16,7 @@
 
 [node name="red-asphalt" parent="Colliders" index="6" groups=["col_offroad_weak"]]
 
-[node name="wall-concrete" parent="Colliders" index="8" groups=["col_wall"]]
+[node name="wall-concrete" parent="Colliders" index="8" groups=["col_bonk", "col_wall"]]
 
 [node name="road_concrete" parent="Colliders" index="9" groups=["col_floor"]]
 

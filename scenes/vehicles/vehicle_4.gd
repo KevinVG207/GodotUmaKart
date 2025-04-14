@@ -290,7 +290,7 @@ var trick_input_frames := 0
 var trick_timer := 0
 var trick_timer_length := int(180 * 0.4)
 
-var collided_with := {}
+var collided_with: Dictionary[Vehicle4, int] = {}
 
 enum DamageType {
 	NONE,
@@ -769,7 +769,7 @@ func apply_push(force: Vector3, vehicle: Vehicle4) -> void:
 	if vehicle in collided_with:
 		return
 	
-	collided_with[vehicle] = 10
+	collided_with[vehicle] = roundi(0.05 * Engine.physics_ticks_per_second)
 
 	velocity.rest_vel += force
 
@@ -1013,6 +1013,10 @@ func bounce_walls() -> void:
 	
 	if ContactType.WALL not in contacts:
 		return
+	
+	#if is_network:
+		#network.teleport_to_network_now()
+		#return
 	
 	var avg_normal := Vector3.ZERO
 	var wall_contacts: Array = contacts[ContactType.WALL]
