@@ -67,7 +67,7 @@ var user_id := ""
 var username := "Player"
 
 @export var weight: float = 1.0
-var push_force: float = 12.0
+var push_force: float = 8.0
 
 @onready var visual_node: Node3D = %Visual
 @onready var cpu_logic: CPULogic = %CPULogic
@@ -253,8 +253,8 @@ enum BoostType {
 
 var boosts := {
 	BoostType.SMALL: Boost.new(0.6, 1.2, 5, 1),
-	BoostType.NORMAL: Boost.new(1.0, 1.4, 5, 1),
-	BoostType.BIG: Boost.new(1.5, 1.6, 5, 1)
+	BoostType.NORMAL: Boost.new(1.5, 1.4, 5, 1),
+	BoostType.BIG: Boost.new(2.5, 1.6, 5, 1)
 }
 class Boost:
 	var length: float

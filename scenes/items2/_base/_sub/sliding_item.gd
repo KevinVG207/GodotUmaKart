@@ -6,6 +6,7 @@ class_name SlidingItem
 @export var area: Area3D
 
 @export var target_speed: float = 40.0
+@export var break_on_wall := false
 
 func _ready() -> void:
 	super()
@@ -33,6 +34,11 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	super(delta)
+	
+	if body.global_position.y < world.fall_failsafe:
+		destroy()
+		return
+	
 	body.up_direction = -gravity
 	
 	var speed := body.velocity.length()
@@ -42,11 +48,6 @@ func _physics_process(delta: float) -> void:
 	
 	body.velocity += gravity * delta * 2
 	
-	#var ray_result = Util.raycast_for_group(self, global_position, global_position + gravity.normalized() * 1.5, "floor", [self])
-	#if not ray_result:
-		#velocity += gravity * delta * 10
-	#else:
-		#velocity += gravity * delta * 30
 	body.up_direction = -gravity.normalized()
 	body.move_and_slide()
 	
@@ -66,12 +67,16 @@ func _physics_process(delta: float) -> void:
 			continue
 		
 		if collider.is_in_group("col_wall"):
+			if break_on_wall:
+				destroy()
+				return
 			# Bounce off walls
 			var normal := col_data.get_normal(0)
 			if Util.v3_length_compare(body.velocity, 0.1) > 0 and body.velocity.normalized().dot(normal) < 0:
 			# if velocity.length() > 0.1 and velocity.normalized().dot(normal) < 0:
 				body.velocity = body.velocity.bounce(normal)
 				body.velocity = body.velocity - body.velocity.project(gravity.normalized())
+			break
 
 func get_state() -> Dictionary:
 	return {

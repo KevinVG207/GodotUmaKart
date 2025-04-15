@@ -67,7 +67,7 @@ func _physics_process(delta: float) -> void:
 		dist_to_target_player = body.global_position.distance_to(target_player.global_position)
 		if target_mode == TargetMode.FOLLOW and dist_to_target_player < dist_to_homing and (Global.MODE1 == Global.MODE1_OFFLINE or (Global.MODE1 == Global.MODE1_ONLINE and owned_by == world.player_vehicle)):
 			target_mode = TargetMode.HOMING
-			if owned_by == world.player_vehicle:
+			if owned_by == world.player_vehicle and Global.MODE1 == Global.MODE1_ONLINE:
 				new_owner = target_player.user_id
 				is_transferring_ownership = true
 	

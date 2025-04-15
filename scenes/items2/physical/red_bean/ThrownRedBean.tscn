@@ -21,6 +21,8 @@ script = ExtResource("1_fkcbl")
 target_texture = ExtResource("2_llsmk")
 body = NodePath("ThrownRedBean")
 area = NodePath("ThrownRedBean/Area3D")
+target_speed = 50.0
+break_on_wall = true
 damage_type = 1
 metadata/_custom_type_script = "uid://bbvgp5b1h7yam"
 

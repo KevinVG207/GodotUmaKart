@@ -1,10 +1,13 @@
-[gd_scene load_steps=33 format=3 uid="uid://b62d811jwymmd"]
+[gd_scene load_steps=36 format=3 uid="uid://b62d811jwymmd"]
 
 [ext_resource type="Script" uid="uid://g5ppq8xvvwsd" path="res://scenes/ui/race_ui.gd" id="1_23b1w"]
 [ext_resource type="PackedScene" uid="uid://cgubbv13lvah8" path="res://scenes/ui/player_info_box.tscn" id="2_64c26"]
 [ext_resource type="PackedScene" uid="uid://b4ktan2k4miry" path="res://scenes/ui/item_roulette.tscn" id="3_xg3tb"]
 [ext_resource type="PackedScene" uid="uid://2ani3pyd27xg" path="res://scenes/ui/nametag.tscn" id="4_5a5qs"]
+[ext_resource type="AudioStream" uid="uid://8j3ylitxuhxw" path="res://assets/audio/race/roulette/roulette-use.wav" id="5_ctci6"]
 [ext_resource type="Texture2D" uid="uid://cf2x8b1awq2b5" path="res://assets/race/startline.png" id="5_s54dk"]
+[ext_resource type="AudioStream" uid="uid://c4pt7ngtqrisg" path="res://assets/audio/race/roulette/roulette.wav" id="5_vasbk"]
+[ext_resource type="AudioStream" uid="uid://dtb3j4l38v3o2" path="res://assets/audio/race/roulette/roulette-stop.wav" id="6_0b1o3"]
 [ext_resource type="PackedScene" uid="uid://ttgvsua40ods" path="res://scenes/ui/race/alert.tscn" id="6_1cm01"]
 [ext_resource type="LabelSettings" uid="uid://dg8cn7dsip001" path="res://scenes/ui/_styles/basic_text.tres" id="7_fx38p"]
 [ext_resource type="Script" uid="uid://v6kfnxwflqaj" path="res://scenes/ui/pause_menu.gd" id="8_getyi"]
@@ -291,6 +294,24 @@ offset_bottom = 210.0
 texture = SubResource("ViewportTexture_5eh43")
 expand_mode = 1
 stretch_mode = 4
+
+[node name="SFXRoulette" type="AudioStreamPlayer" parent="ItemBox"]
+unique_name_in_owner = true
+stream = ExtResource("5_vasbk")
+volume_db = -10.0
+bus = &"SFX"
+
+[node name="SFXRouletteStop" type="AudioStreamPlayer" parent="ItemBox"]
+unique_name_in_owner = true
+stream = ExtResource("6_0b1o3")
+volume_db = -10.0
+bus = &"SFX"
+
+[node name="SFXRouletteUse" type="AudioStreamPlayer" parent="ItemBox"]
+unique_name_in_owner = true
+stream = ExtResource("5_ctci6")
+volume_db = -10.0
+bus = &"SFX"
 
 [node name="Viewport" type="SubViewport" parent="ItemBox"]
 transparent_bg = true

@@ -50,6 +50,7 @@ func raycast_for_group(space_state: PhysicsDirectSpaceState3D, start_pos: Vector
 		# Debug.print(result)
 		if not result:
 			break
+		# FIXME: Use shape!
 		var collider := result["collider"] as Node
 		if is_in_group_list(collider, group):
 			out = result

@@ -38,6 +38,10 @@ func _ready() -> void:
 func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 	var delta: float = physics_state.step
 	
+	if body.global_position.y < world.fall_failsafe:
+		destroy()
+		return
+	
 	if landed:
 		body.linear_velocity = Vector3.ZERO
 		body.angular_velocity = Vector3.ZERO

@@ -3,6 +3,7 @@ extends Node
 var ui_player := AudioStreamPlayer.new()
 var sfx_player := AudioStreamPlayer.new()
 
+static var base_music_volume_multi: float = 0.6
 var race_music_player := AudioStreamPlayer.new()
 var race_music_volume := 0.0
 var final_lap := false
@@ -28,6 +29,7 @@ func play_race_music(multi_stream: AudioStreamSynchronized, multi: float) -> voi
 	final_lap = false
 	race_music_player.stop()
 	race_music_player.stream = multi_stream
+	multi *= base_music_volume_multi
 	race_music_volume = linear_to_db(multi * multi * multi)
 	for i: int in range(multi_stream.stream_count):
 		multi_stream.set_sync_stream_volume(i, -INF)

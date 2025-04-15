@@ -18,6 +18,9 @@ socket_connect_disconnect.mp3 by JustHallowed -- https://freesound.org/s/691007/
 SPLASH.wav by petenice -- https://freesound.org/s/9508/ -- License: Creative Commons 0
 race_countdown2.mp3 by Kokoro-Beats -- https://freesound.org/s/165990/ -- License: Creative Commons 0
 Level Up / Mission Complete by Beetlemuse -- https://freesound.org/s/528958/ -- License: Creative Commons 0
+LEVEL UP SFX 1 by trader_one -- https://freesound.org/s/709927/ -- License: Creative Commons 0
+Game item pickup BONUS SFX 1 by trader_one -- https://freesound.org/s/709890/ -- License: Creative Commons 0
+Nice Game Find by qubodup -- https://freesound.org/s/195486/ -- License: Attribution 4.0
 
 # Music
 AfterHaze composed by t12ya -- https://dova-s.jp/EN/bgm/play21959.html -- DOVA-SYNDROME License https://dova-s.jp/EN/_contents/license/

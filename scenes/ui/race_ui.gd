@@ -165,10 +165,12 @@ func start_roulette():
 	$"ItemBox/Viewport".disable_3d = false
 	$"ItemBox/Viewport/AnimationPlayer".play("rotate")
 	$"ItemBox/Viewport/AnimationPlayer".speed_scale = 2.0
+	%SFXRoulette.play(0)
 
 func hide_roulette():
 	$ItemBox.visible = false
 	$"ItemBox/Viewport".disable_3d = true
+	%SFXRoulette.stop()
 
 func stop_roulette(item_texture: CompressedTexture2D):
 	last_item_texture = item_texture
@@ -178,6 +180,9 @@ func stop_roulette(item_texture: CompressedTexture2D):
 
 func set_item_texture(item_texture: CompressedTexture2D):
 	$"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture = item_texture
+
+func play_roulette_use():
+	%SFXRouletteUse.play(0)
 
 func update_item_image(img: CompressedTexture2D) -> void:
 	# TODO: Add animation
@@ -190,6 +195,8 @@ func _on_rotate_end():
 		roulette_stop = true
 		$"ItemBox/Viewport/AnimationPlayer".play("RESET")
 		roulette_ended.emit()
+		%SFXRoulette.stop()
+		%SFXRouletteStop.play(0)
 	
 	var tex1 = $"ItemBox/Viewport/ItemRoulette".get_node("Item1").texture
 	var tex2 = Global.item_tex.pick_random()

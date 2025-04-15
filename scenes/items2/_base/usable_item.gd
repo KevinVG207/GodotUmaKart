@@ -12,6 +12,7 @@ var world: RaceBase
 func use() -> void:
 	if physical_item_key:
 		world.make_physical_item(physical_item_key, owned_by)
+	
 	clear()
 
 func setup(new_owner: Vehicle4, new_world: RaceBase) -> void:
@@ -22,9 +23,15 @@ func setup(new_owner: Vehicle4, new_world: RaceBase) -> void:
 func clear() -> void:
 	owned_by.remove_item()
 	queue_free()
+	if owned_by.is_player:
+		UI.race_ui.play_roulette_use()
 
 func replace_item(item: UsableItem) -> void:
 	owned_by.replace_item(item)
 
 func update_image(img: CompressedTexture2D) -> void:
+	if !owned_by.is_player:
+		return
 	UI.race_ui.update_item_image(img)
+	if owned_by.is_player:
+		UI.race_ui.play_roulette_use()

@@ -22,3 +22,4 @@ func _physics_process(delta: float) -> void:
 	despawn_ticks -= 1
 	if despawn_ticks <= 0:
 		destroy()
+		return
