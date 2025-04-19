@@ -4,26 +4,28 @@
 
 [node name="tracen-course-export" instance=ExtResource("1_k2r3t")]
 
-[node name="truck" parent="Colliders" index="0" groups=["col_boost"]]
+[node name="fence" parent="Colliders" index="0" groups=["col_wall"]]
 
-[node name="fence" parent="Colliders" index="1" groups=["col_wall"]]
+[node name="fencebrown" parent="Colliders" index="1" groups=["col_wall"]]
 
-[node name="fencebrown" parent="Colliders" index="2" groups=["col_wall"]]
+[node name="fenceblue" parent="Colliders" index="2" groups=["col_wall"]]
 
-[node name="fenceblue" parent="Colliders" index="3" groups=["col_wall"]]
+[node name="arrows" parent="Colliders" index="3" groups=["col_wall"]]
 
-[node name="offroadgrass" parent="Colliders" index="5" groups=["col_offroad"]]
+[node name="offroadgrass" parent="Colliders" index="6" groups=["col_offroad"]]
 
-[node name="red-asphalt" parent="Colliders" index="6" groups=["col_offroad_weak"]]
+[node name="wall-tarmac" parent="Colliders" index="7" groups=["col_wall"]]
 
-[node name="wall-concrete" parent="Colliders" index="8" groups=["col_bonk", "col_wall"]]
+[node name="red-asphalt" parent="Colliders" index="8" groups=["col_offroad_weak"]]
 
-[node name="road_concrete" parent="Colliders" index="9" groups=["col_floor"]]
+[node name="wall-concrete" parent="Colliders" index="10" groups=["col_bonk", "col_wall"]]
 
-[node name="arrows" parent="Colliders" index="18" groups=["col_wall"]]
+[node name="wall-invis-nodraw" parent="Colliders" index="22" groups=["col_wall"]]
 
-[node name="redcar" parent="Colliders" index="19" groups=["col_wall"]]
+[node name="redcar" parent="Colliders" index="23" groups=["col_wall"]]
 
-[node name="wheel" parent="Colliders" index="20" groups=["col_wall"]]
+[node name="wheel" parent="Colliders" index="24" groups=["col_wall"]]
 
-[node name="bluecar" parent="Colliders" index="21" groups=["col_wall"]]
+[node name="bluecar" parent="Colliders" index="25" groups=["col_wall"]]
+
+[node name="truck" parent="Colliders" index="26" groups=["col_boost"]]

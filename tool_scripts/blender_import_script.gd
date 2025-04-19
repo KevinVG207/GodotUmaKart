@@ -2,6 +2,7 @@
 extends EditorScenePostImport
 
 var collision_body: StaticBody3D
+var triggers: Node3D
 var global_scene: Node
 
 func _post_import(scene: Node) -> Node:
@@ -20,6 +21,11 @@ func _post_import(scene: Node) -> Node:
 	visual_node.set_owner(scene)
 	visual_node.set_meta("_edit_lock_", true)
 
+	triggers = Node3D.new()
+	triggers.name = "Triggers"
+	scene.add_child(triggers)
+	scene.move_child(triggers, 0)
+	triggers.set_owner(scene)
 
 	collision_body = StaticBody3D.new()
 	collision_body.name = "Colliders"
@@ -32,6 +38,8 @@ func _post_import(scene: Node) -> Node:
 		if not child is MeshInstance3D:
 			continue
 		generate_collision_shapes(child as MeshInstance3D)
+		if child.name.to_lower().ends_with("-nodraw") or child.name.to_lower().ends_with("-fall") or child.name.to_lower() == "fall":
+			visual_node.remove_child(child)
 
 	return scene
 
@@ -43,7 +51,18 @@ func iterate(node: Node) -> void:
 
 func generate_collision_shapes(mesh_instance: MeshInstance3D) -> void:
 	mesh_instance.name = mesh_instance.mesh.get("surface_0/name")
-	mesh_instance.create_trimesh_collision()
+	
+	if mesh_instance.name.to_lower().ends_with("-nocol"):
+		return
+	
+	var fall := false
+	if mesh_instance.name.to_lower().ends_with("-fall") or mesh_instance.name.to_lower() == "fall":
+		fall = true
+		#mesh_instance.create_convex_collision()
+		mesh_instance.create_trimesh_collision()
+	else:
+		mesh_instance.create_trimesh_collision()
+
 	for child: Node in mesh_instance.get_children():
 		if not child is StaticBody3D:
 			continue
@@ -61,12 +80,20 @@ func generate_collision_shapes(mesh_instance: MeshInstance3D) -> void:
 					var new_shape_owner := CollisionShape3D.new()
 					new_shape_owner.name = mesh_instance.name
 					new_shape_owner.shape = shape_object
-					collision_body.add_child(new_shape_owner)
-					print("Added shape ", new_shape_owner, " to ", collision_body)
+					
+					var new_parent: CollisionObject3D = collision_body
+					
+					if fall:
+						new_parent = FallBoundary.new()
+						triggers.add_child(new_parent)
+						new_parent.set_owner(global_scene)
+					
+					new_parent.add_child(new_shape_owner)
+					print("Added shape ", new_shape_owner, " to ", new_parent)
 					new_shape_owner.set_owner(global_scene)
 					new_shape_owner.position = mesh_instance.position
-					var new_owner_id := collision_body.create_shape_owner(new_shape_owner)
-					collision_body.shape_owner_set_transform(new_owner_id, owner_transform)
+					var new_owner_id := new_parent.create_shape_owner(new_shape_owner)
+					new_parent.shape_owner_set_transform(new_owner_id, owner_transform)
 				
 				static_body.remove_shape_owner(owner_id)
 				static_body.process_mode = Node.PROCESS_MODE_DISABLED

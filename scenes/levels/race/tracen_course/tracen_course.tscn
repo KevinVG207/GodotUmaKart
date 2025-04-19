@@ -17,6 +17,7 @@ stream_0/volume = 0.0
 
 [node name="TracenCourse" node_paths=PackedStringArray("start_enemy_points") instance=ExtResource("1_n65nj")]
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
+fall_failsafe = -20.0
 start_enemy_points = [NodePath("EnemyPathPoints/EnemyPath")]
 music = SubResource("AudioStreamSynchronized_xes7l")
 
@@ -38,7 +39,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 27.7424)
 
 [node name="ItemPickup24" parent="Objects/Pickups" index="0" instance=ExtResource("5_xes7l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5289, 1.03925, 22.7562)
-visible = false
 guaranteed_item = ExtResource("6_3upyf")
 
 [node name="ItemPickup" parent="Objects/Pickups" index="1" instance=ExtResource("5_xes7l")]
