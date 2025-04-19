@@ -38,6 +38,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 27.7424)
 
 [node name="ItemPickup24" parent="Objects/Pickups" index="0" instance=ExtResource("5_xes7l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5289, 1.03925, 22.7562)
+visible = false
 guaranteed_item = ExtResource("6_3upyf")
 
 [node name="ItemPickup" parent="Objects/Pickups" index="1" instance=ExtResource("5_xes7l")]
