@@ -186,6 +186,11 @@ func new_curve(natural: bool = false) -> void:
 	)
 
 func update_curve_point() -> void:
+	if parent.is_network and !moved_to_next:
+		curve_point_position = next_target_1.global_position
+		curve_point_forward = next_target_1.normal
+		return
+
 	var curve_sample_distance := 20.0
 	curve_sample_distance = clampf(curve_sample_distance * (parent.cur_speed / parent.max_speed), 3, curve_sample_distance)
 	var curve_current_distance := curve.get_closest_offset(parent.global_position) + curve_sample_distance
