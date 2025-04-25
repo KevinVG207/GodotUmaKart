@@ -12,13 +12,41 @@
 
 [node name="arrows" parent="Colliders" index="3" groups=["col_wall"]]
 
+[node name="road-concrete" parent="Colliders" index="4" groups=["col_floor"]]
+
+[node name="road-concrete2-edge" parent="Colliders" index="5" groups=["col_floor"]]
+
 [node name="offroadgrass" parent="Colliders" index="6" groups=["col_offroad"]]
 
 [node name="wall-tarmac" parent="Colliders" index="7" groups=["col_wall"]]
 
 [node name="red-asphalt" parent="Colliders" index="8" groups=["col_offroad_weak"]]
 
+[node name="default" parent="Colliders" index="9" groups=["col_floor"]]
+
 [node name="wall-concrete" parent="Colliders" index="10" groups=["col_bonk", "col_wall"]]
+
+[node name="coursegrass1" parent="Colliders" index="11" groups=["col_floor"]]
+
+[node name="dirtpath1" parent="Colliders" index="12" groups=["col_floor"]]
+
+[node name="grasspath1" parent="Colliders" index="13" groups=["col_floor"]]
+
+[node name="dirtpath2" parent="Colliders" index="14" groups=["col_floor"]]
+
+[node name="sandpath" parent="Colliders" index="15" groups=["col_floor"]]
+
+[node name="dirtpath3" parent="Colliders" index="16" groups=["col_floor"]]
+
+[node name="woodchip" parent="Colliders" index="17" groups=["col_floor"]]
+
+[node name="startline" parent="Colliders" index="18" groups=["col_floor"]]
+
+[node name="path" parent="Colliders" index="19" groups=["col_floor"]]
+
+[node name="road-concrete-edge" parent="Colliders" index="20" groups=["col_floor"]]
+
+[node name="road-concrete2" parent="Colliders" index="21" groups=["col_floor"]]
 
 [node name="wall-invis-nodraw" parent="Colliders" index="22" groups=["col_wall"]]
 
@@ -28,4 +56,12 @@
 
 [node name="bluecar" parent="Colliders" index="25" groups=["col_wall"]]
 
-[node name="truck" parent="Colliders" index="26" groups=["col_boost"]]
+[node name="road-truck" parent="Colliders" index="26" groups=["col_floor"]]
+
+[node name="truck-body" parent="Colliders" index="27" groups=["col_wall"]]
+
+[node name="boost" parent="Colliders" index="28" groups=["col_boost"]]
+
+[node name="boost-trick" parent="Colliders" index="29" groups=["col_boost", "col_trick"]]
+
+[node name="test-nodraw" parent="Colliders" index="30" groups=["col_bonk", "col_wall"]]

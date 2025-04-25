@@ -89,7 +89,7 @@ func generate_collision_shapes(mesh_instance: MeshInstance3D) -> void:
 						new_parent.set_owner(global_scene)
 					
 					new_parent.add_child(new_shape_owner)
-					print("Added shape ", new_shape_owner, " to ", new_parent)
+					#print("Added shape ", new_shape_owner, " to ", new_parent)
 					new_shape_owner.set_owner(global_scene)
 					new_shape_owner.position = mesh_instance.position
 					var new_owner_id := new_parent.create_shape_owner(new_shape_owner)
