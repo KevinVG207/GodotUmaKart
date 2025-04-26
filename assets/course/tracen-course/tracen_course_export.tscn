@@ -24,7 +24,7 @@
 
 [node name="default" parent="Colliders" index="9" groups=["col_floor"]]
 
-[node name="wall-concrete" parent="Colliders" index="10" groups=["col_bonk", "col_wall"]]
+[node name="wall-concrete" parent="Colliders" index="10" groups=["col_wall"]]
 
 [node name="coursegrass1" parent="Colliders" index="11" groups=["col_floor"]]
 

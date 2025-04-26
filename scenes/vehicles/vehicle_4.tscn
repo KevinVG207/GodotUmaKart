@@ -714,6 +714,7 @@ icon = ExtResource("2_r88gu")
 vehicle_height_below = 0.5
 
 [node name="Debug" type="Node3D" parent="."]
+visible = false
 
 [node name="GravityVisualizer" type="Node3D" parent="Debug" node_paths=PackedStringArray("vehicle")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
