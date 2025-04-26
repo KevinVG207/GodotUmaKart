@@ -132,7 +132,7 @@ func teleport_to_network(state: Dictionary) -> void:
 
 func should_teleport_to_network() -> bool:
 	var network_pos := Util.to_vector3(prev_state.pos)
-	if vehicle.global_position.distance_to(network_pos) > network_teleport_distance and vehicle.global_position.distance_to(vehicle.cpu_logic.curve_point_position) > network_teleport_distance:
+	if vehicle.global_position.distance_to(network_pos) > network_teleport_distance and vehicle.global_position.distance_to(vehicle.cpu_logic.next_target_1.global_position) > network_teleport_distance:
 		Debug.print("TELEPORT")
 		return true
 		

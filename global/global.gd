@@ -11,7 +11,10 @@ var player_count: int = default_player_count:
 		player_count = value
 		setup_items()
 
-var extraPing = 0
+var extraPing: int = 0
+func get_extra_ping() -> float:
+	return clampf(RandomNumberGenerator.new().randf_range(Global.extraPing, Global.extraPing / 4.0), 0, 2000)
+
 var unique_string = OS.get_unique_id()
 
 var menu_start_cam: String = "%CamInitial"

@@ -1201,9 +1201,13 @@ func handle_race_start(data: Dictionary):
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	if Global.extraPing:
-		await get_tree().create_timer(Global.extraPing / 1000.0).timeout
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0).timeout
 	
-	var data: Dictionary = JSON.parse_string(match_state.data)
+	var res: Variant = JSON.parse_string(match_state.data)
+	if res == null:
+		print("ERR: received match_state parse failed")
+		return
+	var data := res as Dictionary
 	match match_state.op_code:
 		raceOp.SERVER_UPDATE_VEHICLE_STATE:
 			update_vehicle_state(data, match_state.presence.user_id)

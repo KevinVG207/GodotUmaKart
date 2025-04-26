@@ -260,7 +260,7 @@ func focus():
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	if Global.extraPing:
-		await get_tree().create_timer(Global.extraPing / 1000.0).timeout
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0).timeout
 	
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:

@@ -390,9 +390,6 @@ func _process(delta: float) -> void:
 	
 	handle_particles()
 
-	# if is_cpu:
-	# 	Debug.print([Util.round_to_dec(cpu_logic.speed_multi, 2), Util.round_to_dec(cpu_logic.turn_speed_multi, 2), Util.round_to_dec(velocity.total().length(), 1)])
-	
 	if is_player:
 		UI.race_ui.update_speed(velocity.total().length())
 
@@ -912,14 +909,10 @@ func handle_steer() -> void:
 	
 	if hop_frames > 0:
 		var multi := (float(hop_frames) / max_hop_frames) * 0.5 + 1
-		#Debug.print(multi)
 		turn_target *= multi
 		turn_accel *= multi
-		#Debug.print("TURN SNAP")
 
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
-	
-	#Debug.print(turn_speed)
 
 	var multi := 1.0 if grounded else air_turn_multiplier
 
@@ -936,11 +929,13 @@ func apply_velocities() -> void:
 	collide_vehicles()
 	collide_walls()
 
-	bounce_walls()
+	if !is_network:
+		bounce_walls()
+	
 	handle_bounce()
-
+	
 	handle_respawn()
-
+	
 	apply_friction()
 
 	if respawn_stage != RespawnStage.RESPAWNING:
@@ -1276,7 +1271,6 @@ func apply_gravity() -> void:
 
 	var grav_mult := 1.0
 	if is_network and catchup_multi > 1.5:
-		#Debug.print("STEER FAST")
 		grav_mult = 2.0
 	velocity.rest_vel += gravity * delta * grav_mult
 
@@ -1354,8 +1348,7 @@ func outside_drift_force() -> void:
 	
 	# drift_offset = move_toward(drift_offset, max_drift_offset * -drift_dir, delta * drift_offset_multi)
 	
-	
-	# Debug.print(rad_to_deg(drift_offset))
+
 
 	if !outside_drift or in_cannon or contacts.has(ContactType.WALL):
 		drift_offset = 0.0
@@ -1441,6 +1434,7 @@ func rotate_to_gravity() -> void:
 
 
 func apply_network_drift() -> void:
+	var prev_multi = catchup_multi
 	catchup_multi = 1.0
 	
 	if !is_network:
@@ -1455,8 +1449,8 @@ func apply_network_drift() -> void:
 	var rot_multi := 1.0
 	
 	if !cpu_logic.moved_to_next and network.prev_state.cur_speed >= 5.0:
-		var dist: float = global_position.distance_to(cpu_logic.curve_point_position)
-		move_multi = clampf(remap(dist, 0, network.network_teleport_distance, 0.0, 0.5), 0, 0.5)
+		var dist: float = global_position.distance_to(cpu_logic.next_target_1.global_position)
+		move_multi = clampf(remap(dist, 0, network.network_teleport_distance, 0.0, 1.0), 0, 1.0)
 	
 	else:
 		move_multi = 0.0
@@ -1483,10 +1477,21 @@ func apply_network_drift() -> void:
 	#if wall_cooldown > 0:
 		#wall_cooldown -= 1
 		#network_pos = Util.to_vector3(network.prev_state.pos)
-		#Debug.print("WALL")
+	
+	if cpu_logic.moved_to_next:
+		#Debug.print("PASSED")
+		move_multi = -move_multi
+		if cur_speed < 5.0:
+			move_multi = 0.0
 	
 	catchup_multi += move_multi
-	#Debug.print(catchup_multi)
+	#Debug.print("===")
+	#Debug.print(["B", catchup_multi])
+	catchup_multi = move_toward(prev_multi, catchup_multi, delta * 0.2)
+	#Debug.print(["A", catchup_multi])
+	#Debug.print(cur_speed)
+	#Debug.print("===")
+	# FIXME: Wide drift doesn't work over network
 	
 	var cur_quat := Quaternion.from_euler(rotation)
 	var target_quat := network_rot
@@ -1498,7 +1503,6 @@ func apply_network_drift() -> void:
 #
 	## Remove the component along the gravity vector
 	#var adjusted_movement: Vector3 = Plane(-gravity.normalized()).project(new_movement)
-	#Debug.print(adjusted_movement.length())
 	#var vertical_movement: Vector3 = new_movement - adjusted_movement
 #
 	##global_position += adjusted_movement
