@@ -1,0 +1,117 @@
+[gd_resource type="VisualShader" load_steps=10 format=3 uid="uid://jbxs5r0o32m8"]
+
+[ext_resource type="Texture2D" uid="uid://cluba5ya60nd4" path="res://assets/race/pickup/rainbow.png" id="1_ej7e3"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_ylwyp"]
+expanded_output_ports = [0]
+input_name = "screen_uv"
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_ej7e3"]
+texture = ExtResource("1_ej7e3")
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_ej7e3"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(-0.5, -0.5)]
+op_type = 0
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_x42nm"]
+input_name = "time"
+
+[sub_resource type="VisualShaderNodeRotationByAxis" id="VisualShaderNodeRotationByAxis_0612r"]
+default_input_values = [0, Vector3(0, 0, 0), 1, 0.0, 2, Vector3(0, 0, 1)]
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_u0upd"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(0.5, 0.5)]
+op_type = 0
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_a423f"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(1, 1)]
+op_type = 0
+operator = 3
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_r4tic"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(2.5, 1)]
+op_type = 0
+operator = 2
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform sampler2D tex_frg_3;
+
+
+
+void fragment() {
+// Input:2
+	vec2 n_out2p0 = SCREEN_UV;
+
+
+// VectorOp:9
+	vec2 n_in9p1 = vec2(2.50000, 1.00000);
+	vec2 n_out9p0 = n_out2p0 * n_in9p1;
+
+
+// VectorOp:4
+	vec2 n_in4p1 = vec2(-0.50000, -0.50000);
+	vec2 n_out4p0 = n_out9p0 + n_in4p1;
+
+
+// Input:5
+	float n_out5p0 = TIME;
+
+
+	vec3 n_out6p0;
+	mat4 n_out6p1;
+// RotationByAxis:6
+	vec3 n_in6p2 = vec3(0.00000, 0.00000, 1.00000);
+	{
+		float __angle = n_out5p0;
+		vec3 __axis = normalize(n_in6p2);
+		mat3 __rot_matrix = mat3(
+			vec3( cos(__angle)+__axis.x*__axis.x*(1.0 - cos(__angle)), __axis.x*__axis.y*(1.0-cos(__angle))-__axis.z*sin(__angle), __axis.x*__axis.z*(1.0-cos(__angle))+__axis.y*sin(__angle) ),
+			vec3( __axis.y*__axis.x*(1.0-cos(__angle))+__axis.z*sin(__angle), cos(__angle)+__axis.y*__axis.y*(1.0-cos(__angle)), __axis.y*__axis.z*(1.0-cos(__angle))-__axis.x*sin(__angle) ),
+			vec3( __axis.z*__axis.x*(1.0-cos(__angle))-__axis.y*sin(__angle), __axis.z*__axis.y*(1.0-cos(__angle))+__axis.x*sin(__angle), cos(__angle)+__axis.z*__axis.z*(1.0-cos(__angle)) )
+		);
+		n_out6p0 = vec3(n_out4p0, 0.0) * __rot_matrix;
+	}
+
+
+// VectorOp:7
+	vec2 n_in7p1 = vec2(0.50000, 0.50000);
+	vec2 n_out7p0 = vec2(n_out6p0.xy) + n_in7p1;
+
+
+// VectorOp:8
+	vec2 n_in8p1 = vec2(1.00000, 1.00000);
+	vec2 n_out8p0 = n_out7p0 / n_in8p1;
+
+
+// Texture2D:3
+	vec4 n_out3p0 = texture(tex_frg_3, n_out8p0);
+
+
+// Output:0
+	ALBEDO = vec3(n_out3p0.xyz);
+
+
+}
+"
+graph_offset = Vector2(-264.684, -71.3682)
+nodes/fragment/0/position = Vector2(1220, 140)
+nodes/fragment/2/node = SubResource("VisualShaderNodeInput_ylwyp")
+nodes/fragment/2/position = Vector2(-1820, 180)
+nodes/fragment/3/node = SubResource("VisualShaderNodeTexture_ej7e3")
+nodes/fragment/3/position = Vector2(860, 140)
+nodes/fragment/4/node = SubResource("VisualShaderNodeVectorOp_ej7e3")
+nodes/fragment/4/position = Vector2(-740, 140)
+nodes/fragment/5/node = SubResource("VisualShaderNodeInput_x42nm")
+nodes/fragment/5/position = Vector2(-800, -20)
+nodes/fragment/6/node = SubResource("VisualShaderNodeRotationByAxis_0612r")
+nodes/fragment/6/position = Vector2(-460, 180)
+nodes/fragment/7/node = SubResource("VisualShaderNodeVectorOp_u0upd")
+nodes/fragment/7/position = Vector2(-220, 260)
+nodes/fragment/8/node = SubResource("VisualShaderNodeVectorOp_a423f")
+nodes/fragment/8/position = Vector2(60, 240)
+nodes/fragment/9/node = SubResource("VisualShaderNodeVectorOp_r4tic")
+nodes/fragment/9/position = Vector2(-1260, 160)
+nodes/fragment/connections = PackedInt32Array(4, 0, 6, 0, 5, 0, 6, 1, 6, 0, 7, 0, 7, 0, 8, 0, 3, 0, 0, 0, 2, 0, 9, 0, 9, 0, 4, 0, 8, 0, 3, 0)

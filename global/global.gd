@@ -5,7 +5,7 @@ signal goto_settings_screen
 
 signal camera_switched
 
-var default_player_count: int = 12
+var default_player_count: int = 1
 var player_count: int = default_player_count:
 	set(value):
 		player_count = value
@@ -86,6 +86,11 @@ var selected_replay: String = ""
 
 func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
+	
+func _process(_delta: float) -> void:
+	var viewport := get_viewport()
+	var new_scale := float(viewport.size.x) / 1280.0
+	get_window().content_scale_factor = new_scale
 
 func setup_items() -> void:
 	print("Setting up items...")
