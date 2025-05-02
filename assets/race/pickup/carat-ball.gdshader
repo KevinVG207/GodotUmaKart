@@ -12,7 +12,7 @@ void fragment() {
 	vec2 tex_uv = centered_uv / scale + 0.5;
 	
 	float diff = dot(VIEW, NORMAL);
-	vec3 col = vec3(1.5);
+	vec3 col = vec3(1.5, 1.2, 0.5);
 	if (diff > 0.5) {
 		col = vec3(0.7, 0.2, 0.0) * 1.2;
 	}

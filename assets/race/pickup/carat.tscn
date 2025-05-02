@@ -15,19 +15,18 @@ shader = ExtResource("2_tdoqf")
 shader_parameter/tex = ExtResource("3_b5vox")
 shader_parameter/normal = ExtResource("4_42k4d")
 shader_parameter/base_scale = 5.0
-shader_parameter/ui_scale = 1.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_f8pf2"]
 render_priority = 0
 shader = ExtResource("6_ql100")
 shader_parameter/overlay = ExtResource("7_f8pf2")
-shader_parameter/base_scale = 2.0
+shader_parameter/base_scale = 1.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ql100"]
 render_priority = 0
 shader = ExtResource("6_42k4d")
 shader_parameter/normal = ExtResource("4_42k4d")
-shader_parameter/base_scale = 2.0
+shader_parameter/base_scale = 5.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sjsgp"]
 albedo_color = Color(1.4, 1.4, 1.4, 1)

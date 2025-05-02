@@ -5,7 +5,6 @@ uniform sampler2D normal;
 uniform float base_scale = 4.0;
 instance uniform vec2 offset_in_viewport = vec2(0.5, 0.5);
 instance uniform float rot_offset = 0.0;
-uniform float ui_scale = 1.0;
 
 vec2 rotateUV(vec2 uv, vec2 pivot, float rotation) {
 	float cosa = cos(rotation);
@@ -24,7 +23,7 @@ void fragment() {
 	vec2 centered_uv = SCREEN_UV - 0.5;
 	centered_uv.x *= aspect;
 	vec2 tex_uv = centered_uv / scale + 0.5;
-	tex_uv += vec2((offset_in_viewport.x - 0.5) * -2.0 * aspect/2.0, 0.5 - offset_in_viewport.y) / scale * ui_scale;
+	tex_uv += vec2((offset_in_viewport.x - 0.5) * -2.0 * aspect/2.0, 0.5 - offset_in_viewport.y) / scale;
 	vec2 non_rotated_uv = tex_uv;
 	tex_uv = rotateUV(tex_uv, vec2(0.5), TIME + rot_offset);
 	float brightness_offset = texture(normal, non_rotated_uv * 1.2).r * 0.8;

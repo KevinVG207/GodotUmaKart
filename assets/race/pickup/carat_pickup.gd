@@ -6,7 +6,9 @@ var body_mat: ShaderMaterial
 func _ready() -> void:
 	mesh = get_child(0).get_child(0) as MeshInstance3D
 	mesh.set_instance_shader_parameter("rot_offset", randf()*2*PI)
+	mesh.set_instance_shader_parameter("leaves_random_offset", Vector2(randf(), randf()))
 	body_mat = mesh.get_surface_override_material(0) as ShaderMaterial
+	
 
 func _process(_delta: float) -> void:
 	var viewport_coords := get_viewport().get_camera_3d().unproject_position(global_position)
