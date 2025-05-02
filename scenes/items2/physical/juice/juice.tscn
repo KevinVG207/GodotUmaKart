@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://cba553fgeor6y"]
+
+[ext_resource type="PackedScene" uid="uid://dkamx3burpbqn" path="res://assets/items/glass/glass.blend" id="1_ruk21"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u7syb"]
+transparency = 1
+cull_mode = 2
+specular_mode = 1
+albedo_color = Color(1, 1, 1, 0.287)
+roughness = 0.05
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.05
+rim_enabled = true
+rim = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v2jpt"]
+transparency = 1
+depth_draw_mode = 1
+diffuse_mode = 3
+specular_mode = 1
+albedo_color = Color(0, 0.306, 0.09, 0.851)
+roughness = 0.37
+emission_enabled = true
+emission = Color(0.074599, 0.446092, 0, 1)
+rim_enabled = true
+disable_receive_shadows = true
+
+[node name="Juice" type="Node3D"]
+
+[node name="glass" parent="." instance=ExtResource("1_ruk21")]
+
+[node name="Circle" parent="glass" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_u7syb")
+surface_material_override/1 = SubResource("StandardMaterial3D_v2jpt")
+
+[editable path="glass"]

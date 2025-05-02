@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://bbdd3gxmf2uoy"]
+
+[ext_resource type="Script" uid="uid://crmwq1v6djfdl" path="res://scenes/items2/_base/usable_item.gd" id="1_noavq"]
+[ext_resource type="Texture2D" uid="uid://7aaku8st0qgp" path="res://assets/items/glass/glass.png" id="2_iui7f"]
+
+[sub_resource type="Curve" id="Curve_4ou06"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.497006, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="GreenJuice" type="Node"]
+script = ExtResource("1_noavq")
+wheel_image = ExtResource("2_iui7f")
+probability = SubResource("Curve_4ou06")
+physical_item_key = "DraggedJuice"
+metadata/_custom_type_script = "uid://crmwq1v6djfdl"

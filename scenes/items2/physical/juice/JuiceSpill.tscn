@@ -1,0 +1,31 @@
+[gd_scene load_steps=4 format=3 uid="uid://nxxb2or3srpw"]
+
+[ext_resource type="Script" uid="uid://niueeg5ciru0" path="res://scenes/items2/physical/juice/juice_spill.gd" id="1_xf2w1"]
+[ext_resource type="Texture2D" uid="uid://wjql38rloo2t" path="res://assets/items/glass/spill.png" id="2_d888v"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_d888v"]
+height = 0.381958
+radius = 0.849121
+
+[node name="JuiceSpill" type="Node"]
+script = ExtResource("1_xf2w1")
+metadata/_custom_type_script = "uid://difslb44mei5n"
+
+[node name="Node3D" type="Node3D" parent="."]
+unique_name_in_owner = true
+
+[node name="Decal" type="Decal" parent="Node3D"]
+unique_name_in_owner = true
+layers = 2
+texture_albedo = ExtResource("2_d888v")
+cull_mask = 2
+
+[node name="Area3D" type="Area3D" parent="Node3D"]
+unique_name_in_owner = true
+collision_layer = 8
+collision_mask = 6
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Node3D/Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.151428, 0)
+shape = SubResource("CylinderShape3D_d888v")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c7ahqrhul0gpx"]
+[gd_scene load_steps=11 format=3 uid="uid://c7ahqrhul0gpx"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_n65nj"]
 [ext_resource type="ArrayMesh" uid="uid://b6e1rva1cf2ml" path="res://assets/course/tracen-course/_map/tracen-course-map_Plane.res" id="2_m36vl"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_4vv2t"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_xes7l"]
 [ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/red_bean/RedBean.tscn" id="6_3upyf"]
+[ext_resource type="PackedScene" uid="uid://bbdd3gxmf2uoy" path="res://scenes/items2/usable/juice/GreenJuice.tscn" id="9_uttjj"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_xes7l"]
 resource_local_to_scene = true
@@ -463,3 +464,4 @@ transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 138.47
 
 [node name="ItemPickup" parent="." index="12" instance=ExtResource("5_xes7l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, 0.0757363, 17.0637)
+guaranteed_item = ExtResource("9_uttjj")
