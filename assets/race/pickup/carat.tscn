@@ -1,15 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://cruj3552j7a68"]
+[gd_scene load_steps=7 format=3 uid="uid://cruj3552j7a68"]
 
 [ext_resource type="PackedScene" uid="uid://caih5rjdhw1hs" path="res://assets/race/pickup/carat-pickup.blend" id="1_jn78y"]
 [ext_resource type="Script" uid="uid://cg84maibtckq1" path="res://assets/race/pickup/carat_pickup.gd" id="2_b5vox"]
 [ext_resource type="Shader" uid="uid://caoqpi5a8vuhw" path="res://assets/race/pickup/_shader/test2.gdshader" id="2_tdoqf"]
 [ext_resource type="Texture2D" uid="uid://cluba5ya60nd4" path="res://assets/race/pickup/rainbow.png" id="3_b5vox"]
+[ext_resource type="Texture2D" uid="uid://vyhvkx34v5yi" path="res://assets/race/pickup/normal.png" id="4_42k4d"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sjsgp"]
 render_priority = 0
 shader = ExtResource("2_tdoqf")
 shader_parameter/tex = ExtResource("3_b5vox")
-shader_parameter/base_scale = 4.0
+shader_parameter/normal = ExtResource("4_42k4d")
+shader_parameter/base_scale = 5.0
 shader_parameter/ui_scale = 1.0
 
 [node name="Carat" type="Node3D"]

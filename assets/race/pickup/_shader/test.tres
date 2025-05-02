@@ -4,7 +4,7 @@
 
 [sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_ylwyp"]
 expanded_output_ports = [0]
-input_name = "screen_uv"
+input_name = "normal"
 
 [sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_ej7e3"]
 texture = ExtResource("1_ej7e3")
@@ -43,12 +43,12 @@ uniform sampler2D tex_frg_3;
 
 void fragment() {
 // Input:2
-	vec2 n_out2p0 = SCREEN_UV;
+	vec3 n_out2p0 = NORMAL;
 
 
 // VectorOp:9
 	vec2 n_in9p1 = vec2(2.50000, 1.00000);
-	vec2 n_out9p0 = n_out2p0 * n_in9p1;
+	vec2 n_out9p0 = vec2(n_out2p0.xy) * n_in9p1;
 
 
 // VectorOp:4
@@ -96,7 +96,7 @@ void fragment() {
 
 }
 "
-graph_offset = Vector2(-264.684, -71.3682)
+graph_offset = Vector2(-1218.45, -73.3183)
 nodes/fragment/0/position = Vector2(1220, 140)
 nodes/fragment/2/node = SubResource("VisualShaderNodeInput_ylwyp")
 nodes/fragment/2/position = Vector2(-1820, 180)

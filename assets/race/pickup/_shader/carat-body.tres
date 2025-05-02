@@ -141,7 +141,6 @@ void fragment() {
 
 }
 "
-graph_offset = Vector2(-871.174, -86.07)
 preview_params/tex_frg_2 = "Resource(\"res://assets/race/pickup/rainbow.png\")"
 nodes/fragment/2/node = SubResource("VisualShaderNodeTexture_t8jfx")
 nodes/fragment/2/position = Vector2(-60, 300)

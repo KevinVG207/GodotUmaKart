@@ -90,7 +90,8 @@ func _enter_tree() -> void:
 func _process(_delta: float) -> void:
 	var viewport := get_viewport()
 	var new_scale := float(viewport.size.x) / 1280.0
-	get_window().content_scale_factor = new_scale
+	if get_window().content_scale_factor != new_scale:
+		get_window().content_scale_factor = new_scale
 
 func setup_items() -> void:
 	print("Setting up items...")
