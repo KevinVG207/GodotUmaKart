@@ -1,10 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://cruj3552j7a68"]
+[gd_scene load_steps=13 format=3 uid="uid://cruj3552j7a68"]
 
 [ext_resource type="PackedScene" uid="uid://caih5rjdhw1hs" path="res://assets/race/pickup/carat-pickup.blend" id="1_jn78y"]
 [ext_resource type="Script" uid="uid://cg84maibtckq1" path="res://assets/race/pickup/carat_pickup.gd" id="2_b5vox"]
 [ext_resource type="Shader" uid="uid://caoqpi5a8vuhw" path="res://assets/race/pickup/_shader/test2.gdshader" id="2_tdoqf"]
 [ext_resource type="Texture2D" uid="uid://cluba5ya60nd4" path="res://assets/race/pickup/rainbow.png" id="3_b5vox"]
 [ext_resource type="Texture2D" uid="uid://vyhvkx34v5yi" path="res://assets/race/pickup/normal.png" id="4_42k4d"]
+[ext_resource type="Shader" uid="uid://bfp3dukcbufma" path="res://assets/race/pickup/carat-ball.gdshader" id="6_42k4d"]
+[ext_resource type="Shader" uid="uid://c8yoa73c4o5of" path="res://assets/race/pickup/leaves.gdshader" id="6_ql100"]
+[ext_resource type="Texture2D" uid="uid://ctww3x36lch5q" path="res://assets/race/pickup/leaves-overlay.png" id="7_f8pf2"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_sjsgp"]
 render_priority = 0
@@ -13,6 +16,18 @@ shader_parameter/tex = ExtResource("3_b5vox")
 shader_parameter/normal = ExtResource("4_42k4d")
 shader_parameter/base_scale = 5.0
 shader_parameter/ui_scale = 1.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_f8pf2"]
+render_priority = 0
+shader = ExtResource("6_ql100")
+shader_parameter/overlay = ExtResource("7_f8pf2")
+shader_parameter/base_scale = 2.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ql100"]
+render_priority = 0
+shader = ExtResource("6_42k4d")
+shader_parameter/normal = ExtResource("4_42k4d")
+shader_parameter/base_scale = 2.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sjsgp"]
 albedo_color = Color(1.4, 1.4, 1.4, 1)
@@ -29,9 +44,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.87995, 0)
 
 [node name="Circle" parent="carat-pickup" index="0"]
 surface_material_override/0 = SubResource("ShaderMaterial_sjsgp")
+surface_material_override/1 = SubResource("ShaderMaterial_f8pf2")
+surface_material_override/2 = SubResource("ShaderMaterial_ql100")
 surface_material_override/3 = SubResource("StandardMaterial3D_sjsgp")
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0139207, 0, 1.21391)
+transform = Transform3D(0.293023, 0, 0.956106, 0, 1, 0, -0.956106, 0, 0.293023, 1.29087, 1.75711, 0.726772)
 
 [editable path="carat-pickup"]
