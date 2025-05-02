@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cruj3552j7a68"]
+[gd_scene load_steps=8 format=3 uid="uid://cruj3552j7a68"]
 
 [ext_resource type="PackedScene" uid="uid://caih5rjdhw1hs" path="res://assets/race/pickup/carat-pickup.blend" id="1_jn78y"]
 [ext_resource type="Script" uid="uid://cg84maibtckq1" path="res://assets/race/pickup/carat_pickup.gd" id="2_b5vox"]
@@ -14,6 +14,13 @@ shader_parameter/normal = ExtResource("4_42k4d")
 shader_parameter/base_scale = 5.0
 shader_parameter/ui_scale = 1.0
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sjsgp"]
+albedo_color = Color(1.4, 1.4, 1.4, 1)
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.2
+disable_receive_shadows = true
+
 [node name="Carat" type="Node3D"]
 script = ExtResource("2_b5vox")
 
@@ -22,6 +29,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.87995, 0)
 
 [node name="Circle" parent="carat-pickup" index="0"]
 surface_material_override/0 = SubResource("ShaderMaterial_sjsgp")
+surface_material_override/3 = SubResource("StandardMaterial3D_sjsgp")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0139207, 0, 1.21391)
