@@ -1,15 +1,15 @@
 [gd_scene load_steps=4 format=3 uid="uid://b801hs1jg6kwi"]
 
-[ext_resource type="Script" uid="uid://bs86qno67mjj2" path="res://scenes/items2/usable/red_bean/red_bean.gd" id="1_uc3dp"]
-[ext_resource type="Texture2D" uid="uid://chjvxxnrtrfvk" path="res://assets/items/jellybean_red.png" id="2_ysil3"]
+[ext_resource type="Script" uid="uid://bs86qno67mjj2" path="res://scenes/items2/usable/horseshoe_red/horseshoe_red.gd" id="1_uc3dp"]
+[ext_resource type="Texture2D" uid="uid://dqdcvp00coh3j" path="res://assets/items/horseshoe/horseshoe-red.png" id="2_as6eh"]
 
 [sub_resource type="Curve" id="Curve_bm6sg"]
 _data = [Vector2(0.244186, 0), 0.0, 0.0, 0, 0, Vector2(0.496124, 0.491028), 0.0, 0.0, 0, 0, Vector2(0.639535, 0.215334), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[node name="RedBean" type="Node"]
+[node name="HorseShoeRed" type="Node"]
 script = ExtResource("1_uc3dp")
-wheel_image = ExtResource("2_ysil3")
+wheel_image = ExtResource("2_as6eh")
 probability = SubResource("Curve_bm6sg")
-physical_item_key = "DraggedRedBean"
+physical_item_key = "DraggedHorseShoeRed"
 metadata/_custom_type_script = "uid://crmwq1v6djfdl"

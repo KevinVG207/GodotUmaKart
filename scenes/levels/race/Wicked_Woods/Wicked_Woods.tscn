@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://clsclqt1h0fjf" path="res://scenes/objects/cannon_trigger.tscn" id="3_te5xt"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_6gkg7"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="6_x6qyg"]
-[ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/red_bean/RedBean.tscn" id="7_nm106"]
+[ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn" id="7_nm106"]
 [ext_resource type="ArrayMesh" uid="uid://dtyvvgshfl4xh" path="res://assets/course/wicked-woods/map_mesh.tres" id="8_torjd"]
 [ext_resource type="PackedScene" uid="uid://ce0p0or6swliy" path="res://scenes/items/RedBean.tscn" id="8_u35rw"]
 [ext_resource type="PackedScene" uid="uid://c751hrd13mc7e" path="res://scenes/items/Book.tscn" id="9_gxv84"]

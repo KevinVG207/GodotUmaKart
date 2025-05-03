@@ -7,9 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_yb4ep"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_4vv2t"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_xes7l"]
-[ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/red_bean/RedBean.tscn" id="6_3upyf"]
+[ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn" id="6_3upyf"]
 [ext_resource type="PackedScene" uid="uid://bbdd3gxmf2uoy" path="res://scenes/items2/usable/juice/GreenJuice.tscn" id="9_uttjj"]
-[ext_resource type="PackedScene" uid="uid://x3aq02gdikle" path="res://scenes/items2/usable/green_bean/GreenBean.tscn" id="10_wies2"]
+[ext_resource type="PackedScene" uid="uid://x3aq02gdikle" path="res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn" id="10_wies2"]
 [ext_resource type="PackedScene" uid="uid://bi2og1u3yqr4i" path="res://scenes/items2/usable/book/Book.tscn" id="11_v1cpl"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_xes7l"]
