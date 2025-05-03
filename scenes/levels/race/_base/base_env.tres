@@ -18,6 +18,5 @@ ambient_light_energy = 0.3
 reflected_light_source = 1
 ssao_enabled = true
 ssao_intensity = 1.0
-ssil_enabled = true
 adjustment_enabled = true
 adjustment_saturation = 1.1

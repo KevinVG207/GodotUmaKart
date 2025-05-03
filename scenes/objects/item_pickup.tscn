@@ -132,6 +132,7 @@ shape = SubResource("CylinderShape3D_t2465")
 [node name="Visuals" type="Node3D" parent="."]
 
 [node name="Carat" parent="Visuals" instance=ExtResource("3_bbpbm")]
+unique_name_in_owner = true
 transform = Transform3D(-0.00849814, 0.221212, -0.4146, -0.0159156, 0.414294, 0.221376, 0.469654, 0.0180423, -1.81227e-08, -2.79397e-09, 1, -0.05058)
 
 [node name="ItemPickup" parent="." instance=ExtResource("3_7axpt")]
