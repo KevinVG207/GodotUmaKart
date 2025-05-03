@@ -48,20 +48,18 @@
 
 [node name="road-concrete2" parent="Colliders" index="21" groups=["col_floor"]]
 
-[node name="wall-invis-nodraw" parent="Colliders" index="22" groups=["col_wall"]]
+[node name="redcar" parent="Colliders" index="22" groups=["col_wall"]]
 
-[node name="redcar" parent="Colliders" index="23" groups=["col_wall"]]
+[node name="wheel" parent="Colliders" index="23" groups=["col_wall"]]
 
-[node name="wheel" parent="Colliders" index="24" groups=["col_wall"]]
+[node name="bluecar" parent="Colliders" index="24" groups=["col_wall"]]
 
-[node name="bluecar" parent="Colliders" index="25" groups=["col_wall"]]
+[node name="road-truck" parent="Colliders" index="25" groups=["col_floor"]]
 
-[node name="road-truck" parent="Colliders" index="26" groups=["col_floor"]]
+[node name="truck-body" parent="Colliders" index="26" groups=["col_wall"]]
 
-[node name="truck-body" parent="Colliders" index="27" groups=["col_wall"]]
+[node name="boost" parent="Colliders" index="27" groups=["col_boost"]]
 
-[node name="boost" parent="Colliders" index="28" groups=["col_boost"]]
+[node name="boost-trick" parent="Colliders" index="28" groups=["col_boost", "col_trick"]]
 
-[node name="boost-trick" parent="Colliders" index="29" groups=["col_boost", "col_trick"]]
-
-[node name="test-nodraw" parent="Colliders" index="30" groups=["col_bonk", "col_wall"]]
+[node name="test-nodraw" parent="Colliders" index="29" groups=["col_bonk", "col_wall"]]

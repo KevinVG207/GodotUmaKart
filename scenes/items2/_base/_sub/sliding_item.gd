@@ -12,6 +12,10 @@ func _ready() -> void:
 	super()
 	area.body_entered.connect(_on_area_3d_body_entered)
 	
+	body.set_collision_mask_value(5, false)
+	body.set_collision_mask_value(6, true)
+	body.set_collision_mask_value(7, true)
+	
 	if Global.MODE1 == Global.MODE1_ONLINE:
 		area.set_collision_mask_value(3, false)
 	var offset := origin.transform.basis.z * (origin.vehicle_length_ahead * 2)

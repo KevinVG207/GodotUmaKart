@@ -701,6 +701,7 @@ _data = {
 process_priority = 1000
 process_physics_priority = 1000
 collision_layer = 2
+collision_mask = 49
 mass = 10.0
 physics_material_override = SubResource("PhysicsMaterial_b3vot")
 gravity_scale = 0.0

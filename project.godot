@@ -215,6 +215,9 @@ locale/translations=PackedStringArray("res://loc/text.en.translation", "res://lo
 3d_physics/layer_2="Player"
 3d_physics/layer_3="Opponents"
 3d_physics/layer_4="Objects"
+3d_physics/layer_5="InvWallPlayer"
+3d_physics/layer_6="InvWallPlayerItems"
+3d_physics/layer_7="InvWallItems"
 3d_physics/layer_9="ClothCol"
 3d_physics/layer_10="FallBoundary"
 

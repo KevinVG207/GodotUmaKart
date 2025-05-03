@@ -12,6 +12,10 @@ func _ready() -> void:
 	body._integrate_forces.bind()
 	area.body_entered.connect(_on_area_3d_body_entered)
 	
+	body.set_collision_mask_value(5, false)
+	body.set_collision_mask_value(6, true)
+	body.set_collision_mask_value(7, true)
+	
 	var offset: Vector3 = origin.transform.basis.z * (origin.vehicle_length_ahead * 1)
 	var dir_multi: float = 1.0
 	if origin.input.tilt < 0:
