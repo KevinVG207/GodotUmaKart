@@ -537,11 +537,14 @@ func send_item_state(item: PhysicalItem):
 	if not item_state:
 		return
 	
+	item.state_idx += 1
+	
 	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {
 		"uniqueId": item.key,
 		"originId": item.origin_id,
 		"ownerId": item.owner_id,
-		"state": item_state
+		"state": item_state,
+		"idx": item.state_idx
 	})
 
 
@@ -550,6 +553,7 @@ func apply_item_state(data: Dictionary):
 	var origin_id = data["originId"]
 	var owner_id = data["ownerId"]
 	var item_state = data["state"]
+	var state_idx := data["idx"] as int
 
 	if key in deleted_physical_items:
 		return
@@ -563,9 +567,14 @@ func apply_item_state(data: Dictionary):
 	#Debug.print(["state", origin_id, owner_id])
 	
 	var instance = physical_items[key]
+	
+	if instance.state_idx >= state_idx:
+		return
+	
 	instance.owner_id = owner_id
 	instance.origin_id = origin_id
 	instance.set_state(item_state)
+	instance.state_idx = state_idx
 	#print(player_user_id, " receives ", key)
 	#print("New owner ", instance.owner_id)
 

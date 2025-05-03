@@ -17,7 +17,7 @@ metadata/_custom_type_script = "uid://ci3rabmu3lfwm"
 [node name="Area3D" type="Area3D" parent="."]
 
 [node name="Juice" parent="Area3D" instance=ExtResource("2_1k4rr")]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.135586, 0)
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.0210661, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.353871, 0)

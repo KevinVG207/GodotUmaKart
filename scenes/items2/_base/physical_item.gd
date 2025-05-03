@@ -16,6 +16,8 @@ var owner_id: String:
 var origin: Vehicle4
 var owned_by: Vehicle4
 
+var state_idx: int = 0
+
 @export var no_updates := false
 
 func setup(new_key: String, new_world: RaceBase, new_origin: Vehicle4) -> void:

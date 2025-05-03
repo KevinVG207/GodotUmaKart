@@ -28,6 +28,7 @@ var new_owner: String = ""
 
 func _ready() -> void:
 	super()
+	%AnimationPlayer.speed_scale = 1.0 if randf() < 0.5 else -1.0
 	var offset := origin.transform.basis.z * (origin.vehicle_length_ahead * 2)
 	var dir_multi: float = 1.0
 	if origin.input.tilt < 0:

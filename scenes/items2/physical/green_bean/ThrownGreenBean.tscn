@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://ciepem2lnb12b"]
+[gd_scene load_steps=10 format=3 uid="uid://ciepem2lnb12b"]
 
 [ext_resource type="Script" uid="uid://b1hendyt8brqu" path="res://scenes/items2/physical/green_bean/thrown_green_bean.gd" id="1_oepxu"]
+[ext_resource type="PackedScene" uid="uid://b5geotv2tsyru" path="res://assets/items/horseshoe/horse_shoe_gray.tscn" id="2_x5rrm"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_v8qc4"]
 height = 1.32048
@@ -14,6 +15,43 @@ material = SubResource("StandardMaterial3D_5qrcn")
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_hsbh8"]
 height = 0.5
 radius = 0.736184
+
+[sub_resource type="Animation" id="Animation_x5rrm"]
+resource_name = "spin"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HorseShoeGray:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 6.28319, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_vjo2o"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HorseShoeGray:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_vjo2o"]
+_data = {
+&"RESET": SubResource("Animation_vjo2o"),
+&"spin": SubResource("Animation_x5rrm")
+}
 
 [node name="ThrownGreenBean" type="Node" node_paths=PackedStringArray("body", "area")]
 script = ExtResource("1_oepxu")
@@ -30,12 +68,16 @@ floor_block_on_wall = false
 floor_max_angle = 1.5708
 floor_snap_length = 0.4
 
+[node name="HorseShoeGray" parent="ThrownGreenBean" instance=ExtResource("2_x5rrm")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0.238241, 0)
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ThrownGreenBean"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.25, 0)
 shape = SubResource("CapsuleShape3D_v8qc4")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="ThrownGreenBean"]
 transform = Transform3D(-6.46929e-08, 0, -1.184, 0, 0.888, 0, 1.48, 0, -5.17543e-08, 0, 0.2, 0)
+visible = false
 mesh = SubResource("SphereMesh_crqg3")
 
 [node name="Area3D" type="Area3D" parent="ThrownGreenBean"]
@@ -45,3 +87,10 @@ collision_mask = 14
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ThrownGreenBean/Area3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 shape = SubResource("CylinderShape3D_hsbh8")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="ThrownGreenBean"]
+unique_name_in_owner = true
+libraries = {
+&"": SubResource("AnimationLibrary_vjo2o")
+}
+autoplay = "spin"

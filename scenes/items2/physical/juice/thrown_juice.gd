@@ -38,7 +38,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState3D) -> void:
 			body.linear_velocity = Vector3.ZERO
 			body.angular_velocity = Vector3.ZERO
 			destroy()
-			if owned_by == world.player_vehicle:
+			if Global.MODE1 == Global.MODE1_OFFLINE or owned_by == world.player_vehicle:
 				var spill := world.make_physical_item("JuiceSpill", owned_by) as JuiceSpill
 				spill.body.global_transform = body.global_transform
 				spill.is_ready = true

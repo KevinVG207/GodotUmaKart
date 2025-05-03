@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://cwuopmm7jfnht"]
+[gd_scene load_steps=6 format=3 uid="uid://cwuopmm7jfnht"]
 
 [ext_resource type="Script" uid="uid://c7m8kg1mid1wk" path="res://scenes/items2/physical/green_bean/dragged_green_bean.gd" id="1_k5ewv"]
+[ext_resource type="PackedScene" uid="uid://b5geotv2tsyru" path="res://assets/items/horseshoe/horse_shoe_gray.tscn" id="2_j486a"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_psos0"]
 albedo_color = Color(0, 0.639216, 0.0823529, 1)
@@ -10,7 +11,7 @@ material = SubResource("StandardMaterial3D_psos0")
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_tkjb2"]
 height = 0.5
-radius = 0.456419
+radius = 0.538086
 
 [node name="DraggedGreenBean" type="Node" node_paths=PackedStringArray("area")]
 script = ExtResource("1_k5ewv")
@@ -23,8 +24,12 @@ metadata/_custom_type_script = "uid://ci3rabmu3lfwm"
 collision_layer = 8
 collision_mask = 14
 
+[node name="HorseShoeGray" parent="GreenBean" instance=ExtResource("2_j486a")]
+transform = Transform3D(-0.5, 0, -4.37114e-08, 0, 0.5, 0, 4.37114e-08, 0, -0.5, 0, 0.2, 0)
+
 [node name="MeshInstance3D" type="MeshInstance3D" parent="GreenBean"]
 transform = Transform3D(-4.37114e-08, 0, 0.8, 0, 0.6, 0, -1, 0, -3.49691e-08, 0, 0.2, 0)
+visible = false
 mesh = SubResource("SphereMesh_yw5fk")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GreenBean"]
