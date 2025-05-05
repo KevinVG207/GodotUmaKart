@@ -4,10 +4,11 @@ class_name NetworkPlayer
 
 @onready var vehicle: Vehicle4 = get_parent()
 
-var network_teleport_distance: float = 25.0
+var network_teleport_distance: float = 20.0
 
 var prev_state: Dictionary = {}
 var prev_input: Vehicle4.VehicleInput = null
+var prev_transform: Transform3D
 
 var packet_idx := -1
 # var prev_state: Dictionary = get_state()
@@ -59,6 +60,7 @@ func apply_state(state: Dictionary) -> void:
 
 	prev_state = state
 	prev_input = Vehicle4.VehicleInput.from_dict(state.input)
+	prev_transform = Transform3D(Basis(Util.array_to_quat(state.rot)), Util.to_vector3(state.pos))
 
 	packet_idx = state.idx
 
@@ -77,7 +79,7 @@ func apply_state(state: Dictionary) -> void:
 
 	# FIXME: In reality, it should probably compare to the predicted position, because the network_pos is currently behind the true position of the player!
 	# BUT the network predicted position could be inside the ground or similar...
-	if should_teleport_to_network(Util.to_vector3(state.pos)):
+	if should_teleport_to_network():
 		teleport_to_network(state)
 	
 	apply_timer(vehicle.respawn_timer, state.respawn_time)
@@ -108,8 +110,8 @@ func set_path_point(state: Dictionary) -> void:
 	network_path.global_position = Util.to_vector3(state.pos)
 	network_path.quaternion = Util.array_to_quat(state.rot)
 	network_path.normal = network_path.transform.basis.z
-	if vehicle.user_id in vehicle.world.pings:
-		network_path.global_position += network_path.transform.basis.z * state.cur_speed * (1 + ((vehicle.world.pings[vehicle.user_id] + vehicle.world.pings[vehicle.world.player_user_id])/1000)) * 0.35
+	if vehicle.user_id in vehicle.world.pings and vehicle.cur_speed > 3:
+		network_path.global_position += network_path.transform.basis.z * state.cur_speed * ((vehicle.world.pings[vehicle.user_id] + vehicle.world.pings[vehicle.world.player_user_id])/1000)
 	# network_path.next_points = [Util.get_path_point_ahead_of_player(vehicle)]
 	# network_path.prev_points = network_path.next_points[0].prev_points
 	vehicle.cpu_logic.moved_to_next = false
@@ -128,8 +130,10 @@ func teleport_to_network(state: Dictionary) -> void:
 		vehicle.grounded = state.grounded
 		vehicle.teleport(vehicle.global_position, vehicle.transform.basis.z, vehicle.transform.basis.y)
 
-func should_teleport_to_network(network_pos: Vector3) -> bool:
-	if vehicle.global_position.distance_to(network_pos) > network_teleport_distance:
+func should_teleport_to_network() -> bool:
+	var network_pos := Util.to_vector3(prev_state.pos)
+	if vehicle.global_position.distance_to(network_pos) > network_teleport_distance and vehicle.global_position.distance_to(vehicle.cpu_logic.next_target_1.global_position) > network_teleport_distance:
+		Debug.print("TELEPORT")
 		return true
 		
 	var grav_component := (vehicle.global_position - network_pos).project(vehicle.gravity)

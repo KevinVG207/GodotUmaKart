@@ -11,7 +11,10 @@ var player_count: int = default_player_count:
 		player_count = value
 		setup_items()
 
-var extraPing = 0
+var extraPing: int = 0
+func get_extra_ping() -> float:
+	return clampf(RandomNumberGenerator.new().randf_range(Global.extraPing, Global.extraPing / 4.0), 0, 2000)
+
 var unique_string = OS.get_unique_id()
 
 var menu_start_cam: String = "%CamInitial"
@@ -42,8 +45,9 @@ var items: Array[PackedScene] = [
 	load("res://scenes/items2/usable/carrot/1Carrot.tscn"),
 	load("res://scenes/items2/usable/carrot/3Carrots.tscn"),
 	load("res://scenes/items2/usable/book/Book.tscn"),
-	load("res://scenes/items2/usable/green_bean/GreenBean.tscn"),
-	load("res://scenes/items2/usable/red_bean/RedBean.tscn")
+	load("res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn"),
+	load("res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn"),
+	load("res://scenes/items2/usable/juice/GreenJuice.tscn")
 	#load("res://scenes/items/1carrot.tscn"),
 	#preload("res://scenes/items/2carrots.tscn"),
 	#load("res://scenes/items/3carrots.tscn"),
@@ -58,10 +62,13 @@ var item_distributions: Dictionary[PackedScene, Curve] = {}
 var physical_items: Dictionary[String, PackedScene] = {
 	"DraggedBook": load("res://scenes/items2/physical/book/DraggedBook.tscn"),
 	"ThrownBook": load("res://scenes/items2/physical/book/ThrownBook.tscn"),
-	"DraggedGreenBean": load("res://scenes/items2/physical/green_bean/DraggedGreenBean.tscn"),
-	"ThrownGreenBean": load("res://scenes/items2/physical/green_bean/ThrownGreenBean.tscn"),
-	"DraggedRedBean": load("res://scenes/items2/physical/red_bean/DraggedRedBean.tscn"),
-	"ThrownRedBean": load("res://scenes/items2/physical/red_bean/ThrownRedBean.tscn")
+	"DraggedHorseShoeGray": load("res://scenes/items2/physical/horseshoe_gray/DraggedHorseShoeGray.tscn"),
+	"ThrownHorseShoeGray": load("res://scenes/items2/physical/horseshoe_gray/ThrownHorseShoeGray.tscn"),
+	"DraggedHorseShoeRed": load("res://scenes/items2/physical/horseshoe_red/DraggedHorseShoeRed.tscn"),
+	"ThrownHorseShoeRed": load("res://scenes/items2/physical/horseshoe_red/ThrownHorseShoeRed.tscn"),
+	"DraggedJuice": load("res://scenes/items2/physical/juice/DraggedJuice.tscn"),
+	"ThrownJuice": load("res://scenes/items2/physical/juice/ThrownJuice.tscn"),
+	"JuiceSpill": load("res://scenes/items2/physical/juice/JuiceSpill.tscn")
 	#"green_bean": load("res://scenes/items/_physical/DraggedGreenBean.tscn"),
 	#"thrown_green_bean": load("res://scenes/items/_physical/ThrownGreenBean.tscn"),
 	#"book": load("res://scenes/items/_physical/DraggedBook.tscn"),
@@ -83,6 +90,12 @@ var selected_replay: String = ""
 
 func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
+	
+func _process(_delta: float) -> void:
+	var viewport := get_viewport()
+	var new_scale := float(viewport.size.x) / 1280.0
+	if get_window().content_scale_factor != new_scale:
+		get_window().content_scale_factor = new_scale
 
 func setup_items() -> void:
 	print("Setting up items...")

@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://x3aq02gdikle"]
+
+[ext_resource type="Script" uid="uid://c8dwr0dogbedn" path="res://scenes/items2/usable/horseshoe_gray/horse_shoe_gray.gd" id="1_qagso"]
+[ext_resource type="Texture2D" uid="uid://cgg2vaw8tnx4a" path="res://assets/items/horseshoe/horseshoe-gray.png" id="2_pot57"]
+
+[sub_resource type="Curve" id="Curve_nwkb5"]
+_data = [Vector2(0, 0.518103), 0.0, 0.0, 0, 0, Vector2(0.502024, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="HorseShoeGray" type="Node"]
+script = ExtResource("1_qagso")
+wheel_image = ExtResource("2_pot57")
+probability = SubResource("Curve_nwkb5")
+physical_item_key = "DraggedHorseShoeGray"
+metadata/_custom_type_script = "uid://crmwq1v6djfdl"

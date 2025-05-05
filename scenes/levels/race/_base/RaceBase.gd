@@ -537,11 +537,14 @@ func send_item_state(item: PhysicalItem):
 	if not item_state:
 		return
 	
+	item.state_idx += 1
+	
 	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {
 		"uniqueId": item.key,
 		"originId": item.origin_id,
 		"ownerId": item.owner_id,
-		"state": item_state
+		"state": item_state,
+		"idx": item.state_idx
 	})
 
 
@@ -550,6 +553,7 @@ func apply_item_state(data: Dictionary):
 	var origin_id = data["originId"]
 	var owner_id = data["ownerId"]
 	var item_state = data["state"]
+	var state_idx := data["idx"] as int
 
 	if key in deleted_physical_items:
 		return
@@ -563,9 +567,14 @@ func apply_item_state(data: Dictionary):
 	#Debug.print(["state", origin_id, owner_id])
 	
 	var instance = physical_items[key]
+	
+	if instance.state_idx >= state_idx:
+		return
+	
 	instance.owner_id = owner_id
 	instance.origin_id = origin_id
 	instance.set_state(item_state)
+	instance.state_idx = state_idx
 	#print(player_user_id, " receives ", key)
 	#print("New owner ", instance.owner_id)
 
@@ -1201,9 +1210,13 @@ func handle_race_start(data: Dictionary):
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	if Global.extraPing:
-		await get_tree().create_timer(Global.extraPing / 1000.0).timeout
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0).timeout
 	
-	var data: Dictionary = JSON.parse_string(match_state.data)
+	var res: Variant = JSON.parse_string(match_state.data)
+	if res == null:
+		print("ERR: received match_state parse failed")
+		return
+	var data := res as Dictionary
 	match match_state.op_code:
 		raceOp.SERVER_UPDATE_VEHICLE_STATE:
 			update_vehicle_state(data, match_state.presence.user_id)

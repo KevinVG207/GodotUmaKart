@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://bhgmc70fy671p"]
+
+[ext_resource type="Script" uid="uid://du235ssnh3m7e" path="res://scenes/items2/physical/juice/dragged_juice.gd" id="1_1k4rr"]
+[ext_resource type="PackedScene" uid="uid://cba553fgeor6y" path="res://scenes/items2/physical/juice/juice.tscn" id="2_1k4rr"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_6y6rb"]
+height = 0.424789
+radius = 0.282715
+
+[node name="DraggedJuice" type="Node" node_paths=PackedStringArray("area")]
+script = ExtResource("1_1k4rr")
+area = NodePath("Area3D")
+damage_type = 1
+next_item_key = "ThrownJuice"
+metadata/_custom_type_script = "uid://ci3rabmu3lfwm"
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="Juice" parent="Area3D" instance=ExtResource("2_1k4rr")]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0.0210661, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.353871, 0)
+shape = SubResource("CylinderShape3D_6y6rb")

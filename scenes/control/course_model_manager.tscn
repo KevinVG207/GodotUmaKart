@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bd1tutxq6ocwt"]
+
+[ext_resource type="Script" uid="uid://ocmjuqj7q6ch" path="res://scenes/control/course_model_manager.gd" id="1_fbuuw"]
+
+[node name="CourseModelManager" type="Node"]
+script = ExtResource("1_fbuuw")

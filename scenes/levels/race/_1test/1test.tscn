@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_864dc"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_qon5u"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_jv31a"]
-[ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/red_bean/RedBean.tscn" id="8_wwo5q"]
+[ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn" id="8_wwo5q"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_wwo5q"]
 resource_local_to_scene = true

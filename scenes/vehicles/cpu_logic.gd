@@ -135,6 +135,9 @@ func get_random_target_offset(radius:float=1.0) -> Vector3:
 
 func update_target() -> void:
 	if passed_target(next_target_1):
+		if parent.is_network:
+			moved_to_next = true
+			return
 		new_target(next_target_2, true)
 	return
 
@@ -186,6 +189,15 @@ func new_curve(natural: bool = false) -> void:
 	)
 
 func update_curve_point() -> void:
+	if parent.is_network:
+		if !moved_to_next:
+			curve_point_position = next_target_1.global_position
+			curve_point_forward = next_target_1.normal
+		else:
+			curve_point_position = parent.global_position + parent.global_basis.z
+			curve_point_forward = parent.global_basis.z
+		return
+
 	var curve_sample_distance := 20.0
 	curve_sample_distance = clampf(curve_sample_distance * (parent.cur_speed / parent.max_speed), 3, curve_sample_distance)
 	var curve_current_distance := curve.get_closest_offset(parent.global_position) + curve_sample_distance

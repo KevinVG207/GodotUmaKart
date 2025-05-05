@@ -71,7 +71,7 @@ func is_socket():
 
 func send_match_state(op_code: int, state: Dictionary):
 	if Global.extraPing:
-		await get_tree().create_timer(Global.extraPing / 1000.0).timeout
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0).timeout
 	
 	if not is_socket():
 		return false

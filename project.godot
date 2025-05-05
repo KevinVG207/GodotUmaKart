@@ -39,8 +39,7 @@ gdscript/warnings/untyped_declaration=1
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
-window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
+window/stretch/aspect="ignore"
 window/vsync/vsync_mode=2
 
 [editor]
@@ -216,7 +215,11 @@ locale/translations=PackedStringArray("res://loc/text.en.translation", "res://lo
 3d_physics/layer_2="Player"
 3d_physics/layer_3="Opponents"
 3d_physics/layer_4="Objects"
+3d_physics/layer_5="InvWallPlayer"
+3d_physics/layer_6="InvWallPlayerItems"
+3d_physics/layer_7="InvWallItems"
 3d_physics/layer_9="ClothCol"
+3d_physics/layer_10="FallBoundary"
 
 [physics]
 
@@ -228,4 +231,6 @@ jolt_physics_3d/queries/use_enhanced_internal_edge_removal=true
 
 [rendering]
 
+anti_aliasing/quality/msaa_3d=1
 textures/default_filters/texture_mipmap_bias=-1.0
+anti_aliasing/quality/use_debanding=true

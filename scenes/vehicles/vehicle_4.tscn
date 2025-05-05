@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://ds7es8al63u4p"]
+[gd_scene load_steps=37 format=3 uid="uid://ds7es8al63u4p"]
 
 [ext_resource type="Script" uid="uid://cam4qnh4qwq5x" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dk33wleda3xba" path="res://scenes/vehicles/VehicleAnimationTree.gd" id="4_gc5eh"]
 [ext_resource type="Texture2D" uid="uid://ccawlfa3j8bex" path="res://assets/vehicles/blobshadow.png" id="4_piqwu"]
 [ext_resource type="Animation" uid="uid://cmcnrdew7ckq5" path="res://scenes/items/RunningShoes/running_shoes_run.res" id="5_6rco1"]
+[ext_resource type="Script" uid="uid://dotpuw65orxwk" path="res://scenes/vehicles/network_truth_visualiser.gd" id="5_f8g0e"]
 [ext_resource type="Script" uid="uid://cof1jjm2q2w8x" path="res://scenes/vehicles/blob_shadow.gd" id="5_x7a0q"]
 [ext_resource type="PackedScene" uid="uid://bmq4y5xti5ibm" path="res://assets/character/body.tscn" id="6_6ard6"]
 [ext_resource type="Script" uid="uid://nm5tp16uwelq" path="res://scenes/vehicles/cpu_logic.gd" id="12_u6ron"]
@@ -32,7 +33,16 @@ albedo_color = Color(1, 0, 0, 1)
 
 [sub_resource type="PrismMesh" id="PrismMesh_f8g0e"]
 material = SubResource("StandardMaterial3D_0tp0h")
-size = Vector3(0.2, 0.4, 0.2)
+size = Vector3(0.4, 0.8, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_f8g0e"]
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(0, 0, 1, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_sy3d6"]
+material = SubResource("StandardMaterial3D_f8g0e")
+size = Vector3(0.4, 0.8, 0.4)
 
 [sub_resource type="Animation" id="Animation_2t2a3"]
 length = 0.001
@@ -691,6 +701,7 @@ _data = {
 process_priority = 1000
 process_physics_priority = 1000
 collision_layer = 2
+collision_mask = 49
 mass = 10.0
 physics_material_override = SubResource("PhysicsMaterial_b3vot")
 gravity_scale = 0.0
@@ -722,6 +733,14 @@ vehicle = NodePath("../..")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Debug/PathPointVisualizer"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
 mesh = SubResource("PrismMesh_f8g0e")
+
+[node name="NetworkTruthVisualizer" type="Node3D" parent="Debug" node_paths=PackedStringArray("vehicle")]
+script = ExtResource("5_f8g0e")
+vehicle = NodePath("../..")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Debug/NetworkTruthVisualizer"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("PrismMesh_sy3d6")
 
 [node name="Visual" type="Node3D" parent="."]
 unique_name_in_owner = true

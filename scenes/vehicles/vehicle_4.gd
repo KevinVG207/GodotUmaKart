@@ -325,6 +325,9 @@ var respawn_boost_landed_frames: int = 0
 var respawn_boost_safezone_frames: int = 0
 static var respawn_boost_safezone_seconds: float = 0.1
 
+var wall_cooldown: int = 0
+var catchup_multi: float = 1.0
+
 func _ready() -> void:
 	# UI.show_race_ui()
 	custom_integrator = true
@@ -387,9 +390,6 @@ func _process(delta: float) -> void:
 	
 	handle_particles()
 
-	# if is_cpu:
-	# 	Debug.print([Util.round_to_dec(cpu_logic.speed_multi, 2), Util.round_to_dec(cpu_logic.turn_speed_multi, 2), Util.round_to_dec(velocity.total().length(), 1)])
-	
 	if is_player:
 		UI.race_ui.update_speed(velocity.total().length())
 
@@ -482,13 +482,13 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 
 	handle_countdown_gauge()
 
+	apply_network_drift()
+
 	apply_velocities()
 
 	apply_rotations()
 
 	apply_drift_tilt()
-
-	apply_network_drift()
 
 	prev_transform = transform
 
@@ -897,7 +897,7 @@ func handle_steer() -> void:
 
 	# if respawn_stage:
 	# 	return
-	steering = clampf(input.steer, -1.0, 1.0)
+	steering = clampf(input.steer, -1.0 * catchup_multi*catchup_multi*catchup_multi, 1.0 * catchup_multi*catchup_multi*catchup_multi)
 
 	if in_drift:
 		steering = drift_dir * remap(steering * drift_dir, -1, 1, drift_turn_min_multiplier, drift_turn_multiplier)
@@ -909,14 +909,10 @@ func handle_steer() -> void:
 	
 	if hop_frames > 0:
 		var multi := (float(hop_frames) / max_hop_frames) * 0.5 + 1
-		#Debug.print(multi)
 		turn_target *= multi
 		turn_accel *= multi
-		#Debug.print("TURN SNAP")
 
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
-	
-	#Debug.print(turn_speed)
 
 	var multi := 1.0 if grounded else air_turn_multiplier
 
@@ -933,11 +929,13 @@ func apply_velocities() -> void:
 	collide_vehicles()
 	collide_walls()
 
-	bounce_walls()
+	if !is_network:
+		bounce_walls()
+	
 	handle_bounce()
-
+	
 	handle_respawn()
-
+	
 	apply_friction()
 
 	if respawn_stage != RespawnStage.RESPAWNING:
@@ -959,7 +957,7 @@ func apply_velocities() -> void:
 		var grip_multi := pow(grip / base_grip, 2)
 
 		if started:
-			velocity.prop_vel = prev_velocity.prop_vel.slerp(transform.basis.z.normalized().rotated(transform.basis.y.normalized(), drift_offset) * cur_speed, clampf(grip_multi, 0, 1))
+			velocity.prop_vel = prev_velocity.prop_vel.slerp(transform.basis.z.normalized().rotated(transform.basis.y.normalized(), drift_offset) * cur_speed * catchup_multi, clampf(grip_multi, 0, 1))
 
 		rotate_accel_along_floor()
 
@@ -1271,7 +1269,10 @@ func apply_gravity() -> void:
 	# if prev_grounded and !grounded:
 	# 	velocity.rest_vel += gravity / 4
 
-	velocity.rest_vel += gravity * delta
+	var grav_mult := 1.0
+	if is_network and catchup_multi > 1.5:
+		grav_mult = 2.0
+	velocity.rest_vel += gravity * delta * grav_mult
 
 	if hop_frames > 0:
 		velocity.rest_vel = -velocity.grav_component(gravity)
@@ -1347,8 +1348,7 @@ func outside_drift_force() -> void:
 	
 	# drift_offset = move_toward(drift_offset, max_drift_offset * -drift_dir, delta * drift_offset_multi)
 	
-	
-	# Debug.print(rad_to_deg(drift_offset))
+
 
 	if !outside_drift or in_cannon or contacts.has(ContactType.WALL):
 		drift_offset = 0.0
@@ -1434,6 +1434,9 @@ func rotate_to_gravity() -> void:
 
 
 func apply_network_drift() -> void:
+	var prev_multi = catchup_multi
+	catchup_multi = 1.0
+	
 	if !is_network:
 		return
 
@@ -1445,36 +1448,69 @@ func apply_network_drift() -> void:
 	var move_multi := 0.0
 	var rot_multi := 1.0
 	
-	if !cpu_logic.moved_to_next:
-		var dist: float = max(network.network_teleport_distance/2, global_position.distance_to(network_pos))
-		move_multi = remap(dist, network.network_teleport_distance/2, network.network_teleport_distance, 0.0, 3.0)
+	if !cpu_logic.moved_to_next and network.prev_state.cur_speed >= 5.0:
+		var dist: float = global_position.distance_to(cpu_logic.next_target_1.global_position)
+		move_multi = clampf(remap(dist, 0, network.network_teleport_distance, 0.0, 1.0), 0, 1.0)
 	
 	else:
 		move_multi = 0.0
 	
 	if network.prev_state.cur_speed < 5.0: # and global_position.distance_to(network_pos) < 3.0:
 		network_pos = Util.to_vector3(network.prev_state.pos)
-		move_multi = clamp(remap(network.prev_state.cur_speed, 0, 5.0, 2.0, 0.0), 0.0, 2.0)
+		move_multi = clampf(remap(network.prev_state.cur_speed, 0, 5.0, 5.0, 0.0), 0.0, 0.5)
 		rot_multi = 3.0
 		prev_input.steer = 0.0
 		input.steer = 0.0
-	
-	var new_pos: Vector3 = global_position.lerp(network_pos, delta * move_multi)
-	var new_movement: Vector3 = new_pos - global_position
+		
+		var new_pos: Vector3 = global_position.lerp(network_pos, delta * move_multi*5)
+		var new_movement: Vector3 = new_pos - global_position
 
-	# Remove the component along the gravity vector
-	var adjusted_movement: Vector3 = Plane(-gravity.normalized()).project(new_movement)
-	var vertical_movement: Vector3 = new_movement - adjusted_movement
+		# Remove the component along the gravity vector
+		var adjusted_movement: Vector3 = Plane(-gravity.normalized()).project(new_movement)
+		var vertical_movement: Vector3 = new_movement - adjusted_movement
 
-	global_position += adjusted_movement
+		global_position += adjusted_movement
 	
-	if Util.v3_length_compare(vertical_movement, network.network_teleport_distance / 2) > 0 and !cpu_logic.moved_to_next:
-	# if vertical_movement.length() > network.network_teleport_distance / 2 and !cpu_logic.moved_to_next:
-		global_position = network_pos
+	#if ContactType.WALL in contacts:
+		#wall_cooldown = roundi(Engine.physics_ticks_per_second * (world.pings[user_id] / 1000))
+	#
+	#if wall_cooldown > 0:
+		#wall_cooldown -= 1
+		#network_pos = Util.to_vector3(network.prev_state.pos)
+	
+	if cpu_logic.moved_to_next:
+		#Debug.print("PASSED")
+		move_multi = -move_multi
+		if cur_speed < 5.0:
+			move_multi = 0.0
+	
+	catchup_multi += move_multi
+	#Debug.print("===")
+	#Debug.print(["B", catchup_multi])
+	catchup_multi = move_toward(prev_multi, catchup_multi, delta * 0.2)
+	#Debug.print(["A", catchup_multi])
+	#Debug.print(cur_speed)
+	#Debug.print("===")
+	# FIXME: Wide drift doesn't work over network
 	
 	var cur_quat := Quaternion.from_euler(rotation)
 	var target_quat := network_rot
 	rotation = cur_quat.slerp(target_quat, rot_multi * delta).get_euler()
+	return
+	
+	#var new_pos: Vector3 = global_position.lerp(network_pos, delta * move_multi)
+	#var new_movement: Vector3 = new_pos - global_position
+#
+	## Remove the component along the gravity vector
+	#var adjusted_movement: Vector3 = Plane(-gravity.normalized()).project(new_movement)
+	#var vertical_movement: Vector3 = new_movement - adjusted_movement
+#
+	##global_position += adjusted_movement
+	#
+	#if Util.v3_length_compare(vertical_movement, network.network_teleport_distance / 2) > 0 and !cpu_logic.moved_to_next:
+	## if vertical_movement.length() > network.network_teleport_distance / 2 and !cpu_logic.moved_to_next:
+		#global_position = network_pos
+	#
 
 func stop_movement() -> void:
 	prev_transform = transform

@@ -19,7 +19,7 @@ func _on_body_entered(body) -> void:
 		return
 
 	$CollisionShape3D.set_deferred("disabled", true)
-	$ItemPickup.visible = false
+	$Visuals.visible = false
 	$RespawnTimer.start()
 	body.get_item(guaranteed_item)
 	
@@ -27,4 +27,4 @@ func _on_body_entered(body) -> void:
 
 func _on_respawn_timer_timeout() -> void:
 	$CollisionShape3D.disabled = false
-	$ItemPickup.visible = true
+	$Visuals.visible = true

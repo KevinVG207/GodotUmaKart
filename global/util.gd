@@ -51,8 +51,9 @@ func raycast_for_group(space_state: PhysicsDirectSpaceState3D, start_pos: Vector
 		if not result:
 			break
 		# FIXME: Use shape!
-		var collider := result["collider"] as Node
-		if is_in_group_list(collider, group):
+		var collider := result["collider"] as Node3D
+		var shape := get_collision_shape_from_idx(collider as CollisionObject3D, result["shape"])
+		if is_in_group_list(shape, group):
 			out = result
 			result["start"] = start_pos
 			result["end"] = end_pos
@@ -299,6 +300,10 @@ func get_collision_shape(collision: KinematicCollision3D, idx: int) -> Collision
 	if collider == null:
 		return null
 	var shape_index := collision.get_collider_shape_index(idx)
+	var shape_owner := collider.shape_find_owner(shape_index)
+	return collider.shape_owner_get_owner(shape_owner) as CollisionShape3D
+
+func get_collision_shape_from_idx(collider: CollisionObject3D, shape_index: int) -> CollisionShape3D:
 	var shape_owner := collider.shape_find_owner(shape_index)
 	return collider.shape_owner_get_owner(shape_owner) as CollisionShape3D
 

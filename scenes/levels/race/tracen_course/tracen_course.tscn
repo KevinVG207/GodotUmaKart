@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://c7ahqrhul0gpx"]
+[gd_scene load_steps=13 format=3 uid="uid://c7ahqrhul0gpx"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_n65nj"]
 [ext_resource type="ArrayMesh" uid="uid://b6e1rva1cf2ml" path="res://assets/course/tracen-course/_map/tracen-course-map_Plane.res" id="2_m36vl"]
@@ -7,7 +7,10 @@
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_yb4ep"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_4vv2t"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_xes7l"]
-[ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/red_bean/RedBean.tscn" id="6_3upyf"]
+[ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn" id="6_3upyf"]
+[ext_resource type="PackedScene" uid="uid://bbdd3gxmf2uoy" path="res://scenes/items2/usable/juice/GreenJuice.tscn" id="9_uttjj"]
+[ext_resource type="PackedScene" uid="uid://x3aq02gdikle" path="res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn" id="10_wies2"]
+[ext_resource type="PackedScene" uid="uid://bi2og1u3yqr4i" path="res://scenes/items2/usable/book/Book.tscn" id="11_v1cpl"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_xes7l"]
 resource_local_to_scene = true
@@ -17,7 +20,9 @@ stream_0/volume = 0.0
 
 [node name="TracenCourse" node_paths=PackedStringArray("start_enemy_points") instance=ExtResource("1_n65nj")]
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
+fall_failsafe = -20.0
 start_enemy_points = [NodePath("EnemyPathPoints/EnemyPath")]
+music_volume_multi = 0.0
 music = SubResource("AudioStreamSynchronized_xes7l")
 
 [node name="MapMesh" parent="Course" index="0"]
@@ -26,7 +31,7 @@ visible = false
 mesh = ExtResource("2_m36vl")
 
 [node name="DirectionalLight3D" parent="Course" index="1"]
-transform = Transform3D(-0.75304, -0.639637, 0.154255, 0.374803, -0.224315, 0.899558, -0.54079, 0.735219, 0.408657, -15.5561, 27.6737, -93.2476)
+transform = Transform3D(0.739631, -0.497781, 0.452946, 0, 0.673012, 0.739631, -0.673013, -0.547054, 0.497781, -15.5561, 27.6737, -93.2476)
 
 [node name="Model" type="Node3D" parent="Course" index="2"]
 transform = Transform3D(18, 0, 0, 0, 18, 0, 0, 0, 18, 0, 0, 0)
@@ -392,8 +397,10 @@ transform = Transform3D(-0.722423, 0, -1.38052, 0, 1.55811, 0, 1.38052, 0, -0.72
 next_points = [NodePath("../EnemyPath39")]
 
 [node name="EnemyPath39" parent="EnemyPathPoints" index="30" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
-transform = Transform3D(-0.865554, 0, -0.500816, 0, 1, 0, 0.500816, 0, -0.865554, 47.6855, 0.162177, -74.3178)
+transform = Transform3D(-0.865554, 0, -0.500816, 0, 1, 0, 0.500816, 0, -0.865554, 46.6421, 0.162177, -73.7141)
 next_points = [NodePath("../EnemyPath40")]
+curve_in = 5.0
+curve_out = 5.0
 
 [node name="EnemyPath40" parent="EnemyPathPoints" index="31" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.998747, 0, -0.0500526, 0, 1, 0, 0.0500526, 0, -0.998747, 41.6855, 0.162177, -92.3178)
@@ -416,8 +423,9 @@ transform = Transform3D(-0.152054, 0, -0.988372, 0, 1, 0, 0.988372, 0, -0.152054
 next_points = [NodePath("../EnemyPath46")]
 
 [node name="EnemyPath46" parent="EnemyPathPoints" index="36" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -45.3214, 0.162177, -146.639)
+transform = Transform3D(0.984451, 0, -0.175659, 0, 1, 0, 0.175659, 0, 0.984451, -45.3214, 0.162177, -145.896)
 next_points = [NodePath("../EnemyPath47")]
+curve_in = 5.0
 
 [node name="EnemyPath47" parent="EnemyPathPoints" index="37" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(1.14534, 0, 0, 0, 1.14534, 0, 0, 0, 1.14534, -46.3214, 0.162177, -129.639)
@@ -455,3 +463,15 @@ curve_out = 5.0
 
 [node name="MapCamera" parent="." index="10"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 138.473, 1000, 0)
+
+[node name="ItemPickup" parent="." index="12" instance=ExtResource("5_xes7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, 0.0757363, 17.0637)
+guaranteed_item = ExtResource("9_uttjj")
+
+[node name="ItemPickup2" parent="." index="13" instance=ExtResource("5_xes7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, 0.0757363, 21.5886)
+guaranteed_item = ExtResource("10_wies2")
+
+[node name="ItemPickup3" parent="." index="14" instance=ExtResource("5_xes7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5767, 0.0757363, 21.5886)
+guaranteed_item = ExtResource("11_v1cpl")

@@ -1,0 +1,175 @@
+[gd_resource type="VisualShader" load_steps=17 format=3 uid="uid://dj7xhpe2du7rk"]
+
+[ext_resource type="Texture2D" uid="uid://cluba5ya60nd4" path="res://assets/race/pickup/rainbow.png" id="1_t8jfx"]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_t8jfx"]
+input_name = "viewport_size"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_ugjva"]
+operator = 2
+
+[sub_resource type="VisualShaderNodeVectorDecompose" id="VisualShaderNodeVectorDecompose_tti3n"]
+default_input_values = [0, Vector2(0, 0)]
+op_type = 0
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_mjbad"]
+operator = 3
+
+[sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_xq4rr"]
+default_input_values = [0, 1.0, 1, 1.0, 2, 0.0]
+op_type = 0
+
+[sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_xny8s"]
+default_input_values = [0, 0.0, 1, 0.5, 2, 0.0]
+op_type = 0
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_0ljwa"]
+default_input_values = [0, 0.0, 1, 0.5]
+operator = 2
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_t8jfx"]
+texture = ExtResource("1_t8jfx")
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_ugjva"]
+input_name = "screen_uv"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_wuktn"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(0, 0)]
+op_type = 0
+
+[sub_resource type="VisualShaderNodeVec2Parameter" id="VisualShaderNodeVec2Parameter_in0vc"]
+parameter_name = "screen_coords"
+qualifier = 2
+default_value_enabled = true
+default_value = Vector2(0.1, 0)
+
+[sub_resource type="VisualShaderNodeRotationByAxis" id="VisualShaderNodeRotationByAxis_dckmv"]
+default_input_values = [0, Vector3(0, 0, 0), 1, 10.0, 2, Vector3(0, 0, 1)]
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_lcl5p"]
+input_name = "time"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_8vpjw"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(0, -0.5)]
+op_type = 0
+operator = 1
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_3d3qe"]
+default_input_values = [0, Vector2(0, 0), 1, Vector2(0, 0.5)]
+op_type = 0
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform sampler2D tex_frg_2;
+
+
+
+void fragment() {
+// Input:3
+	vec2 n_out3p0 = SCREEN_UV;
+
+
+// Input:10
+	vec2 n_out10p0 = VIEWPORT_SIZE;
+
+
+// VectorDecompose:12
+	float n_out12p0 = n_out10p0.x;
+	float n_out12p1 = n_out10p0.y;
+
+
+// FloatOp:13
+	float n_out13p0 = n_out12p0 / n_out12p1;
+
+
+// VectorCompose:14
+	float n_in14p1 = 1.00000;
+	vec2 n_out14p0 = vec2(n_out13p0, n_in14p1);
+
+
+// VectorOp:11
+	vec3 n_out11p0 = vec3(n_out3p0, 0.0) * vec3(n_out14p0, 0.0);
+
+
+// FloatOp:17
+	float n_in17p1 = 0.50000;
+	float n_out17p0 = n_out14p0.x * n_in17p1;
+
+
+// VectorCompose:15
+	float n_in15p1 = 0.50000;
+	vec2 n_out15p0 = vec2(n_out17p0, n_in15p1);
+
+
+// VectorOp:8
+	vec2 n_out8p0 = vec2(n_out11p0.xy) - n_out15p0;
+
+
+// Input:7
+	float n_out7p0 = TIME;
+
+
+	vec3 n_out6p0;
+	mat4 n_out6p1;
+// RotationByAxis:6
+	vec3 n_in6p2 = vec3(0.00000, 0.00000, 1.00000);
+	{
+		float __angle = n_out7p0;
+		vec3 __axis = normalize(n_in6p2);
+		mat3 __rot_matrix = mat3(
+			vec3( cos(__angle)+__axis.x*__axis.x*(1.0 - cos(__angle)), __axis.x*__axis.y*(1.0-cos(__angle))-__axis.z*sin(__angle), __axis.x*__axis.z*(1.0-cos(__angle))+__axis.y*sin(__angle) ),
+			vec3( __axis.y*__axis.x*(1.0-cos(__angle))+__axis.z*sin(__angle), cos(__angle)+__axis.y*__axis.y*(1.0-cos(__angle)), __axis.y*__axis.z*(1.0-cos(__angle))-__axis.x*sin(__angle) ),
+			vec3( __axis.z*__axis.x*(1.0-cos(__angle))-__axis.y*sin(__angle), __axis.z*__axis.y*(1.0-cos(__angle))+__axis.x*sin(__angle), cos(__angle)+__axis.z*__axis.z*(1.0-cos(__angle)) )
+		);
+		n_out6p0 = vec3(n_out8p0, 0.0) * __rot_matrix;
+	}
+
+
+// VectorOp:9
+	vec2 n_out9p0 = vec2(n_out6p0.xy) + n_out15p0;
+
+
+// Texture2D:2
+	vec4 n_out2p0 = texture(tex_frg_2, n_out9p0);
+
+
+// Output:0
+	ALBEDO = vec3(n_out2p0.xyz);
+
+
+}
+"
+preview_params/tex_frg_2 = "Resource(\"res://assets/race/pickup/rainbow.png\")"
+nodes/fragment/2/node = SubResource("VisualShaderNodeTexture_t8jfx")
+nodes/fragment/2/position = Vector2(-60, 300)
+nodes/fragment/3/node = SubResource("VisualShaderNodeInput_ugjva")
+nodes/fragment/3/position = Vector2(-1820, 120)
+nodes/fragment/4/node = SubResource("VisualShaderNodeVectorOp_wuktn")
+nodes/fragment/4/position = Vector2(-400, 420)
+nodes/fragment/5/node = SubResource("VisualShaderNodeVec2Parameter_in0vc")
+nodes/fragment/5/position = Vector2(-800, 400)
+nodes/fragment/6/node = SubResource("VisualShaderNodeRotationByAxis_dckmv")
+nodes/fragment/6/position = Vector2(-840, 120)
+nodes/fragment/7/node = SubResource("VisualShaderNodeInput_lcl5p")
+nodes/fragment/7/position = Vector2(-1220, -60)
+nodes/fragment/8/node = SubResource("VisualShaderNodeVectorOp_8vpjw")
+nodes/fragment/8/position = Vector2(-1040, 100)
+nodes/fragment/9/node = SubResource("VisualShaderNodeVectorOp_3d3qe")
+nodes/fragment/9/position = Vector2(-360, 0)
+nodes/fragment/10/node = SubResource("VisualShaderNodeInput_t8jfx")
+nodes/fragment/10/position = Vector2(-2420, 400)
+nodes/fragment/11/node = SubResource("VisualShaderNodeVectorOp_ugjva")
+nodes/fragment/11/position = Vector2(-1400, 40)
+nodes/fragment/12/node = SubResource("VisualShaderNodeVectorDecompose_tti3n")
+nodes/fragment/12/position = Vector2(-2080, 380)
+nodes/fragment/13/node = SubResource("VisualShaderNodeFloatOp_mjbad")
+nodes/fragment/13/position = Vector2(-1860, 420)
+nodes/fragment/14/node = SubResource("VisualShaderNodeVectorCompose_xq4rr")
+nodes/fragment/14/position = Vector2(-1660, 420)
+nodes/fragment/15/node = SubResource("VisualShaderNodeVectorCompose_xny8s")
+nodes/fragment/15/position = Vector2(-1100, 360)
+nodes/fragment/17/node = SubResource("VisualShaderNodeFloatOp_0ljwa")
+nodes/fragment/17/position = Vector2(-1320, 360)
+nodes/fragment/connections = PackedInt32Array(2, 0, 0, 0, 5, 0, 4, 1, 7, 0, 6, 1, 8, 0, 6, 0, 6, 0, 9, 0, 10, 0, 12, 0, 12, 0, 13, 0, 12, 1, 13, 1, 13, 0, 14, 0, 9, 0, 2, 0, 3, 0, 11, 0, 11, 0, 8, 0, 14, 0, 11, 1, 14, 0, 17, 0, 17, 0, 15, 0, 15, 0, 8, 1, 15, 0, 9, 1)

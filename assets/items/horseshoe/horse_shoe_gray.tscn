@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://b5geotv2tsyru"]
+
+[ext_resource type="PackedScene" uid="uid://burelaq4uerek" path="res://assets/items/horseshoe/horseshoe-base.blend" id="1_m7a7t"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m7a7t"]
+diffuse_mode = 3
+specular_mode = 1
+albedo_color = Color(0.537011, 0.537011, 0.537011, 1)
+metallic = 0.58
+metallic_specular = 1.0
+clearcoat_enabled = true
+clearcoat = 0.7
+
+[node name="HorseShoeGray" instance=ExtResource("1_m7a7t")]
+
+[node name="Circle" parent="." index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_m7a7t")
