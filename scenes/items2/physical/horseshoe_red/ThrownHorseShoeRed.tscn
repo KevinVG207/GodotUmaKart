@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://cwjrdqv7kb8w5"]
 
 [ext_resource type="Script" uid="uid://c1wg7htb5jpbo" path="res://scenes/items2/physical/horseshoe_red/thrown_horseshoe_red.gd" id="1_fkcbl"]
-[ext_resource type="Texture2D" uid="uid://chjvxxnrtrfvk" path="res://assets/items/jellybean_red.png" id="2_llsmk"]
+[ext_resource type="Texture2D" uid="uid://dqdcvp00coh3j" path="res://assets/items/horseshoe/horseshoe-red.png" id="2_46dhs"]
 [ext_resource type="PackedScene" uid="uid://dhuaui0hie3eu" path="res://assets/items/horseshoe/horse_shoe_red.tscn" id="3_518cm"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_v8qc4"]
@@ -56,7 +56,7 @@ _data = {
 
 [node name="ThrownHorseShoeRed" type="Node" node_paths=PackedStringArray("body", "area")]
 script = ExtResource("1_fkcbl")
-target_texture = ExtResource("2_llsmk")
+target_texture = ExtResource("2_46dhs")
 body = NodePath("ThrownHorseShoeRed")
 area = NodePath("ThrownHorseShoeRed/Area3D")
 target_speed = 50.0
