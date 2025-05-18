@@ -28,6 +28,7 @@ func _on_connection_failed() -> void:
 
 func _on_server_disconnected() -> void:
 	print("Client: server disconnected")
+	RPCClient.error(DomainError.SERVER_DISCONNECT)
 
 func _on_get_rooms(rooms: Array[DomainRoom.Room]) -> void:
 	print("Client: Get rooms")
