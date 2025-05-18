@@ -30,6 +30,10 @@ Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
 Network="*res://global/network.gd"
 Audio="*res://global/audio.gd"
 RaceUtil="*res://global/RaceUtil.gd"
+NetworkTest="*res://global/network/NetworkTest.gd"
+UUID="*res://addons/uuid/uuid.gd"
+RPCClient="*res://global/network/RPCClient.gd"
+RPCServer="*res://global/network/RPCServer.gd"
 
 [debug]
 
