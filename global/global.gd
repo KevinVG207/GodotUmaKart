@@ -90,6 +90,9 @@ var selected_replay: String = ""
 
 func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
+
+func _ready() -> void:
+	RPCClient.error_received.connect(_on_network_error)
 	
 func _process(_delta: float) -> void:
 	var viewport := get_viewport()
@@ -160,3 +163,8 @@ func _input(event: InputEvent) -> void:
 		if event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion:
 			rebind_popup.handle_input(event)
 		return
+
+var error_code: int = DomainError.GENERIC_ERROR
+func _on_network_error(code: int) -> void:
+	error_code = code
+	UI.change_scene("res://scenes/ui/network_error/network_error_screen.tscn")
