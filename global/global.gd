@@ -88,6 +88,8 @@ var selected_replay: String = ""
 #var selected_replay: String = "user://replays/Wicked_Woods/1738524227.sav"
 #var selected_replay: String = "user://replays/1test/1738524048.sav"
 
+var fade_to_black_scene = preload("res://scenes/ui/transition/fade_to_black.tscn")
+
 func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
 
@@ -167,4 +169,5 @@ func _input(event: InputEvent) -> void:
 var error_code: int = DomainError.GENERIC_ERROR
 func _on_network_error(code: int) -> void:
 	error_code = code
-	UI.change_scene("res://scenes/ui/network_error/network_error_screen.tscn")
+	multiplayer.multiplayer_peer = null
+	UI.change_scene("res://scenes/ui/network_error/network_error_screen.tscn", false, fade_to_black_scene)
