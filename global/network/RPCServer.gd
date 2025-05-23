@@ -1,7 +1,7 @@
 extends Node
 
 @rpc("any_peer", "reliable")
-func initialize_player(data: PackedByteArray) -> void:
+func initialize_player(list: Array[Variant]) -> void:
 	return
 
 @rpc("any_peer", "reliable")
@@ -10,4 +10,8 @@ func get_rooms() -> void:
 
 @rpc("any_peer", "reliable")
 func join_random_room() -> void:
+	return
+
+@rpc("any_peer", "reliable")
+func send_vote(list: Array[Variant]) -> void:
 	return
