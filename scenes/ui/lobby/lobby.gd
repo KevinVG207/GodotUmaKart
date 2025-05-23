@@ -108,6 +108,7 @@ func change_state(new_state: int, state_func: Callable = Callable()):
 
 
 func reset():
+	Global.final_lobby = null
 	$Status.text = tr("LOBBY_RESET")
 	NetworkTest.reset()
 	$LeaveButton.text = tr("LOBBY_BTN_BACK")
@@ -131,6 +132,7 @@ func reset():
 	Config.online_username = display_name
 	Config.update_config()
 	%UsernameEdit.text = display_name
+	next_course = ""
 	state = STATE_INITIAL
 
 
@@ -256,9 +258,27 @@ func focus():
 	$MatchmakeButton.grab_focus()
 
 func update_votes() -> void:
+	var lobby: DomainRoom.Lobby
+	if NetworkTest.our_room.type == DomainRoom.RoomType.RACE:
+		if !Global.final_lobby:
+			return
+		print("RECEIVED RACE ROOM")
+		state = STATE_MATCH_RECEIVED
+		lobby = Global.final_lobby
+	else:
+		lobby = NetworkTest.our_room as DomainRoom.Lobby
+	
+	# Setup vote timeout:
+	var ticks_left = max(lobby.voting_timeout - lobby.tick, 0)
+	var seconds_left = Util.ticks_to_time_with_ping(ticks_left, lobby.tick_rate, lobby.players[NetworkTest.peer_id].ping)
+	if not vote_timeout_started or info_boxes.size() <= 1:
+		vote_timeout_started = true
+		$VoteTimeout.start(seconds_left)
+	elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
+		$VoteTimeout.start(seconds_left)
+	
 	# Update player states
 	var cur_user_ids := info_boxes.keys()
-	var lobby := NetworkTest.our_room as DomainRoom.Lobby
 	var server_user_ids := lobby.players.keys()
 	#
 	for user_id in cur_user_ids:
@@ -273,6 +293,23 @@ func update_votes() -> void:
 	for user_id in lobby.votes:
 		var vote_data := lobby.votes[user_id]
 		update_player_pick(user_id, vote_data.course_name)
+	
+	# Handle winning vote
+	if !lobby.winning_vote:
+		return
+	if next_course:
+		return
+	$LeaveButton.disabled = true
+	$LeaveButton.visible = false
+	
+	info_boxes[lobby.winning_vote].set_picked()
+	var vote_data := lobby.votes[lobby.winning_vote]
+	print("Winning course: ", vote_data.course_name)
+	print("Vote user: ", lobby.winning_vote)
+	$Status.text = tr("LOBBY_COURSE_SELECT") % vote_data.course_name
+
+	next_course = vote_data.course_name
+
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	if Global.extraPing:
@@ -280,10 +317,10 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	
 	var data: Dictionary = JSON.parse_string(match_state.data)
 	match match_state.op_code:
-		lobbyOp.SERVER_PING:
-			Network.send_match_state(lobbyOp.SERVER_PING, data)
-		lobbyOp.SERVER_VOTE_DATA:
-			handle_vote_data(data)
+		#lobbyOp.SERVER_PING:
+			#Network.send_match_state(lobbyOp.SERVER_PING, data)
+		#lobbyOp.SERVER_VOTE_DATA:
+			#handle_vote_data(data)
 		lobbyOp.SERVER_MATCH_DATA:
 			#print("Received match data")
 			handle_match_data(data)
@@ -291,46 +328,6 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 			await reload()
 		_:
 			print("Unknown lobby op code: ", match_state.op_code)
-
-
-func handle_vote_data(data: Dictionary):
-	var presences = data.presences as Dictionary
-	var votes = data.votes as Dictionary
-	var tick = data.tick as int
-	var vote_timeout = data.voteTimeout as int
-	var tick_rate = data.tickRate as int
-	var ping_data = data.pingData as Dictionary
-	var user_data = data.userData as Dictionary
-	
-	## Setup vote timeout:
-	#if Network.session.user_id in ping_data:
-		#var ticks_left = max(vote_timeout - tick, 0)
-		#var seconds_left = Util.ticks_to_time_with_ping(ticks_left, tick_rate, ping_data[Network.session.user_id])
-		#if not vote_timeout_started or info_boxes.size() <= 1:
-			#vote_timeout_started = true
-			#$VoteTimeout.start(seconds_left)
-		#elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
-			#$VoteTimeout.start(seconds_left)
-	#
-	## Update player states
-	#var cur_user_ids = info_boxes.keys()
-	#var server_user_ids = presences.keys()
-	#
-	#for user_id: String in cur_user_ids:
-		#if not user_id in server_user_ids:
-			#remove_player(user_id)
-	#
-	#for p in presences.values():
-		##print(p.userId, " ", user_data)
-		#if p.userId in cur_user_ids or !(p.userId in user_data):
-			#continue
-		#add_player(user_data[p.userId].displayName, p.userId)
-	#
-	#cur_votes = votes
-	#for user_id in votes:
-		#var vote_data: Dictionary = votes[user_id]
-		#update_player_pick(user_id, vote_data['course'])
-
 
 func _on_vote_button_pressed():
 	$VoteButton.disabled = true
@@ -348,6 +345,9 @@ func vote():
 
 
 func _on_vote_timeout_timeout():
+	if next_course:
+		return
+	
 	$VoteButton.disabled = true
 	$VoteButton.visible = false
 	$LeaveButton.disabled = true
@@ -374,14 +374,11 @@ func handle_match_data(data: Dictionary):
 	Network.ready_match = match_id
 	Network.next_match_data = data
 
-	$Status.text = tr("LOBBY_COURSE_SELECT") % winning_vote['course']
 	state = STATE_MATCH_RECEIVED
 
 
 func switch_scene():
 	Global.MODE1 = Global.MODE1_ONLINE
-	Network.socket.received_match_state.disconnect(_on_match_state)
-	Network.socket.closed.disconnect(_on_socket_closed)
 	UI.change_scene(Util.get_race_course_path(next_course), true)
 
 

@@ -27,13 +27,16 @@ class Room:
 		room.max_players = list.pop_front()
 		room.joinable = list.pop_front()
 		var players_dict: Dictionary[int, Array] = list.pop_front()
-		for id in players_dict:
-			room.players[id] = DomainPlayer.Player.serialize(players_dict[id])
+		for pid in players_dict:
+			room.players[pid] = DomainPlayer.Player.serialize(players_dict[pid])
 		room.tick = list.pop_front()
 		room.tick_rate = list.pop_front()
 
 class Lobby extends Room:
 	var votes: Dictionary[int, VoteData]
+	var voting_timeout: int = 30 * tick_rate
+	var joining_timeout: int = 15 * tick_rate
+	var winning_vote: int = 0
 	
 	func _init() -> void:
 		self.type = RoomType.LOBBY
@@ -41,9 +44,12 @@ class Lobby extends Room:
 	static func serialize(list: Array[Variant]) -> Lobby:
 		var lobby := Lobby.new()
 		generic_serialize_room(lobby, list)
-		var tmp_votes = list.pop_front() as Dictionary[int, Array]
+		var tmp_votes := list.pop_front() as Dictionary[int, Array]
 		for vote_id in tmp_votes:
 			lobby.votes[vote_id] = VoteData.serialize(tmp_votes[vote_id])
+		lobby.voting_timeout = list.pop_front()
+		lobby.joining_timeout = list.pop_front()
+		lobby.winning_vote = list.pop_front()
 		return lobby
 
 class Race extends Room:

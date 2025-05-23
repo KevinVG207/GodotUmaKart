@@ -90,6 +90,8 @@ var selected_replay: String = ""
 
 var fade_to_black_scene = preload("res://scenes/ui/transition/fade_to_black.tscn")
 
+var final_lobby: DomainRoom.Lobby = null
+
 func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
 

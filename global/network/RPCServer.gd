@@ -15,3 +15,7 @@ func join_random_room() -> void:
 @rpc("any_peer", "reliable")
 func send_vote(list: Array[Variant]) -> void:
 	return
+
+@rpc("any_peer", "reliable")
+func send_ping(tick: int) -> void:
+	return

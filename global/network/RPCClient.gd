@@ -47,3 +47,14 @@ signal update_lobby_received(lobby: DomainRoom.Lobby)
 @rpc("reliable")
 func update_lobby(list: Array[Variant]) -> void:
 	update_lobby_received.emit(DomainRoom.Lobby.serialize(list))
+
+@rpc("reliable")
+func receive_final_lobby(list: Array[Variant]) -> void:
+	print("FINAL LOBBY RECEIVED")
+	Global.final_lobby = DomainRoom.Lobby.serialize(list)
+
+@rpc("reliable")
+func receive_ping(tick: int) -> void:
+	if Global.extraPing:
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0 * 2).timeout
+	RPCServer.send_ping.rpc_id(1, tick)
