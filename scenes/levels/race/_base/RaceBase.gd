@@ -6,13 +6,13 @@ class_name RaceBase
 var updates_to_server_per_second: int = 6
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
-var players_dict: Dictionary = {}
+var players_dict: Dictionary[int, Vehicle4] = {}
 var frames_between_update: int = 60
 var update_wait_frames: int = 0
 var should_exit: bool = false
 var update_thread: Thread
 var player_vehicle: Vehicle4 = null
-var player_user_id: String = ""
+var player_user_id: int = 0
 var removed_player_ids: Array = []
 var starting_order: Array = []
 var spectate: bool = false
@@ -159,6 +159,8 @@ var state: int = STATE_INITIAL
 var loaded_replay: Array = []
 var loaded_replay_idx: int = 0
 var loaded_replay_vehicle: Vehicle4 = null
+
+var network_room: DomainRoom.Race
 
 func _ready() -> void:
 	course_name = Util.get_race_course_name_from_path(scene_file_path)
@@ -358,7 +360,7 @@ func _process(delta: float) -> void:
 	if player_camera.target.finished:
 		UI.race_ui.update_time(player_camera.target.finish_time)
 	
-	# Minimap icons
+	# Minimap iconsr
 	UI.race_ui.update_icons(players_dict.values())
 	
 	# Nametags
@@ -373,7 +375,7 @@ func _process(delta: float) -> void:
 		var nt_deadzone_top := viewport_size.y / 14
 		var nt_deadzone_bottom := viewport_size.y / 3
 		
-		for user_id: String in players_dict.keys():
+		for user_id: int in players_dict.keys():
 			var vehicle := players_dict[user_id] as Vehicle4
 			if vehicle == player_vehicle:
 				continue
@@ -587,7 +589,7 @@ func _physics_process(_delta: float) -> void:
 	match state:
 		STATE_INITIAL:
 			state = STATE_JOINING
-			await join()
+			join()
 		STATE_CAN_READY:
 			change_state(STATE_READY_FOR_START, send_ready)
 		STATE_COUNTDOWN:
@@ -673,7 +675,7 @@ func handle_replay() -> void:
 	replay_manager.advance_loaded_state(self)
 
 func save_finish_times_to_replay() -> void:
-	for user_id: String in players_dict.keys():
+	for user_id: int in players_dict.keys():
 		replay_manager.set_finish_time(user_id, players_dict[user_id].finish_time)
 
 # func save_replay(force: bool=false) -> void:
@@ -793,14 +795,14 @@ func setup_finish_order() -> void:
 	var finished_vehicles: Array = []
 	var unfinished_vehicles: Array = []
 	
-	for user_id: String in players_dict.keys():
+	for user_id: int in players_dict.keys():
 		if players_dict[user_id].finished:
 			finished_vehicles.append(user_id)
 		else:
 			unfinished_vehicles.append(user_id)
 	
-	finished_vehicles.sort_custom(func(a: String, b: String) -> bool: return players_dict[a].finish_time < players_dict[b].finish_time)
-	unfinished_vehicles.sort_custom(func(a: String, b: String) -> bool: return get_vehicle_progress(players_dict[a]) > get_vehicle_progress(players_dict[b]))
+	finished_vehicles.sort_custom(func(a: int, b: int) -> bool: return players_dict[a].finish_time < players_dict[b].finish_time)
+	unfinished_vehicles.sort_custom(func(a: int, b: int) -> bool: return get_vehicle_progress(players_dict[a]) > get_vehicle_progress(players_dict[b]))
 	
 	finished_vehicles += unfinished_vehicles
 	finish_order = finished_vehicles
@@ -855,7 +857,7 @@ func check_finished():
 			Audio.race_music_stop()
 
 
-func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_dir: Vector3, ignore_replay:=false):
+func _add_vehicle(user_id: int, new_position: Vector3, look_dir: Vector3, up_dir: Vector3, ignore_replay:=false):
 	# if !ignore_replay:
 	# 	replay_manager.spawn_vehicle(user_id, new_position, look_dir, up_dir)
 	var new_vehicle := player_scene.instantiate() as Vehicle4
@@ -875,7 +877,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 		Global.MODE1_ONLINE:
 			new_vehicle.is_cpu = true
 			new_vehicle.is_network = true
-			new_vehicle.username = "Network Player"
+			new_vehicle.username = NetworkTest.our_room.players[user_id].username
 			var path_point: EnemyPath = path_point_scene.instantiate()
 			network_path_points[new_vehicle] = path_point
 			path_point.visible = false
@@ -891,7 +893,7 @@ func _add_vehicle(user_id: String, new_position: Vector3, look_dir: Vector3, up_
 		if Global.MODE1 == Global.MODE1_ONLINE:
 			new_vehicle.username = await Network.get_display_name()
 
-func _remove_vehicle(user_id: String):
+func _remove_vehicle(user_id: int):
 	if user_id in players_dict.keys():
 		var vehicle = players_dict[user_id]
 		if player_camera.target == vehicle:
@@ -911,7 +913,7 @@ func setup_vehicles() -> void:
 	start_position += up_dir * 1.0
 
 	for i in range(starting_order.size()):
-		var user_id: String = starting_order[i]
+		var user_id: int = starting_order[i]
 		
 		var side_multi := 1
 		if i % 2 == 1:
@@ -920,22 +922,22 @@ func setup_vehicles() -> void:
 		var cur_pos := start_position + start_offset_z * (i + 3) * start_direction + side_multi * start_offset_x * side_direction
 		_add_vehicle(user_id, cur_pos, -start_direction, up_dir)
 
-func get_starting_order():
+func get_starting_order() -> Array[int]:
 	match Global.MODE1:
 		Global.MODE1_ONLINE:
-			player_user_id = Network.session.user_id
-
-			if !Network.next_match_data.get('startingIds'):
+			player_user_id = NetworkTest.peer_id
+			network_room = NetworkTest.our_room as DomainRoom.Race
+			if !NetworkTest.peer_id in network_room.starting_order:
 				spectate = true
 				return []
 			
-			return Network.next_match_data.startingIds
+			return network_room.starting_order
 		Global.MODE1_OFFLINE:
-			player_user_id = "Player"
+			player_user_id = 0
 			var player_array = []
 
 			for i in range(Global.default_player_count-1):
-				player_array.append("CPU" + str(i))
+				player_array.append(i+1)
 			player_array.append(player_user_id)
 			player_array.shuffle()
 			return player_array
@@ -945,24 +947,25 @@ func join():
 	starting_order = get_starting_order()
 	Global.player_count = max(len(starting_order), 1)
 	setup_vehicles()
-	Network.next_match_data = {}
+	Global.final_lobby = null
 	if Global.MODE1 == Global.MODE1_OFFLINE:
 		UI.end_scene_change()
 		state = STATE_COUNTDOWN
 		return
-
-	var res: bool = await Network.join_match(Network.ready_match)
 	
-	Network.socket.received_match_state.connect(_on_match_state)
+	#Network.socket.received_match_state.connect(_on_match_state)
+	#RPCClient.player_state_received.connect(_on_player_state)
+	RPCClient.race_start_received.connect(handle_race_start)
 	UI.end_scene_change()
 	
-	if not res or not Network.cur_match:
+	if not NetworkTest.our_room or not NetworkTest.our_room.type == DomainRoom.RoomType.RACE:
 		# Disconnect functions
 		print("ERR: Could not connect to race")
 		Debug.print("Could not connect to race")
-		Network.socket.received_match_state.disconnect(_on_match_state)
+		#Network.socket.received_match_state.disconnect(_on_match_state)
 
 		state = STATE_DISCONNECT
+		RPCClient.error(DomainError.INVALID_ROOM)
 		return
 	if spectate:
 		state = STATE_SPECTATING
@@ -971,12 +974,9 @@ func join():
 	return
 
 func send_ready():
-	var res: bool = await Network.send_match_state(raceOp.CLIENT_READY, {})
-	
-	if not res:
-		state = STATE_DISCONNECT
-		return
-	
+	#var res: bool = await Network.send_match_state(raceOp.CLIENT_READY, {})
+	RPCServer.race_send_ready.rpc_id(1)
+	print("SENDING READY")
 	state = STATE_WAIT_FOR_START
 	return
 
@@ -1178,7 +1178,7 @@ func get_respawn_point(vehicle: Vehicle4) -> Dictionary:
 	
 	return out
 
-func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
+func update_vehicle_state(vehicle_state: Dictionary, user_id: int):
 	if user_id == player_user_id:
 		return
 	
@@ -1199,12 +1199,8 @@ func update_vehicle_state(vehicle_state: Dictionary, user_id: String):
 	#players_dict[user_id].call_deferred("apply_state", vehicle_state)
 
 
-func handle_race_start(data: Dictionary):
-	pings = data.pings as Dictionary
-	var ticks_to_start: int = data.ticksToStart as int
-	var tick_rate: int = data.tickRate as int
-
-	var seconds_left: float = Util.ticks_to_time_with_ping(ticks_to_start, tick_rate, pings[Network.session.user_id])
+func handle_race_start(ticks_to_start: int, tick_rate: int, ping: int):
+	var seconds_left: float = Util.ticks_to_time_with_ping(ticks_to_start, tick_rate, ping)
 	%StartTimer.start(seconds_left)
 
 
@@ -1219,13 +1215,13 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 	var data := res as Dictionary
 	match match_state.op_code:
 		raceOp.SERVER_UPDATE_VEHICLE_STATE:
-			update_vehicle_state(data, match_state.presence.user_id)
+			update_vehicle_state(data, int(match_state.presence.user_id))
 		raceOp.SERVER_PING:
 			Network.send_match_state(raceOp.SERVER_PING, data)
 		raceOp.SERVER_PING_UPDATE:
 			pings = data.pings
-		raceOp.SERVER_RACE_START:
-			handle_race_start(data)
+		#raceOp.SERVER_RACE_START:
+			#handle_race_start(data)
 		raceOp.SERVER_CLIENT_DISCONNECT:
 			_remove_vehicle(data.userId)
 		raceOp.SERVER_RACE_OVER:

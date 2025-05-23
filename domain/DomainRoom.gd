@@ -54,6 +54,7 @@ class Lobby extends Room:
 
 class Race extends Room:
 	var course_name: String = ""
+	var starting_order: Array[int] = []
 	
 	func _init() -> void:
 		self.type = RoomType.RACE
@@ -62,6 +63,7 @@ class Race extends Room:
 		var race := Race.new()
 		generic_serialize_room(race, list)
 		race.course_name = list.pop_front()
+		race.starting_order = list.pop_front()
 		return race
 
 class VoteData:

@@ -24,7 +24,7 @@ var target_player: Vehicle4 = null:
 var target_point: EnemyPath
 var target_pos: Vector3
 var dist_to_homing: float = 30.0
-var new_owner: String = ""
+var new_owner: int = 0
 
 func _ready() -> void:
 	super()
@@ -134,7 +134,7 @@ func get_state() -> Dictionary:
 	
 	if new_owner:
 		owner_id = new_owner
-		new_owner = ""
+		new_owner = 0
 	
 	return out
 	

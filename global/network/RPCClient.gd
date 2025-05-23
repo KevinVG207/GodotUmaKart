@@ -4,7 +4,7 @@ signal error_received(code: int)
 @rpc("reliable")
 func error(code: int) -> void:
 	print("DISCONNECT WITH ERROR CODE ", code)
-	multiplayer.multiplayer_peer = null
+	NetworkTest.reset()
 	error_received.emit(code)
 
 signal initialize_player_result(player: DomainPlayer.Player)
@@ -58,3 +58,9 @@ func receive_ping(tick: int) -> void:
 	if Global.extraPing:
 		await get_tree().create_timer(Global.get_extra_ping() / 1000.0 * 2).timeout
 	RPCServer.send_ping.rpc_id(1, tick)
+
+signal race_start_received(ticks_to_start: int, tick_rate: int, ping: int)
+@rpc("reliable")
+func race_start(ticks_to_start: int, tick_rate: int, ping: int) -> void:
+	print("RACE START DATA RECEIVED")
+	race_start_received.emit(ticks_to_start, tick_rate, ping)

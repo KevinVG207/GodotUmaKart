@@ -340,6 +340,7 @@ func vote():
 	var data := DomainRoom.VoteData.new()
 	data.course_name = Util.get_race_courses()[0]
 	RPCServer.send_vote.rpc_id(1, data.deserialize())
+	print("VOTE SENT")
 	state = STATE_VOTED
 	return true
 

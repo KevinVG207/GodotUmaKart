@@ -52,7 +52,7 @@ func update_icons(players: Array):
 		icon.visible = false
 	
 	for player: Vehicle4 in players:
-		var id: String = player.user_id
+		var id: int = player.user_id
 		
 		# Create new icons
 		if not id in player_icons:
@@ -217,7 +217,7 @@ func _on_rotate_end():
 func _on_rotate_true_end():
 	roulette_ended.emit()
 
-func update_nametag(user_id: String, username: String, coords: Vector2, opacity: float, dist: float, tag_visible: bool, force: bool, delta: float):
+func update_nametag(user_id: int, username: String, coords: Vector2, opacity: float, dist: float, tag_visible: bool, force: bool, delta: float):
 	if not tag_visible:
 		opacity = 0.0
 
@@ -249,14 +249,14 @@ func sort_nametags():
 		nametags[order_list[i]].z_index = i
 	
 
-func remove_nametag(user_id: String):
+func remove_nametag(user_id: int):
 	if user_id in nametags:
 		var nt = nametags[user_id]
 		nametags.erase(user_id)
 		nt.queue_free()
 
 func remove_all_nametags() -> void:
-	for key: String in nametags:
+	for key: int in nametags:
 		remove_nametag(key)
 
 func update_alert(object: Node3D, tex: CompressedTexture2D, player: Vehicle4, cam: Camera3D, delta: float):

@@ -63,7 +63,7 @@ var is_cpu := false
 var use_cpu_logic := false
 var is_network := false
 var is_replay := false
-var user_id := ""
+var user_id: int = 0
 var username := "Player"
 
 @export var weight: float = 1.0

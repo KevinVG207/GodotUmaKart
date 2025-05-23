@@ -4,11 +4,11 @@ class_name PhysicalItem
 
 var key: String
 var world: RaceBase
-var origin_id: String:
+var origin_id: int:
 	set(value):
 		origin_id = value
 		origin = world.players_dict[value]
-var owner_id: String:
+var owner_id: int:
 	set(value):
 		owner_id = value
 		owned_by = world.players_dict[value]
