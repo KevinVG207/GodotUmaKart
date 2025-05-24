@@ -656,7 +656,8 @@ func _physics_process(_delta: float) -> void:
 				update_wait_frames = 0
 				if player_vehicle:
 					var vehicle_data: Dictionary = player_vehicle.network.get_state()
-					Network.send_match_state(raceOp.CLIENT_UPDATE_VEHICLE_STATE, vehicle_data)
+					RPCServer.race_vehicle_state.rpc_id(1, vehicle_data)
+					# Network.send_match_state(raceOp.CLIENT_UPDATE_VEHICLE_STATE, vehicle_data)
 					#player_vehicle.call_deferred("upload_data")
 				
 				for unique_id: String in physical_items.keys():
@@ -934,7 +935,7 @@ func get_starting_order() -> Array[int]:
 			return network_room.starting_order
 		Global.MODE1_OFFLINE:
 			player_user_id = 0
-			var player_array = []
+			var player_array: Array[int] = []
 
 			for i in range(Global.default_player_count-1):
 				player_array.append(i+1)
@@ -956,6 +957,8 @@ func join():
 	#Network.socket.received_match_state.connect(_on_match_state)
 	#RPCClient.player_state_received.connect(_on_player_state)
 	RPCClient.race_start_received.connect(handle_race_start)
+	RPCClient.race_vehicle_state_received.connect(update_vehicle_state)
+
 	UI.end_scene_change()
 	
 	if not NetworkTest.our_room or not NetworkTest.our_room.type == DomainRoom.RoomType.RACE:
@@ -1178,16 +1181,21 @@ func get_respawn_point(vehicle: Vehicle4) -> Dictionary:
 	
 	return out
 
-func update_vehicle_state(vehicle_state: Dictionary, user_id: int):
+
+func update_vehicle_state(data: DomainRace.VehicleDataWrapper) -> void:
+	var user_id: int = data.player.peer_id
+
 	if user_id == player_user_id:
 		return
 	
 	if user_id in removed_player_ids:
 		return
 	
+	NetworkTest.our_room.players[user_id] = data.player
+	
 	if not user_id in players_dict.keys():
-		var cur_position: Vector3 = Util.to_vector3(vehicle_state["pos"])
-		var cur_rotation: Vector3 = Util.to_vector3(vehicle_state["rot"])
+		var cur_position: Vector3 = Util.to_vector3(data.vehicle_state["pos"])
+		var cur_rotation: Vector3 = Util.to_vector3(data.vehicle_state["rot"])
 
 		var look_dir: Vector3 = cur_rotation.normalized()
 		var up_dir: Vector3 = Vector3(0, 1, 0)
@@ -1195,16 +1203,16 @@ func update_vehicle_state(vehicle_state: Dictionary, user_id: int):
 		_add_vehicle(user_id, cur_position, look_dir, up_dir)
 		players_dict[user_id].axis_unlock()
 	
-	players_dict[user_id].network.apply_state(vehicle_state)
+	players_dict[user_id].network.apply_state(data.vehicle_state)
 	#players_dict[user_id].call_deferred("apply_state", vehicle_state)
 
 
-func handle_race_start(ticks_to_start: int, tick_rate: int, ping: int):
+func handle_race_start(ticks_to_start: int, tick_rate: int, ping: int) -> void:
 	var seconds_left: float = Util.ticks_to_time_with_ping(ticks_to_start, tick_rate, ping)
 	%StartTimer.start(seconds_left)
 
 
-func _on_match_state(match_state : NakamaRTAPI.MatchData):
+func _on_match_state(match_state : NakamaRTAPI.MatchData) -> void:
 	if Global.extraPing:
 		await get_tree().create_timer(Global.get_extra_ping() / 1000.0).timeout
 	
@@ -1214,8 +1222,8 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData):
 		return
 	var data := res as Dictionary
 	match match_state.op_code:
-		raceOp.SERVER_UPDATE_VEHICLE_STATE:
-			update_vehicle_state(data, int(match_state.presence.user_id))
+		# raceOp.SERVER_UPDATE_VEHICLE_STATE:
+		# 	update_vehicle_state(data, int(match_state.presence.user_id))
 		raceOp.SERVER_PING:
 			Network.send_match_state(raceOp.SERVER_PING, data)
 		raceOp.SERVER_PING_UPDATE:

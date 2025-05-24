@@ -23,3 +23,7 @@ func send_ping(tick: int) -> void:
 @rpc("any_peer", "reliable")
 func race_send_ready() -> void:
 	return
+
+@rpc("any_peer", "unreliable_ordered")
+func race_vehicle_state(state: Dictionary) -> void:
+	return

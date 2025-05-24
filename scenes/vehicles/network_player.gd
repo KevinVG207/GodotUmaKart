@@ -10,14 +10,14 @@ var prev_state: Dictionary = {}
 var prev_input: Vehicle4.VehicleInput = null
 var prev_transform: Transform3D
 
-var packet_idx := -1
+#var packet_idx := -1
 # var prev_state: Dictionary = get_state()
 
 func get_state() -> Dictionary:
-	packet_idx += 1
+	#packet_idx += 1
 	return {
 		# Easy things
-		"idx": packet_idx,
+		#"idx": packet_idx,
 		"vani": vehicle.vani.animation,
 		"cur_speed": vehicle.cur_speed,
 		"turn_speed": vehicle.turn_speed,
@@ -55,14 +55,14 @@ func get_state() -> Dictionary:
 	}
 
 func apply_state(state: Dictionary) -> void:
-	if packet_idx > state.idx:
-		return
+	#if packet_idx > state.idx:
+		#return
 
 	prev_state = state
 	prev_input = Vehicle4.VehicleInput.from_dict(state.input)
 	prev_transform = Transform3D(Basis(Util.array_to_quat(state.rot)), Util.to_vector3(state.pos))
 
-	packet_idx = state.idx
+	#packet_idx = state.idx
 
 	if state.in_hop:
 		vehicle.start_hop()

@@ -64,3 +64,8 @@ signal race_start_received(ticks_to_start: int, tick_rate: int, ping: int)
 func race_start(ticks_to_start: int, tick_rate: int, ping: int) -> void:
 	print("RACE START DATA RECEIVED")
 	race_start_received.emit(ticks_to_start, tick_rate, ping)
+
+signal race_vehicle_state_received(vehicle: DomainRace.VehicleDataWrapper)
+@rpc("unreliable_ordered")
+func race_vehicle_state(list: Array[Variant]) -> void:
+	race_vehicle_state_received.emit(DomainRace.VehicleDataWrapper.deserialize(list))
