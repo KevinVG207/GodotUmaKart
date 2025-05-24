@@ -1,7 +1,7 @@
 extends Node
 
 const SERVER_IP := "localhost"
-#const SERVER_IP := "185.252.235.108"
+#const SERVER_IP := "game.umapyoi.net"
 const SERVER_PORT := 31500
 var peer_id: int
 var our_username: String = ""
