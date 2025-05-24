@@ -59,7 +59,7 @@ func _on_get_rooms(rooms: Array[DomainRoom.Room]) -> void:
 func initialize_player() -> void:
 	var data := DomainPlayer.PlayerInitializeData.new()
 	data.username = our_username
-	RPCServer.initialize_player.rpc_id(1, data.deserialize())
+	RPCServer.initialize_player.rpc_id(1, data.serialize())
 
 func _on_initialize_player_result(player: DomainPlayer.Player) -> void:
 	print("Initialized player")
