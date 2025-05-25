@@ -77,7 +77,7 @@ func _on_other_player_joined(player: DomainPlayer.Player) -> void:
 	print("Player joined our room: ", player.peer_id)
 	our_room.players[player.peer_id] = player
 
-func _on_other_player_left(player: DomainPlayer.Player) -> void:
+func _on_other_player_left(player: DomainPlayer.Player, _is_transfer: bool) -> void:
 	print("Player left our room: ", player.peer_id)
 	our_room.players.erase(player.peer_id)
 

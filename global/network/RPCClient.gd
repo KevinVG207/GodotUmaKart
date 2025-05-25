@@ -34,14 +34,14 @@ signal player_joined_room_received(player: DomainPlayer.Player)
 @rpc("reliable")
 func player_joined_room(list: Array[Variant]) -> void:
 	print("RPCClient player_joined_room")
-	var player = DomainPlayer.Player.deserialize(list)
+	var player := DomainPlayer.Player.deserialize(list)
 	player_joined_room_received.emit(player)
 
-signal player_left_room_received(player: DomainPlayer.Player)
+signal player_left_room_received(player: DomainPlayer.Player, is_transfer: bool)
 @rpc("reliable")
-func player_left_room(list: Array[Variant]) -> void:
-	var player = DomainPlayer.Player.deserialize(list)
-	player_left_room_received.emit(player)
+func player_left_room(list: Array[Variant], is_transfer: bool) -> void:
+	var player := DomainPlayer.Player.deserialize(list)
+	player_left_room_received.emit(player, is_transfer)
 
 signal update_lobby_received(lobby: DomainRoom.Lobby)
 @rpc("reliable")
@@ -69,3 +69,23 @@ signal race_vehicle_state_received(vehicle: DomainRace.VehicleDataWrapper)
 @rpc("unreliable_ordered")
 func race_vehicle_state(list: Array[Variant]) -> void:
 	race_vehicle_state_received.emit(DomainRace.VehicleDataWrapper.deserialize(list))
+
+signal race_spawn_item_received(dto: DomainRace.ItemSpawnWrapper)
+@rpc("reliable")
+func race_spawn_item(list: Array[Variant]) -> void:
+	race_spawn_item_received.emit(DomainRace.ItemSpawnWrapper.deserialize(list))
+
+signal race_destroy_item_received(key: String)
+@rpc("reliable")
+func race_destroy_item(key: String) -> void:
+	race_destroy_item_received.emit(key)
+
+signal race_item_state_received(dto: DomainRace.ItemStateWrapper)
+@rpc("unreliable")
+func race_item_state(list: Array[Variant]) -> void:
+	race_item_state_received.emit(DomainRace.ItemStateWrapper.deserialize(list))
+
+signal race_finished_received(dto: DomainRoom.FinishData)
+@rpc("reliable")
+func race_finished(list: Array[Variant]) -> void:
+	race_finished_received.emit(DomainRoom.FinishData.deserialize(list))

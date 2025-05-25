@@ -66,7 +66,7 @@ class ReplayData:
 class RaceState:
 	var vehicle_states: Array[VehicleState] = []
 	var item_states: Array[ItemState] = []
-	var items_to_spawn: Array[Dictionary] = []
+	var items_to_spawn: Array[DomainRace.ItemSpawnWrapper] = []
 	var time: float
 	
 	func to_dict() -> Dictionary:
@@ -191,7 +191,7 @@ var replay_thread_semaphore: Semaphore = null
 var replay_thread_mutex: Mutex = null
 
 # var vehicle_spawn_data: Array[VehicleSpawnData] = []
-var item_spawn_data: Array[Dictionary] = []
+var item_spawn_data: Array[DomainRace.ItemSpawnWrapper] = []
 
 func _ready() -> void:
 	replay_thread_mutex = Mutex.new()
@@ -207,7 +207,7 @@ func _ready() -> void:
 # 	data.up_dir = up_dir
 # 	vehicle_spawn_data.append(data)
 
-func spawn_item(data: Dictionary) -> void:
+func spawn_item(data: DomainRace.ItemSpawnWrapper) -> void:
 	item_spawn_data.append(data)
 
 func get_course_name_from_world(world: RaceBase) -> String:

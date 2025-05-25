@@ -66,6 +66,28 @@ class Race extends Room:
 		race.starting_order = list.pop_front()
 		return race
 
+enum FinishType {
+	NORMAL,
+	TIMEOUT
+}
+
+class FinishData:
+	var finish_order: Array[int]
+	var type: FinishType
+	
+	func serialize() -> Array[Variant]:
+		var list: Array[Variant] = []
+		list.append(finish_order)
+		list.append(type)
+		return list
+	
+	static func deserialize(list: Array[Variant]) -> FinishData:
+		var o := FinishData.new()
+		o.finish_order = list.pop_front()
+		o.type = list.pop_front()
+		return o
+
+
 class VoteData:
 	var course_name: String = ""
 	var character_id: int = 0

@@ -234,7 +234,7 @@ func update_nametag(user_id: int, username: String, coords: Vector2, opacity: fl
 	cur_nt.position = coords
 	cur_nt.dist = dist
 	cur_nt.username.text = username
-	
+
 	if force:
 		cur_nt.modulate.a = opacity
 	else:

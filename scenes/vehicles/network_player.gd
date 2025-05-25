@@ -39,7 +39,6 @@ func get_state() -> Dictionary:
 		"lap": vehicle.lap,
 		"finished": vehicle.finished,
 		"finish_time": vehicle.finish_time,
-		"username": vehicle.username,
 		"boost_type": vehicle.cur_boost_type,
 		"still_turbo_ready": vehicle.still_turbo_ready,
 
@@ -100,7 +99,6 @@ func apply_simple(state: Dictionary) -> void:
 	vehicle.respawn_stage = state.respawn_stage
 	vehicle.finished = state.finished
 	vehicle.finish_time = state.finish_time
-	vehicle.username = state.username
 	vehicle.cur_boost_type = state.boost_type
 	vehicle.still_turbo_ready = state.still_turbo_ready
 

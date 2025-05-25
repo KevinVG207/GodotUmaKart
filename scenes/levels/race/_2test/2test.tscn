@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_oq3jr"]
 [ext_resource type="PackedScene" uid="uid://0b3c3s4dwccp" path="res://scenes/control/gravity/spherical_gravity_zone.tscn" id="3_1c0o1"]
 [ext_resource type="Texture2D" uid="uid://cj3j5w81elffd" path="res://assets/course/barn/tex/checker.png" id="3_7gt87"]
-[ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/_1test/1test_map_Circle_001.res" id="3_ob57e"]
+[ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/1test/1test_map_Circle_001.res" id="3_ob57e"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="4_n73gn"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="5_a2cpo"]
 [ext_resource type="PackedScene" uid="uid://cqng3bjv7wadr" path="res://scenes/control/gravity/gravity_zone.tscn" id="5_vg353"]

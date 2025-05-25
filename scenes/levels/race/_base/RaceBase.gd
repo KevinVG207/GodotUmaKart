@@ -7,6 +7,7 @@ var updates_to_server_per_second: int = 6
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
 var players_dict: Dictionary[int, Vehicle4] = {}
+var removed_players_dict: Dictionary[int, Vehicle4] = {}
 var frames_between_update: int = 60
 var update_wait_frames: int = 0
 var should_exit: bool = false
@@ -18,7 +19,6 @@ var starting_order: Array = []
 var spectate: bool = false
 # var timer_tick: int = 0
 var race_start_time: float = 0
-var physical_item_counter := 0
 var physical_items: Dictionary[String, PhysicalItem] = {}
 var deleted_physical_items: Array[String] = []
 var all_enemy_points: Array[EnemyPath] = []
@@ -452,51 +452,44 @@ func make_physical_item(key: String, player: Vehicle4) -> PhysicalItem:
 	if player.is_network:
 		return
 
-	physical_item_counter += 1
 	var unique_key := Util.uuid.v4()
-	var instance := Global.physical_items[key].instantiate() as PhysicalItem
+	var instance := Global.physical_items[key].instantiate()
 	instance.setup(unique_key, self, player)
 	physical_items[unique_key] = instance
 	$Items.add_child(instance)
 	
-	var spawn_data := {
-		"originId": instance.origin_id,
-		"ownerId": instance.owner_id,
-		"uniqueId": unique_key,
-		"type": key,
-		"state": instance.get_state()
-	}
+	var dto := DomainRace.ItemSpawnWrapper.new()
+	dto.key = unique_key
+	dto.type = key
+	dto.owner_id = instance.owner_id
+	dto.origin_id = instance.origin_id
+	dto.state = instance.get_state()
 
-	Network.send_match_state(raceOp.CLIENT_SPAWN_ITEM, spawn_data)
+	#Network.send_match_state(raceOp.CLIENT_SPAWN_ITEM, spawn_data)
+	RPCServer.race_spawn_item.rpc_id(1, dto.serialize())
 	
-	replay_manager.spawn_item(spawn_data)
+	replay_manager.spawn_item(dto)
 
 	return instance
 
 
-func spawn_physical_item(data: Dictionary):
-	var key = data["uniqueId"]
-	var origin_id = data["originId"]
-	var owner_id = data["ownerId"]
-	var item_type = data["type"]
-	var item_state = data["state"]
-
-	if key in deleted_physical_items:
+func spawn_physical_item(data: DomainRace.ItemSpawnWrapper):
+	if data.key in deleted_physical_items:
 		return
 	
 	# Ignore already owned items
-	if owner_id == player_user_id:
+	if data.owner_id == player_user_id:
 		return
 	
-	if key in physical_items.keys():
+	if data.key in physical_items.keys():
 		return
 	
-	var instance = Global.physical_items[item_type].instantiate() as PhysicalItem
-	instance.setup(key, self, players_dict[origin_id])
-	instance.owner_id = owner_id
-	physical_items[key] = instance
+	var instance = Global.physical_items[data.type].instantiate() as PhysicalItem
+	instance.setup(data.key, self, players_dict[data.origin_id])
+	instance.owner_id = data.owner_id
+	physical_items[data.key] = instance
 	$Items.add_child(instance)
-	instance.set_state(item_state)
+	instance.set_state(data.state)
 	
 	replay_manager.spawn_item(data)
 
@@ -510,11 +503,11 @@ func destroy_physical_item(key: String):
 	instance.on_destroy()
 	instance.queue_free()
 	deleted_physical_items.append(key)
-	Network.send_match_state(raceOp.CLIENT_DESTROY_ITEM, {"uniqueId": key})
+	#Network.send_match_state(raceOp.CLIENT_DESTROY_ITEM, {"uniqueId": key})
+	RPCServer.race_destroy_item.rpc_id(1, key)
 
 
-func server_destroy_physical_item(data: Dictionary):
-	var key = data["uniqueId"]
+func server_destroy_physical_item(key: String):
 	if key in deleted_physical_items:
 		return
 	
@@ -541,42 +534,53 @@ func send_item_state(item: PhysicalItem):
 	
 	item.state_idx += 1
 	
-	Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {
-		"uniqueId": item.key,
-		"originId": item.origin_id,
-		"ownerId": item.owner_id,
-		"state": item_state,
-		"idx": item.state_idx
-	})
+	var dto := DomainRace.ItemStateWrapper.new()
+	dto.key = item.key
+	dto.origin_id = item.origin_id
+	dto.owner_id = item.owner_id
+	dto.state = item_state
+	dto.state_idx = item.state_idx
+	
+	RPCServer.race_item_state.rpc_id(1, dto.serialize())
+	
+	#
+	
+	#Network.send_match_state(raceOp.CLIENT_ITEM_STATE, {
+		#"uniqueId": item.key,
+		#"originId": item.origin_id,
+		#"ownerId": item.owner_id,
+		#"state": item_state,
+		#"idx": item.state_idx
+	#})
 
 
-func apply_item_state(data: Dictionary):
-	var key = data["uniqueId"]
-	var origin_id = data["originId"]
-	var owner_id = data["ownerId"]
-	var item_state = data["state"]
-	var state_idx := data["idx"] as int
+func apply_item_state(dto: DomainRace.ItemStateWrapper):
+	#var key = data["uniqueId"]
+	#var origin_id = data["originId"]
+	#var owner_id = data["ownerId"]
+	#var item_state = data["state"]
+	#var state_idx := data["idx"] as int
 
-	if key in deleted_physical_items:
+	if dto.key in deleted_physical_items:
 		return
 	
-	if not key in physical_items.keys():
+	if not dto.key in physical_items.keys():
 		return
 	
-	if owner_id == player_user_id:
+	if dto.owner_id == player_user_id:
 		return
 		
 	#Debug.print(["state", origin_id, owner_id])
 	
-	var instance = physical_items[key]
+	var instance = physical_items[dto.key]
 	
-	if instance.state_idx >= state_idx:
+	if instance.state_idx >= dto.state_idx:
 		return
 	
-	instance.owner_id = owner_id
-	instance.origin_id = origin_id
-	instance.set_state(item_state)
-	instance.state_idx = state_idx
+	instance.owner_id = dto.owner_id
+	instance.origin_id = dto.origin_id
+	instance.set_state(dto.state)
+	#instance.state_idx = state_idx
 	#print(player_user_id, " receives ", key)
 	#print("New owner ", instance.owner_id)
 
@@ -820,7 +824,11 @@ func handle_rankings() -> void:
 		if cur_idx >= len(finish_order)-1:
 			stop_rankings = true
 			
-		var cur_vehicle: Vehicle4 = players_dict[finish_order[cur_idx]]
+		var cur_vehicle: Vehicle4
+		if finish_order[cur_idx] in players_dict:
+			cur_vehicle = players_dict[finish_order[cur_idx]]
+		else:
+			cur_vehicle = removed_players_dict[finish_order[cur_idx]]
 		
 		var end_position = Vector2(-262, 16 + (40+5)*cur_idx)
 		var start_position = end_position
@@ -900,6 +908,10 @@ func _remove_vehicle(user_id: int):
 		if player_camera.target == vehicle:
 			player_camera.target = null
 		vehicle.queue_free()
+		# vehicle.freeze = true
+		# vehicle.visible = false
+		# vehicle.global_position = Vector3(0,0,-100_000)
+		removed_players_dict[user_id] = players_dict[user_id]
 		players_dict.erase(user_id)
 		removed_player_ids.append(user_id)
 		UI.race_ui.remove_nametag(user_id)
@@ -958,6 +970,11 @@ func join():
 	#RPCClient.player_state_received.connect(_on_player_state)
 	RPCClient.race_start_received.connect(handle_race_start)
 	RPCClient.race_vehicle_state_received.connect(update_vehicle_state)
+	RPCClient.player_left_room_received.connect(_on_player_disconnect)
+	RPCClient.race_spawn_item_received.connect(spawn_physical_item)
+	RPCClient.race_destroy_item_received.connect(server_destroy_physical_item)
+	RPCClient.race_item_state_received.connect(apply_item_state)
+	RPCClient.race_finished_received.connect(_on_race_finished)
 
 	UI.end_scene_change()
 	
@@ -1211,6 +1228,16 @@ func handle_race_start(ticks_to_start: int, tick_rate: int, ping: int) -> void:
 	var seconds_left: float = Util.ticks_to_time_with_ping(ticks_to_start, tick_rate, ping)
 	%StartTimer.start(seconds_left)
 
+func _on_player_disconnect(player: DomainPlayer.Player, is_transfer: bool) -> void:
+	if is_transfer:
+		return
+	_remove_vehicle(player.peer_id)
+
+func _on_race_finished(data: DomainRoom.FinishData) -> void:
+	print("FINISHED RECEIVED")
+	finished = true
+	finish_order = data.finish_order
+	state = STATE_READY_FOR_RANKINGS
 
 func _on_match_state(match_state : NakamaRTAPI.MatchData) -> void:
 	if Global.extraPing:
@@ -1224,25 +1251,25 @@ func _on_match_state(match_state : NakamaRTAPI.MatchData) -> void:
 	match match_state.op_code:
 		# raceOp.SERVER_UPDATE_VEHICLE_STATE:
 		# 	update_vehicle_state(data, int(match_state.presence.user_id))
-		raceOp.SERVER_PING:
-			Network.send_match_state(raceOp.SERVER_PING, data)
-		raceOp.SERVER_PING_UPDATE:
-			pings = data.pings
+		#raceOp.SERVER_PING:
+			#Network.send_match_state(raceOp.SERVER_PING, data)
+		#raceOp.SERVER_PING_UPDATE:
+			#pings = data.pings
 		#raceOp.SERVER_RACE_START:
 			#handle_race_start(data)
-		raceOp.SERVER_CLIENT_DISCONNECT:
-			_remove_vehicle(data.userId)
-		raceOp.SERVER_RACE_OVER:
-			finished = true
-			Network.ready_match = data.matchId
-			finish_order = data.finishOrder
-			state = STATE_READY_FOR_RANKINGS
-		raceOp.SERVER_SPAWN_ITEM:
-			spawn_physical_item(data)
-		raceOp.SERVER_DESTROY_ITEM:
-			server_destroy_physical_item(data)
-		raceOp.SERVER_ITEM_STATE:
-			apply_item_state(data)		
+		#raceOp.SERVER_CLIENT_DISCONNECT:
+			#_remove_vehicle(data.userId)
+		# raceOp.SERVER_RACE_OVER:
+		# 	finished = true
+		# 	Network.ready_match = data.matchId
+		# 	finish_order = data.finishOrder
+		# 	state = STATE_READY_FOR_RANKINGS
+		#raceOp.SERVER_SPAWN_ITEM:
+			#spawn_physical_item(data)
+		#raceOp.SERVER_DESTROY_ITEM:
+			#server_destroy_physical_item(data)
+		#raceOp.SERVER_ITEM_STATE:
+			#apply_item_state(data)
 		raceOp.SERVER_ABORT:
 			Global.menu_start_cam = lobby_cam_str
 			UI.change_scene(lobby_scene)
@@ -1266,7 +1293,7 @@ func start_race():
 func join_next():
 	UI.reset_race_ui()
 	UI.race_ui.visible = false
-	Network.socket.received_match_state.disconnect(_on_match_state)
+	#Network.socket.received_match_state.disconnect(_on_match_state)
 	Global.menu_start_cam = lobby_cam_str
 	UI.change_scene(lobby_scene)
 

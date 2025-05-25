@@ -1,7 +1,7 @@
 [gd_scene load_steps=15 format=3 uid="uid://b722awfk5rbbi"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_2asln"]
-[ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/_1test/1test_map_Circle_001.res" id="3_cnu52"]
+[ext_resource type="ArrayMesh" uid="uid://qjemkpb6xgga" path="res://scenes/levels/race/1test/1test_map_Circle_001.res" id="3_cnu52"]
 [ext_resource type="PackedScene" uid="uid://cw3524imqeugj" path="res://assets/course/3beam/3beam.tscn" id="3_t6h0d"]
 [ext_resource type="PackedScene" uid="uid://nwhlgc3bmk5w" path="res://scenes/control/gravity/curve_based_gravity_zone.tscn" id="4_baukt"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="4_rx1am"]
