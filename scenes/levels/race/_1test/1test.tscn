@@ -42,7 +42,7 @@ size = Vector3(5, 3, 1)
 size = Vector3(5, 3, 1)
 
 [node name="1test" node_paths=PackedStringArray("start_enemy_points") instance=ExtResource("1_2vsv6")]
-lap_count = 2
+lap_count = 1
 map_outline_width = 1.0
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
 start_enemy_points = [NodePath("EnemyPathPoints/EnemyPath")]

@@ -6,7 +6,7 @@ class ReplayData:
 	var course_name: String = ""
 	var states: Array[RaceState] = []
 	var idx: int = 0
-	var finish_times: Dictionary = {}  # player_id: time
+	var finish_times: Dictionary[int, float] = {}  # player_id: time
 	
 	func to_dict() -> Dictionary:
 		var s_array := []
@@ -66,7 +66,7 @@ class ReplayData:
 class RaceState:
 	var vehicle_states: Array[VehicleState] = []
 	var item_states: Array[ItemState] = []
-	var items_to_spawn: Array[Dictionary] = []
+	var items_to_spawn: Array[DomainRace.ItemSpawnWrapper] = []
 	var time: float
 	
 	func to_dict() -> Dictionary:
@@ -124,7 +124,7 @@ class RaceState:
 		return out
 
 class VehicleState:
-	var id: String
+	var id: int
 	var position: Vector3
 	var rotation: Quaternion
 	var input: Vehicle4.VehicleInput
@@ -191,7 +191,7 @@ var replay_thread_semaphore: Semaphore = null
 var replay_thread_mutex: Mutex = null
 
 # var vehicle_spawn_data: Array[VehicleSpawnData] = []
-var item_spawn_data: Array[Dictionary] = []
+var item_spawn_data: Array[DomainRace.ItemSpawnWrapper] = []
 
 func _ready() -> void:
 	replay_thread_mutex = Mutex.new()
@@ -207,7 +207,7 @@ func _ready() -> void:
 # 	data.up_dir = up_dir
 # 	vehicle_spawn_data.append(data)
 
-func spawn_item(data: Dictionary) -> void:
+func spawn_item(data: DomainRace.ItemSpawnWrapper) -> void:
 	item_spawn_data.append(data)
 
 func get_course_name_from_world(world: RaceBase) -> String:
@@ -228,7 +228,7 @@ func save_state(world: RaceBase) -> void:
 	state.items_to_spawn = item_spawn_data
 	item_spawn_data = []
 	
-	for id: String in world.players_dict:
+	for id: int in world.players_dict:
 		state.vehicle_states.append(make_vehicle_state(id, world))
 	
 	for key: String in world.physical_items:
@@ -239,7 +239,7 @@ func save_state(world: RaceBase) -> void:
 	replay_thread_mutex.unlock()
 	return
 
-func make_vehicle_state(id: String, world: RaceBase) -> VehicleState:
+func make_vehicle_state(id: int, world: RaceBase) -> VehicleState:
 	var state := VehicleState.new()
 	
 	var player: Vehicle4 = world.players_dict[id]
@@ -258,7 +258,7 @@ func make_item_state(key: String, world: RaceBase) -> ItemState:
 	
 	return state
 
-func set_finish_time(id: String, time: float) -> void:
+func set_finish_time(id: int, time: float) -> void:
 	if write_replay == null:
 		print("ERR: Attempted to set finish time, but no replay is set up!")
 		return
@@ -306,7 +306,7 @@ func load_replay(path: String, world: RaceBase) -> int:
 
 	loaded_replay = data
 	Debug.print("Loaded replay with finish times:")
-	for id: String in loaded_replay.finish_times:
+	for id: int in loaded_replay.finish_times:
 		Debug.print([id, loaded_replay.finish_times[id]])
 
 	return OK
@@ -334,7 +334,7 @@ func advance_loaded_state(world: RaceBase) -> void:
 	loaded_replay.idx += 1
 	return
 
-func make_new_vehicle(id: String, world: RaceBase) -> void:
+func make_new_vehicle(id: int, world: RaceBase) -> void:
 	var vehicle := world.player_scene.instantiate() as Vehicle4
 	vehicle.world = world
 	vehicle.setup_replay()
@@ -347,6 +347,8 @@ func _exit_tree() -> void:
 
 func _replay_thread_loop() -> void:
 	replay_thread_semaphore.wait()
+	if !write_replay:
+		return
 	
 	var t0 := Time.get_ticks_msec()
 	replay_thread_mutex.lock()

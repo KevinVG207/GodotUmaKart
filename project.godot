@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Uma Kart"
-config/version="0.1.0"
+config/version="0.2.0"
 run/main_scene="res://scenes/ui/academy/menu_academy.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="KevinVG207/UmaKart"
@@ -26,10 +26,12 @@ Global="*res://global/global.gd"
 Config="*res://global/config.gd"
 UI="*res://global/UI.tscn"
 Debug="*res://global/Debug.tscn"
-Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
-Network="*res://global/network.gd"
 Audio="*res://global/audio.gd"
 RaceUtil="*res://global/RaceUtil.gd"
+Network="*res://global/network/Network.gd"
+UUID="*res://addons/uuid/uuid.gd"
+RPCClient="*res://global/network/RPCClient.gd"
+RPCServer="*res://global/network/RPCServer.gd"
 
 [debug]
 

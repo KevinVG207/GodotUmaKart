@@ -10,7 +10,7 @@ void fragment() {
 	vec2 centered_uv = SCREEN_UV - 0.5;
 	centered_uv.x *= aspect;
 	vec2 tex_uv = centered_uv / scale + 0.5;
-	
+
 	float diff = dot(VIEW, NORMAL);
 	vec3 col = vec3(1.5, 1.2, 0.5);
 	if (diff > 0.5) {

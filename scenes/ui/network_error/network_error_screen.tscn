@@ -1,0 +1,88 @@
+[gd_scene load_steps=5 format=3 uid="uid://bqdf6l74rn7qr"]
+
+[ext_resource type="Script" uid="uid://bfyius0lxg0pd" path="res://scenes/ui/network_error/network_error_screen.gd" id="1_hks2i"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7fo08"]
+font_size = 40
+
+[sub_resource type="LabelSettings" id="LabelSettings_44uh7"]
+font_size = 30
+
+[sub_resource type="LabelSettings" id="LabelSettings_hks2i"]
+font_size = 20
+
+[node name="NetworkErrorScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hks2i")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -114.0
+offset_top = -25.0
+offset_right = 114.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "NETWORK_ERROR_TITLE"
+label_settings = SubResource("LabelSettings_7fo08")
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+text = "Description"
+label_settings = SubResource("LabelSettings_44uh7")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Code" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+text = "Code"
+label_settings = SubResource("LabelSettings_hks2i")
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ContinueButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -217.0
+offset_top = -120.0
+offset_right = 217.0
+offset_bottom = -70.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 30
+text = "NETWORK_ERROR_CONTINUE"
+
+[connection signal="pressed" from="ContinueButton" to="." method="_on_continue_button_pressed"]

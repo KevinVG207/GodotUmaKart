@@ -5,8 +5,11 @@ const STATE_RESET = -2
 const STATE_RESETTING = -1
 const STATE_INITIAL = 0
 const STATE_SETUP = 1
+const STATE_SETUP_2 = -10
+const STATE_SETUP_3 = -11
 const STATE_SETUP_COMPLETE = 2
 const STATE_PRE_MATCHMAKING = -3
+const STATE_PRE_MATCHMAKING_2 = -4
 const STATE_MATCHMAKING = 3
 const STATE_MATCHMAKING_WAIT = 4
 const STATE_MATCHMAKING_COMLETE = 5
@@ -28,23 +31,25 @@ class lobbyOp:
 var state: int
 var vote_timeout_started = false
 
-var cur_vote = ""
-var cur_votes = {}
 var next_course = ""
 var given_focus := false
 
 signal back
 
 @export var info_box: PackedScene
-var info_boxes: Dictionary = {}
+var info_boxes: Dictionary[int, LobbyPlayerInfoBox] = {}
 @onready var box_container: GridContainer = %PlayerInfoContainer
 
 
 func _ready():
 	state = STATE_IDLE
-	if Network.ready_match:
+	if Network.our_room:
 		state = STATE_MATCHMAKING_COMLETE
 	Global.goto_lobby_screen.connect(start)
+	Network.connection_success.connect(setup_complete)
+	Network.connection_failed.connect(setup_failed)
+	Network.initialization_success.connect(player_initialized)
+	RPCClient.player_left_room_received.connect(_on_player_disconnect)
 
 
 func start():
@@ -81,15 +86,17 @@ func _physics_process(_delta):
 			$MatchmakeButton.disabled = false
 			$MatchmakeButton.visible = true
 		STATE_PRE_MATCHMAKING:
-			change_state(STATE_MATCHMAKING, matchmake)
+			change_state(STATE_PRE_MATCHMAKING_2, initialize_player)
 		STATE_MATCHMAKING_WAIT:
-			if Network.ready_match:
+			if Network.our_room:
 				$Status.text = tr("LOBBY_ROOM_FOUND")
 				state = STATE_MATCHMAKING_COMLETE
 		STATE_MATCHMAKING_COMLETE:
 			change_state(STATE_JOINING, join)
 		STATE_START_VOTING:
 			change_state(STATE_START_VOTING, setup_voting)
+		STATE_VOTING, STATE_VOTED:
+			update_votes()
 		STATE_MATCH_RECEIVED:
 			change_state(STATE_SWITCHING_SCENE, switch_scene)
 		_:
@@ -102,8 +109,9 @@ func change_state(new_state: int, state_func: Callable = Callable()):
 
 
 func reset():
+	Global.final_lobby = null
 	$Status.text = tr("LOBBY_RESET")
-	await Network.reset()
+	Network.reset()
 	$LeaveButton.text = tr("LOBBY_BTN_BACK")
 	$LeaveButton.visible = true
 	$LeaveButton.focus_neighbor_left = "../MatchmakeButton"
@@ -117,43 +125,45 @@ func reset():
 	$VoteButton.visible = false
 	$UsernameContainer.visible = true
 	%UsernameEdit.focus_mode = 2
-	state = STATE_INITIAL
-
-
-func setup():
-	$Status.text = tr("LOBBY_SETUP")
-	
-	var res: bool = await Network.connect_client()
-	
-	if not res:
-		$Status.text = tr("LOBBY_CONNECTION_FAIL")
-		state = STATE_INITIAL
-		return
-	
 	var display_name: String = Config.online_username
 	if not display_name:
-		display_name = await Network.get_display_name()
+		display_name = Network.our_player.username
 	if not display_name:
 		display_name = "Player" + str(randi_range(100000,999999))
 	Config.online_username = display_name
 	Config.update_config()
 	%UsernameEdit.text = display_name
-	
+	next_course = ""
+	state = STATE_INITIAL
+
+
+func setup():
+	$Status.text = tr("LOBBY_SETUP")
+	state = STATE_SETUP_2
+	Network.setup()
+
+func setup_complete():
 	state = STATE_SETUP_COMPLETE
 
+func setup_failed():
+	$Status.text = tr("LOBBY_CONNECTION_FAIL")
+	state = STATE_INITIAL
+	return
+
+func initialize_player() -> void:
+	state = STATE_MATCHMAKING
+	Network.our_username = Config.online_username
+	Network.initialize_player()
+
+func player_initialized() -> void:
+	matchmake()
 
 func matchmake():
 	$Status.text = tr("LOBBY_SEARCHING")
 	$PingBox.visible = false
 	$UsernameContainer.visible = false
 	%UsernameEdit.focus_mode = 0
-	
-	var res: bool = await Network.matchmake(%UsernameEdit.text)
-	
-	if not res:
-		$Status.text = tr("LOBBY_SEARCH_FAIL")
-		state = STATE_RESET
-		return
+	Network.join_random_room()
 	
 	state = STATE_MATCHMAKING_WAIT
 	return
@@ -164,27 +174,18 @@ func join():
 	$PingBox.visible = false
 	$UsernameContainer.visible = false
 	%UsernameEdit.focus_mode = 0
+	
+	if not Network.our_room:
+		# Disconnect functions
+		$Status.text = tr("LOBBY_JOIN_FAIL")
+		state = STATE_INITIAL
+		return
 
-	if Network.ready_match_type == "race":
-		next_course = Network.ready_match_label['course']
+	if Network.our_room.type == DomainRoom.RoomType.RACE:
+		var race = Network.our_room as DomainRoom.Race
+		next_course = race.course_name
 		switch_scene()
 		state = STATE_SWITCHING_SCENE
-		return
-	
-	var res: bool = await Network.join_match(Network.ready_match)
-	
-	#Network.socket.received_match_presence.connect(_on_match_presence)
-	Network.socket.received_match_state.connect(_on_match_state)
-	Network.socket.closed.connect(_on_socket_closed)
-
-	if not res or not Network.cur_match:
-		# Disconnect functions
-		#Network.socket.received_match_presence.disconnect(_on_match_presence)
-		Network.socket.received_match_state.disconnect(_on_match_state)
-		Network.socket.closed.disconnect(_on_socket_closed)
-
-		$Status.text = tr("LOBBY_JOIN_FAIL")
-		state = STATE_RESET
 		return
 	
 	state = STATE_START_VOTING
@@ -206,19 +207,19 @@ func setup_voting():
 	return
 
 
-func add_player(username: String, user_id: String):
-	if user_id in info_boxes:
+func add_player(player: DomainPlayer.Player):
+	if player.peer_id in info_boxes:
 		return
 	
 	var new_box = info_box.instantiate() as LobbyPlayerInfoBox
-	new_box.set_username(username)
-	if Network.session.user_id == user_id:
+	new_box.set_username(player.username)
+	if Network.peer_id == player.peer_id:
 		new_box.set_cur_user()
-	info_boxes[user_id] = new_box
+	info_boxes[player.peer_id] = new_box
 	box_container.add_child(new_box)
 
 
-func remove_player(user_id: String):
+func remove_player(user_id: int):
 	if not user_id in info_boxes:
 		return
 	var cur_box = info_boxes[user_id] as LobbyPlayerInfoBox
@@ -227,13 +228,13 @@ func remove_player(user_id: String):
 	cur_box.queue_free()
 
 
-func update_player_name(user_id: String, new_name: String):
-	if not user_id in info_boxes:
+func update_player_name(player: DomainPlayer.Player):
+	if not player.peer_id in info_boxes:
 		return
-	info_boxes[user_id].set_username(new_name)
+	info_boxes[player.peer_id].set_username(player.username)
 
 
-func update_player_pick(user_id: String, pick_text: String):
+func update_player_pick(user_id: int, pick_text: String):
 	if not user_id in info_boxes:
 		return
 	info_boxes[user_id].set_pick(pick_text)
@@ -248,149 +249,105 @@ func _on_matchmake_button_pressed():
 		state = STATE_PRE_MATCHMAKING
 
 
-#func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
-	#for p in p_presence.joins:
-		#add_player(p.user_id.substr(0, 10), p.user_id)
-	#for p in p_presence.leaves:
-		#remove_player(p.user_id)
-
 func focus():
 	$MatchmakeButton.grab_focus()
 
+func _on_player_disconnect(player: DomainPlayer.Player, is_transfer: bool) -> void:
+	if is_transfer:
+		return
+	remove_player(player.peer_id)
 
-func _on_match_state(match_state : NakamaRTAPI.MatchData):
-	if Global.extraPing:
-		await get_tree().create_timer(Global.get_extra_ping() / 1000.0).timeout
-	
-	var data: Dictionary = JSON.parse_string(match_state.data)
-	match match_state.op_code:
-		lobbyOp.SERVER_PING:
-			Network.send_match_state(lobbyOp.SERVER_PING, data)
-		lobbyOp.SERVER_VOTE_DATA:
-			handle_vote_data(data)
-		lobbyOp.SERVER_MATCH_DATA:
-			#print("Received match data")
-			handle_match_data(data)
-		lobbyOp.SERVER_ABORT:
-			await reload()
-		_:
-			print("Unknown lobby op code: ", match_state.op_code)
-
-
-func handle_vote_data(data: Dictionary):
-	var presences = data.presences as Dictionary
-	var votes = data.votes as Dictionary
-	var tick = data.tick as int
-	var vote_timeout = data.voteTimeout as int
-	var tick_rate = data.tickRate as int
-	var ping_data = data.pingData as Dictionary
-	var user_data = data.userData as Dictionary
+func update_votes() -> void:
+	var lobby: DomainRoom.Lobby
+	if not Network.our_room:
+		reset()
+		return
+	if Network.our_room.type == DomainRoom.RoomType.RACE:
+		if !Global.final_lobby:
+			return
+		print("RECEIVED RACE ROOM")
+		state = STATE_MATCH_RECEIVED
+		lobby = Global.final_lobby
+	else:
+		lobby = Network.our_room as DomainRoom.Lobby
 	
 	# Setup vote timeout:
-	if Network.session.user_id in ping_data:
-		var ticks_left = max(vote_timeout - tick, 0)
-		var seconds_left = Util.ticks_to_time_with_ping(ticks_left, tick_rate, ping_data[Network.session.user_id])
-		if not vote_timeout_started or info_boxes.size() <= 1:
-			vote_timeout_started = true
-			$VoteTimeout.start(seconds_left)
-		elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
-			$VoteTimeout.start(seconds_left)
+	var ticks_left = max(lobby.voting_timeout - lobby.tick, 0)
+	var seconds_left = Util.ticks_to_time_with_ping(ticks_left, lobby.tick_rate, lobby.players[Network.peer_id].ping)
+	if not vote_timeout_started or info_boxes.size() <= 1:
+		vote_timeout_started = true
+		$VoteTimeout.start(seconds_left)
+	elif $VoteTimeout.time_left > 0 and seconds_left < $VoteTimeout.time_left:
+		$VoteTimeout.start(seconds_left)
 	
 	# Update player states
-	var cur_user_ids = info_boxes.keys()
-	var server_user_ids = presences.keys()
+	var cur_user_ids := info_boxes.keys()
+	var server_user_ids := lobby.players.keys()
+	#
+	#for user_id in cur_user_ids:
+		#if not user_id in server_user_ids:
+			#remove_player(user_id)
 	
-	for user_id: String in cur_user_ids:
-		if not user_id in server_user_ids:
-			remove_player(user_id)
-	
-	for p in presences.values():
-		#print(p.userId, " ", user_data)
-		if p.userId in cur_user_ids or !(p.userId in user_data):
+	for p in lobby.players.values():
+		if p.peer_id in cur_user_ids:
 			continue
-		add_player(user_data[p.userId].displayName, p.userId)
+		add_player(p)
 	
-	cur_votes = votes
-	for user_id in votes:
-		var vote_data: Dictionary = votes[user_id]
-		update_player_pick(user_id, vote_data['course'])
+	for user_id in lobby.votes:
+		var vote_data := lobby.votes[user_id]
+		update_player_pick(user_id, vote_data.course_name)
+	
+	# Handle winning vote
+	if !lobby.winning_vote:
+		return
+	if next_course:
+		return
+	$LeaveButton.disabled = true
+	$LeaveButton.visible = false
+	
+	info_boxes[lobby.winning_vote].set_picked()
+	var vote_data := lobby.votes[lobby.winning_vote]
+	print("Winning course: ", vote_data.course_name)
+	print("Vote user: ", lobby.winning_vote)
+	$Status.text = tr("LOBBY_COURSE_SELECT") % vote_data.course_name
+
+	next_course = vote_data.course_name
 
 
 func _on_vote_button_pressed():
 	$VoteButton.disabled = true
 	$VoteButton.visible = false
 
-	cur_vote = Util.get_race_courses()[0]
-
-	var res = await vote()
-	return res
+	vote()
 
 
 func vote():
-	var payload = {
-		"course": cur_vote
-	}
-
-	var res = await Network.send_match_state(lobbyOp.CLIENT_VOTE, payload)
-
-	if not res:
-		$Status.text = tr("LOBBY_VOTE_FAIL")
-		state = STATE_RESET
-		return false
-	
+	var data := DomainRoom.VoteData.new()
+	data.course_name = Util.get_race_courses()[0]
+	RPCServer.send_vote.rpc_id(1, data.serialize())
+	print("VOTE SENT")
 	state = STATE_VOTED
 	return true
 
 
 func _on_vote_timeout_timeout():
+	if next_course:
+		return
+	
 	$VoteButton.disabled = true
 	$VoteButton.visible = false
 	$LeaveButton.disabled = true
 	$LeaveButton.visible = false
 	
-	if not cur_vote:
-		cur_vote = Util.get_race_courses()[0]
-	
-	var res = await vote()
-	return res
-
-
-func handle_match_data(data: Dictionary):
-	var match_id = data.matchId as String
-	var winning_vote = data.winningVote as Dictionary
-	var vote_user = data.voteUser as String
-	
-	$LeaveButton.disabled = true
-	$LeaveButton.visible = false
-	
-	info_boxes[vote_user].set_picked()
-	print("Match ID: ", match_id)
-	print("Winning vote: ", winning_vote)
-	print("Vote user: ", vote_user)
-
-	next_course = winning_vote['course']
-	
-	Network.ready_match = match_id
-	Network.next_match_data = data
-
-	$Status.text = tr("LOBBY_COURSE_SELECT") % winning_vote['course']
-	state = STATE_MATCH_RECEIVED
-
+	vote()
 
 func switch_scene():
 	Global.MODE1 = Global.MODE1_ONLINE
-	Network.socket.received_match_state.disconnect(_on_match_state)
-	Network.socket.closed.disconnect(_on_socket_closed)
 	UI.change_scene(Util.get_race_course_path(next_course), true)
 
 
 func reload():
-	await Network.leave_match()
-	#await Network.reset()
-	#var parent: Node = get_parent()
-	#parent.remove_child(self)
-	#parent.add_child(load("res://scenes/ui/lobby/lobby.tscn").instantiate())
-	#queue_free()
+	Network.reset()
 	state = STATE_RESETTING
 
 

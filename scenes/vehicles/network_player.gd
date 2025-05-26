@@ -10,14 +10,14 @@ var prev_state: Dictionary = {}
 var prev_input: Vehicle4.VehicleInput = null
 var prev_transform: Transform3D
 
-var packet_idx := -1
+#var packet_idx := -1
 # var prev_state: Dictionary = get_state()
 
 func get_state() -> Dictionary:
-	packet_idx += 1
+	#packet_idx += 1
 	return {
 		# Easy things
-		"idx": packet_idx,
+		#"idx": packet_idx,
 		"vani": vehicle.vani.animation,
 		"cur_speed": vehicle.cur_speed,
 		"turn_speed": vehicle.turn_speed,
@@ -39,7 +39,6 @@ func get_state() -> Dictionary:
 		"lap": vehicle.lap,
 		"finished": vehicle.finished,
 		"finish_time": vehicle.finish_time,
-		"username": vehicle.username,
 		"boost_type": vehicle.cur_boost_type,
 		"still_turbo_ready": vehicle.still_turbo_ready,
 
@@ -55,14 +54,14 @@ func get_state() -> Dictionary:
 	}
 
 func apply_state(state: Dictionary) -> void:
-	if packet_idx > state.idx:
-		return
+	#if packet_idx > state.idx:
+		#return
 
 	prev_state = state
 	prev_input = Vehicle4.VehicleInput.from_dict(state.input)
 	prev_transform = Transform3D(Basis(Util.array_to_quat(state.rot)), Util.to_vector3(state.pos))
 
-	packet_idx = state.idx
+	#packet_idx = state.idx
 
 	if state.in_hop:
 		vehicle.start_hop()
@@ -100,7 +99,6 @@ func apply_simple(state: Dictionary) -> void:
 	vehicle.respawn_stage = state.respawn_stage
 	vehicle.finished = state.finished
 	vehicle.finish_time = state.finish_time
-	vehicle.username = state.username
 	vehicle.cur_boost_type = state.boost_type
 	vehicle.still_turbo_ready = state.still_turbo_ready
 

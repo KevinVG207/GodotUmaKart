@@ -190,14 +190,14 @@ func _process(delta: float) -> void:
 	handle_sound(delta)
 
 	if Input.is_action_just_pressed("_F5"):
-		var key: String = target.world.players_dict.find_key(target)
+		var key: int = target.world.players_dict.find_key(target)
 		var idx := target.world.players_dict.keys().find(key)
 		idx -= 1
 		idx %= target.world.players_dict.size()
 		key = target.world.players_dict.keys()[idx]
 		target = target.world.players_dict[key]
 	if Input.is_action_just_pressed("_F6"):
-		var key: String = target.world.players_dict.find_key(target)
+		var key: int = target.world.players_dict.find_key(target)
 		var idx := target.world.players_dict.keys().find(key)
 		idx += 1
 		idx %= target.world.players_dict.size()

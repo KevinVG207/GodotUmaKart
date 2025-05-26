@@ -88,8 +88,15 @@ var selected_replay: String = ""
 #var selected_replay: String = "user://replays/Wicked_Woods/1738524227.sav"
 #var selected_replay: String = "user://replays/1test/1738524048.sav"
 
+var fade_to_black_scene = preload("res://scenes/ui/transition/fade_to_black.tscn")
+
+var final_lobby: DomainRoom.Lobby = null
+
 func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
+
+func _ready() -> void:
+	RPCClient.error_received.connect(_on_network_error)
 	
 func _process(_delta: float) -> void:
 	var viewport := get_viewport()
@@ -142,7 +149,7 @@ func sample_item(player: Vehicle4) -> PackedScene:
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		await Network.on_exit_async()
+		Network.reset()
 		if save_on_exit:
 			Config.save_config(Config.make_config())
 		get_tree().quit()
@@ -160,3 +167,9 @@ func _input(event: InputEvent) -> void:
 		if event is InputEventKey or event is InputEventJoypadButton or event is InputEventJoypadMotion:
 			rebind_popup.handle_input(event)
 		return
+
+var error_code: int = DomainError.GENERIC_ERROR
+func _on_network_error(code: int) -> void:
+	error_code = code
+	multiplayer.multiplayer_peer = null
+	UI.change_scene("res://scenes/ui/network_error/network_error_screen.tscn", false, fade_to_black_scene)
