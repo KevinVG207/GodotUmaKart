@@ -1,7 +1,7 @@
 extends Node
 
-#const SERVER_IP := "localhost"
-const SERVER_IP := "game.umapyoi.net"
+const SERVER_IP := "localhost"
+#const SERVER_IP := "game.umapyoi.net"
 const SERVER_PORT := 31500
 var peer_id: int
 var our_username: String = ""
@@ -59,6 +59,7 @@ func _on_get_rooms(rooms: Array[DomainRoom.Room]) -> void:
 func initialize_player() -> void:
 	var data := DomainPlayer.PlayerInitializeData.new()
 	data.username = our_username
+	data.version = Util.version
 	RPCServer.initialize_player.rpc_id(1, data.serialize())
 
 func _on_initialize_player_result(player: DomainPlayer.Player) -> void:
