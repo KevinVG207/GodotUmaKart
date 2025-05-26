@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Uma Kart"
-config/version="0.2.0"
+config/version="0.2.2"
 run/main_scene="res://scenes/ui/academy/menu_academy.tscn"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="KevinVG207/UmaKart"

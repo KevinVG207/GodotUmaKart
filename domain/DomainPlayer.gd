@@ -24,13 +24,16 @@ class Player:
 
 class PlayerInitializeData:
 	var username: String
+	var version: String = "0.0.0"
 	
 	func serialize() -> Array[Variant]:
 		var list: Array[Variant] = []
 		list.append(username)
+		list.append(version)
 		return list
 
 	static func deserialize(list: Array[Variant]) -> PlayerInitializeData:
 		var o := PlayerInitializeData.new()
 		o.username = list.pop_front()
+		o.version = list.pop_front()
 		return o
