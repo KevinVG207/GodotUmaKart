@@ -242,7 +242,6 @@ func _ready() -> void:
 	if is_replay:
 		recursive_set_transparency($Visual)
 
-	#Network.should_setup = true
 	#transform = initial_transform
 
 func setup_colliders() -> void:

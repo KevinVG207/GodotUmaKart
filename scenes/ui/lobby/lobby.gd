@@ -126,7 +126,7 @@ func reset():
 	%UsernameEdit.focus_mode = 2
 	var display_name: String = Config.online_username
 	if not display_name:
-		display_name = await Network.get_display_name()
+		display_name = NetworkTest.our_player.username
 	if not display_name:
 		display_name = "Player" + str(randi_range(100000,999999))
 	Config.online_username = display_name
@@ -248,12 +248,6 @@ func _on_matchmake_button_pressed():
 		state = STATE_PRE_MATCHMAKING
 
 
-#func _on_match_presence(p_presence : NakamaRTAPI.MatchPresenceEvent):
-	#for p in p_presence.joins:
-		#add_player(p.user_id.substr(0, 10), p.user_id)
-	#for p in p_presence.leaves:
-		#remove_player(p.user_id)
-
 func focus():
 	$MatchmakeButton.grab_focus()
 
@@ -311,24 +305,6 @@ func update_votes() -> void:
 	next_course = vote_data.course_name
 
 
-func _on_match_state(match_state : NakamaRTAPI.MatchData):
-	if Global.extraPing:
-		await get_tree().create_timer(Global.get_extra_ping() / 1000.0).timeout
-	
-	var data: Dictionary = JSON.parse_string(match_state.data)
-	match match_state.op_code:
-		#lobbyOp.SERVER_PING:
-			#Network.send_match_state(lobbyOp.SERVER_PING, data)
-		#lobbyOp.SERVER_VOTE_DATA:
-			#handle_vote_data(data)
-		lobbyOp.SERVER_MATCH_DATA:
-			#print("Received match data")
-			handle_match_data(data)
-		lobbyOp.SERVER_ABORT:
-			await reload()
-		_:
-			print("Unknown lobby op code: ", match_state.op_code)
-
 func _on_vote_button_pressed():
 	$VoteButton.disabled = true
 	$VoteButton.visible = false
@@ -356,40 +332,13 @@ func _on_vote_timeout_timeout():
 	
 	vote()
 
-
-func handle_match_data(data: Dictionary):
-	var match_id = data.matchId as String
-	var winning_vote = data.winningVote as Dictionary
-	var vote_user = data.voteUser as String
-	
-	$LeaveButton.disabled = true
-	$LeaveButton.visible = false
-	
-	#info_boxes[vote_user].set_picked()
-	print("Match ID: ", match_id)
-	print("Winning vote: ", winning_vote)
-	print("Vote user: ", vote_user)
-
-	next_course = winning_vote['course']
-	
-	Network.ready_match = match_id
-	Network.next_match_data = data
-
-	state = STATE_MATCH_RECEIVED
-
-
 func switch_scene():
 	Global.MODE1 = Global.MODE1_ONLINE
 	UI.change_scene(Util.get_race_course_path(next_course), true)
 
 
 func reload():
-	await Network.leave_match()
-	#await Network.reset()
-	#var parent: Node = get_parent()
-	#parent.remove_child(self)
-	#parent.add_child(load("res://scenes/ui/lobby/lobby.tscn").instantiate())
-	#queue_free()
+	NetworkTest.reset()
 	state = STATE_RESETTING
 
 
