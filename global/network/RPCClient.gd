@@ -89,3 +89,8 @@ signal race_finished_received(dto: DomainRoom.FinishData)
 @rpc("reliable")
 func race_finished(list: Array[Variant]) -> void:
 	race_finished_received.emit(DomainRoom.FinishData.deserialize(list))
+
+signal race_item_transfer_owner_received(key: String, new_owner_id: int)
+@rpc("reliable")
+func race_item_transfer_owner(key: String, new_owner_id: int) -> void:
+	race_item_transfer_owner_received.emit(key, new_owner_id)

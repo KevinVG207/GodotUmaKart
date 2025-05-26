@@ -15,6 +15,7 @@ var owner_id: int:
 
 var origin: Vehicle4
 var owned_by: Vehicle4
+var is_transferring_ownership := false
 
 var state_idx: int = 0
 
@@ -41,4 +42,7 @@ func get_state() -> Dictionary:
 	return {}
 
 func set_state(state: Dictionary) -> void:
+	return
+
+func _on_owner_changed(old_owner: Vehicle4, new_owner: Vehicle4) -> void:
 	return

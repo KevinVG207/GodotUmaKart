@@ -39,3 +39,7 @@ func race_destroy_item(key: String) -> void:
 @rpc("any_peer", "unreliable")
 func race_item_state(list: Array[Variant]) -> void:
 	return
+
+@rpc("any_peer", "reliable")
+func race_item_transfer_owner(key: String, new_owner_id: int) -> void:
+	return

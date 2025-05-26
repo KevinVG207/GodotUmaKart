@@ -545,11 +545,13 @@ func apply_item_state(dto: DomainRace.ItemStateWrapper):
 		return
 	
 	var instance := physical_items[dto.key]
+
+	if instance.owner_id != dto.owner_id:
+		return
 	
 	if instance.state_idx >= dto.state_idx:
 		return
 	
-	instance.owner_id = dto.owner_id
 	instance.origin_id = dto.origin_id
 	instance.set_state(dto.state)
 
@@ -852,6 +854,10 @@ func get_starting_order() -> Array[int]:
 	return []
 
 func join():
+	if Network.our_room and Network.our_room.type == DomainRoom.RoomType.LOBBY:
+		join_next()
+		return
+	
 	starting_order = get_starting_order()
 	Global.player_count = max(len(starting_order), 1)
 	setup_vehicles()
@@ -868,6 +874,7 @@ func join():
 	RPCClient.race_destroy_item_received.connect(server_destroy_physical_item)
 	RPCClient.race_item_state_received.connect(apply_item_state)
 	RPCClient.race_finished_received.connect(_on_race_finished)
+	RPCClient.race_item_transfer_owner_received.connect(_on_item_transfer_owner)
 
 	UI.end_scene_change()
 	
@@ -1159,3 +1166,36 @@ func _on_back_pressed():
 
 func _on_next_race_timer_timeout():
 	state = STATE_JOIN_NEXT
+
+func item_transfer_owner(item: PhysicalItem, new_owner_id: int) -> void:
+	if not item or not item.key or not new_owner_id:
+		return
+	
+	if item.owner_id != player_user_id:
+		return
+	
+	if item.owner_id == new_owner_id:
+		return
+	
+	var old_owner_id := item.owner_id
+	item.owner_id = new_owner_id
+	item._on_owner_changed(players_dict[old_owner_id], players_dict[new_owner_id])
+
+	item.is_transferring_ownership = true
+	RPCServer.race_item_transfer_owner.rpc_id(1, item.key, new_owner_id)
+
+func _on_item_transfer_owner(key: String, new_owner_id: int):
+	if not key in physical_items.keys():
+		return
+	if not new_owner_id in players_dict.keys():
+		return
+	
+	var item := physical_items[key] as PhysicalItem
+	var old_owner_id := item.owner_id
+	item.owner_id = new_owner_id
+	item.is_transferring_ownership = false
+
+	if not old_owner_id == player_user_id:
+		item._on_owner_changed(players_dict[old_owner_id], players_dict[new_owner_id])
+
+	Debug.print(["RECEIVED NEW OWNER", new_owner_id, player_vehicle.user_id])

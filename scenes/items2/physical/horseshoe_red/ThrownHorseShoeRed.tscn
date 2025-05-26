@@ -24,6 +24,7 @@ body = NodePath("ThrownHorseShoeRed")
 area = NodePath("ThrownHorseShoeRed/Area3D")
 target_speed = 50.0
 break_on_wall = true
+grace_time = 10.0
 damage_type = 1
 metadata/_custom_type_script = "uid://bbvgp5b1h7yam"
 
