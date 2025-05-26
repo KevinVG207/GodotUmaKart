@@ -149,7 +149,7 @@ func sample_item(player: Vehicle4) -> PackedScene:
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		NetworkTest.reset()
+		Network.reset()
 		if save_on_exit:
 			Config.save_config(Config.make_config())
 		get_tree().quit()

@@ -12,7 +12,7 @@ vec2 rotateUV(vec2 uv, vec2 pivot, float rotation) {
 	uv -= pivot;
 	return vec2(
 		cosa * uv.x - sina * uv.y,
-		cosa * uv.y + sina * uv.x 
+		cosa * uv.y + sina * uv.x
 	) + pivot;
 }
 

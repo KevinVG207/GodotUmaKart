@@ -43,12 +43,12 @@ var info_boxes: Dictionary[int, LobbyPlayerInfoBox] = {}
 
 func _ready():
 	state = STATE_IDLE
-	if NetworkTest.our_room:
+	if Network.our_room:
 		state = STATE_MATCHMAKING_COMLETE
 	Global.goto_lobby_screen.connect(start)
-	NetworkTest.connection_success.connect(setup_complete)
-	NetworkTest.connection_failed.connect(setup_failed)
-	NetworkTest.initialization_success.connect(player_initialized)
+	Network.connection_success.connect(setup_complete)
+	Network.connection_failed.connect(setup_failed)
+	Network.initialization_success.connect(player_initialized)
 
 
 func start():
@@ -87,7 +87,7 @@ func _physics_process(_delta):
 		STATE_PRE_MATCHMAKING:
 			change_state(STATE_PRE_MATCHMAKING_2, initialize_player)
 		STATE_MATCHMAKING_WAIT:
-			if NetworkTest.our_room:
+			if Network.our_room:
 				$Status.text = tr("LOBBY_ROOM_FOUND")
 				state = STATE_MATCHMAKING_COMLETE
 		STATE_MATCHMAKING_COMLETE:
@@ -110,7 +110,7 @@ func change_state(new_state: int, state_func: Callable = Callable()):
 func reset():
 	Global.final_lobby = null
 	$Status.text = tr("LOBBY_RESET")
-	NetworkTest.reset()
+	Network.reset()
 	$LeaveButton.text = tr("LOBBY_BTN_BACK")
 	$LeaveButton.visible = true
 	$LeaveButton.focus_neighbor_left = "../MatchmakeButton"
@@ -126,7 +126,7 @@ func reset():
 	%UsernameEdit.focus_mode = 2
 	var display_name: String = Config.online_username
 	if not display_name:
-		display_name = NetworkTest.our_player.username
+		display_name = Network.our_player.username
 	if not display_name:
 		display_name = "Player" + str(randi_range(100000,999999))
 	Config.online_username = display_name
@@ -139,7 +139,7 @@ func reset():
 func setup():
 	$Status.text = tr("LOBBY_SETUP")
 	state = STATE_SETUP_2
-	NetworkTest.setup()
+	Network.setup()
 
 func setup_complete():
 	state = STATE_SETUP_COMPLETE
@@ -151,8 +151,8 @@ func setup_failed():
 
 func initialize_player() -> void:
 	state = STATE_MATCHMAKING
-	NetworkTest.our_username = Config.online_username
-	NetworkTest.initialize_player()
+	Network.our_username = Config.online_username
+	Network.initialize_player()
 
 func player_initialized() -> void:
 	matchmake()
@@ -162,7 +162,7 @@ func matchmake():
 	$PingBox.visible = false
 	$UsernameContainer.visible = false
 	%UsernameEdit.focus_mode = 0
-	NetworkTest.join_random_room()
+	Network.join_random_room()
 	
 	state = STATE_MATCHMAKING_WAIT
 	return
@@ -174,14 +174,14 @@ func join():
 	$UsernameContainer.visible = false
 	%UsernameEdit.focus_mode = 0
 	
-	if not NetworkTest.our_room:
+	if not Network.our_room:
 		# Disconnect functions
 		$Status.text = tr("LOBBY_JOIN_FAIL")
 		state = STATE_INITIAL
 		return
 
-	if NetworkTest.our_room.type == DomainRoom.RoomType.RACE:
-		var race = NetworkTest.our_room as DomainRoom.Race
+	if Network.our_room.type == DomainRoom.RoomType.RACE:
+		var race = Network.our_room as DomainRoom.Race
 		next_course = race.course_name
 		switch_scene()
 		state = STATE_SWITCHING_SCENE
@@ -212,7 +212,7 @@ func add_player(player: DomainPlayer.Player):
 	
 	var new_box = info_box.instantiate() as LobbyPlayerInfoBox
 	new_box.set_username(player.username)
-	if NetworkTest.peer_id == player.peer_id:
+	if Network.peer_id == player.peer_id:
 		new_box.set_cur_user()
 	info_boxes[player.peer_id] = new_box
 	box_container.add_child(new_box)
@@ -253,18 +253,18 @@ func focus():
 
 func update_votes() -> void:
 	var lobby: DomainRoom.Lobby
-	if NetworkTest.our_room.type == DomainRoom.RoomType.RACE:
+	if Network.our_room.type == DomainRoom.RoomType.RACE:
 		if !Global.final_lobby:
 			return
 		print("RECEIVED RACE ROOM")
 		state = STATE_MATCH_RECEIVED
 		lobby = Global.final_lobby
 	else:
-		lobby = NetworkTest.our_room as DomainRoom.Lobby
+		lobby = Network.our_room as DomainRoom.Lobby
 	
 	# Setup vote timeout:
 	var ticks_left = max(lobby.voting_timeout - lobby.tick, 0)
-	var seconds_left = Util.ticks_to_time_with_ping(ticks_left, lobby.tick_rate, lobby.players[NetworkTest.peer_id].ping)
+	var seconds_left = Util.ticks_to_time_with_ping(ticks_left, lobby.tick_rate, lobby.players[Network.peer_id].ping)
 	if not vote_timeout_started or info_boxes.size() <= 1:
 		vote_timeout_started = true
 		$VoteTimeout.start(seconds_left)
@@ -338,7 +338,7 @@ func switch_scene():
 
 
 func reload():
-	NetworkTest.reset()
+	Network.reset()
 	state = STATE_RESETTING
 
 

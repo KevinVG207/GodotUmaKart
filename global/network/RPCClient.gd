@@ -4,7 +4,7 @@ signal error_received(code: int)
 @rpc("reliable")
 func error(code: int) -> void:
 	print("DISCONNECT WITH ERROR CODE ", code)
-	NetworkTest.reset()
+	Network.reset()
 	error_received.emit(code)
 
 signal initialize_player_result(player: DomainPlayer.Player)

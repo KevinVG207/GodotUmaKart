@@ -781,7 +781,7 @@ func _add_vehicle(user_id: int, new_position: Vector3, look_dir: Vector3, up_dir
 		Global.MODE1_ONLINE:
 			new_vehicle.is_cpu = true
 			new_vehicle.is_network = true
-			new_vehicle.username = NetworkTest.our_room.players[user_id].username
+			new_vehicle.username = Network.our_room.players[user_id].username
 			var path_point: EnemyPath = path_point_scene.instantiate()
 			network_path_points[new_vehicle] = path_point
 			path_point.visible = false
@@ -833,9 +833,9 @@ func setup_vehicles() -> void:
 func get_starting_order() -> Array[int]:
 	match Global.MODE1:
 		Global.MODE1_ONLINE:
-			player_user_id = NetworkTest.peer_id
-			network_room = NetworkTest.our_room as DomainRoom.Race
-			if !NetworkTest.peer_id in network_room.starting_order:
+			player_user_id = Network.peer_id
+			network_room = Network.our_room as DomainRoom.Race
+			if !Network.peer_id in network_room.starting_order:
 				spectate = true
 				return []
 			
@@ -871,7 +871,7 @@ func join():
 
 	UI.end_scene_change()
 	
-	if not NetworkTest.our_room or not NetworkTest.our_room.type == DomainRoom.RoomType.RACE:
+	if not Network.our_room or not Network.our_room.type == DomainRoom.RoomType.RACE:
 		# Disconnect functions
 		print("ERR: Could not connect to race")
 		Debug.print("Could not connect to race")
@@ -1099,7 +1099,7 @@ func update_vehicle_state(data: DomainRace.VehicleDataWrapper) -> void:
 	if user_id in removed_player_ids:
 		return
 	
-	NetworkTest.our_room.players[user_id] = data.player
+	Network.our_room.players[user_id] = data.player
 	
 	if not user_id in players_dict.keys():
 		var cur_position: Vector3 = Util.to_vector3(data.vehicle_state["pos"])
