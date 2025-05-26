@@ -49,6 +49,7 @@ func _ready():
 	Network.connection_success.connect(setup_complete)
 	Network.connection_failed.connect(setup_failed)
 	Network.initialization_success.connect(player_initialized)
+	RPCClient.player_left_room_received.connect(_on_player_disconnect)
 
 
 func start():
@@ -251,8 +252,16 @@ func _on_matchmake_button_pressed():
 func focus():
 	$MatchmakeButton.grab_focus()
 
+func _on_player_disconnect(player: DomainPlayer.Player, is_transfer: bool) -> void:
+	if is_transfer:
+		return
+	remove_player(player.peer_id)
+
 func update_votes() -> void:
 	var lobby: DomainRoom.Lobby
+	if not Network.our_room:
+		reset()
+		return
 	if Network.our_room.type == DomainRoom.RoomType.RACE:
 		if !Global.final_lobby:
 			return
@@ -275,9 +284,9 @@ func update_votes() -> void:
 	var cur_user_ids := info_boxes.keys()
 	var server_user_ids := lobby.players.keys()
 	#
-	for user_id in cur_user_ids:
-		if not user_id in server_user_ids:
-			remove_player(user_id)
+	#for user_id in cur_user_ids:
+		#if not user_id in server_user_ids:
+			#remove_player(user_id)
 	
 	for p in lobby.players.values():
 		if p.peer_id in cur_user_ids:

@@ -325,7 +325,7 @@ func _process(delta: float) -> void:
 		if !%NextRaceTimer.is_stopped():
 			UI.race_ui.update_timeleft(%NextRaceTimer.time_left)
 	
-	if spectate:
+	if spectate and players_dict:
 		if !player_camera.target and players_dict:
 			player_camera.target = players_dict.values()[0]
 			player_camera.instant = true
@@ -348,7 +348,7 @@ func _process(delta: float) -> void:
 			
 			player_camera.target = players_dict.values()[spectator_index]
 	
-	if player_camera.target.finished:
+	if player_camera.target and player_camera.target.finished:
 		UI.race_ui.update_time(player_camera.target.finish_time)
 	
 	# Minimap iconsr
@@ -1109,7 +1109,8 @@ func update_vehicle_state(data: DomainRace.VehicleDataWrapper) -> void:
 		var up_dir: Vector3 = Vector3(0, 1, 0)
 
 		_add_vehicle(user_id, cur_position, look_dir, up_dir)
-		players_dict[user_id].axis_unlock()
+		#players_dict[user_id].axis_unlock()
+		players_dict[user_id].start()
 	
 	players_dict[user_id].network.apply_state(data.vehicle_state)
 

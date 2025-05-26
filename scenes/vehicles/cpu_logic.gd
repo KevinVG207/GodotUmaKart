@@ -50,7 +50,8 @@ func set_inputs(delta: float) -> void:
 	if not next_target_2:
 		new_target(next_target_1)
 
-	do_rubberband(delta)
+	if !parent.is_network:
+		do_rubberband(delta)
 
 	# return
 
