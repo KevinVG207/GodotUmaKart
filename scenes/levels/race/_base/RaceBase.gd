@@ -586,7 +586,7 @@ func _physics_process(_delta: float) -> void:
 		STATE_RACE_OVER:
 			#save_replay(true)
 			#write_replay()
-			
+			Audio.race_music_stop()
 			UI.race_ui.race_over()
 			if Global.MODE1 == Global.MODE1_OFFLINE:
 				# Race is over in offline mode.
