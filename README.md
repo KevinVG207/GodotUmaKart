@@ -1,3 +1,5 @@
+Game server on this repository: [GodotUmaKartServer](https://github.com/KevinVG207/GodotUmaKartServer)
+
 # Usage
 * Download the latest release for your operating system and extract to a folder.
 * Run the executable.

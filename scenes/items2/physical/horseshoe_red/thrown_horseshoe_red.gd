@@ -59,8 +59,6 @@ func _physics_process(delta: float) -> void:
 	if not target_point:
 		# Determine the target point currently in front of the thrower.
 		target_point = Util.get_path_point_ahead_of_player(origin)
-	
-	Debug.print([target_player.user_id, TargetMode.find_key(target_mode)])
 
 	var dist_to_target_player: float = 10000
 	if target_player:
