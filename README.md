@@ -8,6 +8,6 @@ Online multiplayer server is hosted on [umapyoi.net](https://umapyoi.net). Game 
 
 ---
 
-This is a fan-made work that includes content based around the Umamusume Project, and follows the Fan-Created Content Guidelines as found [here](https://umamusume.com/fan-createdguide/).
+This is a fan-made work that includes content based on characters and motifs from the Umamusume Project by Cygames, Inc., and follows the Fan-Created Content Guidelines as found [here](https://umamusume.com/fan-createdguide/).
 
 Other credits can be found in [credits.md](other_file.md).
