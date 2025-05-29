@@ -71,7 +71,7 @@ func apply_state(state: Dictionary) -> void:
 	apply_simple(state)
 
 	vehicle.gravity = Util.to_vector3(state.gravity)
-	vehicle.velocity = Vehicle4.Velocity.from_dict(state.velocity)
+	#vehicle.velocity = Vehicle4.Velocity.from_dict(state.velocity)
 	vehicle.input = Vehicle4.VehicleInput.from_dict(state.input)
 
 	set_path_point(state)
@@ -90,7 +90,7 @@ func apply_simple(state: Dictionary) -> void:
 	vehicle.cur_speed = state.cur_speed
 	vehicle.turn_speed = state.turn_speed
 	vehicle.in_trick = state.in_trick
-	vehicle.air_frames = state.air_frames
+	#vehicle.air_frames = state.air_frames
 	vehicle.in_drift = state.in_drift
 	vehicle.drift_dir = state.drift_dir
 	vehicle.drift_gauge = state.drift_gauge
@@ -108,7 +108,7 @@ func set_path_point(state: Dictionary) -> void:
 	network_path.global_position = Util.to_vector3(state.pos)
 	network_path.quaternion = Util.array_to_quat(state.rot)
 	network_path.normal = network_path.transform.basis.z
-	if vehicle.user_id in vehicle.world.pings and vehicle.cur_speed > 3:
+	if vehicle.user_id in vehicle.world.pings and vehicle.world.player_user_id in vehicle.world.pings and vehicle.cur_speed > 3:
 		network_path.global_position += network_path.transform.basis.z * state.cur_speed * ((vehicle.world.pings[vehicle.user_id] + vehicle.world.pings[vehicle.world.player_user_id])/1000)
 	# network_path.next_points = [Util.get_path_point_ahead_of_player(vehicle)]
 	# network_path.prev_points = network_path.next_points[0].prev_points
@@ -120,11 +120,13 @@ func teleport_to_network_now() -> void:
 func teleport_to_network(state: Dictionary) -> void:
 		vehicle.global_position = Util.to_vector3(state.pos)
 		vehicle.quaternion = Util.array_to_quat(state.rot)
+		vehicle.velocity = Vehicle4.Velocity.from_dict(state.velocity)
 		vehicle.check_idx = state.check_idx
 		vehicle.check_key_idx = state.check_key_idx
 		vehicle.check_progress = state.check_progress
 		vehicle.in_hop = state.in_hop
 		vehicle.hop_frames = state.hop_frames
+		vehicle.air_frames = state.air_frames
 		vehicle.grounded = state.grounded
 		vehicle.teleport(vehicle.global_position, vehicle.transform.basis.z, vehicle.transform.basis.y)
 

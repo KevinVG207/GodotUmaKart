@@ -214,6 +214,9 @@ func update_curve_point() -> void:
 func passed_curve_point() -> bool:
 	return Util.dist_to_plane(curve_point_forward, curve_point_position, parent.global_position) >= 0
 
+func passed_target_point(target: EnemyPath) -> bool:
+	return Util.dist_to_plane(target.normal, target.global_position, parent.global_position) >= 0
+
 func try_trick() -> void:
 	if !parent.trick_timer:
 		return
@@ -259,8 +262,11 @@ func steer() -> void:
 	if abs(angle) > max_angle:
 		# Should steer
 		parent.input.steer = -1 if angle < 0 else 1
+		
 		if !parent.is_network:
 			try_release_drift()
+		elif parent.in_drift and !is_behind:
+			parent.input.steer = parent.network.prev_input.steer
 
 
 func hold_drift(angle: float) -> void:
@@ -283,7 +289,14 @@ func get_target_dir() -> Vector3:
 func get_angle_to_target(target_dir: Vector3) -> float:
 	return (-parent.global_transform.basis.x).angle_to(target_dir) - PI/2
 func get_max_angle_to_target() -> float:
-	return next_target_1.radius*0.25 / parent.global_position.distance_to(next_target_1.global_position)
+	var distance_to := parent.global_position.distance_to(next_target_1.global_position)
+	if passed_target_point(next_target_1):
+		distance_to = 0.0
+	distance_to = max(1.0, distance_to)
+	var multi := 0.25
+	if parent.is_network:
+		multi = 0.1
+	return next_target_1.radius * multi / distance_to
 
 
 func try_use_item() -> void:
