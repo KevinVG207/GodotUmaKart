@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://742psss2cgvv"]
+[gd_scene load_steps=6 format=3 uid="uid://742psss2cgvv"]
 
 [ext_resource type="PackedScene" uid="uid://dv6dnfmpqwme7" path="res://assets/objects/cone.blend" id="1_2g1bl"]
 [ext_resource type="Script" uid="uid://3rgv6n46kddv" path="res://scenes/objects/cone.gd" id="1_qqta6"]
+[ext_resource type="AudioStream" uid="uid://cygm2x5lg7xq" path="res://assets/audio/sfx/object/cone/impact.wav" id="3_xm24l"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jn756"]
 rough = true
@@ -17,10 +18,12 @@ script = ExtResource("1_qqta6")
 unique_name_in_owner = true
 collision_layer = 8
 collision_mask = 15
-mass = 1000.0
+mass = 10.0
 physics_material_override = SubResource("PhysicsMaterial_jn756")
+gravity_scale = 0.0
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, 0.5, 0)
+continuous_cd = true
 contact_monitor = true
 max_contacts_reported = 10
 
@@ -30,5 +33,12 @@ transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, -0.433145, 0)
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Rigidbody" groups=["col_object"]]
 transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0.441855, 0)
 shape = SubResource("ConvexPolygonShape3D_x0ke2")
+
+[node name="Impact" type="AudioStreamPlayer3D" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("3_xm24l")
+volume_db = -20.0
+max_db = -10.0
+attenuation_filter_db = -12.0
 
 [connection signal="body_entered" from="Rigidbody" to="." method="_on_rigidbody_body_entered"]
