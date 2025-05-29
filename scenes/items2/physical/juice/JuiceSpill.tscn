@@ -9,6 +9,8 @@ radius = 0.849121
 
 [node name="JuiceSpill" type="Node"]
 script = ExtResource("1_xf2w1")
+despawn_time = 300
+destroys_objects = false
 metadata/_custom_type_script = "uid://difslb44mei5n"
 
 [node name="Node3D" type="Node3D" parent="."]

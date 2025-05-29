@@ -19,7 +19,6 @@ func _physics_process(delta: float) -> void:
 		cur_despawn_ticks = -1
 		
 		if !is_respawning and global_position.distance_squared_to(%Rigidbody.global_position) > 25.0:
-			print("DESPAWNING FROM DISTANCE ", name)
 			cur_despawn_ticks = DESPAWN_TICKS
 
 func start_animation() -> void:
@@ -33,7 +32,6 @@ func respawn() -> void:
 	%Rigidbody.angular_velocity = Vector3.ZERO
 
 func _on_rigidbody_body_entered(body: Node) -> void:
-	print(world.time)
 	if world.time > 0:
 		%Impact.pitch_scale = randf_range(1.2, 1.6)
 		%Impact.play()

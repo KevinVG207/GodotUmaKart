@@ -29,6 +29,7 @@ func setup() -> void:
 	multiplayer.multiplayer_peer = peer
 
 func reset() -> void:
+	print("Disconnecting from server")
 	multiplayer.multiplayer_peer = null
 	our_player = null
 	our_room = null

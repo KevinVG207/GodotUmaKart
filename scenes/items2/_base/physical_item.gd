@@ -19,6 +19,7 @@ var is_transferring_ownership := false
 
 var state_idx: int = 0
 
+@export var destroys_objects := true
 @export var no_updates := false
 
 func setup(new_key: String, new_world: RaceBase, new_origin: Vehicle4) -> void:

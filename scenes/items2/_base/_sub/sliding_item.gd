@@ -100,10 +100,20 @@ func set_state(state: Dictionary) -> void:
 func _on_area_3d_body_entered(body: Variant) -> void:
 	if body == self:
 		return
+		
+	var other_item: PhysicalItem = null
 	if body is PhysicalItem:
-		var item := body as PhysicalItem
+		other_item = body as PhysicalItem
+	
+	if body.get_parent() is PhysicalItem:
+		other_item = body.get_parent() as PhysicalItem
+	
+	if other_item == self:
+		return
+	
+	if other_item and destroys_objects and other_item.destroys_objects:
 		destroy()
-		item.destroy()
+		other_item.destroy()
 		return
 	
 	if not body is Vehicle4:
