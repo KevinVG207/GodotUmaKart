@@ -21,6 +21,7 @@
 * LEVEL UP SFX 1 by trader_one -- https://freesound.org/s/709927/ -- License: Creative Commons 0
 * Game item pickup BONUS SFX 1 by trader_one -- https://freesound.org/s/709890/ -- License: Creative Commons 0
 * Nice Game Find by qubodup -- https://freesound.org/s/195486/ -- License: Attribution 4.0
+* close glove box.wav by greatsoundstube -- https://freesound.org/s/629319/ -- License: Creative Commons 0
 
 # Music
 * AfterHaze composed by t12ya -- https://dova-s.jp/EN/bgm/play21959.html -- DOVA-SYNDROME License https://dova-s.jp/EN/_contents/license/

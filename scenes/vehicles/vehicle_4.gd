@@ -222,7 +222,8 @@ enum ContactType {
 	OFFROAD,
 	TRICK,
 	BOOST,
-	FALL
+	FALL,
+	OBJECT
 }
 
 static var floor_types := [
@@ -687,10 +688,13 @@ func determine_floor_normal() -> void:
 	raycast_below()
 
 	var normals := below_normals
-	if normals.is_empty():
-		# Naive floor normal detection
-		for contact: Contact in ground_contacts:
-			normals.append(contact.normal)
+	#normals = []
+	
+	# TODO: Check if this is needed. Issues with object collisions!
+	#if normals.is_empty():
+		## Naive floor normal detection
+		#for contact: Contact in ground_contacts:
+			#normals.append(contact.normal)
 	
 	if normals.is_empty():
 		return
@@ -705,7 +709,7 @@ func raycast_below() -> void:
 		var start_pos := to_global(loc_start_pos)
 		var end_pos := start_pos + (transform.basis.y.normalized() * -floor_check_distance)
 		# TODO: Revert
-		var result := Util.raycast_for_group(world.space_state, start_pos, end_pos, "floor", [self])
+		var result := Util.raycast_for_group(world.space_state, start_pos, end_pos, "col_floor", [self])
 		if result:
 			below_normals.append(result.normal)
 

@@ -331,3 +331,13 @@ func v3_length_compare_v3(v1: Vector3, v2: Vector3) -> float:
 
 func round_to_dec(num: Variant, digit: int) -> float:
 	return roundf(num * pow(10.0, digit)) / pow(10.0, digit)
+
+func find_race_base_parent(node: Node) -> RaceBase:
+	var max_iter := 10
+	var iter := 0
+	while iter < max_iter:
+		node = node.get_parent()
+		if node is RaceBase:
+			return node
+		iter += 1
+	return null

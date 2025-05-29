@@ -5,7 +5,7 @@ class_name DetachedItem
 var gravity: Vector3
 @export var grace_time := 0.5
 var grace_ticks: int
-@export var despawn_time := 300
+@export var despawn_time := 30
 var despawn_ticks: int
 
 @export var damage_type := Vehicle4.DamageType.NONE

@@ -40,9 +40,20 @@ func update_position() -> void:
 func _on_body_entered(body: Variant) -> void:
 	if body == self:
 		return
+	
+	var other_item: PhysicalItem = null
 	if body is PhysicalItem:
+		other_item = body as PhysicalItem
+	
+	if body.get_parent() is PhysicalItem:
+		other_item = body.get_parent() as PhysicalItem
+	
+	if other_item == self:
+		return
+	
+	if other_item and destroys_objects and other_item.destroys_objects:
 		destroy()
-		body.destroy()
+		other_item.destroy()
 		return
 	
 	if body is Vehicle4:

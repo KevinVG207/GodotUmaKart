@@ -64,6 +64,7 @@ col_floor=""
 col_boost=""
 col_bonk=""
 item_draggable=""
+col_object=""
 
 [gui]
 
@@ -220,6 +221,7 @@ locale/translations=PackedStringArray("res://loc/text.en.translation", "res://lo
 3d_physics/layer_5="InvWallPlayer"
 3d_physics/layer_6="InvWallPlayerItems"
 3d_physics/layer_7="InvWallItems"
+3d_physics/layer_8="ObjectsNoPlayerCol"
 3d_physics/layer_9="ClothCol"
 3d_physics/layer_10="FallBoundary"
 

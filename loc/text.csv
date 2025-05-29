@@ -58,8 +58,8 @@ HOME_EXIT_CANCEL,Cancel,キャンセル
 LANG_EN,English,英語
 LANG_JA,Japanese,日本語
 GAME_TITLE,Uma Kart Racer,ウマカート・レーシング
-PRESS_ANY,Press Any Button,Press Any Button
-PRESS_ANY2,"What's the ""Any Button""?",Any Buttonって何のボタン？
+TITLE_PRESS_ANY,Press Any Button,Press Any Button
+TITLE_PRESS_ANY2,"What's the ""Any Button""?",Any Buttonって何のボタン？
 SETTINGS_TAB_GENERAL,General,
 SETTINGS_TAB_GENERAL_DESCR,Change general settings.,
 SETTINGS_TAB_GRAPHICS,Graphics,グラフィック

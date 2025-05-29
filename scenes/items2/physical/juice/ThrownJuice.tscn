@@ -19,6 +19,7 @@ radius = 0.361816
 script = ExtResource("1_5poyj")
 body = NodePath("RigidBody3D")
 area = NodePath("RigidBody3D/Area3D2")
+destroys_objects = false
 metadata/_custom_type_script = "uid://bvaap4p81lp84"
 
 [node name="RigidBody3D" type="RigidBody3D" parent="."]

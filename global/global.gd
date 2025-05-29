@@ -5,7 +5,7 @@ signal goto_settings_screen
 
 signal camera_switched
 
-var default_player_count: int = 12
+var default_player_count: int = 1
 var player_count: int = default_player_count:
 	set(value):
 		player_count = value
@@ -149,6 +149,7 @@ func sample_item(player: Vehicle4) -> PackedScene:
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("SHUTTING DOWN")
 		Network.reset()
 		if save_on_exit:
 			Config.save_config(Config.make_config())

@@ -12,6 +12,7 @@ height = 0.4
 [node name="PlayerCamera" type="Camera3D"]
 transform = Transform3D(-4.37114e-08, 0.173648, -0.984808, 0, 0.984808, 0.173648, 1, 7.59039e-09, -4.30473e-08, 0, 0, 0)
 doppler_tracking = 2
+fov = 37.8493
 script = ExtResource("1_rf2un")
 
 [node name="CameraArea" type="Area3D" parent="."]

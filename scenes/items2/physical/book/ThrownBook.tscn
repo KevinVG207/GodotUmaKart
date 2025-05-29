@@ -15,10 +15,11 @@ size = Vector3(0.917725, 0.721001, 0.93457)
 script = ExtResource("1_cdbfi")
 body = NodePath("ThrownBook")
 area = NodePath("ThrownBook/Area3D")
+despawn_time = 300
 metadata/_custom_type_script = "uid://bvaap4p81lp84"
 
 [node name="ThrownBook" type="RigidBody3D" parent="."]
-collision_layer = 0
+collision_layer = 8
 physics_material_override = SubResource("PhysicsMaterial_8fn56")
 gravity_scale = 0.0
 continuous_cd = true
