@@ -1,24 +1,34 @@
-[gd_scene load_steps=4 format=3 uid="uid://742psss2cgvv"]
+[gd_scene load_steps=5 format=3 uid="uid://742psss2cgvv"]
 
 [ext_resource type="PackedScene" uid="uid://dv6dnfmpqwme7" path="res://assets/objects/cone.blend" id="1_2g1bl"]
+[ext_resource type="Script" uid="uid://3rgv6n46kddv" path="res://scenes/objects/cone.gd" id="1_qqta6"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_jn756"]
-bounce = 0.2
+rough = true
+bounce = 0.3
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_x0ke2"]
 points = PackedVector3Array(-1, -1.25, 0, -0.924041, -1.25, 0.382537, -1, -1.15002, 0, -0.924041, -1.25, -0.382733, -0.807948, -1.25, 0.807752, -0.924041, -1.15002, 0.382537, -0.924041, -1.15002, -0.382733, -0.0755678, 0.985086, 0.0311277, -0.0816368, 0.985086, 0, -0.0755678, 0.985086, -0.0313234, -0.807948, -1.25, -0.807948, -0.382733, -1.25, 0.923845, -0.807948, -1.15002, 0.807752, -0.807948, -1.15002, -0.807948, -0.0577527, 0.985086, 0.0575567, -0.0577527, 0.985086, -0.0577525, -0.382733, -1.25, -0.924041, -0.000195861, -1.25, 1, -0.382733, -1.15002, 0.923845, -0.0313236, 0.985086, 0.075372, -0.382733, -1.15002, -0.924041, -0.0313236, 0.985086, -0.0755677, -1.19209e-07, -1.25, -1, 0.382537, -1.25, 0.923845, -0.000195861, -1.15002, 1, -1.19209e-07, 0.985086, 0.0814409, -1.19209e-07, -1.15002, -1, -1.19209e-07, 0.985086, -0.0816367, 0.382537, -1.25, -0.924041, 0.807752, -1.25, 0.807752, 0.382537, -1.15002, 0.923845, 0.0311276, 0.985086, 0.075372, 0.382537, -1.15002, -0.924041, 0.0311276, 0.985086, -0.0755677, 0.807752, -1.25, -0.807948, 0.923845, -1.25, 0.382537, 0.807752, -1.15002, 0.807752, 0.0575566, 0.985086, 0.0575567, 0.807752, -1.15002, -0.807948, 0.0575566, 0.985086, -0.0577525, 0.923845, -1.25, -0.382733, 1, -1.25, 0, 0.923845, -1.15002, 0.382537, 0.0753719, 0.985086, 0.0311277, 0.923845, -1.15002, -0.382733, 0.0753719, 0.985086, -0.0313234, 1, -1.15002, 0, 0.0814408, 0.985086, 0)
 
-[node name="Cone" type="RigidBody3D"]
+[node name="Cone" type="Node3D"]
+script = ExtResource("1_qqta6")
+
+[node name="Rigidbody" type="RigidBody3D" parent="." groups=["col_object"]]
+unique_name_in_owner = true
 collision_layer = 8
 collision_mask = 15
 mass = 1000.0
 physics_material_override = SubResource("PhysicsMaterial_jn756")
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, 0.5, 0)
+contact_monitor = true
+max_contacts_reported = 10
 
-[node name="cone" parent="." instance=ExtResource("1_2g1bl")]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0, 0)
+[node name="cone" parent="Rigidbody" instance=ExtResource("1_2g1bl")]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, -0.433145, 0)
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0.875, 0)
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Rigidbody" groups=["col_object"]]
+transform = Transform3D(0.7, 0, 0, 0, 0.7, 0, 0, 0, 0.7, 0, 0.441855, 0)
 shape = SubResource("ConvexPolygonShape3D_x0ke2")
+
+[connection signal="body_entered" from="Rigidbody" to="." method="_on_rigidbody_body_entered"]

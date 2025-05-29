@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c7ahqrhul0gpx"]
+[gd_scene load_steps=14 format=3 uid="uid://c7ahqrhul0gpx"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_n65nj"]
 [ext_resource type="ArrayMesh" uid="uid://b6e1rva1cf2ml" path="res://assets/course/tracen-course/_map/tracen-course-map_Plane.res" id="2_m36vl"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_4vv2t"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_xes7l"]
 [ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn" id="6_3upyf"]
+[ext_resource type="PackedScene" uid="uid://742psss2cgvv" path="res://scenes/objects/cone.tscn" id="8_shrl0"]
 [ext_resource type="PackedScene" uid="uid://bbdd3gxmf2uoy" path="res://scenes/items2/usable/juice/GreenJuice.tscn" id="9_uttjj"]
 [ext_resource type="PackedScene" uid="uid://x3aq02gdikle" path="res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn" id="10_wies2"]
 [ext_resource type="PackedScene" uid="uid://bi2og1u3yqr4i" path="res://scenes/items2/usable/book/Book.tscn" id="11_v1cpl"]
@@ -113,6 +114,69 @@ transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 
 
 [node name="ItemPickup23" parent="Objects/Pickups" index="23" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 135.729, 1.43051e-06, -44.8661)
+
+[node name="Cone" parent="Objects" index="1" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 227.634, 1.343, 169.528)
+
+[node name="Cone2" parent="Objects" index="2" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 205.779, 1.343, 168.966)
+
+[node name="Cone3" parent="Objects" index="3" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 216.974, 1.343, 176.717)
+
+[node name="Cone4" parent="Objects" index="4" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 226.088, 1.343, 163.372)
+
+[node name="Cone5" parent="Objects" index="5" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 294.901, 1.33382, 150.388)
+
+[node name="Cone6" parent="Objects" index="6" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 298.347, 1.33347, 150.371)
+
+[node name="Cone7" parent="Objects" index="7" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 301.79, 1.33756, 150.338)
+
+[node name="Cone8" parent="Objects" index="8" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 304.994, 1.31335, 150.25)
+
+[node name="Cone9" parent="Objects" index="9" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 160.116, 2.20029, 111.516)
+
+[node name="Cone10" parent="Objects" index="10" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 163.864, 2.64417, 110.284)
+
+[node name="Cone11" parent="Objects" index="11" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 167.584, 2.92718, 108.631)
+
+[node name="Cone12" parent="Objects" index="12" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.2831, 1.849, 6.36071)
+
+[node name="Cone13" parent="Objects" index="13" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.9445, 1.849, 5.87915)
+
+[node name="Cone14" parent="Objects" index="14" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5592, 1.849, 7.58869)
+
+[node name="Cone15" parent="Objects" index="15" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.2688, 1.849, 7.22752)
+
+[node name="Cone18" parent="Objects" index="16" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.9302, 1.849, 6.81819)
+
+[node name="Cone19" parent="Objects" index="17" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.6412, 1.849, 8.52774)
+
+[node name="Cone20" parent="Objects" index="18" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.2319, 1.849, 10.1891)
+
+[node name="Cone21" parent="Objects" index="19" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.3876, 1.849, 5.15681)
+
+[node name="Cone16" parent="Objects" index="20" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.6781, 1.849, 5.59021)
+
+[node name="Cone17" parent="Objects" index="21" instance=ExtResource("8_shrl0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39.9317, 1.849, 8.88891)
 
 [node name="Checkpoints" parent="." index="3"]
 visible = false

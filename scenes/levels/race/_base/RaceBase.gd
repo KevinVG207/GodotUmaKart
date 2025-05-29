@@ -18,6 +18,8 @@ var removed_player_ids: Array = []
 var starting_order: Array = []
 var spectate: bool = false
 # var timer_tick: int = 0
+var time := 0.0
+var tick := 0
 var race_start_time: float = 0
 var physical_items: Dictionary[String, PhysicalItem] = {}
 var deleted_physical_items: Array[String] = []
@@ -558,6 +560,9 @@ func apply_item_state(dto: DomainRace.ItemStateWrapper):
 
 func _physics_process(_delta: float) -> void:
 	space_state = get_world_3d().direct_space_state
+	time = get_timer_seconds()
+	if state in UPDATE_STATES:
+		tick += 1
 	
 	pause_cooldown = max(0, pause_cooldown - 1)
 
@@ -673,7 +678,7 @@ func set_course_length() -> void:
 	course_length = length
 
 func finish_cpus() -> void:
-	var cur_seconds: float = get_timer_seconds()
+	var cur_seconds: float = time
 	for vehicle: Vehicle4 in players_dict.values():
 		if vehicle.is_player:
 			continue
@@ -999,7 +1004,7 @@ func check_advance(player: Vehicle4) -> bool:
 		
 		if not player.finished and player.lap > lap_count and not player.is_network:
 			# var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
-			var time_after_finish := get_timer_seconds()
+			var time_after_finish := time
 			
 			var finish_plane_normal: Vector3 = checkpoints[0].transform.basis.z
 			var vehicle_vel: Vector3 = player.prev_velocity.total()
