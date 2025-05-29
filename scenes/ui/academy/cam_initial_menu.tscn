@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://d2pr13dqnvme2"]
+[gd_scene load_steps=6 format=3 uid="uid://d2pr13dqnvme2"]
 
+[ext_resource type="Script" uid="uid://byas0yne3h0x" path="res://scenes/ui/academy/cam_initial_menu.gd" id="1_2rgus"]
 [ext_resource type="Texture2D" uid="uid://53pqjniwp6x1" path="res://icon.svg" id="1_kbqtk"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_oj0c4"]
@@ -12,6 +13,10 @@ font_size = 50
 outline_size = 10
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="LabelSettings" id="LabelSettings_2rgus"]
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+
 [node name="CamInitialMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -19,6 +24,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_2rgus")
 
 [node name="Title" type="Label" parent="."]
 layout_mode = 1
@@ -47,9 +53,22 @@ offset_right = 206.0
 offset_bottom = 156.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "PRESS_ANY"
+text = "TITLE_PRESS_ANY"
 label_settings = SubResource("LabelSettings_i61yk")
 horizontal_alignment = 1
+
+[node name="Version" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_top = -23.0
+offset_right = 73.0
+grow_vertical = 0
+text = "VERSION"
+label_settings = SubResource("LabelSettings_2rgus")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1

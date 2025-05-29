@@ -80,7 +80,7 @@ func start_cam_travel(start_cam: MenuCam, end_cam: MenuCam, path_follow: PathFol
 	if wait_fade_end:
 		fade_delay_end = time
 	
-	var tween: Tween = create_tween().set_parallel(true)
+	var tween: Tween = create_tween().set_parallel(true).set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
 	start_cam.opacity = 1.0
 	end_cam.opacity = 0.0
 	cam.rotation = start_cam.rotation
@@ -158,7 +158,7 @@ func _input(event: InputEvent):
 
 
 func _on_ee_timer_timeout():
-	%Menus/CamInitial/SubViewport/CamInitialMenu/PressKey.text = "PRESS_ANY2"
+	%Menus/CamInitial/SubViewport/CamInitialMenu/PressKey.text = "TITLE_PRESS_ANY2"
 
 
 func _on_lobby_back() -> void:
