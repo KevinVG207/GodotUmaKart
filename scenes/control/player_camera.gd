@@ -53,6 +53,8 @@ func do_respawn() -> void:
 func _physics_process(delta: float) -> void:
 	if !target:
 		return
+		
+	#Debug.print([target.grounded, target.input.steer])
 	
 	var prev_glob_pos := global_position
 
@@ -130,7 +132,7 @@ func _physics_process(delta: float) -> void:
 		cur_pos_bw = target.global_transform.translated_local(cur_offset_bw).origin
 
 	var mirror := false
-	if target.input.mirror:
+	if target.input.mirror and !target.world.spectate:
 		transform.origin = cur_pos_bw
 		mirror = true
 	else:

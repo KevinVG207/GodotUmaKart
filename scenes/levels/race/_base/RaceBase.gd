@@ -880,6 +880,7 @@ func join():
 	RPCClient.race_item_state_received.connect(apply_item_state)
 	RPCClient.race_finished_received.connect(_on_race_finished)
 	RPCClient.race_item_transfer_owner_received.connect(_on_item_transfer_owner)
+	RPCClient.ping_received.connect(_on_ping)
 
 	UI.end_scene_change()
 	
@@ -896,6 +897,10 @@ func join():
 		return
 	state = STATE_CAN_READY
 	return
+
+func _on_ping(ping: float) -> void:
+	if player_vehicle:
+		pings[Network.peer_id] = ping
 
 func send_ready():
 	RPCServer.race_send_ready.rpc_id(1)
@@ -1112,6 +1117,7 @@ func update_vehicle_state(data: DomainRace.VehicleDataWrapper) -> void:
 		return
 	
 	Network.our_room.players[user_id] = data.player
+	pings[user_id] = data.player.ping
 	
 	if not user_id in players_dict.keys():
 		var cur_position: Vector3 = Util.to_vector3(data.vehicle_state["pos"])

@@ -43,7 +43,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 27.7424)
 [node name="Pickups" type="Node3D" parent="Objects" index="0"]
 
 [node name="ItemPickup24" parent="Objects/Pickups" index="0" instance=ExtResource("5_xes7l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5289, 1.03925, 22.7562)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5289, -6.37339, 31.1347)
 guaranteed_item = ExtResource("6_3upyf")
 
 [node name="ItemPickup" parent="Objects/Pickups" index="1" instance=ExtResource("5_xes7l")]
@@ -147,42 +147,6 @@ transform = Transform3D(0.984109, -0.0229557, 0.176076, 0, 0.991608, 0.12928, -0
 
 [node name="Cone11" parent="Objects" index="11" instance=ExtResource("8_shrl0")]
 transform = Transform3D(0.984109, -0.0229557, 0.176076, 0, 0.991608, 0.12928, -0.177566, -0.127226, 0.97585, 167.251, 1.8154, 107.963)
-
-[node name="Cone12" parent="Objects" index="12" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.5521, 1.849, 0.386106)
-
-[node name="Cone22" parent="Objects" index="13" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.2831, 1.849, 6.36071)
-
-[node name="Cone23" parent="Objects" index="14" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.8074, 1.849, 6.36071)
-
-[node name="Cone13" parent="Objects" index="15" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.9445, 1.849, 5.87915)
-
-[node name="Cone14" parent="Objects" index="16" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.5592, 1.849, 7.58869)
-
-[node name="Cone15" parent="Objects" index="17" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.2688, 1.849, 7.22752)
-
-[node name="Cone18" parent="Objects" index="18" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.9302, 1.849, 6.81819)
-
-[node name="Cone19" parent="Objects" index="19" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.6412, 1.849, 8.52774)
-
-[node name="Cone20" parent="Objects" index="20" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.2319, 1.849, 10.1891)
-
-[node name="Cone21" parent="Objects" index="21" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42.3876, 1.849, 5.15681)
-
-[node name="Cone16" parent="Objects" index="22" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.6781, 1.849, 5.59021)
-
-[node name="Cone17" parent="Objects" index="23" instance=ExtResource("8_shrl0")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 39.9317, 1.849, 8.88891)
 
 [node name="Checkpoints" parent="." index="3"]
 visible = false
@@ -535,13 +499,13 @@ curve_out = 5.0
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 138.473, 1000, 0)
 
 [node name="ItemPickup" parent="." index="12" instance=ExtResource("5_xes7l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, 0.0757363, 17.0637)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, -7.33691, 25.4422)
 guaranteed_item = ExtResource("9_uttjj")
 
 [node name="ItemPickup2" parent="." index="13" instance=ExtResource("5_xes7l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, 0.0757363, 21.5886)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, -7.33691, 29.9671)
 guaranteed_item = ExtResource("10_wies2")
 
 [node name="ItemPickup3" parent="." index="14" instance=ExtResource("5_xes7l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5767, 0.0757363, 21.5886)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5767, -7.33691, 29.9671)
 guaranteed_item = ExtResource("11_v1cpl")

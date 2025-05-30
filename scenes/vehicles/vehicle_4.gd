@@ -1489,6 +1489,9 @@ func apply_network_drift() -> void:
 			move_multi = 0.0
 	
 	catchup_multi += move_multi
+	
+	if network.prev_state.in_drift:
+		catchup_multi = 1.0
 	#Debug.print("===")
 	#Debug.print(["B", catchup_multi])
 	catchup_multi = move_toward(prev_multi, catchup_multi, delta * 0.2)

@@ -53,8 +53,10 @@ func receive_final_lobby(list: Array[Variant]) -> void:
 	print("FINAL LOBBY RECEIVED")
 	Global.final_lobby = DomainRoom.Lobby.deserialize(list)
 
+signal ping_received(ping: int)
 @rpc("reliable")
-func receive_ping(tick: int) -> void:
+func receive_ping(tick: int, ping: int) -> void:
+	ping_received.emit(ping)
 	if Global.extraPing:
 		await get_tree().create_timer(Global.get_extra_ping() / 1000.0 * 2).timeout
 	RPCServer.send_ping.rpc_id(1, tick)
