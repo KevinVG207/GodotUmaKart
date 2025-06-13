@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://c7ahqrhul0gpx"]
+[gd_scene load_steps=15 format=3 uid="uid://c7ahqrhul0gpx"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_n65nj"]
 [ext_resource type="ArrayMesh" uid="uid://b6e1rva1cf2ml" path="res://assets/course/tracen-course/_map/tracen-course-map_Plane.res" id="2_m36vl"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bbdd3gxmf2uoy" path="res://scenes/items2/usable/juice/GreenJuice.tscn" id="9_uttjj"]
 [ext_resource type="PackedScene" uid="uid://x3aq02gdikle" path="res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn" id="10_wies2"]
 [ext_resource type="PackedScene" uid="uid://bi2og1u3yqr4i" path="res://scenes/items2/usable/book/Book.tscn" id="11_v1cpl"]
+[ext_resource type="PackedScene" uid="uid://l2ol5w4jrnpo" path="res://scenes/items2/usable/donut/Donut.tscn" id="13_shrl0"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_xes7l"]
 resource_local_to_scene = true
@@ -509,3 +510,7 @@ guaranteed_item = ExtResource("10_wies2")
 [node name="ItemPickup3" parent="." index="14" instance=ExtResource("5_xes7l")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5767, -7.33691, 29.9671)
 guaranteed_item = ExtResource("11_v1cpl")
+
+[node name="ItemPickup4" parent="." index="15" instance=ExtResource("5_xes7l")]
+transform = Transform3D(-0.172273, 0, -0.985049, 0, 1, 0, 0.985049, 0, -0.172273, 47.4262, -0.00606585, 0.869619)
+guaranteed_item = ExtResource("13_shrl0")

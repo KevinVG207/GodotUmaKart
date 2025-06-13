@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://ds7es8al63u4p"]
+[gd_scene load_steps=43 format=3 uid="uid://ds7es8al63u4p"]
 
 [ext_resource type="Script" uid="uid://cam4qnh4qwq5x" path="res://scenes/vehicles/vehicle_4.gd" id="1_p7mde"]
 [ext_resource type="Texture2D" uid="uid://wg22vos12fxt" path="res://assets/vehicles/_default-icon.png" id="2_r88gu"]
@@ -608,6 +608,12 @@ _data = {
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_0tp0h"]
 animation = &"Chargeup"
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_f8g0e"]
+animation = &"squish"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_sy3d6"]
+animation = &"scale"
+
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_x7a0q"]
 animation = &"RESET"
 
@@ -615,18 +621,30 @@ animation = &"RESET"
 
 [sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_x7a0q"]
 
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_p1spk"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_sy3d6"]
+
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_0tp0h"]
-graph_offset = Vector2(-354.432, -7.93605)
+graph_offset = Vector2(62.2422, -249.465)
 nodes/Animation/node = SubResource("AnimationNodeAnimation_x7a0q")
 nodes/Animation/position = Vector2(-40, 40)
 "nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_0tp0h")
 "nodes/Animation 2/position" = Vector2(-200, 240)
+"nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_f8g0e")
+"nodes/Animation 3/position" = Vector2(180, -200)
+"nodes/Animation 4/node" = SubResource("AnimationNodeAnimation_sy3d6")
+"nodes/Animation 4/position" = Vector2(580, -280)
 nodes/Chargeup/node = SubResource("AnimationNodeBlend2_f8g0e")
 nodes/Chargeup/position = Vector2(180, 0)
 nodes/ChargeupSpeed/node = SubResource("AnimationNodeTimeScale_x7a0q")
 nodes/ChargeupSpeed/position = Vector2(-20, 240)
-nodes/output/position = Vector2(420, 20)
-node_connections = [&"Chargeup", 0, &"Animation", &"Chargeup", 1, &"ChargeupSpeed", &"ChargeupSpeed", 0, &"Animation 2", &"output", 0, &"Chargeup"]
+nodes/Scale/node = SubResource("AnimationNodeBlend2_p1spk")
+nodes/Scale/position = Vector2(798.289, -147.09)
+nodes/Squish/node = SubResource("AnimationNodeBlend2_sy3d6")
+nodes/Squish/position = Vector2(440, -100)
+nodes/output/position = Vector2(1040, 0)
+node_connections = [&"Chargeup", 0, &"Animation", &"Chargeup", 1, &"ChargeupSpeed", &"ChargeupSpeed", 0, &"Animation 2", &"Scale", 0, &"Squish", &"Scale", 1, &"Animation 4", &"Squish", 0, &"Chargeup", &"Squish", 1, &"Animation 3", &"output", 0, &"Scale"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_bleu3"]
 animation = &"dmg_spin"
@@ -645,7 +663,7 @@ states/Start/position = Vector2(280, 93)
 states/dmg_spin/node = SubResource("AnimationNodeAnimation_bleu3")
 states/dmg_spin/position = Vector2(551, 208)
 transitions = ["Start", "Rest", SubResource("AnimationNodeStateMachineTransition_x7a0q"), "dmg_spin", "Rest", SubResource("AnimationNodeStateMachineTransition_0tp0h")]
-graph_offset = Vector2(-19, -37)
+graph_offset = Vector2(-20, -116)
 
 [sub_resource type="Animation" id="Animation_x7a0q"]
 resource_name = "Chargeup"
@@ -675,6 +693,30 @@ tracks/0/keys = {
 "points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0)
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_oqrol"]
 resource_name = "dmg_spin"
@@ -690,16 +732,61 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 1)
 }
 
+[sub_resource type="Animation" id="Animation_f8g0e"]
+resource_name = "squish"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 0.35, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, -0.3, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_sy3d6"]
+resource_name = "scale"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(2, 2, 2)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_yrkfx"]
 _data = {
 &"Chargeup": SubResource("Animation_x7a0q"),
 &"RESET": SubResource("Animation_8ksb3"),
-&"dmg_spin": SubResource("Animation_oqrol")
+&"dmg_spin": SubResource("Animation_oqrol"),
+&"scale": SubResource("Animation_sy3d6"),
+&"squish": SubResource("Animation_f8g0e")
 }
 
 [node name="Vehicle4" type="RigidBody3D" groups=["vehicle"]]
 process_priority = 1000
 process_physics_priority = 1000
+transform = Transform3D(0.995004, 0, 0.0998334, 0, 1, 0, -0.0998334, 0, 0.995004, 0, 0, 0)
 collision_layer = 2
 collision_mask = 49
 mass = 10.0
@@ -950,8 +1037,10 @@ unique_name_in_owner = true
 root_node = NodePath("%Visual")
 tree_root = SubResource("AnimationNodeStateMachine_nguqk")
 anim_player = NodePath("../VehicleAnimationPlayer")
-parameters/Rest/Chargeup/blend_amount = 0.0
-parameters/Rest/ChargeupSpeed/scale = 1.0
+parameters/Rest/Chargeup/blend_amount = false
+parameters/Rest/ChargeupSpeed/scale = false
+parameters/Rest/Scale/blend_amount = 0
+parameters/Rest/Squish/blend_amount = 0.001
 script = ExtResource("4_gc5eh")
 
 [node name="VehicleAnimationPlayer" type="AnimationPlayer" parent="."]
@@ -1000,6 +1089,11 @@ unique_name_in_owner = true
 process_callback = 0
 one_shot = true
 
+[node name="SquishTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+process_callback = 0
+one_shot = true
+
 [node name="CPULogic" type="Node" parent="." node_paths=PackedStringArray("parent")]
 unique_name_in_owner = true
 script = ExtResource("12_u6ron")
@@ -1014,5 +1108,6 @@ script = ExtResource("14_284x6")
 [connection signal="timeout" from="ItemRouletteTimer" to="." method="_on_item_roulette_timer_timeout"]
 [connection signal="timeout" from="FailsafeTimer" to="." method="_on_failsafe_timer_timeout"]
 [connection signal="timeout" from="DamageTimer" to="." method="_on_damage_timer_timeout"]
+[connection signal="timeout" from="SquishTimer" to="." method="_on_squish_timer_timeout"]
 
 [editable path="Visual/Character/Body"]

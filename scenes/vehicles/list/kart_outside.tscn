@@ -819,9 +819,6 @@ drift_turn_multiplier = 1.5
 [node name="Debug" parent="." index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.506384, 0)
 
-[node name="Visual" parent="." index="1"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0035522, 0)
-
 [node name="BlobShadow" parent="Visual" index="6"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.323508, 0)
 size = Vector3(4.5, 8, 4)

@@ -1,5 +1,5 @@
 extends Node3D
 
 
-func _ready():
-	$PlayerCamera.target = $Vehicle
+#func _ready():
+	#$PlayerCamera.target = $Vehicle

@@ -47,13 +47,8 @@ var items: Array[PackedScene] = [
 	load("res://scenes/items2/usable/book/Book.tscn"),
 	load("res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn"),
 	load("res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn"),
-	load("res://scenes/items2/usable/juice/GreenJuice.tscn")
-	#load("res://scenes/items/1carrot.tscn"),
-	#preload("res://scenes/items/2carrots.tscn"),
-	#load("res://scenes/items/3carrots.tscn"),
-	#load("res://scenes/items/GreenBean.tscn"),
-	#load("res://scenes/items/RedBean.tscn"),
-	#load("res://scenes/items/Book.tscn"),
+	load("res://scenes/items2/usable/juice/GreenJuice.tscn"),
+	load("res://scenes/items2/usable/donut/Donut.tscn")
 	#load("res://scenes/items/RunningShoes/running_shoes.tscn")
 ]
 
@@ -68,13 +63,8 @@ var physical_items: Dictionary[String, PackedScene] = {
 	"ThrownHorseShoeRed": load("res://scenes/items2/physical/horseshoe_red/ThrownHorseShoeRed.tscn"),
 	"DraggedJuice": load("res://scenes/items2/physical/juice/DraggedJuice.tscn"),
 	"ThrownJuice": load("res://scenes/items2/physical/juice/ThrownJuice.tscn"),
-	"JuiceSpill": load("res://scenes/items2/physical/juice/JuiceSpill.tscn")
-	#"green_bean": load("res://scenes/items/_physical/DraggedGreenBean.tscn"),
-	#"thrown_green_bean": load("res://scenes/items/_physical/ThrownGreenBean.tscn"),
-	#"book": load("res://scenes/items/_physical/DraggedBook.tscn"),
-	#"thrown_book": load("res://scenes/items/_physical/ThrownBook.tscn"),
-	#"red_bean": load("res://scenes/items/_physical/DraggedRedBean.tscn"),
-	#"thrown_red_bean": load("res://scenes/items/_physical/ThrownRedBean.tscn")
+	"JuiceSpill": load("res://scenes/items2/physical/juice/JuiceSpill.tscn"),
+	"DonutLogic": load("res://scenes/items2/physical/donut/DonutLogic.tscn")
 }
 
 var item_tex: Array = []

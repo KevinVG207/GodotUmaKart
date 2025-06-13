@@ -32,6 +32,7 @@ static var max_degrees_change_for_sleep := 0.5
 
 @export var base_max_speed: float = 25
 var max_speed := base_max_speed
+var item_speed_multi: float = 1.0
 @export var base_initial_accel: float = 10
 @export var base_accel_exponent: float = 10
 var initial_accel := base_initial_accel
@@ -89,8 +90,8 @@ var prev_velocity := Velocity.new()
 var velocity := Velocity.new()
 
 class Velocity:
-	var prop_vel: Vector3
-	var rest_vel: Vector3
+	var prop_vel: Vector3 = Vector3.ZERO
+	var rest_vel: Vector3 = Vector3.ZERO
 
 	func total() -> Vector3:
 		return prop_vel + rest_vel
@@ -119,6 +120,7 @@ class VehicleInput:
 	var item := false
 	var tilt := 0.0
 	var mirror := false
+	var rewind := false
 
 	func to_dict() -> Dictionary:
 		return {
@@ -128,7 +130,8 @@ class VehicleInput:
 			"trick": trick,
 			"item": item,
 			"tilt": tilt,
-			"mirror": mirror
+			"mirror": mirror,
+			"rewind": rewind
 		}
 	
 	static func from_dict(dict: Dictionary) -> VehicleInput:
@@ -140,8 +143,8 @@ class VehicleInput:
 		out.item = dict.item
 		out.tilt = dict.tilt
 		out.mirror = dict.mirror
+		out.rewind = dict.rewind
 		return out
-		
 
 var prev_contacts := {}
 var contacts := {}
@@ -284,7 +287,7 @@ var turn_speed := 0.0
 var turn_accel := base_turn_accel
 
 static var replay_transparency := 0.75
-var standard_colliders: Array = []
+var standard_colliders: Array[CollisionShape3D] = []
 
 static var trick_safezone_frames := 30
 var trick_input_frames := 0
@@ -297,7 +300,8 @@ enum DamageType {
 	NONE,
 	SPIN,
 	TUMBLE,
-	EXPLODE
+	EXPLODE,
+	SQUISH
 }
 
 var cur_damage_type := DamageType.NONE
@@ -329,6 +333,21 @@ static var respawn_boost_safezone_seconds: float = 0.1
 var wall_cooldown: int = 0
 var catchup_multi: float = 1.0
 
+var in_rewind: bool = false
+@onready var min_rewind_frames: int = roundi(1.0 * world.PHYSICS_TICKS_PER_SECOND)
+var rewind_start_frame: int = 0
+var rewind_frame: int = 0
+var exited_rewind: bool = false
+var rewind_data: Array[RewindData] = []
+@onready var max_rewind_data: int = roundi(60.0 * world.PHYSICS_TICKS_PER_SECOND)
+
+class RewindData:
+	var pos: Vector3
+	var rot: Quaternion
+	func _init(p: Vector3, r: Quaternion) -> void:
+		pos = p
+		rot = r
+
 func _ready() -> void:
 	# UI.show_race_ui()
 	custom_integrator = true
@@ -342,7 +361,6 @@ func _ready() -> void:
 	respawn_boost_safezone_frames = int(respawn_boost_safezone_seconds * Engine.physics_ticks_per_second)
 
 	max_hop_frames = int(hop_time * Engine.physics_ticks_per_second)
-
 
 	if is_replay:
 		recursive_set_transparency(visual_node)
@@ -458,43 +476,126 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	visual_delta += delta
 
 	prev_in_drift = in_drift
+	
+	if Input.is_action_just_pressed("_F2"):
+		damage(DamageType.SQUISH)
 
 	if is_replay:
 		return
+		
+	update_progress()
+	
+	update_rewind_state()
+	handle_rewind()
 
 	before_update.emit(delta)
-
-	update_progress()
-	handle_sleep()
-	handle_failsafe_timer()
+	
+	if !in_rewind:
+		handle_sleep()
+		handle_failsafe_timer()
 
 	if tick % 3 == 0:
 		visual_tick()
 		visual_delta = 0.0
 
-	respawn_if_too_low()
-
-	detect_collisions()
+	if !in_rewind:
+		respawn_if_too_low()
+		detect_collisions()
+		
 	determine_gravity()
 
-	handle_item()
+	if !in_rewind:
+		handle_item()
 
-	handle_steer()
+		handle_steer()
 
-	handle_countdown_gauge()
+		handle_countdown_gauge()
 
-	apply_network_drift()
+		apply_network_drift()
 
 	apply_velocities()
 
 	apply_rotations()
 
-	apply_drift_tilt()
+	if !in_rewind:
+		apply_drift_tilt()
 
 	prev_transform = transform
 
 	after_update.emit(delta)
 	return
+
+func update_rewind_state() -> void:
+	exited_rewind = false
+	
+	if is_cpu or is_network:
+		in_rewind = false
+		return
+	
+	if !in_rewind:
+		rewind_data.append(RewindData.new(global_position, global_basis.get_rotation_quaternion()))
+		if rewind_data.size() >= max_rewind_data:
+			rewind_data.pop_front()
+		#print("REWIND DATA SIZE: ", rewind_data.size())
+	
+	if !started or respawn_stage != RespawnStage.NONE:
+		rewind_data.clear()
+	
+	if !in_rewind and !input.rewind:
+		return
+	
+	if !started:
+		in_rewind = false
+		return
+
+	#if is_player:
+		#print(min_rewind_frames, " ", rewind_start_frame - rewind_frame)
+	
+	if in_rewind and ((!input.rewind and rewind_start_frame - rewind_frame > min_rewind_frames) or rewind_frame <= 0):
+		in_rewind = false
+		exited_rewind = true
+		rewind_data.resize(rewind_frame)
+		return
+	
+	if in_rewind and input.rewind:
+		in_rewind = true
+		return
+	
+	if !in_rewind and input.rewind:
+		in_rewind = can_start_rewind()
+		if in_rewind:
+			# start rewind.
+			rewind_frame = rewind_data.size() - 1
+			rewind_start_frame = rewind_frame
+
+func can_start_rewind() -> bool:
+	if rewind_data.size() < min_rewind_frames:
+		return false
+	return true
+
+func handle_rewind() -> void:
+	if !started:
+		return
+	
+	if exited_rewind:
+		velocity = Velocity.new()
+		cur_speed = 0.0
+		if input.accel:
+			cur_speed = max_speed * 0.5
+		global_position += transform.basis.y.normalized() * 0.1
+		return
+	
+	if !in_rewind:
+		return
+	
+	rewind_frame = maxi(rewind_frame - 2, 0)
+	input.steer = 0.0
+	input.brake = false
+	var state: RewindData = rewind_data[rewind_frame]
+	print("REWINDING")
+	Debug.print([state.pos, rewind_frame])
+	global_position = state.pos
+	global_transform.basis = Basis(state.rot)
 
 func update_progress() -> void:
 	prev_progress = cur_progress
@@ -585,6 +686,7 @@ func set_inputs() -> void:
 	input.trick = Input.is_action_pressed("trick")
 	input.item = Input.is_action_pressed("item")
 	input.tilt = Input.get_axis("down", "up")
+	input.rewind = Input.is_action_pressed("rewind")
 	return
 
 
@@ -639,6 +741,7 @@ func determine_max_speed_and_accel() -> void:
 		return
 	max_speed = base_max_speed
 	max_speed *= cpu_logic.speed_multi
+	max_speed *= item_speed_multi
 	initial_accel = base_initial_accel
 	accel_exponent = base_accel_exponent
 	grip = base_grip # * drift_grip
@@ -646,6 +749,7 @@ func determine_max_speed_and_accel() -> void:
 	apply_water_grip()
 	apply_boost_speed_multi()
 	apply_turn_speed_reduction()
+	apply_damage_speed_reduction()
 	return
 
 func apply_offroad_speed_multi() -> void:
@@ -653,6 +757,8 @@ func apply_offroad_speed_multi() -> void:
 		return
 	
 	if cur_boost_type != BoostType.NONE:
+		return
+	if cur_damage_type == DamageType.SQUISH:
 		return
 	
 	var speed_multi := 1.0
@@ -681,6 +787,12 @@ func apply_turn_speed_reduction() -> void:
 	max_speed -= abs(turn_speed) * steer_speed_decrease
 	return
 
+func apply_damage_speed_reduction() -> void:
+	if cur_damage_type == DamageType.SQUISH:
+		max_speed *= 0.5
+	elif !%SquishTimer.is_stopped():
+		max_speed *= 0.8
+
 func determine_floor_normal() -> void:
 	if !ground_contacts:
 		return
@@ -706,8 +818,9 @@ func raycast_below() -> void:
 	below_normals = []
 
 	for loc_start_pos: Vector3 in floor_check_grid:
+		loc_start_pos *= vani.scale
 		var start_pos := to_global(loc_start_pos)
-		var end_pos := start_pos + (transform.basis.y.normalized() * -floor_check_distance)
+		var end_pos := start_pos + (transform.basis.y.normalized() * -floor_check_distance * vani.scale)
 		# TODO: Revert
 		var result := Util.raycast_for_group(world.space_state, start_pos, end_pos, "col_floor", [self])
 		if result:
@@ -771,6 +884,9 @@ func apply_push(force: Vector3, vehicle: Vehicle4) -> void:
 	# 	return
 	
 	if vehicle in collided_with:
+		return
+	
+	if vehicle.do_damage_type != do_damage_type:
 		return
 	
 	collided_with[vehicle] = roundi(0.05 * Engine.physics_ticks_per_second)
@@ -927,6 +1043,10 @@ func handle_steer() -> void:
 func apply_velocities() -> void:
 	prev_velocity = velocity
 	velocity = Velocity.new()
+	
+	if in_rewind:
+		return
+	
 	velocity.prop_vel = prev_velocity.prop_vel
 	velocity.rest_vel = prev_velocity.rest_vel
 
@@ -1673,14 +1793,25 @@ func damage(damage_type: DamageType) -> void:
 
 	if cur_damage_type != DamageType.NONE:
 		return
-
-	cur_damage_type = damage_type
-	stop_boost()
+	
+	if do_damage_type != DamageType.NONE:
+		return
 	
 	match damage_type:
 		DamageType.SPIN:
+			cur_damage_type = damage_type
 			%DamageTimer.start(1.5)
 			vani.animation = vani.Type.dmg_spin
+		DamageType.SQUISH:
+			if !%SquishTimer.is_stopped():
+				return
+			cur_damage_type = DamageType.SQUISH
+			%DamageTimer.start(0.5)
+			%SquishTimer.start(5.0)
+			var tween := create_tween()
+			tween.tween_property(vani, "squish_amount", 1.0, 0.1).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUART)
+	
+	stop_boost()
 
 func hide_kart() -> void:
 	%VehicleBody.visible = false
@@ -1718,6 +1849,11 @@ func water_exited(area: Area3D) -> void:
 
 func _on_damage_timer_timeout() -> void:
 	cur_damage_type = DamageType.NONE
+
+func _on_squish_timer_timeout() -> void:
+	var tween := create_tween()
+	tween.tween_property(vani, "squish_amount", 0.0, 0.25).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+
 
 func _on_boost_timer_timeout() -> void:
 	stop_boost()

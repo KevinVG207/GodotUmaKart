@@ -53,7 +53,9 @@ func do_respawn() -> void:
 func _physics_process(delta: float) -> void:
 	if !target:
 		return
-		
+	
+	#Debug.print(target.cur_damage_type)
+	
 	#Debug.print([target.grounded, target.input.steer])
 	
 	var prev_glob_pos := global_position
@@ -75,6 +77,10 @@ func _physics_process(delta: float) -> void:
 		cur_offset = offset_finished
 		cur_lerp_speed = lerp_speed_finished
 		cur_look_offset = look_offset_finished
+	
+	var zoom: float = maxf(1.0, remap(target.visual_node.scale.z, 1.0, 4.0, 1.0, 2.0))
+	cur_offset.z *= zoom
+	cur_offset_bw.z *= zoom
 
 	var prev_pos := cur_pos
 	var prev_pos_bw := cur_pos_bw
