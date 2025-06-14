@@ -15,6 +15,21 @@ var frame: int = 0
 func _ready() -> void:
 	owned_by.do_damage_type = Vehicle4.DamageType.SQUISH
 	owned_by.item_speed_multi = 1.2
+	
+	var latency: float = 0.0
+
+	if owned_by != world.player_vehicle and owned_by.is_network == true:
+		# Spawned by a network player; apply latency
+		if owned_by.user_id in world.pings:
+			latency += world.pings[owned_by.user_id] * 0.001
+		if world.player_vehicle.user_id in world.pings:
+			latency += world.pings[world.player_vehicle.user_id] * 0.001
+	
+	latency = min(latency, time_active / 2.0)
+
+	time_active -= latency
+	Debug.print(latency)
+
 	big_frames = roundi(world.PHYSICS_TICKS_PER_SECOND * time_active)
 	total_frames = big_frames + roundi(world.PHYSICS_TICKS_PER_SECOND * end_anim_time)
 

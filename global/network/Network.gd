@@ -1,8 +1,8 @@
 extends Node
 
 #const SERVER_IP := "localhost"
-const SERVER_IP := "game.umapyoi.net"
-const SERVER_PORT := 31500
+var SERVER_IP := "game.umapyoi.net"
+var SERVER_PORT := 31500
 var peer_id: int
 var our_username: String = ""
 var our_player: DomainPlayer.Player
@@ -12,7 +12,14 @@ signal connection_success
 signal connection_failed
 signal initialization_success
 
+var args: Dictionary[String, String] = {}
+
 func _ready() -> void:
+	if "ip" in Global.args:
+		SERVER_IP = Global.args["ip"]
+	if "port" in Global.args:
+		SERVER_PORT = int(Global.args["port"])
+	
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)

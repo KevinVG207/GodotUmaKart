@@ -5,6 +5,8 @@ signal goto_settings_screen
 
 signal camera_switched
 
+var args: Dictionary[String, String] = {}
+
 var default_player_count: int = 12
 var player_count: int = default_player_count:
 	set(value):
@@ -86,6 +88,13 @@ func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
 
 func _ready() -> void:
+	for arg in OS.get_cmdline_args():
+		if arg.contains("="):
+			var key_value = arg.split("=")
+			args[key_value[0].trim_prefix("--")] = key_value[1]
+		else:
+			args[arg.trim_prefix("--")] = ""
+	
 	RPCClient.error_received.connect(_on_network_error)
 	
 func _process(_delta: float) -> void:

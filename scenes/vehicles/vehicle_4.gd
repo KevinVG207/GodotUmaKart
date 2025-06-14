@@ -477,8 +477,8 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 
 	prev_in_drift = in_drift
 	
-	if Input.is_action_just_pressed("_F2"):
-		damage(DamageType.SQUISH)
+	# if Input.is_action_just_pressed("_F2"):
+	# 	damage(DamageType.SQUISH)
 
 	if is_replay:
 		return
@@ -1051,7 +1051,7 @@ func apply_velocities() -> void:
 	velocity.rest_vel = prev_velocity.rest_vel
 
 	collide_vehicles()
-	collide_walls()
+	# collide_walls()
 
 	if !is_network:
 		bounce_walls()
@@ -1807,7 +1807,7 @@ func damage(damage_type: DamageType) -> void:
 				return
 			cur_damage_type = DamageType.SQUISH
 			%DamageTimer.start(0.5)
-			%SquishTimer.start(5.0)
+			%SquishTimer.start(3.0)
 			var tween := create_tween()
 			tween.tween_property(vani, "squish_amount", 1.0, 0.1).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUART)
 	

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://ceev2vld25vjq" path="res://assets/items/donut/donut.png" id="2_gsefr"]
 
 [sub_resource type="Curve" id="Curve_13632"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.244275, 0), 0.0, 0.0, 0, 0, Vector2(0.583969, 0.5112), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.244275, 0), 0.0, 0.0, 0, 0, Vector2(0.572881, 0.200967), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [node name="Donut" type="Node"]
