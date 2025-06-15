@@ -9,7 +9,7 @@
 _data = [Vector2(0, 1), 0.0, -2.10057, 0, 0, Vector2(1, 0), -0.0526204, 0.0, 0, 0]
 point_count = 2
 
-[sub_resource type="CurveTexture" id="CurveTexture_c6lmt"]
+[sub_resource type="CurveTexture" id="CurveTexture_fcitl"]
 curve = SubResource("Curve_slbu8")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_oscfy"]
@@ -22,9 +22,9 @@ spread = 90.0
 initial_velocity_min = 0.5
 initial_velocity_max = 1.5
 gravity = Vector3(0, 0, 0)
-scale_curve = SubResource("CurveTexture_c6lmt")
+scale_curve = SubResource("CurveTexture_fcitl")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ugt0v"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vfpqb"]
 transparency = 1
 shading_mode = 0
 diffuse_mode = 3
@@ -38,7 +38,7 @@ particles_anim_v_frames = 1
 particles_anim_loop = false
 
 [sub_resource type="QuadMesh" id="QuadMesh_7v8tw"]
-material = SubResource("StandardMaterial3D_ugt0v")
+material = SubResource("StandardMaterial3D_vfpqb")
 size = Vector2(4, 4)
 
 [sub_resource type="Animation" id="Animation_ksinb"]
@@ -314,7 +314,7 @@ layers = 2
 [node name="Ani" type="AnimationPlayer" parent="GateContainer/gate"]
 unique_name_in_owner = true
 libraries = {
-"": SubResource("AnimationLibrary_crjtl")
+&"": SubResource("AnimationLibrary_crjtl")
 }
 autoplay = "invisible"
 

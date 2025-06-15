@@ -45,7 +45,7 @@ func set_inputs(delta: float) -> void:
 	# 	return
 	
 	if not next_target_1:
-		return
+		new_target(Util.get_path_point_ahead_of_player(parent))
 	
 	if not next_target_2:
 		new_target(next_target_1)
@@ -73,7 +73,7 @@ func set_inputs(delta: float) -> void:
 	# if parent.is_being_controlled:
 	# 	parent.input.brake = false
 
-	if !parent.is_network:
+	if !parent.is_network and !parent.is_controlled:
 		try_use_item()
 	
 	return
@@ -267,6 +267,9 @@ func steer() -> void:
 			try_release_drift()
 		elif parent.in_drift and !is_behind:
 			parent.input.steer = parent.network.prev_input.steer
+	
+	if parent.is_controlled:
+		parent.input.brake = false
 
 
 func hold_drift(angle: float) -> void:
@@ -296,7 +299,10 @@ func get_max_angle_to_target() -> float:
 	var multi := 0.25
 	if parent.is_network:
 		multi = 0.1
-	return next_target_1.radius * multi / distance_to
+	var angle := next_target_1.radius * multi / distance_to
+	#if parent.is_controlled:
+		#angle *= 0.5
+	return angle
 
 
 func try_use_item() -> void:

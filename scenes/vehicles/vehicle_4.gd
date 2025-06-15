@@ -32,7 +32,6 @@ static var max_degrees_change_for_sleep := 0.5
 
 @export var base_max_speed: float = 25
 var max_speed := base_max_speed
-var item_speed_multi: float = 1.0
 @export var base_initial_accel: float = 10
 @export var base_accel_exponent: float = 10
 var initial_accel := base_initial_accel
@@ -341,6 +340,8 @@ var exited_rewind: bool = false
 var rewind_data: Array[RewindData] = []
 @onready var max_rewind_data: int = roundi(60.0 * world.PHYSICS_TICKS_PER_SECOND)
 
+var active_items: Array[PhysicalItem] = []
+
 class RewindData:
 	var pos: Vector3
 	var rot: Quaternion
@@ -487,6 +488,9 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 	
 	update_rewind_state()
 	handle_rewind()
+	
+	set_control()
+	set_do_damage()
 
 	before_update.emit(delta)
 	
@@ -524,6 +528,25 @@ func _integrate_forces(new_physics_state: PhysicsDirectBodyState3D) -> void:
 
 	after_update.emit(delta)
 	return
+
+func set_control() -> void:
+	if is_network:
+		return
+	if is_player:
+		is_controlled = false
+		is_cpu = false
+	for item: PhysicalItem in active_items:
+		if item.control_vehicle:
+			is_controlled = true
+			is_cpu = true
+			break
+
+func set_do_damage() -> void:
+	do_damage_type = DamageType.NONE
+	for item: PhysicalItem in active_items:
+		if item.do_damage_type != DamageType.NONE:
+			do_damage_type = item.do_damage_type
+			break
 
 func update_rewind_state() -> void:
 	exited_rewind = false
@@ -718,6 +741,9 @@ func determine_gravity() -> void:
 	var zones := gravity_zones.values()
 	zones.sort_custom(func(a: GravityZone.GravityZoneParams, b: GravityZone.GravityZoneParams) -> bool: return a.priority > b.priority)
 	gravity = zones[0].direction * world.base_gravity.length() * zones[0].multiplier
+	
+	for item: PhysicalItem in active_items:
+		gravity *= item.gravity_multi
 
 func determine_grounded() -> void:
 	prev_grounded = grounded
@@ -741,8 +767,12 @@ func determine_max_speed_and_accel() -> void:
 		return
 	max_speed = base_max_speed
 	max_speed *= cpu_logic.speed_multi
-	max_speed *= item_speed_multi
+	for item: PhysicalItem in active_items:
+		max_speed *= item.speed_multi
 	initial_accel = base_initial_accel
+	for item: PhysicalItem in active_items:
+		initial_accel *= item.accel_multi
+	
 	accel_exponent = base_accel_exponent
 	grip = base_grip # * drift_grip
 	apply_offroad_speed_multi()
@@ -758,8 +788,10 @@ func apply_offroad_speed_multi() -> void:
 	
 	if cur_boost_type != BoostType.NONE:
 		return
-	if cur_damage_type == DamageType.SQUISH:
-		return
+	
+	for item: PhysicalItem in active_items:
+		if item.ignore_offroad:
+			return
 	
 	var speed_multi := 1.0
 	for contact: OffroadContact in contacts[ContactType.OFFROAD]:
@@ -886,7 +918,7 @@ func apply_push(force: Vector3, vehicle: Vehicle4) -> void:
 	if vehicle in collided_with:
 		return
 	
-	if vehicle.do_damage_type != do_damage_type:
+	if vehicle.do_damage_type == DamageType.SQUISH or do_damage_type == DamageType.SQUISH:
 		return
 	
 	collided_with[vehicle] = roundi(0.05 * Engine.physics_ticks_per_second)
@@ -1003,6 +1035,13 @@ func build_contacts() -> void:
 func apply_boost(boost_type: BoostType) -> void:
 	if boost_type < cur_boost_type:
 		return
+	
+	for item: PhysicalItem in active_items:
+		if item.ignore_boost:
+			cur_boost_type = BoostType.NONE
+			boost_timer.start(0)
+			return
+	
 	cur_boost_type = boost_type
 	boost_timer.start(boosts[boost_type].length)
 
@@ -1014,6 +1053,8 @@ func handle_steer() -> void:
 	angular_velocity = Vector3.ZERO
 	steering = 0.0
 	turn_accel = base_turn_accel
+	for item: PhysicalItem in active_items:
+		turn_accel *= item.turn_multi
 
 	# if respawn_stage:
 	# 	return
@@ -1024,6 +1065,8 @@ func handle_steer() -> void:
 
 	max_turn_speed = base_max_turn_speed
 	max_turn_speed *= cpu_logic.turn_speed_multi
+	for item: PhysicalItem in active_items:
+		max_turn_speed *= item.turn_multi
 	max_turn_speed = 0.5/(2*max(0.001, cur_speed)+1) + max_turn_speed
 	var turn_target := steering * max_turn_speed * wall_turn_multi
 	
@@ -1033,6 +1076,9 @@ func handle_steer() -> void:
 		turn_accel *= multi
 
 	turn_speed = move_toward(turn_speed, turn_target, turn_accel * delta)
+	
+	if is_controlled:
+		turn_speed = turn_target
 
 	var multi := 1.0 if grounded else air_turn_multiplier
 
@@ -1708,6 +1754,8 @@ func set_finished(_finish_time: float) -> void:
 	if is_player:
 		UI.race_ui.hide_roulette()
 		UI.race_ui.finished()
+	
+	cpu_logic.new_target(Util.get_path_point_ahead_of_player(self))
 
 
 func get_item(guaranteed_item: PackedScene = null) -> void:
@@ -1814,16 +1862,33 @@ func damage(damage_type: DamageType) -> void:
 	stop_boost()
 
 func hide_kart() -> void:
-	%VehicleBody.visible = false
-	%Wheels.visible = false
-	%DriftParticles.visible = false
-	%ExhaustParticles.visible = false
+	#%VehicleBody.visible = false
+	#%Wheels.visible = false
+	#%DriftParticles.visible = false
+	#%ExhaustParticles.visible = false
+	for node in visual_node.get_children():
+		if not node is Node3D:
+			continue
+		var node3d := node as Node3D
+		node3d.visible = false
+		if node is Decal:
+			var decal := node as Decal
+			decal.albedo_mix = 0.0
+	%Character.visible = true
+	audio.engine_sound_enabled = false
+	cani.play("running_shoes_run")
 
 func show_kart() -> void:
-	%VehicleBody.visible = true
-	%Wheels.visible = true
-	%DriftParticles.visible = true
-	%ExhaustParticles.visible = true
+	for node in visual_node.get_children():
+		if not node is Node3D:
+			continue
+		var node3d := node as Node3D
+		node3d.visible = true
+		if node is Decal:
+			var decal := node as Decal
+			decal.albedo_mix = 1.0
+	cani.play("sit")
+	audio.engine_sound_enabled = true
 
 func add_targeted(object: Node3D, tex: CompressedTexture2D) -> void:
 	if not object in targeted_by_dict:

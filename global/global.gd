@@ -50,8 +50,8 @@ var items: Array[PackedScene] = [
 	load("res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn"),
 	load("res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn"),
 	load("res://scenes/items2/usable/juice/GreenJuice.tscn"),
-	load("res://scenes/items2/usable/donut/Donut.tscn")
-	#load("res://scenes/items/RunningShoes/running_shoes.tscn")
+	load("res://scenes/items2/usable/donut/Donut.tscn"),
+	load("res://scenes/items2/usable/shoes/Shoes.tscn")
 ]
 
 var item_distributions: Dictionary[PackedScene, Curve] = {}
@@ -66,7 +66,8 @@ var physical_items: Dictionary[String, PackedScene] = {
 	"DraggedJuice": load("res://scenes/items2/physical/juice/DraggedJuice.tscn"),
 	"ThrownJuice": load("res://scenes/items2/physical/juice/ThrownJuice.tscn"),
 	"JuiceSpill": load("res://scenes/items2/physical/juice/JuiceSpill.tscn"),
-	"DonutLogic": load("res://scenes/items2/physical/donut/DonutLogic.tscn")
+	"DonutLogic": load("res://scenes/items2/physical/donut/DonutLogic.tscn"),
+	"ShoesLogic": load("res://scenes/items2/physical/shoes/ShoesLogic.tscn")
 }
 
 var item_tex: Array = []

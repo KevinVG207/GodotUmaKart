@@ -13,9 +13,6 @@ var total_frames: int = 0
 var frame: int = 0
 
 func _ready() -> void:
-	owned_by.do_damage_type = Vehicle4.DamageType.SQUISH
-	owned_by.item_speed_multi = 1.2
-	
 	var latency: float = 0.0
 
 	if owned_by != world.player_vehicle and owned_by.is_network == true:
@@ -28,7 +25,6 @@ func _ready() -> void:
 	latency = min(latency, time_active / 2.0)
 
 	time_active -= latency
-	Debug.print(latency)
 
 	big_frames = roundi(world.PHYSICS_TICKS_PER_SECOND * time_active)
 	total_frames = big_frames + roundi(world.PHYSICS_TICKS_PER_SECOND * end_anim_time)
@@ -42,16 +38,14 @@ func _physics_process(_delta: float) -> void:
 		set_start_size()
 	
 	if frame > big_frames:
-		owned_by.do_damage_type = Vehicle4.DamageType.NONE
-		owned_by.item_speed_multi = 1.0
+		do_damage_type = Vehicle4.DamageType.NONE
+		speed_multi = 1.0
 		set_end_size()
 	
 	frame += 1
 
 func on_destroy() -> void:
 	reset_size()
-	owned_by.do_damage_type = Vehicle4.DamageType.NONE
-	owned_by.item_speed_multi = 1.0
 
 func _set_size(size: float) -> void:
 	owned_by.vani.scale = size
