@@ -301,7 +301,7 @@ func get_max_angle_to_target() -> float:
 		multi = 0.1
 	var angle := next_target_1.radius * multi / distance_to
 	if parent.is_controlled:
-		angle *= 2.0
+		angle *= 4.0
 	return angle
 
 
