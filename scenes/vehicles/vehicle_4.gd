@@ -342,6 +342,8 @@ var rewind_data: Array[RewindData] = []
 
 var active_items: Array[PhysicalItem] = []
 
+var running_ani_multi: float = 2.0
+
 class RewindData:
 	var pos: Vector3
 	var rot: Quaternion
@@ -409,6 +411,7 @@ func _process(delta: float) -> void:
 		event.call()
 	
 	handle_particles()
+	handle_animations()
 
 	if is_player:
 		UI.race_ui.update_speed(velocity.total().length())
@@ -416,6 +419,11 @@ func _process(delta: float) -> void:
 		update_alerts(delta)
 
 		update_fov()
+
+func handle_animations() -> void:
+	cani.speed_scale = 1.0
+	if cani.assigned_animation == "running_shoes_run":
+		cani.speed_scale = (cur_speed / max_speed) * running_ani_multi
 
 func update_alerts(delta: float) -> void:
 	for alert_object: Node3D in targeted_by_dict:
