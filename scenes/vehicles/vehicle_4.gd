@@ -1862,10 +1862,7 @@ func damage(damage_type: DamageType) -> void:
 	stop_boost()
 
 func hide_kart() -> void:
-	#%VehicleBody.visible = false
-	#%Wheels.visible = false
-	#%DriftParticles.visible = false
-	#%ExhaustParticles.visible = false
+	# TODO: Change colliders!!
 	for node in visual_node.get_children():
 		if not node is Node3D:
 			continue
