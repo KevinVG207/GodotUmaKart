@@ -1,28 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://bmq4y5xti5ibm"]
+[gd_scene load_steps=4 format=3 uid="uid://bmq4y5xti5ibm"]
 
 [ext_resource type="PackedScene" uid="uid://bloyvhvjxu7lt" path="res://assets/character/chara-test2.blend" id="1_lxosg"]
+[ext_resource type="Script" uid="uid://beps0d7fafh3q" path="res://assets/character/body.gd" id="2_b63c8"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b63c8"]
+diffuse_mode = 3
+specular_mode = 1
+albedo_color = Color(0.419608, 0.254902, 0.286275, 1)
+metallic_specular = 0.0
+roughness = 0.31
 
 [node name="Body" instance=ExtResource("1_lxosg")]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
-
-[node name="Skeleton3D" parent="Armature" index="0"]
-bones/3/rotation = Quaternion(-2.69043e-07, -1.62794e-09, 0.864071, 0.503369)
-bones/4/rotation = Quaternion(1.17567e-07, -7.83734e-09, -0.258688, 0.965961)
-bones/5/rotation = Quaternion(-4.75167e-09, 7.46895e-09, 0.0104701, 0.999945)
-bones/7/scale = Vector3(1, 1, 1)
-bones/8/rotation = Quaternion(0.0066567, 1.80174e-08, 0.258603, 0.965961)
-bones/9/rotation = Quaternion(-0.000269429, -5.14544e-07, -0.0104667, 0.999945)
-bones/10/rotation = Quaternion(0.566588, -0.423058, -0.566588, -0.423058)
-bones/10/scale = Vector3(1, 1, 1)
-bones/12/rotation = Quaternion(-0.00777966, 1.00328e-08, -1.15477e-09, 0.99997)
-bones/12/scale = Vector3(1, 1, 1)
-bones/14/rotation = Quaternion(0.566588, 0.423058, -0.566588, 0.423058)
-bones/14/scale = Vector3(1, 1, 1)
-bones/15/rotation = Quaternion(0.588622, 1.52756e-08, 3.30823e-09, 0.808408)
-bones/16/rotation = Quaternion(0.00777966, -1.04308e-08, 1.46498e-11, 0.99997)
-bones/16/scale = Vector3(1, 1, 1)
-bones/17/rotation = Quaternion(0.00598546, 0.0306302, 0.707237, 0.706288)
-bones/17/scale = Vector3(1, 1, 1)
+script = ExtResource("2_b63c8")
 
 [node name="BaseAttachment" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="1"]
 transform = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, 9.26224, 0)
@@ -37,3 +27,6 @@ bone_idx = 6
 [node name="Head" type="Node3D" parent="Armature/Skeleton3D/HeadAttachment" index="0"]
 unique_name_in_owner = true
 transform = Transform3D(2, 0, 1.1967e-13, 0, 2, 0, -1.1967e-13, 0, 2, 1.02321e-07, 0.778253, -0.177305)
+
+[node name="Tail" parent="Armature/Skeleton3D" index="4"]
+surface_material_override/0 = SubResource("StandardMaterial3D_b63c8")

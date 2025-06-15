@@ -30,6 +30,8 @@ static var max_degrees_change_for_sleep := 0.5
 @export var vehicle_length_ahead: float = 1.5
 @export var vehicle_length_behind: float = 1.5
 
+@export var chara_running_extra_y: float = 0.46
+
 @export var base_max_speed: float = 25
 var max_speed := base_max_speed
 @export var base_initial_accel: float = 10
@@ -354,6 +356,7 @@ class RewindData:
 func _ready() -> void:
 	# UI.show_race_ui()
 	custom_integrator = true
+	%Character.get_node("Body").hide_tail = true
 	
 	setup_floor_check_grid()
 	setup_head()
@@ -1882,6 +1885,8 @@ func hide_kart() -> void:
 	%Character.visible = true
 	audio.engine_sound_enabled = false
 	cani.play("running_shoes_run")
+	%Character.position.y += chara_running_extra_y
+	%Character.get_node("Body").hide_tail = false
 
 func show_kart() -> void:
 	for node in visual_node.get_children():
@@ -1894,6 +1899,8 @@ func show_kart() -> void:
 			decal.albedo_mix = 1.0
 	cani.play("sit")
 	audio.engine_sound_enabled = true
+	%Character.position.y -= chara_running_extra_y
+	%Character.get_node("Body").hide_tail = true
 
 func add_targeted(object: Node3D, tex: CompressedTexture2D) -> void:
 	if not object in targeted_by_dict:
