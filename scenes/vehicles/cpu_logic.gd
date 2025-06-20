@@ -41,6 +41,9 @@ func _ready() -> void:
 	failsafe_tick_max = int(failsafe_seconds * Engine.physics_ticks_per_second)
 
 func set_inputs(delta: float) -> void:
+	if not Global.cpu_enabled:
+		return
+	
 	# if parent.in_damage:
 	# 	return
 	

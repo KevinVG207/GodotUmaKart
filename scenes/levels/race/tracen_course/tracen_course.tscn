@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bbdd3gxmf2uoy" path="res://scenes/items2/usable/juice/GreenJuice.tscn" id="9_uttjj"]
 [ext_resource type="PackedScene" uid="uid://x3aq02gdikle" path="res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn" id="10_wies2"]
 [ext_resource type="PackedScene" uid="uid://bi2og1u3yqr4i" path="res://scenes/items2/usable/book/Book.tscn" id="11_v1cpl"]
-[ext_resource type="PackedScene" uid="uid://tbll8p00yhdi" path="res://scenes/items2/usable/shoes/Shoes.tscn" id="13_shrl0"]
+[ext_resource type="PackedScene" uid="uid://cx2u2r4nw4bca" path="res://scenes/items2/usable/expander/Expander.tscn" id="13_shrl0"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_xes7l"]
 resource_local_to_scene = true

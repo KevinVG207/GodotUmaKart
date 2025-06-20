@@ -451,6 +451,9 @@ func make_physical_item(key: String, player: Vehicle4) -> PhysicalItem:
 	physical_items[unique_key] = instance
 	$Items.add_child(instance)
 	
+	if state == STATE_INITIAL:
+		return instance
+	
 	var dto := DomainRace.ItemSpawnWrapper.new()
 	dto.key = unique_key
 	dto.type = key
@@ -458,7 +461,8 @@ func make_physical_item(key: String, player: Vehicle4) -> PhysicalItem:
 	dto.origin_id = instance.origin_id
 	dto.state = instance.get_state()
 
-	RPCServer.race_spawn_item.rpc_id(1, dto.serialize())
+	if Global.MODE1 == Global.MODE1_ONLINE:
+		RPCServer.race_spawn_item.rpc_id(1, dto.serialize())
 	
 	replay_manager.spawn_item(dto)
 
@@ -495,8 +499,12 @@ func destroy_physical_item(key: String):
 	instance.on_destroy()
 	instance.queue_free()
 	deleted_physical_items.append(key)
+	
+	if state == STATE_INITIAL:
+		return
 
-	RPCServer.race_destroy_item.rpc_id(1, key)
+	if Global.MODE1 == Global.MODE1_ONLINE:
+		RPCServer.race_destroy_item.rpc_id(1, key)
 
 
 func server_destroy_physical_item(key: String):
@@ -533,7 +541,8 @@ func send_item_state(item: PhysicalItem):
 	dto.state = item_state
 	dto.state_idx = item.state_idx
 	
-	RPCServer.race_item_state.rpc_id(1, dto.serialize())
+	if Global.MODE1 == Global.MODE1_ONLINE:
+		RPCServer.race_item_state.rpc_id(1, dto.serialize())
 
 
 func apply_item_state(dto: DomainRace.ItemStateWrapper):
@@ -647,6 +656,16 @@ func _physics_process(_delta: float) -> void:
 	
 	if state in REPLAY_STATES:
 		handle_replay()
+
+#func preload_items() -> void:
+	#for key: String in Global.physical_items:
+		#make_physical_item(key, player_vehicle)
+	#return
+#
+#func remove_preload_items() -> void:
+	#for key: String in physical_items:
+		#destroy_physical_item(key)
+	#return
 
 func handle_replay() -> void:
 	if state < STATE_RACE_OVER:
@@ -866,6 +885,8 @@ func join():
 	starting_order = get_starting_order()
 	Global.player_count = max(len(starting_order), 1)
 	setup_vehicles()
+	#preload_items()
+	#call_deferred("remove_preload_items")
 	Global.final_lobby = null
 	if Global.MODE1 == Global.MODE1_OFFLINE:
 		UI.end_scene_change()

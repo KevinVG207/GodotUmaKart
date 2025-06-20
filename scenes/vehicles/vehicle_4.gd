@@ -26,6 +26,7 @@ static var max_degrees_change_for_sleep := 0.5
 
 @onready var respawn_timer: Timer = %RespawnTimer
 
+@export var radius: float = 2.2
 @export var vehicle_height_below: float = 0
 @export var vehicle_length_ahead: float = 1.5
 @export var vehicle_length_behind: float = 1.5
@@ -56,6 +57,7 @@ var air_frames := 0
 
 var prev_input := VehicleInput.new()
 var input := VehicleInput.new()
+var item_was_pressed: bool = false
 
 var is_controlled := false
 var in_cannon := false
@@ -415,6 +417,9 @@ func _process(delta: float) -> void:
 	
 	handle_particles()
 	handle_animations()
+	
+	if Input.is_action_just_pressed("item"):
+		item_was_pressed = true
 
 	if is_player:
 		UI.race_ui.update_speed(velocity.total().length())
@@ -718,7 +723,8 @@ func set_inputs() -> void:
 	input.brake = Input.is_action_pressed("brake") or Input.is_action_pressed("brake2")
 	input.steer = Input.get_axis("right", "left")
 	input.trick = Input.is_action_pressed("trick")
-	input.item = Input.is_action_pressed("item")
+	input.item = item_was_pressed
+	item_was_pressed = false
 	input.tilt = Input.get_axis("down", "up")
 	input.rewind = Input.is_action_pressed("rewind")
 	return
@@ -1141,6 +1147,9 @@ func apply_velocities() -> void:
 			velocity.prop_vel = prev_velocity.prop_vel.slerp(transform.basis.z.normalized().rotated(transform.basis.y.normalized(), drift_offset) * cur_speed * catchup_multi, clampf(grip_multi, 0, 1))
 
 		rotate_accel_along_floor()
+		
+		for item: PhysicalItem in active_items:
+			velocity.rest_vel += item.rest_vel
 
 
 	linear_velocity = velocity.total()

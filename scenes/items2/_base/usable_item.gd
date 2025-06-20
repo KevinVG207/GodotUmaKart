@@ -10,8 +10,14 @@ var tracked: String = ""
 
 var owned_by: Vehicle4
 var world: RaceBase
+var used: bool = false
 
 func use() -> void:
+	if used:
+		return
+
+	used = true
+	
 	if physical_item_key:
 		tracked = world.make_physical_item(physical_item_key, owned_by).key
 	

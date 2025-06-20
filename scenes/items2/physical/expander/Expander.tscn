@@ -1,0 +1,62 @@
+[gd_scene load_steps=8 format=3 uid="uid://telyaj6if1vp"]
+
+[ext_resource type="Script" uid="uid://qmttjp2fvq72" path="res://scenes/items2/physical/expander/expander.gd" id="1_y5k3j"]
+[ext_resource type="Script" uid="uid://dwcljkfykm3wq" path="res://scenes/items2/physical/expander/handle.gd" id="2_jvpac"]
+[ext_resource type="PackedScene" uid="uid://bcpoqclstpiic" path="res://assets/items/expander/handle.tscn" id="3_vl7km"]
+[ext_resource type="PackedScene" uid="uid://bsri0wg0iri4u" path="res://assets/items/expander/springs.tscn" id="4_nk2ev"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_y5k3j"]
+friction = 0.0
+absorbent = true
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_jvpac"]
+radius = 1.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_jvpac"]
+height = 1.5
+radius = 1.7
+
+[node name="Expander" type="Node"]
+script = ExtResource("1_y5k3j")
+is_active_item = true
+metadata/_custom_type_script = "uid://difslb44mei5n"
+
+[node name="Handle" type="RigidBody3D" parent="."]
+unique_name_in_owner = true
+collision_layer = 128
+collision_mask = 97
+physics_material_override = SubResource("PhysicsMaterial_y5k3j")
+gravity_scale = 0.0
+can_sleep = false
+custom_integrator = true
+continuous_cd = true
+contact_monitor = true
+max_contacts_reported = 8
+script = ExtResource("2_jvpac")
+
+[node name="Col" type="CollisionShape3D" parent="Handle"]
+unique_name_in_owner = true
+shape = SubResource("SphereShape3D_jvpac")
+
+[node name="HandleVis" parent="Handle" instance=ExtResource("3_vl7km")]
+unique_name_in_owner = true
+transform = Transform3D(0.18, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="Handle"]
+unique_name_in_owner = true
+collision_layer = 0
+collision_mask = 6
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Handle/Area3D"]
+shape = SubResource("CylinderShape3D_jvpac")
+
+[node name="Handle2" parent="." instance=ExtResource("3_vl7km")]
+unique_name_in_owner = true
+transform = Transform3D(0.18, 0, 0, 0, 0.15, 0, 0, 0, 0.15, 0, 0, 0)
+
+[node name="Springs" parent="Handle2" instance=ExtResource("4_nk2ev")]
+unique_name_in_owner = true
+transform = Transform3D(4.3, 0, 0, 0, 3.333, 0, 0, 0, 3.333, 0, 0, 0)
+
+[connection signal="integrate_forces" from="Handle" to="." method="_on_handle_integrate_forces"]
+[connection signal="body_entered" from="Handle/Area3D" to="." method="_on_area_3d_body_entered"]

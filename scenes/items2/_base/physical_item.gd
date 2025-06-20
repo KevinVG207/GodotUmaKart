@@ -29,10 +29,11 @@ var state_idx: int = 0
 @export var accel_multi: float = 1.0
 @export var turn_multi: float = 1.0
 @export var gravity_multi: float = 1.0
-@export var air_turn_multi: float = 2.0
+@export var air_turn_multi: float = 1.0
 @export var do_damage_type: Vehicle4.DamageType = Vehicle4.DamageType.NONE
 @export var ignore_boost: bool = false
 @export var ignore_offroad: bool = false
+@export var rest_vel: Vector3 = Vector3.ZERO
 
 func setup(new_key: String, new_world: RaceBase, new_origin: Vehicle4) -> void:
 	key = new_key

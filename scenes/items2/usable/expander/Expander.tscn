@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://cx2u2r4nw4bca"]
+
+[ext_resource type="Script" uid="uid://crmwq1v6djfdl" path="res://scenes/items2/_base/usable_item.gd" id="1_qdr05"]
+[ext_resource type="Texture2D" uid="uid://bq0bs0430xjxn" path="res://assets/items/expander/expander.png" id="2_qodtj"]
+
+[sub_resource type="Curve" id="Curve_ambtc"]
+_data = [Vector2(0.310954, 0), 0.0, 0.0, 0, 0, Vector2(0.759717, 0.489826), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="Expander" type="Node"]
+script = ExtResource("1_qdr05")
+wheel_image = ExtResource("2_qodtj")
+probability = SubResource("Curve_ambtc")
+physical_item_key = "Expander"
+track_physical_item = true
+metadata/_custom_type_script = "uid://crmwq1v6djfdl"

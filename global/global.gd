@@ -13,6 +13,8 @@ var player_count: int = default_player_count:
 		player_count = value
 		setup_items()
 
+var cpu_enabled: bool = true
+
 var extraPing: int = 0
 func get_extra_ping() -> float:
 	return clampf(RandomNumberGenerator.new().randf_range(Global.extraPing, Global.extraPing / 4.0), 0, 2000)
@@ -51,7 +53,8 @@ var items: Array[PackedScene] = [
 	load("res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn"),
 	load("res://scenes/items2/usable/juice/GreenJuice.tscn"),
 	load("res://scenes/items2/usable/donut/Donut.tscn"),
-	load("res://scenes/items2/usable/shoes/Shoes.tscn")
+	load("res://scenes/items2/usable/shoes/Shoes.tscn"),
+	load("res://scenes/items2/usable/expander/Expander.tscn")
 ]
 
 var item_distributions: Dictionary[PackedScene, Curve] = {}
@@ -67,7 +70,8 @@ var physical_items: Dictionary[String, PackedScene] = {
 	"ThrownJuice": load("res://scenes/items2/physical/juice/ThrownJuice.tscn"),
 	"JuiceSpill": load("res://scenes/items2/physical/juice/JuiceSpill.tscn"),
 	"DonutLogic": load("res://scenes/items2/physical/donut/DonutLogic.tscn"),
-	"ShoesLogic": load("res://scenes/items2/physical/shoes/ShoesLogic.tscn")
+	"ShoesLogic": load("res://scenes/items2/physical/shoes/ShoesLogic.tscn"),
+	"Expander": load("res://scenes/items2/physical/expander/Expander.tscn")
 }
 
 var item_tex: Array = []
