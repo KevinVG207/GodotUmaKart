@@ -121,6 +121,7 @@ class VehicleInput:
 	var steer := 0.0
 	var trick := false
 	var item := false
+	var item_just := false
 	var tilt := 0.0
 	var mirror := false
 	var rewind := false
@@ -132,6 +133,7 @@ class VehicleInput:
 			"steer": steer,
 			"trick": trick,
 			"item": item,
+			"item_just": item_just,
 			"tilt": tilt,
 			"mirror": mirror,
 			"rewind": rewind
@@ -144,6 +146,7 @@ class VehicleInput:
 		out.steer = dict.steer
 		out.trick = dict.trick
 		out.item = dict.item
+		out.item_just = dict.item_just
 		out.tilt = dict.tilt
 		out.mirror = dict.mirror
 		out.rewind = dict.rewind
@@ -723,7 +726,8 @@ func set_inputs() -> void:
 	input.brake = Input.is_action_pressed("brake") or Input.is_action_pressed("brake2")
 	input.steer = Input.get_axis("right", "left")
 	input.trick = Input.is_action_pressed("trick")
-	input.item = item_was_pressed
+	input.item = Input.is_action_pressed("item")
+	input.item_just = item_was_pressed
 	item_was_pressed = false
 	input.tilt = Input.get_axis("down", "up")
 	input.rewind = Input.is_action_pressed("rewind")

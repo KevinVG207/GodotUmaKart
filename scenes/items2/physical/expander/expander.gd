@@ -11,7 +11,7 @@ var latched_player: Vehicle4
 var latch_direction: Vector3
 var latched_frame: int = 0
 var max_latched_frames: int = 1
-var max_latched_time: float = 2.0
+var max_latched_time: float = 1.0
 var detach_extra_distance: float = 1.0
 
 @onready var springs_unit_scale: float = %Springs.scale.z
@@ -20,7 +20,7 @@ var retract_speed: float = 180
 var max_retract_frames: int = 1
 var retract_frame: int = 0
 var uses = 3
-var pull_accel: float = 3.0
+var pull_velocity: float = 2.5
 
 enum ExpanderMode {
 	EXPANDING, RETRACTING, LATCHED, USABLE
@@ -29,6 +29,7 @@ enum ExpanderMode {
 var mode: ExpanderMode = ExpanderMode.EXPANDING
 
 var victim_item: PhysicalItem
+var victim_speed_multi: float = 0.7
 
 func _ready() -> void:
 	super()
@@ -38,7 +39,7 @@ func _ready() -> void:
 	max_latched_frames = roundi(world.PHYSICS_TICKS_PER_SECOND * max_latched_time)
 	victim_item = PhysicalItem.new()
 	victim_item.is_active_item = true
-	victim_item.speed_multi = 0.75
+	victim_item.speed_multi = victim_speed_multi
 
 func _process(_delta: float) -> void:
 	handle.visible = true
@@ -90,11 +91,12 @@ func _on_handle_integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		
 	if latched_player:
 		mode = ExpanderMode.LATCHED
-		rest_vel = owned_by.global_position.direction_to(latched_player.global_position) * pull_accel
+		rest_vel = owned_by.global_position.direction_to(latched_player.global_position) * pull_velocity
 		accel_multi = 2.0
 		speed_multi = 1.2
 		if should_detach():
 			destroy()
+			return
 		if victim_item not in latched_player.active_items:
 			latched_player.active_items.append(victim_item)
 		latched_frame += 1
@@ -114,7 +116,7 @@ func _on_handle_integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		ExpanderMode.LATCHED:
 			%Col.disabled = true
 		ExpanderMode.USABLE:
-			if owned_by == world.player_vehicle and owned_by.input.item:
+			if owned_by == world.player_vehicle and owned_by.input.item_just:
 				mode = ExpanderMode.EXPANDING
 				expand_frame = 0
 				retract_frame = 0
@@ -138,6 +140,12 @@ func _on_area_3d_body_entered(body: Node3D) -> void:
 	
 	var vehicle := body as Vehicle4
 	if vehicle == owned_by:
+		return
+	
+	if vehicle.global_position.distance_to(owned_by.global_position) < vehicle.radius + owned_by.radius + detach_extra_distance:
+		return
+	
+	if !Plane(owned_by.basis.z.normalized(), owned_by.global_position + owned_by.basis.z.normalized() * owned_by.radius).is_point_over(vehicle.global_position):
 		return
 	
 	if !latched_player:
