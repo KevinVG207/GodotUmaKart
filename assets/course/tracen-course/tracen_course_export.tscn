@@ -63,3 +63,6 @@
 [node name="boost-trick" parent="Colliders" index="28" groups=["col_boost", "col_trick"]]
 
 [node name="test-nodraw" parent="Colliders" index="29" groups=["col_bonk", "col_wall"]]
+
+[node name="test-nocol" parent="Visual" index="0"]
+visible = false

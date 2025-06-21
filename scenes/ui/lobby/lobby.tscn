@@ -146,6 +146,7 @@ wait_time = 60.0
 one_shot = true
 
 [node name="PingBox" type="SpinBox" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0

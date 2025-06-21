@@ -512,5 +512,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5767, -7.33691, 29.9671)
 guaranteed_item = ExtResource("11_v1cpl")
 
 [node name="ItemPickup4" parent="." index="15" instance=ExtResource("5_xes7l")]
-transform = Transform3D(-0.172273, 0, -0.985049, 0, 1, 0, 0.985049, 0, -0.172273, 47.4262, -0.00606585, 0.869619)
+transform = Transform3D(-0.172273, 0, -0.985049, 0, 1, 0, 0.985049, 0, -0.172273, 47.4262, -4.56539, 0.869619)
 guaranteed_item = ExtResource("13_shrl0")
