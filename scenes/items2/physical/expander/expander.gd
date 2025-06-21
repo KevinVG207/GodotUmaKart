@@ -125,6 +125,12 @@ func _on_handle_integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 				%Col.disabled = false
 
 func should_detach() -> bool:
+	if Global.MODE1 == Global.MODE1_ONLINE and owned_by != world.player_vehicle:
+		return false
+	
+	if latched_player.respawn_stage != Vehicle4.RespawnStage.NONE:
+		return true
+	
 	if Plane(latch_direction, latched_player.global_position).is_point_over(owned_by.global_position):
 		return true
 	if owned_by.global_position.distance_to(latched_player.global_position) < owned_by.radius + latched_player.radius + detach_extra_distance:
@@ -165,3 +171,31 @@ func handle_contacts(physics_state: PhysicsDirectBodyState3D) -> void:
 		if collision_shape.is_in_group("col_wall"):
 			expand_frame = max_expand_frames
 			return
+
+func get_state() -> Dictionary:
+	return {
+		"m": mode,
+		"ef": expand_frame,
+		"id": Util.to_array(initial_direction),
+		"rf": Util.to_array(retracting_from),
+		"lp": latched_player.user_id if latched_player else null,
+		"ld": Util.to_array(latch_direction),
+		"lf": latched_frame,
+		#"mrf": max_retract_frames,
+		"rff": retract_frame,
+		"u": uses
+	}
+
+func set_state(state: Dictionary) -> void:
+	mode = state.m
+	expand_frame = state.ef
+	initial_direction = Util.to_vector3(state.id)
+	retracting_from = Util.to_vector3(state.rf)
+	if state.lp and state.lp in world.players_dict:
+		latched_player = world.players_dict[state.lp] 
+	latch_direction = Util.to_vector3(state.ld)
+	latched_frame = state.lf
+	#max_retract_frames= state.mrf
+	retract_frame = state.rff
+	uses = state.u
+	return

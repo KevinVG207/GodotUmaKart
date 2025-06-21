@@ -66,3 +66,12 @@ func _on_owner_changed(old_owner: Vehicle4, new_owner: Vehicle4) -> void:
 		old_owner.active_items.erase(self)
 		new_owner.active_items.append(self)
 	return
+
+func get_latency() -> float:
+	var latency: float = 0.0
+	if owned_by != world.player_vehicle and owned_by.is_network == true:
+		if owned_by.user_id in world.pings:
+			latency += world.pings[owned_by.user_id] * 0.001
+		if world.player_vehicle.user_id in world.pings:
+			latency += world.pings[world.player_vehicle.user_id] * 0.001
+	return latency

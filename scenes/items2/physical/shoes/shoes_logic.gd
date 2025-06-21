@@ -35,11 +35,14 @@ func _ready() -> void:
 	fall_frames = roundi(world.PHYSICS_TICKS_PER_SECOND * fall_time / speed_scale)
 	disappear_frames = roundi(world.PHYSICS_TICKS_PER_SECOND * disappear_time / speed_scale)
 	decel_frames = roundi(world.PHYSICS_TICKS_PER_SECOND * decel_time)
-	active_frames = roundi(world.PHYSICS_TICKS_PER_SECOND * max_active_time)
+	
+	active_frames = roundi(world.PHYSICS_TICKS_PER_SECOND * (max_active_time - get_latency()))
 	owned_by.cpu_logic.new_target(Util.get_path_point_ahead_of_player(owned_by))
 
 func _physics_process(_delta: float) -> void:
 	if frame >= total_frames:
+		if Global.MODE1 == Global.MODE1_ONLINE and owned_by != world.player_vehicle:
+			return
 		destroy()
 		return
 	
@@ -74,4 +77,13 @@ func on_destroy() -> void:
 	poof.delete_self = true
 	owned_by.call_deferred("show_kart")
 	root.queue_free()
+	return
+
+func get_state() -> Dictionary:
+	return {
+		"a": active_frames
+	}
+
+func set_state(state: Dictionary) -> void:
+	active_frames = state.a
 	return

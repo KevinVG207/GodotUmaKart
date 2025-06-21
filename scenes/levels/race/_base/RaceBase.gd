@@ -516,6 +516,7 @@ func server_destroy_physical_item(key: String):
 
 	var instance = physical_items[key]
 	physical_items.erase(key)
+	instance.owned_by.active_items.erase(instance)
 	instance.on_destroy()
 	instance.queue_free()
 	deleted_physical_items.append(key)

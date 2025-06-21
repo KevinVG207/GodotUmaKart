@@ -13,16 +13,7 @@ var total_frames: int = 0
 var frame: int = 0
 
 func _ready() -> void:
-	var latency: float = 0.0
-
-	if owned_by != world.player_vehicle and owned_by.is_network == true:
-		# Spawned by a network player; apply latency
-		if owned_by.user_id in world.pings:
-			latency += world.pings[owned_by.user_id] * 0.001
-		if world.player_vehicle.user_id in world.pings:
-			latency += world.pings[world.player_vehicle.user_id] * 0.001
-	
-	latency = min(latency, time_active / 2.0)
+	var latency: float = minf(get_latency(), time_active / 2.0)
 
 	time_active -= latency
 
@@ -31,6 +22,8 @@ func _ready() -> void:
 
 func _physics_process(_delta: float) -> void:
 	if frame >= total_frames:
+		if Global.MODE1 == Global.MODE1_ONLINE and owned_by != world.player_vehicle:
+			return
 		destroy()
 		return
 	

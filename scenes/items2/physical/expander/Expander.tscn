@@ -28,7 +28,6 @@ collision_mask = 97
 physics_material_override = SubResource("PhysicsMaterial_y5k3j")
 gravity_scale = 0.0
 can_sleep = false
-custom_integrator = true
 continuous_cd = true
 contact_monitor = true
 max_contacts_reported = 8
