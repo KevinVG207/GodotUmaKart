@@ -65,26 +65,37 @@ signal race_start_received(ticks_to_start: int, tick_rate: int, ping: int)
 @rpc("reliable")
 func race_start(ticks_to_start: int, tick_rate: int, ping: int) -> void:
 	print("RACE START DATA RECEIVED")
+	if Global.extraPing:
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0 * 2).timeout
 	race_start_received.emit(ticks_to_start, tick_rate, ping)
 
 signal race_vehicle_state_received(vehicle: DomainRace.VehicleDataWrapper)
 @rpc("unreliable_ordered")
 func race_vehicle_state(list: Array[Variant]) -> void:
+	if Global.extraPing:
+		print("Waiting for extra ping before emitting")
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0 * 2).timeout
 	race_vehicle_state_received.emit(DomainRace.VehicleDataWrapper.deserialize(list))
 
 signal race_spawn_item_received(dto: DomainRace.ItemSpawnWrapper)
 @rpc("reliable")
 func race_spawn_item(list: Array[Variant]) -> void:
+	if Global.extraPing:
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0 * 2).timeout
 	race_spawn_item_received.emit(DomainRace.ItemSpawnWrapper.deserialize(list))
 
 signal race_destroy_item_received(key: String)
 @rpc("reliable")
 func race_destroy_item(key: String) -> void:
+	if Global.extraPing:
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0 * 2).timeout
 	race_destroy_item_received.emit(key)
 
 signal race_item_state_received(dto: DomainRace.ItemStateWrapper)
 @rpc("unreliable")
 func race_item_state(list: Array[Variant]) -> void:
+	if Global.extraPing:
+		await get_tree().create_timer(Global.get_extra_ping() / 1000.0 * 2).timeout
 	race_item_state_received.emit(DomainRace.ItemStateWrapper.deserialize(list))
 
 signal race_finished_received(dto: DomainRoom.FinishData)

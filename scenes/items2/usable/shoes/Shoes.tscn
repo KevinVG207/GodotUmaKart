@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://tbll8p00yhdi"]
+
+[ext_resource type="Script" uid="uid://crmwq1v6djfdl" path="res://scenes/items2/_base/usable_item.gd" id="1_gultw"]
+[ext_resource type="Texture2D" uid="uid://d2t1jofj0ich4" path="res://assets/items/shoes/shoes.png" id="2_2qe25"]
+
+[sub_resource type="Curve" id="Curve_7e3xa"]
+_data = [Vector2(0.752542, 0), 0.0, 7.07232, 0, 0, Vector2(0.901695, 0.694751), 0.0, 0.0, 0, 0, Vector2(1, 0.703729), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[node name="Shoes" type="Node"]
+script = ExtResource("1_gultw")
+wheel_image = ExtResource("2_2qe25")
+probability = SubResource("Curve_7e3xa")
+physical_item_key = "ShoesLogic"
+track_physical_item = true
+metadata/_custom_type_script = "uid://crmwq1v6djfdl"

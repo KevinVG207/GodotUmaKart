@@ -63,7 +63,6 @@ bones/20/rotation = Quaternion(-0.0451647, 0.00102211, 0.0500403, 0.997725)
 bones/20/scale = Vector3(1, 1, 1)
 bones/21/rotation = Quaternion(-0.0846229, -1.35763e-08, 0.0586614, 0.994685)
 bones/21/scale = Vector3(1, 1, 1)
-bones/22/scale = Vector3(1, 1, 1)
 bones/23/rotation = Quaternion(-0.310634, 0.0117921, -0.13795, 0.940392)
 bones/24/rotation = Quaternion(-0.0451647, -0.00102211, -0.0500403, 0.997725)
 bones/24/scale = Vector3(1, 1, 1)
@@ -91,8 +90,11 @@ bones/35/rotation = Quaternion(0.670662, 0.00194513, -0.560386, 0.485979)
 bones/35/scale = Vector3(1, 1, 1)
 bones/36/position = Vector3(-8.84047e-07, 1.61838, -1.64869e-06)
 bones/36/rotation = Quaternion(0.309057, -0.0245651, -0.191239, 0.931294)
-bones/36/scale = Vector3(1, 1, 1)
 bones/37/rotation = Quaternion(0.0711162, -1.64815e-08, -0.130662, 0.988873)
+bones/39/scale = Vector3(1, 1, 1)
+bones/40/rotation = Quaternion(-0.176363, -1.08279e-14, -4.20483e-08, 0.984325)
+bones/40/scale = Vector3(1, 1, 1)
+bones/41/scale = Vector3(1, 1, 1)
 
 [node name="BaseAttachment" parent="Body/Armature/Skeleton3D" index="1"]
 transform = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, 9.26224, 0)
@@ -103,7 +105,7 @@ transform = Transform3D(1, 0, 2.38419e-07, 0, 1, 0, -2.38419e-07, 0, 1, 0, 15.11
 [node name="Ani" type="AnimationPlayer" parent="."]
 unique_name_in_owner = true
 libraries = {
-"": SubResource("AnimationLibrary_b8bd4")
+&"": SubResource("AnimationLibrary_b8bd4")
 }
 autoplay = "RESET"
 

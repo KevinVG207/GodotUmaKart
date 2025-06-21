@@ -1,7 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://doo2mm5qukjx8"]
+[gd_scene load_steps=10 format=3 uid="uid://doo2mm5qukjx8"]
 
 [ext_resource type="Script" uid="uid://18ebmydgwycr" path="res://scenes/levels/race/_base/RaceBase.gd" id="1_ovc4r"]
-[ext_resource type="PackedScene" uid="uid://nomey8ht6xwd" path="res://scenes/vehicles/vehicle_3.tscn" id="2_6kmkx"]
 [ext_resource type="PackedScene" uid="uid://d0dhk013x7kj1" path="res://scenes/control/player_camera.tscn" id="3_le0ow"]
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="4_2p2d1"]
 [ext_resource type="PackedScene" uid="uid://742psss2cgvv" path="res://scenes/objects/cone.tscn" id="6_3lamw"]
@@ -22,7 +21,6 @@ size = Vector3(20, 1, 20)
 
 [node name="TestLevel3" type="Node3D"]
 script = ExtResource("1_ovc4r")
-player_scene = ExtResource("2_6kmkx")
 
 [node name="StartTimer" type="Timer" parent="."]
 process_callback = 0
@@ -130,10 +128,6 @@ shape = SubResource("BoxShape3D_iv18g")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Floor2"]
 mesh = SubResource("BoxMesh_f8gqm")
-
-[node name="WickedWoods" parent="."]
-transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, -105.395, -9)
-metadata/_edit_lock_ = true
 
 [node name="Box" type="RigidBody3D" parent="."]
 transform = Transform3D(0.486335, -0.856217, -0.174274, -0.170759, -0.288737, 0.942057, -0.856924, -0.428397, -0.28663, 0, 4.94057, -11)

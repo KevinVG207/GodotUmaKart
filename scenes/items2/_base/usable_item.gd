@@ -5,15 +5,33 @@ class_name UsableItem
 @export var wheel_image: CompressedTexture2D
 @export var probability: Curve
 @export var physical_item_key: String
+@export var track_physical_item: bool = false
+var tracked: String = ""
 
 var owned_by: Vehicle4
 var world: RaceBase
+var used: bool = false
 
 func use() -> void:
-	if physical_item_key:
-		world.make_physical_item(physical_item_key, owned_by)
+	if used:
+		return
+
+	used = true
 	
-	clear()
+	if physical_item_key:
+		tracked = world.make_physical_item(physical_item_key, owned_by).key
+	
+	if !track_physical_item:
+		clear()
+	
+	if owned_by.is_player:
+		UI.race_ui.play_roulette_use()
+
+func _physics_process(_delta: float) -> void:
+	if track_physical_item and tracked in world.deleted_physical_items:
+		track_physical_item = false
+		clear()
+	
 
 func setup(new_owner: Vehicle4, new_world: RaceBase) -> void:
 	owned_by = new_owner
@@ -23,8 +41,6 @@ func setup(new_owner: Vehicle4, new_world: RaceBase) -> void:
 func clear() -> void:
 	owned_by.remove_item()
 	queue_free()
-	if owned_by.is_player:
-		UI.race_ui.play_roulette_use()
 
 func replace_item(item: UsableItem) -> void:
 	owned_by.replace_item(item)

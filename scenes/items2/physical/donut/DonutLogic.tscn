@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://dmhml8ilgfy3r"]
+
+[ext_resource type="Script" uid="uid://7cgb1kefuwjx" path="res://scenes/items2/physical/donut/donut_logic.gd" id="1_m5o71"]
+
+[sub_resource type="Curve" id="Curve_m5o71"]
+_limits = [1.0, 3.1, 0.0, 1.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.248, 1.30674), 0.0, 0.0, 0, 0, Vector2(0.5, 1.80225), 0.0, 0.0, 0, 0, Vector2(0.844, 2.6), 0.0, 0.0, 0, 0, Vector2(1, 2.5), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="Curve" id="Curve_eii4v"]
+_limits = [1.0, 2.5, 0.0, 1.0]
+_data = [Vector2(0, 2.5), 0.0, -1.5, 0, 1, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[node name="DonutLogic" type="Node"]
+script = ExtResource("1_m5o71")
+start_anim = SubResource("Curve_m5o71")
+end_anim = SubResource("Curve_eii4v")
+is_active_item = true
+speed_multi = 1.2
+do_damage_type = 4
+ignore_offroad = true
+metadata/_custom_type_script = "uid://cb5xcivhejvpr"

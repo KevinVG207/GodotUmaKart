@@ -152,4 +152,5 @@ func set_state(state: Dictionary) -> void:
 		target_player = world.players_dict[state.t]
 
 func _on_owner_changed(old_owner: Vehicle4, new_owner: Vehicle4) -> void:
+	super(old_owner, new_owner)
 	grace_ticks = -1

@@ -18,12 +18,18 @@ var animation:
 
 const CHARGEUP_BLEND := "parameters/Rest/Chargeup/blend_amount"
 const CHARGEUP_SPEED := "parameters/Rest/ChargeupSpeed/scale"
+const SQUISH_BLEND := "parameters/Rest/Squish/blend_amount"
+var squish_amount: float = 0.0
+const SCALE_BLEND := "parameters/Rest/Scale/blend_amount"
+var scale: float = 1.0
 
 #func _ready():
 	#animation = Type.idle
 
 func _process(delta):
 	blend_chargeup()
+	self.set(SQUISH_BLEND, squish_amount)
+	self.set(SCALE_BLEND, scale - 1.0)
 
 func blend_chargeup():
 	if vehicle.started:

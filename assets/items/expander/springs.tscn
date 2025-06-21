@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://bsri0wg0iri4u"]
+
+[ext_resource type="PackedScene" uid="uid://dv6b1wobuuw8b" path="res://assets/items/expander/springs.blend" id="1_onrx1"]
+[ext_resource type="Texture2D" uid="uid://2tebvjxvlk07" path="res://assets/items/expander/springs.png" id="2_qdxxl"]
+[ext_resource type="Texture2D" uid="uid://dtt3uy10l137a" path="res://assets/items/expander/springs_specular.png" id="3_kk7pg"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kk7pg"]
+transparency = 2
+alpha_scissor_threshold = 0.949
+alpha_antialiasing_mode = 0
+diffuse_mode = 3
+specular_mode = 1
+albedo_texture = ExtResource("2_qdxxl")
+metallic = 0.2
+metallic_specular = 1.0
+roughness = 0.05
+normal_enabled = true
+normal_scale = 0.1
+normal_texture = ExtResource("3_kk7pg")
+
+[node name="Springs" instance=ExtResource("1_onrx1")]
+
+[node name="Plane" parent="." index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_kk7pg")

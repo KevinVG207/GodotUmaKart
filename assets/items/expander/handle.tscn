@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://bcpoqclstpiic"]
+
+[ext_resource type="PackedScene" uid="uid://cgnijw0bch6ti" path="res://assets/items/expander/handle.blend" id="1_1146k"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_q66lt"]
+diffuse_mode = 3
+specular_mode = 1
+albedo_color = Color(0.340339, 0.340339, 0.340339, 1)
+roughness = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uuvu6"]
+diffuse_mode = 3
+specular_mode = 1
+albedo_color = Color(0.928656, 0.193293, 3.85046e-07, 1)
+roughness = 0.41
+
+[node name="Handle" instance=ExtResource("1_1146k")]
+
+[node name="handle" parent="." index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_q66lt")
+surface_material_override/1 = SubResource("StandardMaterial3D_uuvu6")

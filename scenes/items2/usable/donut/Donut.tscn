@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://l2ol5w4jrnpo"]
+
+[ext_resource type="Script" uid="uid://crmwq1v6djfdl" path="res://scenes/items2/_base/usable_item.gd" id="1_jyyuk"]
+[ext_resource type="Texture2D" uid="uid://ceev2vld25vjq" path="res://assets/items/donut/donut.png" id="2_gsefr"]
+
+[sub_resource type="Curve" id="Curve_13632"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.244275, 0), 0.0, 0.0, 0, 0, Vector2(0.572881, 0.200967), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[node name="Donut" type="Node"]
+script = ExtResource("1_jyyuk")
+wheel_image = ExtResource("2_gsefr")
+probability = SubResource("Curve_13632")
+physical_item_key = "DonutLogic"
+metadata/_custom_type_script = "uid://crmwq1v6djfdl"

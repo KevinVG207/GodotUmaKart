@@ -5,11 +5,15 @@ signal goto_settings_screen
 
 signal camera_switched
 
+var args: Dictionary[String, String] = {}
+
 var default_player_count: int = 12
 var player_count: int = default_player_count:
 	set(value):
 		player_count = value
 		setup_items()
+
+var cpu_enabled: bool = true
 
 var extraPing: int = 0
 func get_extra_ping() -> float:
@@ -47,14 +51,10 @@ var items: Array[PackedScene] = [
 	load("res://scenes/items2/usable/book/Book.tscn"),
 	load("res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn"),
 	load("res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn"),
-	load("res://scenes/items2/usable/juice/GreenJuice.tscn")
-	#load("res://scenes/items/1carrot.tscn"),
-	#preload("res://scenes/items/2carrots.tscn"),
-	#load("res://scenes/items/3carrots.tscn"),
-	#load("res://scenes/items/GreenBean.tscn"),
-	#load("res://scenes/items/RedBean.tscn"),
-	#load("res://scenes/items/Book.tscn"),
-	#load("res://scenes/items/RunningShoes/running_shoes.tscn")
+	load("res://scenes/items2/usable/juice/GreenJuice.tscn"),
+	load("res://scenes/items2/usable/donut/Donut.tscn"),
+	load("res://scenes/items2/usable/shoes/Shoes.tscn"),
+	load("res://scenes/items2/usable/expander/Expander.tscn")
 ]
 
 var item_distributions: Dictionary[PackedScene, Curve] = {}
@@ -68,13 +68,10 @@ var physical_items: Dictionary[String, PackedScene] = {
 	"ThrownHorseShoeRed": load("res://scenes/items2/physical/horseshoe_red/ThrownHorseShoeRed.tscn"),
 	"DraggedJuice": load("res://scenes/items2/physical/juice/DraggedJuice.tscn"),
 	"ThrownJuice": load("res://scenes/items2/physical/juice/ThrownJuice.tscn"),
-	"JuiceSpill": load("res://scenes/items2/physical/juice/JuiceSpill.tscn")
-	#"green_bean": load("res://scenes/items/_physical/DraggedGreenBean.tscn"),
-	#"thrown_green_bean": load("res://scenes/items/_physical/ThrownGreenBean.tscn"),
-	#"book": load("res://scenes/items/_physical/DraggedBook.tscn"),
-	#"thrown_book": load("res://scenes/items/_physical/ThrownBook.tscn"),
-	#"red_bean": load("res://scenes/items/_physical/DraggedRedBean.tscn"),
-	#"thrown_red_bean": load("res://scenes/items/_physical/ThrownRedBean.tscn")
+	"JuiceSpill": load("res://scenes/items2/physical/juice/JuiceSpill.tscn"),
+	"DonutLogic": load("res://scenes/items2/physical/donut/DonutLogic.tscn"),
+	"ShoesLogic": load("res://scenes/items2/physical/shoes/ShoesLogic.tscn"),
+	"Expander": load("res://scenes/items2/physical/expander/Expander.tscn")
 }
 
 var item_tex: Array = []
@@ -96,6 +93,13 @@ func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
 
 func _ready() -> void:
+	for arg in OS.get_cmdline_args():
+		if arg.contains("="):
+			var key_value = arg.split("=")
+			args[key_value[0].trim_prefix("--")] = key_value[1]
+		else:
+			args[arg.trim_prefix("--")] = ""
+	
 	RPCClient.error_received.connect(_on_network_error)
 	
 func _process(_delta: float) -> void:

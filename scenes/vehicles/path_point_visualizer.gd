@@ -8,8 +8,8 @@ func _process(delta: float) -> void:
 	if !get_parent().visible:
 		return
 	
-	if vehicle == vehicle.world.player_vehicle:
-		visible = false
+	#if vehicle == vehicle.world.player_vehicle:
+		#visible = false
 	
 	if vehicle.cpu_logic.curve_point_position == null:
 		return
