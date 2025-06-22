@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmgurxgnqp8rq"
 path.s3tc="res://.godot/imported/grass2.png-a568b0cef4260c863fbc20d55de9eaab.s3tc.ctex"
+path.etc2="res://.godot/imported/grass2.png-a568b0cef4260c863fbc20d55de9eaab.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/wicked-woods/tex/grass2.png"
-dest_files=["res://.godot/imported/grass2.png-a568b0cef4260c863fbc20d55de9eaab.s3tc.ctex"]
+dest_files=["res://.godot/imported/grass2.png-a568b0cef4260c863fbc20d55de9eaab.s3tc.ctex", "res://.godot/imported/grass2.png-a568b0cef4260c863fbc20d55de9eaab.etc2.ctex"]
 
 [params]
 

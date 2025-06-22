@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://d2e2nss7mlyda"
 path.s3tc="res://.godot/imported/road_arrow.png-c6c93ff5d7e91c226cc212c60e9a4ad4.s3tc.ctex"
+path.etc2="res://.godot/imported/road_arrow.png-c6c93ff5d7e91c226cc212c60e9a4ad4.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/wicked-woods/tex/road_arrow.png"
-dest_files=["res://.godot/imported/road_arrow.png-c6c93ff5d7e91c226cc212c60e9a4ad4.s3tc.ctex"]
+dest_files=["res://.godot/imported/road_arrow.png-c6c93ff5d7e91c226cc212c60e9a4ad4.s3tc.ctex", "res://.godot/imported/road_arrow.png-c6c93ff5d7e91c226cc212c60e9a4ad4.etc2.ctex"]
 
 [params]
 

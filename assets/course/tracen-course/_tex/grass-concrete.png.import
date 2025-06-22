@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dspfx2hsleknc"
 path.s3tc="res://.godot/imported/grass-concrete.png-5c29cab94aada14e9bf4bb90623034c3.s3tc.ctex"
+path.etc2="res://.godot/imported/grass-concrete.png-5c29cab94aada14e9bf4bb90623034c3.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/tracen-course/_tex/grass-concrete.png"
-dest_files=["res://.godot/imported/grass-concrete.png-5c29cab94aada14e9bf4bb90623034c3.s3tc.ctex"]
+dest_files=["res://.godot/imported/grass-concrete.png-5c29cab94aada14e9bf4bb90623034c3.s3tc.ctex", "res://.godot/imported/grass-concrete.png-5c29cab94aada14e9bf4bb90623034c3.etc2.ctex"]
 
 [params]
 

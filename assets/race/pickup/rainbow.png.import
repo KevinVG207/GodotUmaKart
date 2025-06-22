@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cluba5ya60nd4"
 path.s3tc="res://.godot/imported/rainbow.png-7e9ea1f31cf995ffe06582ffc8784b8b.s3tc.ctex"
+path.etc2="res://.godot/imported/rainbow.png-7e9ea1f31cf995ffe06582ffc8784b8b.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/race/pickup/rainbow.png"
-dest_files=["res://.godot/imported/rainbow.png-7e9ea1f31cf995ffe06582ffc8784b8b.s3tc.ctex"]
+dest_files=["res://.godot/imported/rainbow.png-7e9ea1f31cf995ffe06582ffc8784b8b.s3tc.ctex", "res://.godot/imported/rainbow.png-7e9ea1f31cf995ffe06582ffc8784b8b.etc2.ctex"]
 
 [params]
 

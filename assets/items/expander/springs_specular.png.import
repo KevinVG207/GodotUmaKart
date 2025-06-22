@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dtt3uy10l137a"
 path.s3tc="res://.godot/imported/springs_specular.png-3e09eab4b0cc358744e4c3db678217cc.s3tc.ctex"
+path.etc2="res://.godot/imported/springs_specular.png-3e09eab4b0cc358744e4c3db678217cc.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/items/expander/springs_specular.png"
-dest_files=["res://.godot/imported/springs_specular.png-3e09eab4b0cc358744e4c3db678217cc.s3tc.ctex"]
+dest_files=["res://.godot/imported/springs_specular.png-3e09eab4b0cc358744e4c3db678217cc.s3tc.ctex", "res://.godot/imported/springs_specular.png-3e09eab4b0cc358744e4c3db678217cc.etc2.ctex"]
 
 [params]
 

@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://84rvlna8akqj"
 path.bptc="res://.godot/imported/head.png-122d311d30fd86a6ef126bac9f6feb57.bptc.ctex"
+path.astc="res://.godot/imported/head.png-122d311d30fd86a6ef126bac9f6feb57.astc.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/character/head.png"
-dest_files=["res://.godot/imported/head.png-122d311d30fd86a6ef126bac9f6feb57.bptc.ctex"]
+dest_files=["res://.godot/imported/head.png-122d311d30fd86a6ef126bac9f6feb57.bptc.ctex", "res://.godot/imported/head.png-122d311d30fd86a6ef126bac9f6feb57.astc.ctex"]
 
 [params]
 

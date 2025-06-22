@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://k46gqtf7nsan"
 path.s3tc="res://.godot/imported/carpet2.png-5abb592317bbea54bb446cd300e9d904.s3tc.ctex"
+path.etc2="res://.godot/imported/carpet2.png-5abb592317bbea54bb446cd300e9d904.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/wicked-woods/tex/carpet2.png"
-dest_files=["res://.godot/imported/carpet2.png-5abb592317bbea54bb446cd300e9d904.s3tc.ctex"]
+dest_files=["res://.godot/imported/carpet2.png-5abb592317bbea54bb446cd300e9d904.s3tc.ctex", "res://.godot/imported/carpet2.png-5abb592317bbea54bb446cd300e9d904.etc2.ctex"]
 
 [params]
 

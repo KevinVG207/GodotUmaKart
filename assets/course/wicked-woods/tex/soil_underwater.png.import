@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bdkxxrbg1jevx"
 path.s3tc="res://.godot/imported/soil_underwater.png-6d1484593850431189e37f8d7da69e2e.s3tc.ctex"
+path.etc2="res://.godot/imported/soil_underwater.png-6d1484593850431189e37f8d7da69e2e.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/wicked-woods/tex/soil_underwater.png"
-dest_files=["res://.godot/imported/soil_underwater.png-6d1484593850431189e37f8d7da69e2e.s3tc.ctex"]
+dest_files=["res://.godot/imported/soil_underwater.png-6d1484593850431189e37f8d7da69e2e.s3tc.ctex", "res://.godot/imported/soil_underwater.png-6d1484593850431189e37f8d7da69e2e.etc2.ctex"]
 
 [params]
 
