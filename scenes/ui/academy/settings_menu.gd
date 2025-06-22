@@ -15,6 +15,10 @@ var prev_bindings: Dictionary
 
 @onready var settings_element: PackedScene = preload("res://scenes/ui/academy/settings_element.tscn")
 
+var allowed_ui_bindings: Array[String] = [
+	"ui_accept"
+]
+
 func _ready() -> void:
 	disable_reset_button()
 	Global.goto_settings_screen.connect(first_time_setup)
@@ -103,7 +107,7 @@ func add_bindings() -> void:
 	var actions_list: Array = actions.keys()
 	actions_list.sort()
 	for action: String in actions_list:
-		if action.begins_with("_") or action.to_upper().begins_with("UI_"):
+		if action.begins_with("_") or (action.to_upper().begins_with("UI_") and not action in allowed_ui_bindings):
 			continue
 		
 		for type: String in actions[action]:

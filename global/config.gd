@@ -219,14 +219,17 @@ func save_bindings(actions: Dictionary) -> void:
 
 func load_bindings() -> Dictionary:
 	print("Loading bindings")
-	var out: Dictionary = {}
+	var out: Dictionary = default_bindings.duplicate(true)
 	var parsed_binds: Variant = Util.load_json(keybinds_path)
 	if parsed_binds:
 		for action: String in parsed_binds.keys():
 			if not InputMap.has_action(action):
 				print("Removing action ", action)
-				parsed_binds.erase(action)
-		out = parsed_binds
+				continue
+			# Hacky way to undo broken binds from old version
+			if parsed_binds[action]["KEYBOARD"] == 0.0:
+				continue
+			out[action] = parsed_binds[action]
 	
 	return out
 
