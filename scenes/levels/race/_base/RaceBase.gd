@@ -264,7 +264,6 @@ func pick_next_point_to_target(cur_point: EnemyPath, target_point: EnemyPath) ->
 			new_leaves += leaf.prev_points
 		cur_leaves = new_leaves
 	
-	Debug.print("PANIC: Could not pick next point to target!")
 	print("PANIC: Could not pick next point to target!")
 	return cur_point
 
@@ -1230,5 +1229,3 @@ func _on_item_transfer_owner(key: String, new_owner_id: int):
 
 	if not old_owner_id == player_user_id:
 		item._on_owner_changed(players_dict[old_owner_id], players_dict[new_owner_id])
-
-	Debug.print(["RECEIVED NEW OWNER", new_owner_id, player_vehicle.user_id])

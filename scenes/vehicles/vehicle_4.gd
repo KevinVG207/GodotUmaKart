@@ -634,8 +634,7 @@ func handle_rewind() -> void:
 	input.steer = 0.0
 	input.brake = false
 	var state: RewindData = rewind_data[rewind_frame]
-	print("REWINDING")
-	Debug.print([state.pos, rewind_frame])
+
 	global_position = state.pos
 	global_transform.basis = Basis(state.rot)
 
