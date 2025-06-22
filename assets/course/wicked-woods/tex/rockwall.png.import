@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bmdgcksu5mgsk"
 path.s3tc="res://.godot/imported/rockwall.png-609d0d3147bc6f2984d0e4d071af04a3.s3tc.ctex"
+path.etc2="res://.godot/imported/rockwall.png-609d0d3147bc6f2984d0e4d071af04a3.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/wicked-woods/tex/rockwall.png"
-dest_files=["res://.godot/imported/rockwall.png-609d0d3147bc6f2984d0e4d071af04a3.s3tc.ctex"]
+dest_files=["res://.godot/imported/rockwall.png-609d0d3147bc6f2984d0e4d071af04a3.s3tc.ctex", "res://.godot/imported/rockwall.png-609d0d3147bc6f2984d0e4d071af04a3.etc2.ctex"]
 
 [params]
 

@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dc0s0yfvgj2rw"
 path.s3tc="res://.godot/imported/rainbow.png-5222f857e3c38a5e4b87c8bca26d9061.s3tc.ctex"
+path.etc2="res://.godot/imported/rainbow.png-5222f857e3c38a5e4b87c8bca26d9061.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/wicked-woods/tex/rainbow.png"
-dest_files=["res://.godot/imported/rainbow.png-5222f857e3c38a5e4b87c8bca26d9061.s3tc.ctex"]
+dest_files=["res://.godot/imported/rainbow.png-5222f857e3c38a5e4b87c8bca26d9061.s3tc.ctex", "res://.godot/imported/rainbow.png-5222f857e3c38a5e4b87c8bca26d9061.etc2.ctex"]
 
 [params]
 

@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cprk5flvre0kn"
 path.s3tc="res://.godot/imported/rooftiles.jpg-4192058471d01300eacbd1f564ba4019.s3tc.ctex"
+path.etc2="res://.godot/imported/rooftiles.jpg-4192058471d01300eacbd1f564ba4019.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/wicked-woods/tex/rooftiles.jpg"
-dest_files=["res://.godot/imported/rooftiles.jpg-4192058471d01300eacbd1f564ba4019.s3tc.ctex"]
+dest_files=["res://.godot/imported/rooftiles.jpg-4192058471d01300eacbd1f564ba4019.s3tc.ctex", "res://.godot/imported/rooftiles.jpg-4192058471d01300eacbd1f564ba4019.etc2.ctex"]
 
 [params]
 

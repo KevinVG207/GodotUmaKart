@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxjprbq68w024"
 path.s3tc="res://.godot/imported/chain.png-6e349521656bf84e0427bfd7f6bb220d.s3tc.ctex"
+path.etc2="res://.godot/imported/chain.png-6e349521656bf84e0427bfd7f6bb220d.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/wicked-woods/tex/chain.png"
-dest_files=["res://.godot/imported/chain.png-6e349521656bf84e0427bfd7f6bb220d.s3tc.ctex"]
+dest_files=["res://.godot/imported/chain.png-6e349521656bf84e0427bfd7f6bb220d.s3tc.ctex", "res://.godot/imported/chain.png-6e349521656bf84e0427bfd7f6bb220d.etc2.ctex"]
 
 [params]
 

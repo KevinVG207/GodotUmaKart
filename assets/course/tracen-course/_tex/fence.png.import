@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://dhpjrgadyjk0y"
 path.s3tc="res://.godot/imported/fence.png-51547ecfd673a394726d2f5257a23185.s3tc.ctex"
+path.etc2="res://.godot/imported/fence.png-51547ecfd673a394726d2f5257a23185.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/tracen-course/_tex/fence.png"
-dest_files=["res://.godot/imported/fence.png-51547ecfd673a394726d2f5257a23185.s3tc.ctex"]
+dest_files=["res://.godot/imported/fence.png-51547ecfd673a394726d2f5257a23185.s3tc.ctex", "res://.godot/imported/fence.png-51547ecfd673a394726d2f5257a23185.etc2.ctex"]
 
 [params]
 

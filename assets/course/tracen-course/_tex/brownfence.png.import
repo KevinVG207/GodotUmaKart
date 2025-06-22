@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnr7eeg6n74n8"
 path.s3tc="res://.godot/imported/brownfence.png-464ed561fd842ab20df25212d8bfd645.s3tc.ctex"
+path.etc2="res://.godot/imported/brownfence.png-464ed561fd842ab20df25212d8bfd645.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/course/tracen-course/_tex/brownfence.png"
-dest_files=["res://.godot/imported/brownfence.png-464ed561fd842ab20df25212d8bfd645.s3tc.ctex"]
+dest_files=["res://.godot/imported/brownfence.png-464ed561fd842ab20df25212d8bfd645.s3tc.ctex", "res://.godot/imported/brownfence.png-464ed561fd842ab20df25212d8bfd645.etc2.ctex"]
 
 [params]
 

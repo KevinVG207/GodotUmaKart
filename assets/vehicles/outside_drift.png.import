@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cyf02un6um450"
 path.s3tc="res://.godot/imported/outside_drift.png-996cc005f3b8d85d031de33c601ae381.s3tc.ctex"
+path.etc2="res://.godot/imported/outside_drift.png-996cc005f3b8d85d031de33c601ae381.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/vehicles/outside_drift.png"
-dest_files=["res://.godot/imported/outside_drift.png-996cc005f3b8d85d031de33c601ae381.s3tc.ctex"]
+dest_files=["res://.godot/imported/outside_drift.png-996cc005f3b8d85d031de33c601ae381.s3tc.ctex", "res://.godot/imported/outside_drift.png-996cc005f3b8d85d031de33c601ae381.etc2.ctex"]
 
 [params]
 
