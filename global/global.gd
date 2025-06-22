@@ -93,6 +93,8 @@ func _enter_tree() -> void:
 	process_mode = PROCESS_MODE_ALWAYS
 
 func _ready() -> void:
+	print("VERSION: ", Util.version)
+	
 	for arg in OS.get_cmdline_args():
 		if arg.contains("="):
 			var key_value = arg.split("=")
