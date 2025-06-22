@@ -570,7 +570,7 @@ func set_do_damage() -> void:
 func update_rewind_state() -> void:
 	exited_rewind = false
 	
-	if is_cpu or is_network:
+	if !is_player or is_network:
 		in_rewind = false
 		return
 	
@@ -587,6 +587,10 @@ func update_rewind_state() -> void:
 		return
 	
 	if !started:
+		in_rewind = false
+		return
+	
+	if active_items.size() > 0:
 		in_rewind = false
 		return
 

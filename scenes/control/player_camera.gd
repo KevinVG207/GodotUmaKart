@@ -118,10 +118,14 @@ func _physics_process(delta: float) -> void:
 	if is_respawn:
 		respawn_multi -= respawn_decel * respawn_multi * delta
 	
-	cur_pos = cur_pos.lerp(new_pos, cur_lerp_speed * delta * respawn_multi)
-	cur_pos.y = lerpf(prev_pos.y, new_pos.y, cur_lerp_speed * delta * 0.5 * respawn_multi)
-	cur_pos_bw = cur_pos_bw.lerp(new_pos_bw, cur_lerp_speed * delta * respawn_multi)
-	cur_pos_bw.y = lerpf(prev_pos_bw.y, new_pos_bw.y, cur_lerp_speed * delta * 0.5 * respawn_multi)
+	var rewind_multi: float = 1.0
+	if target.in_rewind:
+		rewind_multi = 2.0
+	
+	cur_pos = cur_pos.lerp(new_pos, cur_lerp_speed * delta * respawn_multi * rewind_multi)
+	cur_pos.y = lerpf(prev_pos.y, new_pos.y, cur_lerp_speed * delta * 0.5 * respawn_multi * rewind_multi)
+	cur_pos_bw = cur_pos_bw.lerp(new_pos_bw, cur_lerp_speed * delta * respawn_multi * rewind_multi)
+	cur_pos_bw.y = lerpf(prev_pos_bw.y, new_pos_bw.y, cur_lerp_speed * delta * 0.5 * respawn_multi * rewind_multi)
 
 
 
