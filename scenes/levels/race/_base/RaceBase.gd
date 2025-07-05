@@ -490,8 +490,9 @@ func spawn_physical_item(data: DomainRace.ItemSpawnWrapper):
 
 
 func destroy_physical_item(key: String):
-	if key in deleted_physical_items:
+	if not key in physical_items.keys():
 		return
+	
 	var instance = physical_items[key]
 
 	physical_items.erase(key)
@@ -507,9 +508,6 @@ func destroy_physical_item(key: String):
 
 
 func server_destroy_physical_item(key: String):
-	if key in deleted_physical_items:
-		return
-	
 	if not key in physical_items.keys():
 		return
 

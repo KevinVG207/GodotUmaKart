@@ -31,6 +31,8 @@ var mode: ExpanderMode = ExpanderMode.EXPANDING
 var victim_item: PhysicalItem
 var victim_speed_multi: float = 0.7
 
+var has_been_latched := false
+
 func _ready() -> void:
 	super()
 	handle.global_position = get_owner_anchor() + owned_by.basis.z * 3.0
@@ -74,6 +76,9 @@ func get_owner_anchor() -> Vector3:
 	return owned_by.global_position + owned_by.basis.z.normalized() * owned_by.radius
 
 func _on_handle_integrate_forces(state: PhysicsDirectBodyState3D) -> void:
+	if destroyed:
+		return
+	
 	handle_contacts(state)
 	
 	if mode == ExpanderMode.RETRACTING or expand_frame >= max_expand_frames:
@@ -97,8 +102,9 @@ func _on_handle_integrate_forces(state: PhysicsDirectBodyState3D) -> void:
 		if should_detach():
 			destroy()
 			return
-		if victim_item not in latched_player.active_items:
+		if victim_item not in latched_player.active_items and !has_been_latched:
 			latched_player.active_items.append(victim_item)
+			has_been_latched = true
 		latched_frame += 1
 	else:
 		despawn_ticks += 1
