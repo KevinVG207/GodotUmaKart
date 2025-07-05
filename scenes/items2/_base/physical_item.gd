@@ -16,6 +16,7 @@ var owner_id: int:
 var origin: Vehicle4
 var owned_by: Vehicle4
 var is_transferring_ownership := false
+var destroyed := false
 
 var state_idx: int = 0
 
@@ -53,6 +54,7 @@ func destroy() -> void:
 	world.destroy_physical_item(key)
 
 func on_destroy() -> void:
+	destroyed = true
 	return
 
 func get_state() -> Dictionary:
