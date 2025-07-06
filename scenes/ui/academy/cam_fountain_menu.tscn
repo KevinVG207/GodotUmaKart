@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://doyxcgm8r6edh"]
+[gd_scene load_steps=4 format=3 uid="uid://doyxcgm8r6edh"]
 
 [ext_resource type="Script" uid="uid://i2o3wk6yte5i" path="res://scenes/ui/academy/cam_fountain_menu.gd" id="1_1cqih"]
 [ext_resource type="PackedScene" uid="uid://685o3qwltpv8" path="res://scenes/ui/settings/exit_popup.tscn" id="2_hjtk7"]
+[ext_resource type="PackedScene" uid="uid://ddgsrqevfrq5j" path="res://scenes/ui/settings/credits_popup.tscn" id="3_j21bn"]
 
 [node name="CamFountainMenu" type="Control"]
 layout_mode = 3
@@ -14,6 +15,7 @@ script = ExtResource("1_1cqih")
 single_scene = "res://scenes/levels/race/Wicked_Woods/Wicked_Woods.tscn"
 online_scene = "res://scenes/ui/lobby/lobby.tscn"
 EXIT_POPUP = ExtResource("2_hjtk7")
+CREDITS_POPUP = ExtResource("3_j21bn")
 
 [node name="Label2" type="Label" parent="."]
 custom_minimum_size = Vector2(300, 0)
@@ -112,9 +114,31 @@ grow_horizontal = 2
 grow_vertical = 2
 focus_neighbor_left = NodePath("../VSButton")
 focus_neighbor_top = NodePath("../OnlineButton")
-focus_neighbor_bottom = NodePath("../TitleButton")
+focus_neighbor_bottom = NodePath("../CreditsButton")
 theme_override_font_sizes/font_size = 35
 text = "HOME_SETTINGS"
+clip_text = true
+
+[node name="CreditsButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 95.0
+offset_top = 43.0
+offset_right = 395.0
+offset_bottom = 110.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_neighbor_left = NodePath("../VSButton")
+focus_neighbor_top = NodePath("../SettingsButton")
+focus_neighbor_bottom = NodePath("../TitleButton")
+theme_override_font_sizes/font_size = 35
+text = "HOME_CREDITS"
 clip_text = true
 
 [node name="TitleButton" type="Button" parent="."]
@@ -133,7 +157,7 @@ offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 0
 focus_neighbor_left = NodePath("../ExitButton")
-focus_neighbor_top = NodePath("../SettingsButton")
+focus_neighbor_top = NodePath("../CreditsButton")
 theme_override_font_sizes/font_size = 35
 text = "HOME_TITLE"
 clip_text = true
@@ -161,5 +185,6 @@ clip_text = true
 
 [connection signal="pressed" from="OnlineButton" to="." method="_on_online_button_pressed"]
 [connection signal="pressed" from="SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="CreditsButton" to="." method="_on_credits_button_pressed"]
 [connection signal="pressed" from="TitleButton" to="." method="_on_title_button_pressed"]
 [connection signal="pressed" from="ExitButton" to="." method="_on_exit_button_pressed"]

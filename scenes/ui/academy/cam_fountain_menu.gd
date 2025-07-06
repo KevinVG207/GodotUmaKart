@@ -6,6 +6,7 @@ class_name CamFountainMenu
 @export var online_scene: String
 @onready var last_button: Control = %VSButton
 @export var EXIT_POPUP: PackedScene
+@export var CREDITS_POPUP: PackedScene
 var given_focus := false
 
 signal to_lobby
@@ -64,3 +65,12 @@ func _on_exit_button_pressed() -> void:
 
 func give_exit_btn_focus() -> void:
 	%ExitButton.grab_focus()
+
+func give_credits_btn_focus() -> void:
+	%CreditsButton.grab_focus()
+
+
+func _on_credits_button_pressed() -> void:
+	var popup: CreditsPopup = CREDITS_POPUP.instantiate()
+	popup.parent = self
+	get_window().add_child(popup)

@@ -1,3 +1,16 @@
+# Credits
+Design, programming and basically everything else:
+**KevinVG207**
+
+Made with Godot. godotengine.org
+
+This is a fan work made with love, that includes content based on characters and motifs
+from the Umamusume Project by Cygames, Inc., and follows the Fan-Created Content Guidelines
+as found at https://umamusume.com/fan-createdguide/.
+
+Thank you so much for playing my game! ❤️
+
+
 # Credits of third-party assets
 ## Textures
 * p0ss	117 Stone Wall Tilable Textures in 8 Themes	GPL 2.0
@@ -26,3 +39,7 @@
 
 ## Music
 * AfterHaze composed by t12ya -- https://dova-s.jp/EN/bgm/play21959.html -- DOVA-SYNDROME License https://dova-s.jp/EN/_contents/license/
+
+## Plugins
+* MarkdownLabel by daenvil -- https://github.com/daenvil/MarkdownLabel -- License: MIT License
+* uuid by binogure and contributors -- https://github.com/binogure-studio/godot-uuid -- License: MIT License

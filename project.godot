@@ -50,7 +50,7 @@ movie_writer/movie_file="E:/Dev/GodotArcadeRacerTest/_movie/movie.avi"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/material_modifier/plugin.cfg", "res://addons/uma_kart_enemy_path_plugin/plugin.cfg")
+enabled=PackedStringArray("res://addons/markdownlabel/plugin.cfg", "res://addons/material_modifier/plugin.cfg", "res://addons/uma_kart_enemy_path_plugin/plugin.cfg")
 
 [global_group]
 

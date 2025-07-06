@@ -1,0 +1,144 @@
+[gd_scene load_steps=16 format=3 uid="uid://ddgsrqevfrq5j"]
+
+[ext_resource type="Script" uid="uid://xuxjfhbxn46b" path="res://scenes/ui/settings/credits_popup.gd" id="1_5b82y"]
+[ext_resource type="Script" uid="uid://dbap0gqox0ty1" path="res://addons/markdownlabel/markdownlabel.gd" id="2_1qj3n"]
+[ext_resource type="Script" uid="uid://dcx7crs23nf4" path="res://addons/markdownlabel/header_formats/h1_format.gd" id="3_qvvok"]
+[ext_resource type="Script" uid="uid://d0sin64i4v3op" path="res://addons/markdownlabel/header_formats/h2_format.gd" id="4_dpitb"]
+[ext_resource type="Script" uid="uid://dlok0dv1tq2bf" path="res://addons/markdownlabel/header_formats/h3_format.gd" id="5_vgfss"]
+[ext_resource type="Script" uid="uid://bayuh2vafablg" path="res://addons/markdownlabel/header_formats/h4_format.gd" id="6_mhrsu"]
+[ext_resource type="Script" uid="uid://dfr1w7u3jgni3" path="res://addons/markdownlabel/header_formats/h5_format.gd" id="7_v84ba"]
+[ext_resource type="Script" uid="uid://bsi6dexoofpe6" path="res://addons/markdownlabel/header_formats/h6_format.gd" id="8_fhu8j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_48vuk"]
+bg_color = Color(0.18359, 0.18359, 0.18359, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Resource" id="Resource_7jg1v"]
+resource_local_to_scene = true
+script = ExtResource("3_qvvok")
+font_size = 2.285
+is_bold = false
+is_italic = false
+is_underlined = false
+override_font_color = false
+font_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Resource" id="Resource_gpsc8"]
+resource_local_to_scene = true
+script = ExtResource("4_dpitb")
+font_size = 1.714
+is_bold = false
+is_italic = false
+is_underlined = false
+override_font_color = false
+font_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Resource" id="Resource_x4myl"]
+resource_local_to_scene = true
+script = ExtResource("5_vgfss")
+font_size = 1.428
+is_bold = false
+is_italic = false
+is_underlined = false
+override_font_color = false
+font_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Resource" id="Resource_2hd2w"]
+resource_local_to_scene = true
+script = ExtResource("6_mhrsu")
+font_size = 1.142
+is_bold = false
+is_italic = false
+is_underlined = false
+override_font_color = false
+font_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Resource" id="Resource_xwn8r"]
+resource_local_to_scene = true
+script = ExtResource("7_v84ba")
+font_size = 1.0
+is_bold = false
+is_italic = false
+is_underlined = false
+override_font_color = false
+font_color = Color(1, 1, 1, 1)
+
+[sub_resource type="Resource" id="Resource_lq3n1"]
+resource_local_to_scene = true
+script = ExtResource("8_fhu8j")
+font_size = 0.857
+is_bold = false
+is_italic = false
+is_underlined = false
+override_font_color = false
+font_color = Color(1, 1, 1, 1)
+
+[node name="ExitPopup" type="CanvasLayer"]
+layer = 50
+script = ExtResource("1_5b82y")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.223529, 0.223529, 0.223529, 0.368627)
+
+[node name="PanelContainer" type="PanelContainer" parent="Background"]
+custom_minimum_size = Vector2(1000, 300)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -425.0
+offset_top = -150.0
+offset_right = 425.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_48vuk")
+
+[node name="MarginContainer" type="MarginContainer" parent="Background/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Background/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="MarkdownLabel" type="RichTextLabel" parent="Background/PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 500)
+layout_mode = 2
+bbcode_enabled = true
+script = ExtResource("2_1qj3n")
+h1 = SubResource("Resource_7jg1v")
+h2 = SubResource("Resource_gpsc8")
+h3 = SubResource("Resource_x4myl")
+h4 = SubResource("Resource_2hd2w")
+h5 = SubResource("Resource_xwn8r")
+h6 = SubResource("Resource_lq3n1")
+metadata/_custom_type_script = "uid://dbap0gqox0ty1"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Background/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="BtnCancel" type="Button" parent="Background/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "HOME_EXIT_CANCEL"
+
+[connection signal="gui_input" from="Background" to="." method="_on_background_gui_input"]
+[connection signal="pressed" from="Background/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/BtnCancel" to="." method="_on_btn_cancel_pressed"]
