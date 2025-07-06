@@ -55,6 +55,7 @@ HOME_EXIT,Quit Game,ゲームを終了
 HOME_EXIT_WARNING,Are you sure you want to quit the game?,ゲームを終了しますか？
 HOME_EXIT_EXIT,Quit,終了する
 HOME_EXIT_CANCEL,Cancel,キャンセル
+HOME_CREDITS,Credits,クレジット
 LANG_EN,English,英語
 LANG_JA,Japanese,日本語
 GAME_TITLE,Uma Kart Racer,ウマカート・レーシング
