@@ -68,7 +68,6 @@ func _physics_process(delta: float) -> void:
 			if owned_by == world.player_vehicle and Global.MODE1 == Global.MODE1_ONLINE and target_player != world.player_vehicle:
 				world.item_transfer_owner(self, target_player.user_id)
 	
-	# FIXME: Switching target/online is broken
 	match target_mode:
 		TargetMode.HOMING:
 			target_pos = target_player.global_position
@@ -113,6 +112,9 @@ func _physics_process(delta: float) -> void:
 			cur_turn_speed *= 2
 		
 		body.velocity = body.velocity.rotated(body.transform.basis.y, cur_turn_speed * delta)
+		
+		if target_mode == TargetMode.HOMING:
+			body.velocity = target_dir.normalized() * body.velocity.length()
 	
 	super(delta)
 
