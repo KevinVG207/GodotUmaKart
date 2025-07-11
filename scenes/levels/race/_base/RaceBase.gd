@@ -2,7 +2,8 @@ extends Node3D
 
 class_name RaceBase
 
-@onready var player_camera: Camera3D = $PlayerCamera
+@onready var player_camera: PlayerCam = $PlayerCamera
+@onready var intro_camera: Camera3D = %IntroCamera
 var updates_to_server_per_second: int = 6
 var checkpoints: Array = []
 var key_checkpoints: Dictionary = {}
@@ -70,7 +71,7 @@ var course_name: String = "default"
 var countdown_timer: int = 0
 var countdown_state: int = 3
 var countdown_gap: float = 1.5
-var countdown_seconds_total := (countdown_state-1) * countdown_gap + 1
+var countdown_seconds_total := (countdown_state-1) * countdown_gap
 
 var map_outline_color: Color = Color(0.37, 0.37, 0.37, 1.0)
 @export var map_outline_width: float = 2.5
@@ -117,15 +118,17 @@ const STATE_JOINING = 1
 const STATE_CAN_READY = 2
 const STATE_READY_FOR_START = 3
 const STATE_WAIT_FOR_START = 4
-const STATE_COUNTDOWN = 5
-const STATE_COUNTING_DOWN = 6
-const STATE_RACE = 7
-const STATE_RACE_OVER = 8
-const STATE_READY_FOR_RANKINGS = 9
-const STATE_SHOW_RANKINGS = 10
-const STATE_JOIN_NEXT = 11
-const STATE_JOINING_NEXT = 12
-const STATE_SPECTATING = 13
+const STATE_COURSE_INTRO = 5
+const STATE_DRIVER_INTRO = 6
+const STATE_COUNTDOWN = 7
+const STATE_COUNTING_DOWN = 8
+const STATE_RACE = 9
+const STATE_RACE_OVER = 10
+const STATE_READY_FOR_RANKINGS = 11
+const STATE_SHOW_RANKINGS = 12
+const STATE_JOIN_NEXT = 13
+const STATE_JOINING_NEXT = 14
+const STATE_SPECTATING = 15
 
 const UPDATE_STATES = [
 	STATE_COUNTDOWN,
@@ -158,6 +161,8 @@ var loaded_replay_vehicle: Vehicle4 = null
 
 var network_room: DomainRoom.Race
 
+var course_intro_tween: Tween = null
+
 func _ready() -> void:
 	course_name = Util.get_race_course_name_from_path(scene_file_path)
 	
@@ -171,8 +176,6 @@ func _ready() -> void:
 	
 	UI.race_ui.set_max_laps(lap_count)
 	UI.race_ui.set_cur_lap(0)
-	
-	UI.show_race_ui()
 	
 	UI.race_ui.back_btn.pressed.connect(_on_back_pressed)
 
@@ -579,6 +582,8 @@ func _physics_process(_delta: float) -> void:
 			join()
 		STATE_CAN_READY:
 			change_state(STATE_READY_FOR_START, send_ready)
+		STATE_COURSE_INTRO:
+			start_course_intro()
 		STATE_COUNTDOWN:
 			replay_manager.setup_new_replay(self)
 			state = STATE_COUNTING_DOWN
@@ -664,6 +669,45 @@ func _physics_process(_delta: float) -> void:
 	#for key: String in physical_items:
 		#destroy_physical_item(key)
 	#return
+
+func start_course_intro() -> void:
+	if course_intro_tween != null:
+		if Util.just_pressed_accept_or_cancel() and !player_camera.intro_skipped:
+			course_intro_tween.pause()
+			course_intro_tween.custom_step(999)
+			skip_course_intro()
+		return
+	
+	if not %IntroCameraAnimationPlayer.is_playing():
+		intro_camera.make_current()
+		for anim: String in %IntroCameraAnimationPlayer.intro_animations:
+			%IntroCameraAnimationPlayer.queue(anim)
+		
+		course_intro_tween = create_tween()
+		course_intro_tween.tween_property(UI.black_overlay, "modulate:a", 0.0, 0.25).set_delay(7.75)
+		course_intro_tween.finished.connect(_on_course_intro_finished)
+
+func _on_course_intro_finished() -> void:
+	#create_tween().tween_property(UI.black_overlay, "modulate:a", 0.0, 0.25)
+	start_driver_intro()
+
+func skip_course_intro() -> void:
+	%IntroCameraAnimationPlayer.play(%IntroCameraAnimationPlayer.intro_animations[%IntroCameraAnimationPlayer.intro_animations.size()-1])
+	%IntroCameraAnimationPlayer.seek(10.0, true)
+	player_camera.intro_skipped = true
+
+func start_driver_intro() -> void:
+	state = STATE_DRIVER_INTRO
+	player_camera.driver_intro_finished.connect(_on_driver_intro_finished)
+	player_camera.start_driver_intro()
+	Audio.play_driver_intro_sound()
+	UI.show_race_ui()
+
+func _on_driver_intro_finished() -> void:
+	if Global.MODE1 == Global.MODE1_ONLINE:
+		state = STATE_CAN_READY
+		return
+	state = STATE_COUNTDOWN
 
 func handle_replay() -> void:
 	if state < STATE_RACE_OVER:
@@ -785,7 +829,7 @@ func check_finished():
 			Audio.race_music_stop()
 
 
-func _add_vehicle(user_id: int, new_position: Vector3, look_dir: Vector3, up_dir: Vector3, ignore_replay:=false):
+func _add_vehicle(user_id: int, new_position: Vector3, look_dir: Vector3, up_dir: Vector3, ignore_replay:=false) -> Vehicle4:
 	# if !ignore_replay:
 	# 	replay_manager.spawn_vehicle(user_id, new_position, look_dir, up_dir)
 	var new_vehicle := player_scene.instantiate() as Vehicle4
@@ -820,6 +864,8 @@ func _add_vehicle(user_id: int, new_position: Vector3, look_dir: Vector3, up_dir
 		new_vehicle.username = "Player"
 		if Global.MODE1 == Global.MODE1_ONLINE:
 			new_vehicle.username = Config.online_username
+	
+	return new_vehicle
 
 func _remove_vehicle(user_id: int):
 	if user_id in players_dict.keys():
@@ -852,7 +898,7 @@ func setup_vehicles() -> void:
 			side_multi = -1
 
 		var cur_pos := start_position + start_offset_z * (i + 3) * start_direction + side_multi * start_offset_x * side_direction
-		_add_vehicle(user_id, cur_pos, -start_direction, up_dir)
+		_add_vehicle(user_id, cur_pos, -start_direction, up_dir).start_side_multi = side_multi
 
 func get_starting_order() -> Array[int]:
 	match Global.MODE1:
@@ -888,7 +934,7 @@ func join():
 	Global.final_lobby = null
 	if Global.MODE1 == Global.MODE1_OFFLINE:
 		UI.end_scene_change()
-		state = STATE_COUNTDOWN
+		state = STATE_COURSE_INTRO
 		return
 	
 	RPCClient.race_start_received.connect(handle_race_start)
@@ -914,7 +960,9 @@ func join():
 	if spectate:
 		state = STATE_SPECTATING
 		return
-	state = STATE_CAN_READY
+	
+	skip_course_intro()
+	start_driver_intro()
 	return
 
 func _on_ping(ping: float) -> void:

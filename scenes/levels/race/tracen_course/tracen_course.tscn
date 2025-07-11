@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c7ahqrhul0gpx"]
+[gd_scene load_steps=20 format=3 uid="uid://c7ahqrhul0gpx"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_n65nj"]
 [ext_resource type="ArrayMesh" uid="uid://b6e1rva1cf2ml" path="res://assets/course/tracen-course/_map/tracen-course-map_Plane.res" id="2_m36vl"]
@@ -19,6 +19,237 @@ resource_local_to_scene = true
 stream_count = 1
 stream_0/stream = ExtResource("2_r71dd")
 stream_0/volume = 0.0
+
+[sub_resource type="Animation" id="Animation_1m6e8"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IntroCamera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(20.3407, 31.7122, -75.6739)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IntroCamera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-0.504487, -0.286914, 1.70217e-08)]
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IntroCamera:position:x")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(20.3407, 0, 0, 0, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IntroCamera:position:y")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(31.7122, 0, 0, 0, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("IntroCamera:position:z")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-75.6739, 0, 0, 0, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IntroCamera:rotation:x")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.504487, 0, 0, 0, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/6/type = "bezier"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("IntroCamera:rotation:y")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(-0.286914, 0, 0, 0, 0),
+"times": PackedFloat32Array(0)
+}
+tracks/7/type = "bezier"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("IntroCamera:rotation:z")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(1.70217e-08, 0, 0, 0, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_shrl0"]
+resource_name = "intro"
+length = 2.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IntroCamera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(20.3407, 31.7122, -75.6739), Vector3(48.8834, 14.4228, -38.8378)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IntroCamera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.504487, -0.286914, 1.70217e-08), Vector3(-0.445024, -1.38806, 2.68274e-08)]
+}
+
+[sub_resource type="Animation" id="Animation_1rjps"]
+resource_name = "intro2"
+length = 2.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IntroCamera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(238.76, 11.2809, 184.665), Vector3(278.511, 18.9206, 192.499)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IntroCamera:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.504487, 0.832086, 2.51846e-08), Vector3(-0.470244, -0.0466524, 2.46815e-08)]
+}
+
+[sub_resource type="Animation" id="Animation_b0os0"]
+resource_name = "intro3"
+length = 3.0
+step = 0.1
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IntroCamera:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(2, 0, 0, 0),
+"points": PackedFloat32Array(66.8419, 0, 0, 0.166667, 0.839516, 71.879, -0.166667, 0.35645, 0.166667, -0.35645, 62.5645, -0.166667, 1.90412, 0.333333, -3.80823, 37.6049, -0.5, 0.0571136, 0, 0),
+"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+}
+tracks/1/type = "bezier"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("IntroCamera:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"handle_modes": PackedInt32Array(2, 0, 0, 0),
+"points": PackedFloat32Array(3.20461, 0, 0, 0.166667, 0.32375, 5.14711, -0.166667, -0.633308, 0.166667, 0.633308, 10.8043, -0.166667, 0.0106639, 0.333333, -0.0213278, 4.95516, -0.5, 0.280123, 0, 0),
+"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+}
+tracks/2/type = "bezier"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IntroCamera:position:z")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"handle_modes": PackedInt32Array(2, 2, 2, 0),
+"points": PackedFloat32Array(87.9776, 0, 0, 0.166667, -3.16113, 69.0108, -0.116667, 3.44767, 0.183333, -5.41778, 34.7849, -0.183333, 4.81383, 0.2, -5.25145, 8.61913, -0.5, 0.751105, 0, 0),
+"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+}
+tracks/3/type = "bezier"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("IntroCamera:rotation:x")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"handle_modes": PackedInt32Array(2, 0, 0, 0),
+"points": PackedFloat32Array(-0.0359364, 0, 0, 0.166667, 0, -0.0359364, -0.166667, 0.0163544, 0.166667, -0.0163544, -0.232189, -0.166667, 0.0108996, 0.333333, -0.0217992, -0.232129, -0.333333, -1.00012e-05, 0, 0),
+"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+}
+tracks/4/type = "bezier"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("IntroCamera:rotation:y")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"handle_modes": PackedInt32Array(2, 2, 2, 0),
+"points": PackedFloat32Array(-0.259583, 0, 0, 0.166667, 0, -0.259583, -0.1, -0.0282527, 0.184431, 0.0521068, 0.535926, -0.183333, -0.125032, 0.2, 0.136399, 1.309, -0.4, -0.0128914, 0, 0),
+"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+}
+tracks/5/type = "bezier"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("IntroCamera:rotation:z")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"handle_modes": PackedInt32Array(2, 0, 0, 0),
+"points": PackedFloat32Array(3.7277e-08, 0, 0, 0.166667, 0, 3.7277e-08, -0.166667, 0.00218529, 0.166667, -0.00218529, -0.0262235, -0.166667, 2.07094e-09, 0.333333, -4.14189e-09, 0, -0.563364, 0.00340402, 0, 0),
+"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_b0os0"]
+resource_local_to_scene = true
+_data = {
+&"RESET": SubResource("Animation_1m6e8"),
+&"intro": SubResource("Animation_shrl0"),
+&"intro2": SubResource("Animation_1rjps"),
+&"intro3": SubResource("Animation_b0os0")
+}
 
 [node name="TracenCourse" node_paths=PackedStringArray("start_enemy_points") instance=ExtResource("1_n65nj")]
 map_mesh_instances = Array[NodePath]([NodePath("Course/MapMesh")])
@@ -514,3 +745,12 @@ guaranteed_item = ExtResource("11_v1cpl")
 [node name="ItemPickup4" parent="." index="15" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.172273, 0, -0.985049, 0, 1, 0, 0.985049, 0, -0.172273, 47.4262, -4.56539, 0.869619)
 guaranteed_item = ExtResource("13_shrl0")
+
+[node name="IntroCamera" parent="." index="16"]
+transform = Transform3D(0.959122, 0.136787, -0.247739, 1.49012e-08, 0.875422, 0.483359, 0.282994, -0.463599, 0.839637, 20.3407, 31.7122, -75.6739)
+
+[node name="IntroCameraAnimationPlayer" parent="." index="17"]
+libraries = {
+&"": SubResource("AnimationLibrary_b0os0")
+}
+intro_animations = Array[String](["intro", "intro2", "intro3"])

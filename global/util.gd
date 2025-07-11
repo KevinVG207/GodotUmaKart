@@ -341,3 +341,9 @@ func find_race_base_parent(node: Node) -> RaceBase:
 			return node
 		iter += 1
 	return null
+
+func just_pressed_accept_or_cancel() -> bool:
+	return Input.is_action_just_pressed("ui_cancel") or Input.is_action_just_pressed("brake") or Input.is_action_just_pressed("brake2") or Input.is_action_just_pressed("accelerate") or Input.is_action_just_pressed("ui_accept")
+
+func get_file_name_from_path(path: String) -> String:
+	return path.rsplit("/", true, 1)[1].rsplit(".", true, 1)[0]

@@ -43,3 +43,4 @@ Thank you so much for playing my game! ❤️
 ## Plugins
 * MarkdownLabel by daenvil -- https://github.com/daenvil/MarkdownLabel -- License: MIT License
 * uuid by binogure and contributors -- https://github.com/binogure-studio/godot-uuid -- License: MIT License
+* Godot Animation Track Converter by Arnklit -- https://github.com/Arnklit/godot-anim-track-converter -- License: MIT License

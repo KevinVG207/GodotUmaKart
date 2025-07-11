@@ -20,7 +20,7 @@ func close() -> void:
 	queue_free()
 
 func _process(delta: float) -> void:
-	if Input.is_action_just_pressed("ui_cancel") or Input.is_action_just_pressed("brake") or Input.is_action_just_pressed("brake2") or Input.is_action_just_pressed("accelerate"):
+	if Util.just_pressed_accept_or_cancel():
 		close()
 	
 	var scrollbar := label.get_v_scroll_bar()

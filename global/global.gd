@@ -122,11 +122,7 @@ func setup_items() -> void:
 	UI.race_ui.setup()
 
 func sample_item(player: Vehicle4) -> PackedScene:
-	var distributions: Array[float] = []
-	for item in item_distributions:
-		var offset := float(player.rank) / player_count
-		var weight := maxf(0, item_distributions[item].sample(offset))
-		distributions.append(weight)
+	var distributions := make_item_distributions(player)
 	
 	var rnd = RandomNumberGenerator.new()
 	var choice := rnd.rand_weighted(distributions)
@@ -136,6 +132,14 @@ func sample_item(player: Vehicle4) -> PackedScene:
 		return items[0]
 
 	return item_distributions.keys()[choice]
+
+func make_item_distributions(player: Vehicle4) -> Array[float]:
+	var distributions: Array[float] = []
+	for item in item_distributions:
+		var offset := float(player.rank) / player_count
+		var weight := maxf(0, item_distributions[item].sample(offset))
+		distributions.append(weight)
+	return distributions
 
 #func _ready():
 	#var gravity := Vector3(0, -1, 0)
