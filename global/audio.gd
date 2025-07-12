@@ -12,6 +12,7 @@ const AFTER_RACE_FADEOUT_TIME := 1.0
 @onready var countdown_normal_sound: AudioStreamWAV = preload("res://assets/audio/race/countdown/countdown.wav")
 @onready var countdown_go_sound: AudioStreamWAV = preload("res://assets/audio/race/countdown/go.wav")
 @onready var final_lap_sound: AudioStreamWAV = preload("res://assets/audio/race/final-lap.wav")
+@onready var driver_intro_sound: AudioStreamWAV = preload("res://assets/audio/race/jingle/umapyoi-race-intro.wav")
 
 func _ready() -> void:
 	add_child(ui_player)
@@ -67,4 +68,8 @@ func play_countdown_go() -> void:
 
 func play_final_lap_sound() -> void:
 	sfx_player.stream = final_lap_sound
+	sfx_player.play(0)
+
+func play_driver_intro_sound() -> void:
+	sfx_player.stream = driver_intro_sound
 	sfx_player.play(0)

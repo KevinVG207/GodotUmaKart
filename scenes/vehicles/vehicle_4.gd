@@ -45,6 +45,7 @@ var friction_multi := 1.5
 var grip := base_grip
 
 var cur_speed := 0.0
+var start_side_multi: int = 1
 
 var item: UsableItem = null
 var can_use_item : = false

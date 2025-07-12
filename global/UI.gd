@@ -4,6 +4,8 @@ var water = false
 @export var underwater_color: Color
 var transparent: Color = Color(0, 0, 0, 0)
 
+@onready var black_overlay: ColorRect = %BlackOverlay
+
 var race_ui_scene: PackedScene = preload("res://scenes/ui/race_ui.tscn")
 @onready var race_ui: RaceUI = $RaceUI
 var _next_scene: String
