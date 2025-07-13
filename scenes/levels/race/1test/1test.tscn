@@ -190,8 +190,9 @@ next_points = [NodePath("../Checkpoint14")]
 transform = Transform3D(-0.999668, 0, -0.0257757, 0, 1, 0, 0.0257757, 0, -0.999668, 41.9416, 0, 12.1809)
 next_points = [NodePath("../Checkpoint15")]
 
-[node name="Checkpoint15" parent="Checkpoints" index="14" instance=ExtResource("3_864dc")]
+[node name="Checkpoint15" parent="Checkpoints" index="14" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
 transform = Transform3D(-0.999668, 0, -0.0257757, 0, 1, 0, 0.0257757, 0, -0.999668, 41.3086, 0, -20.9129)
+next_points = [NodePath("../Checkpoint16")]
 
 [node name="Checkpoint16" parent="Checkpoints" index="15" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
 transform = Transform3D(-0.683325, 0, -0.730115, 0, 1, 0, 0.730115, 0, -0.683325, 35.6122, 0, -46.0497)
