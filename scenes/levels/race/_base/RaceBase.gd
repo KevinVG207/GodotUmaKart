@@ -211,7 +211,7 @@ func setup_checkpoints_new() -> void:
 	for i in range($Checkpoints.get_child_count()):
 		checkpoint_nodes.append($Checkpoints.get_child(i) as Checkpoint)
 		checkpoint_nodes[i].link_next_prev()
-	CheckpointManager.initialize_checkpoints(checkpoint_nodes)
+	CheckpointManager.initialize_checkpoints(checkpoint_nodes, self)
 	print("A")
 
 func setup_map_meshes() -> void:
@@ -1134,13 +1134,15 @@ func check_reverse(player: Vehicle4) -> bool:
 	return true
 
 func update_checkpoint(player: Vehicle4) -> void:
+	CheckpointManager.update_checkpoint(player)
+
 	#if player.respawn_stage:
 		#return
 	
-	if not check_advance(player):
-		check_reverse(player)
+	# if not check_advance(player):
+	# 	check_reverse(player)
 
-	player.check_progress = progress_in_cur_checkpoint(player)
+	# player.check_progress = progress_in_cur_checkpoint(player)
 
 
 func dist_to_checkpoint(player: Vehicle4, checkpoint_idx: int) -> float:

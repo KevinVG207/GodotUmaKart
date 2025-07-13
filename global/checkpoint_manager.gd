@@ -14,13 +14,16 @@ class CheckpointSegment:
 	var next: Array[CheckpointSegment] = []
 	var prev: Array[CheckpointSegment] = []
 
+var world: RaceBase
+
 var indexed_checkpoints: Dictionary[int, Checkpoint]
 var segments: Array[CheckpointSegment]
 var first_segment: CheckpointSegment
 var last_segment: CheckpointSegment
-var is_loop: bool
+var is_loop: bool = false
+var key_checkpoints: Array[Checkpoint] = []
 
-func get_next_checkpoints(checkpoint: Checkpoint) -> Array[Checkpoint]:
+func get_next_segment_checkpoints(checkpoint: Checkpoint) -> Array[Checkpoint]:
 	var out: Array[Checkpoint] = []
 
 	var segment := checkpoint.segment
@@ -29,7 +32,7 @@ func get_next_checkpoints(checkpoint: Checkpoint) -> Array[Checkpoint]:
 
 	return out
 
-func get_previous_checkpoints(checkpoint: Checkpoint) -> Array[Checkpoint]:
+func get_previous_segment_checkpoints(checkpoint: Checkpoint) -> Array[Checkpoint]:
 	var out: Array[Checkpoint] = []
 
 	var segment := checkpoint.segment
@@ -38,24 +41,19 @@ func get_previous_checkpoints(checkpoint: Checkpoint) -> Array[Checkpoint]:
 
 	return out
 
-func fix_check_idx(idx: int) -> int:
-	return posmod(idx, indexed_checkpoints.size())
-
 func get_progress(vehicle: Vehicle4) -> float:
-	var segment := indexed_checkpoints[fix_check_idx(vehicle.check_idx)].segment
-	var checkpoint := indexed_checkpoints[fix_check_idx(vehicle.check_idx)]
+	var segment := vehicle.checkpoint.segment
 	var progress: float = float(vehicle.lap)
 	progress += segment.start_fraction
-	progress += segment.fraction * checkpoint.segment_fraction_start
-	progress += segment.fraction * checkpoint.segment_fraction * get_progress_in_checkpoint(vehicle)
+	progress += segment.fraction * vehicle.checkpoint.segment_fraction_start
+	progress += segment.fraction * vehicle.checkpoint.segment_fraction * get_progress_in_checkpoint(vehicle)
 	return progress
 
 func get_progress_in_checkpoint(vehicle: Vehicle4) -> float:
-	var checkpoint := indexed_checkpoints[fix_check_idx(vehicle.check_idx)]
-	var dist_behind: float = abs(dist_to_checkpoint(vehicle, checkpoint))
+	var dist_behind: float = abs(dist_to_checkpoint(vehicle, vehicle.checkpoint))
 	
 	var shortest_dist_ahead: float = INF
-	for next_checkpoint in checkpoint.next_points:
+	for next_checkpoint in vehicle.checkpoint.next_points:
 		var dist_ahead: float = abs(dist_to_checkpoint(vehicle, next_checkpoint))
 		if dist_ahead < shortest_dist_ahead:
 			shortest_dist_ahead = dist_ahead
@@ -64,10 +62,20 @@ func get_progress_in_checkpoint(vehicle: Vehicle4) -> float:
 func dist_to_checkpoint(player: Vehicle4, checkpoint: Checkpoint) -> float:
 	return Util.dist_to_plane(checkpoint.transform.basis.z, checkpoint.global_position, player.get_node("%Front").global_position)
 
-func initialize_checkpoints(checkpoints: Array[Checkpoint]) -> void:
+func initialize_checkpoints(checkpoints: Array[Checkpoint], _world: RaceBase) -> void:
+	world = _world
+	
 	set_indexes(checkpoints)
 	
 	create_segments(checkpoints)
+
+	first_segment.first.is_key = true
+	last_segment.last.is_key = true
+
+	if first_segment in last_segment.prev:
+		is_loop = true
+
+	initialize_key_checkpoints()
 	
 	for segment in segments:
 		print("LINKING SEGMENT ", segment.first.name, " - ", segment.last.name)
@@ -114,6 +122,12 @@ func initialize_checkpoints(checkpoints: Array[Checkpoint]) -> void:
 		set_segment_fractions(start_frac, end_frac, valid_segments)
 	return
 
+func initialize_key_checkpoints() -> void:
+	for segment in segments:
+		for checkpoint in segment.checkpoints:
+			if checkpoint.is_key:
+				key_checkpoints.append(checkpoint)
+
 func set_indexes(checkpoints: Array[Checkpoint]) -> void:
 	var idx := 0
 	for checkpoint in checkpoints:
@@ -127,10 +141,10 @@ func find_first_valid_start_fraction(path: Array[CheckpointSegment]) -> float:
 			return segment.start_fraction
 	return -1
 
-func set_segment_fractions(start: float, end: float, segments: Array[CheckpointSegment]) -> void:
-	var section_length := calc_segment_array_length(segments)
+func set_segment_fractions(start: float, end: float, _segments: Array[CheckpointSegment]) -> void:
+	var section_length := calc_segment_array_length(_segments)
 	var fraction_total := start
-	for segment in segments:
+	for segment in _segments:
 		segment.fraction = remap(segment.length, 0.0, section_length, start, end) - start
 		segment.start_fraction = fraction_total
 		
@@ -167,9 +181,9 @@ func find_shortest_path(first: CheckpointSegment, last: CheckpointSegment) -> Ar
 	
 	return output[0]
 
-func calc_segment_array_length(segments: Array[CheckpointSegment]) -> float:
+func calc_segment_array_length(_segments: Array[CheckpointSegment]) -> float:
 	var out := 0.0
-	for segment in segments:
+	for segment in _segments:
 		out += segment.length
 	return out
 
@@ -231,8 +245,6 @@ func create_segments(checkpoints: Array[Checkpoint]) -> Array[CheckpointSegment]
 	var cur_segment: CheckpointSegment = CheckpointSegment.new()
 	segments = []
 	var cur_checkpoint: Checkpoint = null
-	
-	var used_checkpoints: Array[Checkpoint] = []
 
 	while checkpoints_left.size() > 0:
 		if cur_checkpoint == null:
@@ -264,3 +276,91 @@ func create_segments(checkpoints: Array[Checkpoint]) -> Array[CheckpointSegment]
 		print(segment.checkpoints)
 
 	return segments
+
+func update_checkpoint(vehicle: Vehicle4) -> void:
+	print("CUR CHECK: ", vehicle.checkpoint.name)
+	if not check_advance(vehicle):
+		check_reverse(vehicle)
+
+func check_reverse(vehicle: Vehicle4) -> bool:
+	var prev_checkpoints := vehicle.checkpoint.prev_points
+
+	if prev_checkpoints.size() == 0:
+		return false
+	
+	if dist_to_checkpoint(vehicle, vehicle.checkpoint) > 0:
+		return false
+	
+	return true
+	
+	for prev_checkpoint in prev_checkpoints:
+		print(prev_checkpoint.name)
+		if dist_to_checkpoint(vehicle, prev_checkpoint) > 0:
+			continue
+		
+		if prev_checkpoint.is_key:
+			var cur_key_idx: int = key_checkpoints.find(prev_checkpoint)
+			var next_key_idx := posmod(cur_key_idx+1, key_checkpoints.size())
+			
+			if key_checkpoints[next_key_idx] != vehicle.key_checkpoint:
+				continue
+			vehicle.key_checkpoint = prev_checkpoint
+	
+		vehicle.checkpoint = prev_checkpoint
+		
+		if prev_checkpoint.end_node:
+			lap_decrease(vehicle)
+		return true
+
+	return false
+
+func check_advance(vehicle: Vehicle4) -> bool:
+	var next_checkpoints := vehicle.checkpoint.next_points
+
+	if next_checkpoints.size() == 0:
+		return false
+	
+	for next_checkpoint in next_checkpoints:
+		if dist_to_checkpoint(vehicle, next_checkpoint) < 0:
+			continue
+		
+		if next_checkpoint.is_key:
+			var cur_key_idx: int = key_checkpoints.find(next_checkpoint)
+			var prev_key_idx := posmod(cur_key_idx-1, key_checkpoints.size())
+			
+			if key_checkpoints[prev_key_idx] != vehicle.key_checkpoint:
+				continue
+			vehicle.key_checkpoint = next_checkpoint
+	
+		vehicle.checkpoint = next_checkpoint
+		
+		if next_checkpoint.begin_node:
+			lap_increase(vehicle)
+		return true
+
+	return false
+
+func lap_decrease(vehicle: Vehicle4) -> void:
+	vehicle.lap -= 1
+
+func lap_increase(vehicle: Vehicle4) -> void:
+	vehicle.lap += 1
+	
+	if vehicle == world.player_vehicle && vehicle.lap == world.lap_count:
+		Audio.start_final_lap(world.final_lap_speed_multi)
+	
+	if not vehicle.finished and vehicle.lap > world.lap_count and not vehicle.is_network:
+		determine_finish_time(vehicle)
+
+func determine_finish_time(vehicle: Vehicle4) -> void:
+	# var time_after_finish = (timer_tick - 1) * (1.0/Engine.physics_ticks_per_second)
+	var time_after_finish := world.time
+		
+	var finish_plane_normal: Vector3 = vehicle.checkpoint.transform.basis.z
+	var vehicle_vel: Vector3 = vehicle.prev_velocity.total()
+	var seconds_per_tick := 1.0/Engine.physics_ticks_per_second
+
+	# Determine the ratio of the vehicle_vel to the finish_plane_normal, and determine how much time it had taken to cross the finish line since the last frame
+	var final_time := time_after_finish - clampf(dist_to_checkpoint(vehicle, vehicle.checkpoint) / vehicle_vel.project(finish_plane_normal).length(), 0, seconds_per_tick)
+	print("Finishing ", vehicle.username, " with time ", final_time, " ", vehicle.finish_time, " ", time_after_finish, " ", seconds_per_tick, " ", time_after_finish - final_time)
+	vehicle.set_finished(final_time)

@@ -43,6 +43,7 @@ func print_vehicle_fields(vehicle: Vehicle4) -> void:
 	Debug.pd_print(vehicle.check_idx, "check idx")
 	Debug.pd_print(vehicle.check_key_idx, "check key idx")
 	Debug.pd_print(vehicle.check_progress, "check progress")
+	Debug.pd_print(vehicle.checkpoint.name, "checkpoint")
 	Debug.pd_print(vehicle.cur_progress, "cur progress")
 	Debug.pd_print(vehicle.lap, "lap")
 	Debug.pd_print(vehicle.rank, "rank")

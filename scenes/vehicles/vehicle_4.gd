@@ -86,6 +86,8 @@ var check_idx := -1  #:
 		#return CheckpointManager.fix_check_idx(check_idx)
 var check_key_idx := 0
 var check_progress := 0.0
+var checkpoint: Checkpoint = null
+var key_checkpoint: Checkpoint = null
 var lap := 0
 var rank := 999999
 var finish_time := 0.0
@@ -375,6 +377,9 @@ func _ready() -> void:
 	respawn_boost_safezone_frames = int(respawn_boost_safezone_seconds * Engine.physics_ticks_per_second)
 
 	max_hop_frames = int(hop_time * Engine.physics_ticks_per_second)
+
+	checkpoint = CheckpointManager.last_segment.last
+	key_checkpoint = checkpoint
 
 	if is_replay:
 		recursive_set_transparency(visual_node)
