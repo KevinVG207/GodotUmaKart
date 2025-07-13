@@ -3,12 +3,12 @@
 [ext_resource type="Script" uid="uid://busvuo6hrs08h" path="res://scenes/control/checkpoint.gd" id="1_wtfq1"]
 [ext_resource type="Material" uid="uid://dcx57dy3bd4vy" path="res://scenes/control/checkpoint_mat.tres" id="2_4cqlq"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bvlq5"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_03d8t"]
 transparency = 1
 albedo_color = Color(1, 0, 0, 0.682353)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_4s15s"]
-material = SubResource("StandardMaterial3D_bvlq5")
+material = SubResource("StandardMaterial3D_03d8t")
 top_radius = 0.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_3fhyg"]

@@ -191,6 +191,8 @@ func _ready() -> void:
 	
 	setup_enemy_path()
 
+	setup_checkpoints_new()
+
 	setup_map_meshes()
 	
 	setup_course_default_collision_type()
@@ -203,6 +205,15 @@ func _ready() -> void:
 	if Global.selected_replay:
 		replay_manager.load_replay(Global.selected_replay, self)
 		Global.selected_replay = ""
+
+func setup_checkpoints_new() -> void:
+	var checkpoint_nodes: Array[Checkpoint2] = []
+	for i in range($Checkpoints2.get_child_count()):
+		checkpoint_nodes.append($Checkpoints2.get_child(i) as Checkpoint2)
+		checkpoint_nodes[i].link_next_prev()
+	var all_checkpoints: Array[Checkpoint2] = []
+	CheckpointManager.initialize_checkpoints(checkpoint_nodes)
+	print("A")
 
 func setup_map_meshes() -> void:
 	for path: NodePath in map_mesh_instances:

@@ -32,6 +32,7 @@ Network="*res://global/network/Network.gd"
 UUID="*res://addons/uuid/uuid.gd"
 RPCClient="*res://global/network/RPCClient.gd"
 RPCServer="*res://global/network/RPCServer.gd"
+CheckpointManager="*res://global/checkpoint_manager.gd"
 
 [debug]
 

@@ -7,7 +7,7 @@ signal camera_switched
 
 var args: Dictionary[String, String] = {}
 
-var default_player_count: int = 12
+var default_player_count: int = 1
 var player_count: int = default_player_count:
 	set(value):
 		player_count = value

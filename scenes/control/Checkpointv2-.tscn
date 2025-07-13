@@ -1,0 +1,32 @@
+[gd_scene load_steps=6 format=3 uid="uid://s8axlyc25h3y"]
+
+[ext_resource type="Script" uid="uid://bqhikpoovxq88" path="res://scenes/control/checkpoint2.gd" id="1_253pw"]
+[ext_resource type="Material" uid="uid://dcx57dy3bd4vy" path="res://scenes/control/checkpoint_mat.tres" id="2_1park"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bvlq5"]
+transparency = 1
+albedo_color = Color(1, 0, 0, 0.682353)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cxvso"]
+material = SubResource("StandardMaterial3D_bvlq5")
+top_radius = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_enj5a"]
+material = ExtResource("2_1park")
+size = Vector3(10, 0.5, 10)
+
+[node name="Checkpointv2-" type="Node3D"]
+script = ExtResource("1_253pw")
+metadata/_custom_type_script = "uid://bqhikpoovxq88"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0.333323)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_cxvso")
+metadata/_edit_lock_ = true
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_enj5a")
+metadata/_edit_lock_ = true
