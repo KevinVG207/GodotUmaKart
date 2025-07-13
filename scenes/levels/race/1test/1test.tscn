@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://tgm0tkbghr0c"]
+[gd_scene load_steps=18 format=3 uid="uid://tgm0tkbghr0c"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_2vsv6"]
 [ext_resource type="PackedScene" uid="uid://xsnx2ivfgbbr" path="res://assets/course/1test/1_test.tscn" id="2_5k6we"]
@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://bdqjcdostqotu" path="res://scenes/control/checkpoint.tscn" id="3_864dc"]
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_qon5u"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_jv31a"]
-[ext_resource type="PackedScene" uid="uid://s8axlyc25h3y" path="res://scenes/control/Checkpointv2-.tscn" id="6_r3mwj"]
 [ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn" id="8_wwo5q"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_wwo5q"]
@@ -44,11 +43,35 @@ size = Vector3(5, 3, 1)
 
 [sub_resource type="Animation" id="Animation_njpde"]
 resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IntroCamera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_fpcj0"]
 resource_name = "intro"
 length = 10.0
 step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("IntroCamera:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_wwo5q"]
 resource_local_to_scene = true
@@ -107,80 +130,114 @@ mesh = SubResource("BoxMesh_hkgbi")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/Node3D/StaticBody3D3" index="1" groups=["col_wall"]]
 shape = SubResource("BoxShape3D_5tueu")
 
-[node name="Checkpoints" parent="." index="3"]
+[node name="Checkpoint" parent="Checkpoints" index="0" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -50.5767)
+is_key = true
+begin_node = true
+next_points = [NodePath("../Checkpoint2")]
+
+[node name="Checkpoint2" parent="Checkpoints" index="1" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -38.337)
+next_points = [NodePath("../Checkpoint3"), NodePath("../Checkpoint7")]
+
+[node name="Checkpoint3" parent="Checkpoints" index="2" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.81372, 0, 0.581257, 0, 1, 0, -0.581257, 0, 0.81372, 5.69278, 0, -28.8665)
+next_points = [NodePath("../Checkpoint4")]
+
+[node name="Checkpoint4" parent="Checkpoints" index="3" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.999714, 0, -0.0239261, 0, 1, 0, 0.0239261, 0, 0.999714, 12.3818, 0, -10.6496)
+next_points = [NodePath("../Checkpoint5")]
+
+[node name="Checkpoint5" parent="Checkpoints" index="4" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.999714, 0, -0.0239261, 0, 1, 0, 0.0239261, 0, 0.999714, -0.142319, 0, 10.4136)
+is_key = true
+next_points = [NodePath("../Checkpoint6")]
+
+[node name="Checkpoint6" parent="Checkpoints" index="5" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.999714, 0, -0.0239261, 0, 1, 0, 0.0239261, 0, 0.999714, -0.28463, 0, 24.9302)
+next_points = [NodePath("../Checkpoint12")]
+
+[node name="Checkpoint7" parent="Checkpoints" index="6" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.809304, 0, -0.58739, 0, 1, 0, 0.58739, 0, 0.809304, -7.96986, 0, -28.4395)
+next_points = [NodePath("../Checkpoint8")]
+
+[node name="Checkpoint8" parent="Checkpoints" index="7" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.999991, 0, -0.00420621, 0, 1, 0, 0.00420621, 0, 0.999991, -13.8049, 0, -15.3462)
+next_points = [NodePath("../Checkpoint9"), NodePath("../Checkpoint10")]
+
+[node name="Checkpoint9" parent="Checkpoints" index="8" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.881139, 0, 0.472858, 0, 1, 0, -0.472858, 0, 0.881139, -7.96985, 0, -8.65717)
+next_points = [NodePath("../Checkpoint5")]
+
+[node name="Checkpoint10" parent="Checkpoints" index="9" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.849672, 0, -0.527312, 0, 1, 0, 0.527312, 0, 0.849672, -20.6363, 0, -9.22644)
+next_points = [NodePath("../Checkpoint11")]
+
+[node name="Checkpoint11" parent="Checkpoints" index="10" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.956565, 0, 0.29152, 0, 1, 0, -0.29152, 0, 0.956565, -22.7711, 0, 0.593585)
+next_points = [NodePath("../Checkpoint5")]
+
+[node name="Checkpoint12" parent="Checkpoints" index="11" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.449896, 0, 0.893081, 0, 1, 0, -0.893081, 0, 0.449896, 11.7413, 0, 32.6159)
+next_points = [NodePath("../Checkpoint13")]
+
+[node name="Checkpoint13" parent="Checkpoints" index="12" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(-0.668741, 0, 0.743495, 0, 1, 0, -0.743495, 0, -0.668741, 33.6229, 0, 31.0787)
+is_key = true
+next_points = [NodePath("../Checkpoint14")]
+
+[node name="Checkpoint14" parent="Checkpoints" index="13" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(-0.999668, 0, -0.0257757, 0, 1, 0, 0.0257757, 0, -0.999668, 41.9416, 0, 12.1809)
+next_points = [NodePath("../Checkpoint15")]
+
+[node name="Checkpoint15" parent="Checkpoints" index="14" instance=ExtResource("3_864dc")]
+transform = Transform3D(-0.999668, 0, -0.0257757, 0, 1, 0, 0.0257757, 0, -0.999668, 41.3086, 0, -20.9129)
+
+[node name="Checkpoint16" parent="Checkpoints" index="15" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(-0.683325, 0, -0.730115, 0, 1, 0, 0.730115, 0, -0.683325, 35.6122, 0, -46.0497)
+is_key = true
+next_points = [NodePath("../Checkpoint17")]
+
+[node name="Checkpoint17" parent="Checkpoints" index="16" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(-0.0693386, 0, -0.997593, 0, 1, 0, 0.997593, 0, -0.0693386, 16.1718, 0, -57.8947)
+next_points = [NodePath("../Checkpoint18")]
+
+[node name="Checkpoint18" parent="Checkpoints" index="17" node_paths=PackedStringArray("next_points") instance=ExtResource("3_864dc")]
+transform = Transform3D(0.477174, 0, -0.878809, 0, 1, 0, 0.878809, 0, 0.477174, 6.04478, 0, -58.4373)
+is_key = true
+end_node = true
+next_points = [NodePath("../Checkpoint")]
+
+[node name="CheckpointsBackup" type="Node3D" parent="." index="4"]
 visible = false
 
-[node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_864dc")]
+[node name="Checkpoint" parent="CheckpointsBackup" index="0" instance=ExtResource("3_864dc")]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 26, 0, 0)
 is_key = true
 
-[node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("3_864dc")]
+[node name="Checkpoint2" parent="CheckpointsBackup" index="1" instance=ExtResource("3_864dc")]
 transform = Transform3D(-0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, -0.707107, 19, 0, -17)
 
-[node name="Checkpoint3" parent="Checkpoints" index="2" instance=ExtResource("3_864dc")]
+[node name="Checkpoint3" parent="CheckpointsBackup" index="2" instance=ExtResource("3_864dc")]
 transform = Transform3D(-5.96046e-08, 0, -1, 0, 1, 0, 1, 0, -5.96046e-08, 0, 0, -25)
 is_key = true
 
-[node name="Checkpoint4" parent="Checkpoints" index="3" instance=ExtResource("3_864dc")]
+[node name="Checkpoint4" parent="CheckpointsBackup" index="3" instance=ExtResource("3_864dc")]
 transform = Transform3D(0.707107, 0, -0.707107, 0, 1, 0, 0.707107, 0, 0.707107, -17, 0, -19)
 
-[node name="Checkpoint5" parent="Checkpoints" index="4" instance=ExtResource("3_864dc")]
+[node name="Checkpoint5" parent="CheckpointsBackup" index="4" instance=ExtResource("3_864dc")]
 transform = Transform3D(1, 0, -8.9407e-08, 0, 1, 0, 8.9407e-08, 0, 1, -25, 0, 0)
 is_key = true
 
-[node name="Checkpoint6" parent="Checkpoints" index="5" instance=ExtResource("3_864dc")]
+[node name="Checkpoint6" parent="CheckpointsBackup" index="5" instance=ExtResource("3_864dc")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, -20, 0, 16)
 
-[node name="Checkpoint7" parent="Checkpoints" index="6" instance=ExtResource("3_864dc")]
+[node name="Checkpoint7" parent="CheckpointsBackup" index="6" instance=ExtResource("3_864dc")]
 transform = Transform3D(8.9407e-08, 0, 1, 0, 1, 0, -1, 0, 8.9407e-08, 0, 0, 26)
 is_key = true
 
-[node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_864dc")]
+[node name="Checkpoint8" parent="CheckpointsBackup" index="7" instance=ExtResource("3_864dc")]
 transform = Transform3D(-0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, -0.707107, 18, 0, 18)
-
-[node name="Checkpointv2-" parent="Checkpoints2" index="0" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-begin_node = true
-next_points = [NodePath("../Checkpointv2-2")]
-
-[node name="Checkpointv2-2" parent="Checkpoints2" index="1" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.85876)
-next_points = [NodePath("../Checkpointv2-3"), NodePath("../Checkpointv2-7")]
-
-[node name="Checkpointv2-3" parent="Checkpoints2" index="2" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-transform = Transform3D(0.81824, 0, 0.574877, 0, 1, 0, -0.574877, 0, 0.81824, 4.72488, 0, 26.3507)
-next_points = [NodePath("../Checkpointv2-4")]
-
-[node name="Checkpointv2-4" parent="Checkpoints2" index="3" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.3858, 0, 43.7113)
-next_points = [NodePath("../Checkpointv2-5")]
-
-[node name="Checkpointv2-5" parent="Checkpoints2" index="4" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 101.568)
-next_points = [NodePath("../Checkpointv2-6")]
-
-[node name="Checkpointv2-6" parent="Checkpoints2" index="5" instance=ExtResource("6_r3mwj")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 128.503)
-end_node = true
-
-[node name="Checkpointv2-7" parent="Checkpoints2" index="6" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-transform = Transform3D(0.585538, 0, -0.810645, 0, 1, 0, 0.810645, 0, 0.585538, -12.2991, 0, 23.5129)
-next_points = [NodePath("../Checkpointv2-8")]
-
-[node name="Checkpointv2-8" parent="Checkpoints2" index="7" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-transform = Transform3D(0.999075, 0, 0.043009, 0, 1, 0, -0.043009, 0, 0.999075, -18.2127, 0, 40.0617)
-next_points = [NodePath("../Checkpointv2-9"), NodePath("../Checkpointv2-10")]
-
-[node name="Checkpointv2-9" parent="Checkpoints2" index="8" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-transform = Transform3D(0.808072, 0, 0.589083, 0, 1, 0, -0.589083, 0, 0.808072, -13.0989, 0, 58.7764)
-next_points = [NodePath("../Checkpointv2-5")]
-
-[node name="Checkpointv2-10" parent="Checkpoints2" index="9" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-transform = Transform3D(0.904, 0, -0.427532, 0, 1, 0, 0.427532, 0, 0.904, -31.4355, 0, 53.658)
-next_points = [NodePath("../Checkpointv2-11")]
-
-[node name="Checkpointv2-11" parent="Checkpoints2" index="10" node_paths=PackedStringArray("next_points") instance=ExtResource("6_r3mwj")]
-transform = Transform3D(0.626631, 0, 0.779316, 0, 1, 0, -0.779316, 0, 0.626631, -26.6136, 0, 81.3413)
-next_points = [NodePath("../Checkpointv2-5")]
 
 [node name="EnemyPathPoints" parent="." index="5"]
 visible = false
@@ -233,20 +290,20 @@ curve_in = 5.0
 curve_out = 5.0
 next_points = [NodePath("../EnemyPath")]
 
-[node name="ItemPickup" parent="." index="8" instance=ExtResource("5_jv31a")]
+[node name="ItemPickup" parent="." index="9" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 8.7305, 1.90735e-06, -19.2348)
 
-[node name="ItemPickup2" parent="." index="9" instance=ExtResource("5_jv31a")]
+[node name="ItemPickup2" parent="." index="10" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.181, 1.90735e-06, -19.8046)
 guaranteed_item = ExtResource("8_wwo5q")
 
-[node name="ItemPickup3" parent="." index="10" instance=ExtResource("5_jv31a")]
+[node name="ItemPickup3" parent="." index="11" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 10.7742, -1.90735e-06, -23.0451)
 
-[node name="ItemPickup4" parent="." index="11" instance=ExtResource("5_jv31a")]
+[node name="ItemPickup4" parent="." index="12" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 14.0165, -1.90735e-06, -23.6097)
 
-[node name="ItemPickup5" parent="." index="12" instance=ExtResource("5_jv31a")]
+[node name="ItemPickup5" parent="." index="13" instance=ExtResource("5_jv31a")]
 transform = Transform3D(0.5, 0, 0.866025, 0, 1, 0, -0.866025, 0, 0.5, 12.0624, 0, -27.0846)
 
 [node name="MapCamera" parent="." index="16"]
@@ -256,3 +313,4 @@ size = 200.0
 libraries = {
 &"": SubResource("AnimationLibrary_wwo5q")
 }
+intro_animations = Array[String](["intro"])

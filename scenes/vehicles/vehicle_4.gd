@@ -81,7 +81,9 @@ var push_force: float = 8.0
 
 var started := false
 var finished := false
-var check_idx := -1
+var check_idx := -1  #:
+	#get:
+		#return CheckpointManager.fix_check_idx(check_idx)
 var check_key_idx := 0
 var check_progress := 0.0
 var lap := 0

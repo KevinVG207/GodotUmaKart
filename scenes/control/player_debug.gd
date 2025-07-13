@@ -5,6 +5,8 @@ class_name PlayerDebug
 var enabled: bool = false
 
 func draw(vehicle: Vehicle4) -> void:
+	Debug.print(CheckpointManager.get_progress(vehicle))
+	
 	Debug.pd_clear()
 	Debug.item_dist_clear()
 	

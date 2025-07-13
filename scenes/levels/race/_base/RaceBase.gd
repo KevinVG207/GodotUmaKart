@@ -207,11 +207,10 @@ func _ready() -> void:
 		Global.selected_replay = ""
 
 func setup_checkpoints_new() -> void:
-	var checkpoint_nodes: Array[Checkpoint2] = []
-	for i in range($Checkpoints2.get_child_count()):
-		checkpoint_nodes.append($Checkpoints2.get_child(i) as Checkpoint2)
+	var checkpoint_nodes: Array[Checkpoint] = []
+	for i in range($Checkpoints.get_child_count()):
+		checkpoint_nodes.append($Checkpoints.get_child(i) as Checkpoint)
 		checkpoint_nodes[i].link_next_prev()
-	var all_checkpoints: Array[Checkpoint2] = []
 	CheckpointManager.initialize_checkpoints(checkpoint_nodes)
 	print("A")
 
