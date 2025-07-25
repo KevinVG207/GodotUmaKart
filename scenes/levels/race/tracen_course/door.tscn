@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://c1e81v07mrgnq"]
+
+[ext_resource type="PackedScene" uid="uid://dbe5nigtmmwle" path="res://assets/course/tracen-course/door.blend" id="1_686rl"]
+[ext_resource type="Script" uid="uid://cmvi2hus8vkxp" path="res://scenes/objects/SimpleDoor.gd" id="2_ejs1t"]
+[ext_resource type="Script" uid="uid://biyye6bt4cff1" path="res://scenes/objects/stage_object_staticbody.gd" id="3_vfskr"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vfskr"]
+size = Vector3(2, 0.1, 2)
+
+[node name="door" instance=ExtResource("1_686rl")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+script = ExtResource("2_ejs1t")
+triggered_by_player = true
+player_trigger_with_boost = true
+player_trigger_with_damage = true
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." index="0" node_paths=PackedStringArray("object_root")]
+transform = Transform3D(0, 0.5, 0, -0.5, 0, 0, 0, 0, 0.5, 0, 0, 0)
+collision_layer = 9
+collision_mask = 8
+script = ExtResource("3_vfskr")
+object_root = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" index="0" groups=["col_wall"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -0.96)
+shape = SubResource("BoxShape3D_vfskr")

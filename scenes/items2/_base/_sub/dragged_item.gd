@@ -51,7 +51,7 @@ func _on_body_entered(body: Variant) -> void:
 	if other_item == self:
 		return
 	
-	if other_item and destroys_objects and other_item.destroys_objects:
+	if other_item and (destroys_objects or other_item.destroys_objects):
 		destroy()
 		other_item.destroy()
 		return
@@ -61,6 +61,13 @@ func _on_body_entered(body: Variant) -> void:
 		if damage_type != Vehicle4.DamageType.NONE and vehicle != owned_by and !vehicle.is_network:
 			vehicle.damage(damage_type)
 			destroy()
+		return
+	
+	if body is StageObjectCharacterBody3D:
+		if destroys_objects:
+			var staticbody := body as StageObjectCharacterBody3D
+			staticbody.object_root._hit_by_item(self)
+		destroy()
 		return
 
 func _exit_tree() -> void:

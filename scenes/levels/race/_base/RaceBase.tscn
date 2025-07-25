@@ -72,6 +72,7 @@ directional_shadow_max_distance = 200.0
 [node name="Objects" type="Node3D" parent="."]
 
 [node name="Checkpoints" type="Node3D" parent="."]
+unique_name_in_owner = true
 metadata/_edit_lock_ = true
 
 [node name="EnemyPathPoints" type="Node3D" parent="."]

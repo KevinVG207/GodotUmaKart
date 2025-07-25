@@ -829,14 +829,14 @@ transform = Transform3D(0.997233, 0.0743348, -3.24928e-09, 0, -4.37114e-08, -1, 
 shape = SubResource("CapsuleShape3D_584pl")
 target_position = Vector3(0, 0, 0)
 max_results = 10
-collision_mask = 6
+collision_mask = 14
 
 [node name="ShapeCast3D2" type="ShapeCast3D" parent="Visual/PlayerCollision" index="1"]
 transform = Transform3D(0.997185, -0.0749787, 3.27742e-09, 0, -4.37114e-08, -1, 0.0749787, 0.997185, -4.35883e-08, 0.309, 0, 0)
 shape = SubResource("CapsuleShape3D_ckjac")
 target_position = Vector3(0, 0, 0)
 max_results = 10
-collision_mask = 6
+collision_mask = 14
 
 [node name="CharacterAnimationPlayer" parent="Visual/Character" index="0"]
 libraries = {
@@ -845,15 +845,9 @@ libraries = {
 
 [node name="Skeleton3D" parent="Visual/Character/Body/Armature" index="0"]
 bones/2/position = Vector3(0, 1.9515, 0)
-bones/3/scale = Vector3(1, 1, 1)
-bones/33/scale = Vector3(1, 1, 0.999999)
-bones/37/scale = Vector3(1, 1, 1)
 bones/39/rotation = Quaternion(-0.447337, 0.0173413, 0.034638, 0.893526)
 bones/40/rotation = Quaternion(0.0711373, -0.0082167, 0.114448, 0.990845)
 bones/41/rotation = Quaternion(0.255313, -5.56471e-09, -1.62348e-08, 0.966859)
-
-[node name="BaseAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="1"]
-transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, 0, 9.26224, 0)
 
 [node name="HeadAttachment" parent="Visual/Character/Body/Armature/Skeleton3D" index="2"]
 transform = Transform3D(1, 0, 2.38418e-07, 0, 1, 0, -2.38418e-07, 0, 1, 0, 15.1167, 0)

@@ -107,3 +107,8 @@ signal race_item_transfer_owner_received(key: String, new_owner_id: int)
 @rpc("reliable")
 func race_item_transfer_owner(key: String, new_owner_id: int) -> void:
 	race_item_transfer_owner_received.emit(key, new_owner_id)
+
+signal race_object_state_received(object: String, opcode: int, data: Array[Variant])
+@rpc("reliable")
+func race_object_state(object: String, opcode: int, data: Array[Variant]) -> void:
+	race_object_state_received.emit(object, opcode, data)

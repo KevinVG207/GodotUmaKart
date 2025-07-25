@@ -278,41 +278,66 @@ func create_segments(checkpoints: Array[Checkpoint]) -> Array[CheckpointSegment]
 	return segments
 
 func update_checkpoint(vehicle: Vehicle4) -> void:
-	print("CUR CHECK: ", vehicle.checkpoint.name)
+	#print("CUR CHECK: ", vehicle.checkpoint.name)
 	if not check_advance(vehicle):
+		
 		check_reverse(vehicle)
+		
+		if going_reverse(vehicle):
+			change_checkpoint_reverse(vehicle)
+
+func going_reverse(vehicle: Vehicle4) -> bool:
+	return get_progress(vehicle) < vehicle.prev_progress
+
+func change_checkpoint_reverse(vehicle: Vehicle4) -> void:
+	vehicle.checkpoint = get_nearest_checkpoint_behind(vehicle)
+
+func get_nearest_checkpoint_behind(vehicle: Vehicle4) -> Checkpoint:
+	var checkpoints_behind: Array[Checkpoint] = []
+	for next_checkpoint in vehicle.checkpoint.next_points:
+		for prev_checkpoint in next_checkpoint.prev_points:
+			if not prev_checkpoint in checkpoints_behind:
+				checkpoints_behind.append(prev_checkpoint as Checkpoint)
+	
+	if not checkpoints_behind:
+		return vehicle.checkpoint
+	
+	var nearest_checkpoint := checkpoints_behind[0]
+	var shortest_distance: float = INF
+	for checkpoint in checkpoints_behind:
+		var dist := dist_to_checkpoint(vehicle, checkpoint)
+		if dist < shortest_distance:
+			shortest_distance = dist
+			nearest_checkpoint = checkpoint
+	
+	return nearest_checkpoint
 
 func check_reverse(vehicle: Vehicle4) -> bool:
-	var prev_checkpoints := vehicle.checkpoint.prev_points
-
-	if prev_checkpoints.size() == 0:
+	if not vehicle.checkpoint.prev_points:
 		return false
 	
 	if dist_to_checkpoint(vehicle, vehicle.checkpoint) > 0:
 		return false
 	
+	var orig_checkpoint := vehicle.checkpoint
+	
+	if vehicle.checkpoint.begin_node:
+		lap_decrease(vehicle)
+	
+	vehicle.checkpoint = vehicle.checkpoint.prev_points[0]
+	vehicle.checkpoint = get_nearest_checkpoint_behind(vehicle)
+	
+	if vehicle.checkpoint.is_key:
+		var cur_key_idx: int = key_checkpoints.find(vehicle.checkpoint)
+		var next_key_idx := posmod(cur_key_idx+1, key_checkpoints.size())
+		
+		if key_checkpoints[next_key_idx] != vehicle.key_checkpoint and key_checkpoints[cur_key_idx] != vehicle.key_checkpoint:
+				vehicle.checkpoint = orig_checkpoint
+				return false
+		
+		vehicle.key_checkpoint = vehicle.checkpoint
+		
 	return true
-	
-	for prev_checkpoint in prev_checkpoints:
-		print(prev_checkpoint.name)
-		if dist_to_checkpoint(vehicle, prev_checkpoint) > 0:
-			continue
-		
-		if prev_checkpoint.is_key:
-			var cur_key_idx: int = key_checkpoints.find(prev_checkpoint)
-			var next_key_idx := posmod(cur_key_idx+1, key_checkpoints.size())
-			
-			if key_checkpoints[next_key_idx] != vehicle.key_checkpoint:
-				continue
-			vehicle.key_checkpoint = prev_checkpoint
-	
-		vehicle.checkpoint = prev_checkpoint
-		
-		if prev_checkpoint.end_node:
-			lap_decrease(vehicle)
-		return true
-
-	return false
 
 func check_advance(vehicle: Vehicle4) -> bool:
 	var next_checkpoints := vehicle.checkpoint.next_points
@@ -321,6 +346,7 @@ func check_advance(vehicle: Vehicle4) -> bool:
 		return false
 	
 	for next_checkpoint in next_checkpoints:
+		#print(next_checkpoint.name, " DIST ", dist_to_checkpoint(vehicle, next_checkpoint))
 		if dist_to_checkpoint(vehicle, next_checkpoint) < 0:
 			continue
 		

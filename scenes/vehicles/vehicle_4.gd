@@ -161,6 +161,7 @@ var prev_contacts := {}
 var contacts := {}
 var prev_ground_contacts := []
 var ground_contacts := []
+var ignore_wall_slide := false
 var wall_turn_multi := 1.0
 var max_wall_turn_multi := 2.0
 var prev_grounded := false
@@ -306,6 +307,8 @@ var trick_timer := 0
 var trick_timer_length := int(180 * 0.4)
 
 var collided_with: Dictionary[Vehicle4, int] = {}
+var colliding_vehicles: Dictionary[Vehicle4, Array] = {}
+var colliding_bodies: Array[PhysicsBody3D] = []
 
 enum DamageType {
 	NONE,
@@ -332,8 +335,8 @@ var countdown_gauge_tick_size := 0.0
 
 var visual_event_queue := []
 
-var prev_progress: float = -1000
-var cur_progress: float = -1000
+var prev_progress: float = -1
+var cur_progress: float = 0
 
 var respawn_boost_enable: bool = false
 var respawn_boost_accel_frames: int = 0
@@ -652,7 +655,7 @@ func handle_rewind() -> void:
 
 func update_progress() -> void:
 	prev_progress = cur_progress
-	cur_progress = world.get_vehicle_progress(self)
+	cur_progress = CheckpointManager.get_progress(self)
 
 func handle_failsafe_timer() -> void:
 	if is_cpu:
@@ -748,7 +751,7 @@ func set_inputs() -> void:
 func detect_collisions() -> void:
 	set_col_layer()
 
-	handle_vehicle_collisions()
+	handle_body_collisions()
 
 	build_contacts()
 
@@ -899,9 +902,18 @@ func set_col_layer() -> void:
 		set_collision_layer_value(2, true)
 		set_collision_layer_value(3, false)
 
-func handle_vehicle_collisions() -> void:
+func handle_body_collisions() -> void:
 	expire_vehicle_collisions()
-	build_vehicle_collisions()
+	build_body_collisions()
+	handle_vehicle_collisions()
+	handle_stage_object_collisions()
+
+func handle_stage_object_collisions() -> void:
+	for body in colliding_bodies:
+		if not body is StageObjectCharacterBody3D:
+			continue
+		var object := (body as StageObjectCharacterBody3D).object_root
+		object._hit_by_vehicle(self)
 
 func expire_vehicle_collisions() -> void:
 	var keys := collided_with.keys()
@@ -911,9 +923,28 @@ func expire_vehicle_collisions() -> void:
 			collided_with.erase(vehicle)
 	return
 
-func build_vehicle_collisions() -> void:
-	var colliding_vehicles := get_colliding_vehicles()
+func build_body_collisions() -> void:
+	colliding_vehicles.clear()
+	colliding_bodies.clear()
+	
+	for shape: ShapeCast3D in %PlayerCollision.get_children():
+		if !shape.enabled:
+			continue
+		shape.force_shapecast_update()
+		for i in range(shape.get_collision_count()):
+			var collider: Node3D = shape.get_collider(i)
+			if collider == self:
+				continue
+			
+			colliding_bodies.append(collider)
+			
+			if collider is Vehicle4:
+				var col_vehicle := collider as Vehicle4
+				if col_vehicle not in colliding_vehicles:
+					colliding_vehicles[col_vehicle] = []
+				colliding_vehicles[col_vehicle].append(shape.get_collision_point(i))
 
+func handle_vehicle_collisions() -> void:
 	for other: Vehicle4 in colliding_vehicles.keys():
 		if do_damage_type != DamageType.NONE:
 			other.damage(do_damage_type)
@@ -957,32 +988,22 @@ func apply_push(force: Vector3, vehicle: Vehicle4) -> void:
 
 	velocity.rest_vel += force
 
-
-func get_colliding_vehicles() -> Dictionary:
-	var colliding_vehicles: Dictionary = {}
-	for shape: ShapeCast3D in %PlayerCollision.get_children():
-		if !shape.enabled:
-			continue
-		#shape.force_shapecast_update()
-		for i in range(shape.get_collision_count()):
-			var collider: Node3D = shape.get_collider(i)
-			if collider == self:
-				continue
-			if collider is Vehicle4:
-				if collider not in colliding_vehicles:
-					colliding_vehicles[collider] = []
-				colliding_vehicles[collider].append(shape.get_collision_point(i))
-	return colliding_vehicles
-
 func build_contacts() -> void:
 	prev_contacts = contacts
 	contacts = {}
 	prev_ground_contacts = ground_contacts
 	ground_contacts = []
+	ignore_wall_slide = false
 
 	for i in range(physics_state.get_contact_count()):
 		var cur_ground_contact := false
+		var collider := physics_state.get_contact_collider_object(i) as CollisionObject3D
 		var collision_shape := Util.get_contact_collision_shape(physics_state, i)
+		
+		if collider is StageObjectCharacterBody3D:
+			var object := (collider as StageObjectCharacterBody3D).object_root
+			if object.no_bounce:
+				ignore_wall_slide = true
 
 		var groups := collision_shape.get_groups()
 		if groups.is_empty():
@@ -1215,6 +1236,9 @@ func bounce_walls() -> void:
 		return
 	
 	if ContactType.WALL not in contacts:
+		return
+	
+	if ignore_wall_slide:
 		return
 	
 	#if is_network:

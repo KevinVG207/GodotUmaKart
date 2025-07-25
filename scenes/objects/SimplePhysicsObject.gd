@@ -1,5 +1,7 @@
 extends StageObject
 
+class_name SimplePhysicsObject
+
 @onready var DESPAWN_TICKS := world.PHYSICS_TICKS_PER_SECOND * 6
 var cur_despawn_ticks := -1
 @onready var initial_scale: Vector3 = %Rigidbody.scale

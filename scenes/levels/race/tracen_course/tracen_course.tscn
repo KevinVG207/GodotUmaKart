@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c7ahqrhul0gpx"]
+[gd_scene load_steps=22 format=3 uid="uid://c7ahqrhul0gpx"]
 
 [ext_resource type="PackedScene" uid="uid://crersi2gg0o1o" path="res://scenes/levels/race/_base/RaceBase.tscn" id="1_n65nj"]
 [ext_resource type="ArrayMesh" uid="uid://b6e1rva1cf2ml" path="res://assets/course/tracen-course/_map/tracen-course-map_Plane.res" id="2_m36vl"]
@@ -8,11 +8,13 @@
 [ext_resource type="PackedScene" uid="uid://cfkme45oihnt7" path="res://scenes/control/path/EnemyPath.tscn" id="4_4vv2t"]
 [ext_resource type="PackedScene" uid="uid://hrarg7jikf1q" path="res://scenes/objects/item_pickup.tscn" id="5_xes7l"]
 [ext_resource type="PackedScene" uid="uid://b801hs1jg6kwi" path="res://scenes/items2/usable/horseshoe_red/HorseShoeRed.tscn" id="6_3upyf"]
+[ext_resource type="PackedScene" uid="uid://bbw6p8qpx646r" path="res://scenes/items2/usable/carrot/3Carrots.tscn" id="7_1rjps"]
+[ext_resource type="PackedScene" uid="uid://c1e81v07mrgnq" path="res://scenes/levels/race/tracen_course/door.tscn" id="8_b0os0"]
 [ext_resource type="PackedScene" uid="uid://742psss2cgvv" path="res://scenes/objects/cone.tscn" id="8_shrl0"]
 [ext_resource type="PackedScene" uid="uid://bbdd3gxmf2uoy" path="res://scenes/items2/usable/juice/GreenJuice.tscn" id="9_uttjj"]
 [ext_resource type="PackedScene" uid="uid://x3aq02gdikle" path="res://scenes/items2/usable/horseshoe_gray/HorseShoeGray.tscn" id="10_wies2"]
 [ext_resource type="PackedScene" uid="uid://bi2og1u3yqr4i" path="res://scenes/items2/usable/book/Book.tscn" id="11_v1cpl"]
-[ext_resource type="PackedScene" uid="uid://tbll8p00yhdi" path="res://scenes/items2/usable/shoes/Shoes.tscn" id="13_shrl0"]
+[ext_resource type="PackedScene" uid="uid://l2ol5w4jrnpo" path="res://scenes/items2/usable/donut/Donut.tscn" id="15_1rjps"]
 
 [sub_resource type="AudioStreamSynchronized" id="AudioStreamSynchronized_xes7l"]
 resource_local_to_scene = true
@@ -112,6 +114,18 @@ tracks/7/keys = {
 "points": PackedFloat32Array(1.70217e-08, 0, 0, 0, 0),
 "times": PackedFloat32Array(0)
 }
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("IntroCamera:fov")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [75.0]
+}
 
 [sub_resource type="Animation" id="Animation_shrl0"]
 resource_name = "intro"
@@ -127,7 +141,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 2.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector3(20.3407, 31.7122, -75.6739), Vector3(48.8834, 14.4228, -38.8378)]
+"values": [Vector3(139.05, 7.3911, -50.7038), Vector3(98.7141, 38.9299, -39.7308)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -139,7 +153,19 @@ tracks/1/keys = {
 "times": PackedFloat32Array(0, 2.5),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector3(-0.504487, -0.286914, 1.70217e-08), Vector3(-0.445024, -1.38806, 2.68274e-08)]
+"values": [Vector3(-0.628317, -2.9147, 0), Vector3(-0.148353, -3.40339, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IntroCamera:fov")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 2.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [75.0, 43.6]
 }
 
 [sub_resource type="Animation" id="Animation_1rjps"]
@@ -170,6 +196,18 @@ tracks/1/keys = {
 "update": 0,
 "values": [Vector3(-0.504487, 0.832086, 2.51846e-08), Vector3(-0.470244, -0.0466524, 2.46815e-08)]
 }
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("IntroCamera:fov")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [75.0]
+}
 
 [sub_resource type="Animation" id="Animation_b0os0"]
 resource_name = "intro3"
@@ -183,7 +221,7 @@ tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "handle_modes": PackedInt32Array(2, 0, 0, 0),
-"points": PackedFloat32Array(66.8419, 0, 0, 0.166667, 0.839516, 71.879, -0.166667, 0.35645, 0.166667, -0.35645, 62.5645, -0.166667, 1.90412, 0.333333, -3.80823, 37.6049, -0.5, 0.0571136, 0, 0),
+"points": PackedFloat32Array(66.8419, 0, 0, 0.166667, 0.839516, 71.879, -0.166667, 0.35645, 0.166667, -0.35645, 62.5645, -0.166667, 1.90412, 0.333333, -3.80823, 37.6049, -0.75, 0.057, 0, 0),
 "times": PackedFloat32Array(0, 0.7, 1.8, 3)
 }
 tracks/1/type = "bezier"
@@ -241,6 +279,17 @@ tracks/5/keys = {
 "points": PackedFloat32Array(3.7277e-08, 0, 0, 0.166667, 0, 3.7277e-08, -0.166667, 0.00218529, 0.166667, -0.00218529, -0.0262235, -0.166667, 2.07094e-09, 0.333333, -4.14189e-09, 0, -0.563364, 0.00340402, 0, 0),
 "times": PackedFloat32Array(0, 0.7, 1.8, 3)
 }
+tracks/6/type = "bezier"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("IntroCamera:fov")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"handle_modes": PackedInt32Array(2, 0),
+"points": PackedFloat32Array(75, 0, 0, 0.5, -6, 39, -1, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 3)
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_b0os0"]
 resource_local_to_scene = true
@@ -275,76 +324,80 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 27.7424)
 [node name="Pickups" type="Node3D" parent="Objects" index="0"]
 
 [node name="ItemPickup24" parent="Objects/Pickups" index="0" instance=ExtResource("5_xes7l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5289, -6.37339, 31.1347)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5289, 1.30333, 31.1347)
 guaranteed_item = ExtResource("6_3upyf")
 
-[node name="ItemPickup" parent="Objects/Pickups" index="1" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup25" parent="Objects/Pickups" index="1" instance=ExtResource("5_xes7l")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2411, 1.30333, 28.7649)
+guaranteed_item = ExtResource("7_1rjps")
+
+[node name="ItemPickup" parent="Objects/Pickups" index="2" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.972018, 0, 0.234905, 0, 1, 0, -0.234905, 0, -0.972018, 78.8262, 0, 62.6801)
 
-[node name="ItemPickup2" parent="Objects/Pickups" index="2" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup2" parent="Objects/Pickups" index="3" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.972018, 0, 0.234905, 0, 1, 0, -0.234905, 0, -0.972018, 75.1922, 0, 61.8019)
 
-[node name="ItemPickup3" parent="Objects/Pickups" index="3" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup3" parent="Objects/Pickups" index="4" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.972018, 0, 0.234905, 0, 1, 0, -0.234905, 0, -0.972018, 71.5911, 0, 60.9316)
 
-[node name="ItemPickup4" parent="Objects/Pickups" index="4" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup4" parent="Objects/Pickups" index="5" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.972018, 0, 0.234905, 0, 1, 0, -0.234905, 0, -0.972018, 68.347, 0, 60.1476)
 
-[node name="ItemPickup5" parent="Objects/Pickups" index="5" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup5" parent="Objects/Pickups" index="6" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.972018, 0, 0.234905, 0, 1, 0, -0.234905, 0, -0.972018, 76.5527, 0, 65.0733)
 
-[node name="ItemPickup6" parent="Objects/Pickups" index="6" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup6" parent="Objects/Pickups" index="7" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.972018, 0, 0.234905, 0, 1, 0, -0.234905, 0, -0.972018, 72.9515, 0, 64.203)
 
-[node name="ItemPickup7" parent="Objects/Pickups" index="7" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup7" parent="Objects/Pickups" index="8" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.972018, 0, 0.234905, 0, 1, 0, -0.234905, 0, -0.972018, 69.7075, 0, 63.4191)
 
-[node name="ItemPickup8" parent="Objects/Pickups" index="8" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup8" parent="Objects/Pickups" index="9" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.192316, 0, -0.981333, 0, 1, 0, 0.981333, 0, -0.192316, 269.637, 0, 161.557)
 
-[node name="ItemPickup9" parent="Objects/Pickups" index="9" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup9" parent="Objects/Pickups" index="10" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.192316, 0, -0.981333, 0, 1, 0, 0.981333, 0, -0.192316, 269.019, 0, 164.387)
 
-[node name="ItemPickup10" parent="Objects/Pickups" index="10" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup10" parent="Objects/Pickups" index="11" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.192316, 0, -0.981333, 0, 1, 0, 0.981333, 0, -0.192316, 268.34, 0, 167.528)
 
-[node name="ItemPickup11" parent="Objects/Pickups" index="11" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup11" parent="Objects/Pickups" index="12" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.192316, 0, -0.981333, 0, 1, 0, 0.981333, 0, -0.192316, 267.745, 0, 170.541)
 
-[node name="ItemPickup12" parent="Objects/Pickups" index="12" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup12" parent="Objects/Pickups" index="13" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.192316, 0, -0.981333, 0, 1, 0, 0.981333, 0, -0.192316, 267.066, 0, 173.555)
 
-[node name="ItemPickup13" parent="Objects/Pickups" index="13" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup13" parent="Objects/Pickups" index="14" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.192316, 0, -0.981333, 0, 1, 0, 0.981333, 0, -0.192316, 266.387, 0, 176.597)
 
-[node name="ItemPickup14" parent="Objects/Pickups" index="14" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup14" parent="Objects/Pickups" index="15" instance=ExtResource("5_xes7l")]
 transform = Transform3D(-0.192316, 0, -0.981333, 0, 1, 0, 0.981333, 0, -0.192316, 265.666, 0, 179.653)
 
-[node name="ItemPickup15" parent="Objects/Pickups" index="15" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup15" parent="Objects/Pickups" index="16" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 135.802, 1.90735e-06, -29.7791)
 
-[node name="ItemPickup16" parent="Objects/Pickups" index="16" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup16" parent="Objects/Pickups" index="17" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 136.324, 1.90735e-06, -33.8102)
 
-[node name="ItemPickup17" parent="Objects/Pickups" index="17" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup17" parent="Objects/Pickups" index="18" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 137.233, 1.43051e-06, -38.1328)
 
-[node name="ItemPickup18" parent="Objects/Pickups" index="18" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup18" parent="Objects/Pickups" index="19" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 137.961, 1.43051e-06, -42.4851)
 
-[node name="ItemPickup19" parent="Objects/Pickups" index="19" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup19" parent="Objects/Pickups" index="20" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 138.785, 1.43051e-06, -46.3091)
 
-[node name="ItemPickup20" parent="Objects/Pickups" index="20" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup20" parent="Objects/Pickups" index="21" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 133.268, 1.90735e-06, -32.3671)
 
-[node name="ItemPickup21" parent="Objects/Pickups" index="21" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup21" parent="Objects/Pickups" index="22" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 134.177, 1.43051e-06, -36.6897)
 
-[node name="ItemPickup22" parent="Objects/Pickups" index="22" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup22" parent="Objects/Pickups" index="23" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 134.906, 1.43051e-06, -41.042)
 
-[node name="ItemPickup23" parent="Objects/Pickups" index="23" instance=ExtResource("5_xes7l")]
+[node name="ItemPickup23" parent="Objects/Pickups" index="24" instance=ExtResource("5_xes7l")]
 transform = Transform3D(0.159278, 0, 0.987234, 0, 1, 0, -0.987234, 0, 0.159278, 135.729, 1.43051e-06, -44.8661)
 
 [node name="Cone" parent="Objects" index="1" instance=ExtResource("8_shrl0")]
@@ -380,138 +433,190 @@ transform = Transform3D(0.984109, -0.0229557, 0.176076, 0, 0.991608, 0.12928, -0
 [node name="Cone11" parent="Objects" index="11" instance=ExtResource("8_shrl0")]
 transform = Transform3D(0.984109, -0.0229557, 0.176076, 0, 0.991608, 0.12928, -0.177566, -0.127226, 0.97585, 167.251, 1.8154, 107.963)
 
+[node name="door" parent="Objects" index="12" node_paths=PackedStringArray("connected_doors") instance=ExtResource("8_b0os0")]
+transform = Transform3D(-8.79856, 0, 2.02006, 0, 9.03, 0, -2.03131, 0, -8.74984, 75.3971, 0.000253451, 86.1545)
+open_angle = 80.0
+connected_doors = [NodePath("../door2")]
+
+[node name="door2" parent="Objects" index="13" node_paths=PackedStringArray("connected_doors") instance=ExtResource("8_b0os0")]
+transform = Transform3D(8.79856, 0, -2.02006, 0, 9.03, 0, 2.03131, 0, 8.74984, 71.4413, 0.000253451, 103.297)
+open_angle = -80.0
+connected_doors = [NodePath("../door")]
+
 [node name="Checkpoints" parent="." index="3"]
 visible = false
 
-[node name="Checkpoint" parent="Checkpoints" index="0" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint" parent="Checkpoints" index="0" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.241922, 0, 0.970296, 0, 1, 0, -0.970296, 0, 0.241922, 25.6885, 0.81721, 4.70767)
 is_key = true
+begin_node = true
+next_points = [NodePath("../Checkpoint2")]
 
-[node name="Checkpoint2" parent="Checkpoints" index="1" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint2" parent="Checkpoints" index="1" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.861744, 0, 0.507343, 0, 1, 0, -0.507343, 0, 0.861744, 67.4329, 0, 27.0849)
+next_points = [NodePath("../Checkpoint3")]
 
-[node name="Checkpoint3" parent="Checkpoints" index="2" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint3" parent="Checkpoints" index="2" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.978079, 0, -0.208236, 0, 1, 0, 0.208236, 0, 0.978079, 73.8605, 0.207325, 60.7206)
+next_points = [NodePath("../Checkpoint4")]
 
-[node name="Checkpoint4" parent="Checkpoints" index="3" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint4" parent="Checkpoints" index="3" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.984644, 0, -0.174576, 0, 1, 0, 0.174576, 0, 0.984644, 57.938, 0.207325, 135.508)
+next_points = [NodePath("../Checkpoint5")]
 
-[node name="Checkpoint5" parent="Checkpoints" index="4" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint5" parent="Checkpoints" index="4" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.229863, 0, 0.973223, 0, 1, 0, -0.973223, 0, 0.229863, 68.1937, 0.207325, 157.372)
 is_key = true
+next_points = [NodePath("../Checkpoint6")]
 
-[node name="Checkpoint6" parent="Checkpoints" index="5" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint6" parent="Checkpoints" index="5" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.229863, 0, 0.973223, 0, 1, 0, -0.973223, 0, 0.229863, 147.091, 0.207325, 176.007)
+next_points = [NodePath("../Checkpoint7")]
 
-[node name="Checkpoint7" parent="Checkpoints" index="6" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint7" parent="Checkpoints" index="6" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.674522, 0, 0.738255, 0, 1, 0, -0.738255, 0, -0.674522, 166.152, 0.207325, 164.853)
+next_points = [NodePath("../Checkpoint8")]
 
-[node name="Checkpoint8" parent="Checkpoints" index="7" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint8" parent="Checkpoints" index="7" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.154141, 0, 0.988049, 0, 1, 0, -0.988049, 0, 0.154141, 201.875, 0.207325, 172.034)
+next_points = [NodePath("../Checkpoint9")]
 
-[node name="Checkpoint9" parent="Checkpoints" index="8" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint9" parent="Checkpoints" index="8" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.154141, 0, 0.988049, 0, 1, 0, -0.988049, 0, 0.154141, 245.255, 0.207325, 164.976)
+next_points = [NodePath("../Checkpoint10")]
 
-[node name="Checkpoint10" parent="Checkpoints" index="9" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint10" parent="Checkpoints" index="9" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.273271, 0, 0.961937, 0, 1, 0, -0.961937, 0, -0.273271, 282.016, 0.207325, 170.711)
 is_key = true
+next_points = [NodePath("../Checkpoint11")]
 
-[node name="Checkpoint11" parent="Checkpoints" index="10" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint11" parent="Checkpoints" index="10" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.999868, 0, 0.0162483, 0, 1, 0, -0.0162483, 0, -0.999868, 298.837, 0.207325, 150.22)
+next_points = [NodePath("../Checkpoint12")]
 
-[node name="Checkpoint12" parent="Checkpoints" index="11" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint12" parent="Checkpoints" index="11" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.984871, 0.0633101, -0.161308, -3.72529e-09, 0.930871, 0.365348, 0.173287, 0.359821, -0.916788, 292.749, 14.4971, 111.524)
+next_points = [NodePath("../Checkpoint13")]
 
-[node name="Checkpoint13" parent="Checkpoints" index="12" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint13" parent="Checkpoints" index="12" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.866601, 0, -0.499002, 0, 1, 0, 0.499002, 0, -0.866601, 277.045, 19.972, 52.5095)
+next_points = [NodePath("../Checkpoint14")]
 
-[node name="Checkpoint14" parent="Checkpoints" index="13" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint14" parent="Checkpoints" index="13" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.866601, 0, -0.499002, 0, 1, 0, 0.499002, 0, -0.866601, 253.823, 0.181886, 12.1806)
 is_key = true
+next_points = [NodePath("../Checkpoint15")]
 
-[node name="Checkpoint15" parent="Checkpoints" index="14" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint15" parent="Checkpoints" index="14" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.133744, 0, -0.991016, 0, 1, 0, 0.991016, 0, -0.133744, 235.678, 0.181886, -1.90602)
+next_points = [NodePath("../Checkpoint16")]
 
-[node name="Checkpoint16" parent="Checkpoints" index="15" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint16" parent="Checkpoints" index="15" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.617379, 0, -0.786666, 0, 1, 0, 0.786666, 0, 0.617379, 224.359, 0.181886, 2.89819)
 is_key = true
+next_points = [NodePath("../Checkpoint17")]
 
-[node name="Checkpoint17" parent="Checkpoints" index="16" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint17" parent="Checkpoints" index="16" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.412532, 0, -0.910943, 0, 1, 0, 0.910943, 0, 0.412532, 207.719, 0.181886, 15.1869)
+next_points = [NodePath("../Checkpoint18")]
 
-[node name="Checkpoint18" parent="Checkpoints" index="17" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint18" parent="Checkpoints" index="17" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.645658, 0, -0.763627, 0, 1, 0, 0.763627, 0, -0.645658, 196.027, 0.181886, 18.4939)
+next_points = [NodePath("../Checkpoint19")]
 
-[node name="Checkpoint19" parent="Checkpoints" index="18" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint19" parent="Checkpoints" index="18" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.882669, 0, -0.469995, 0, 1, 0, 0.469995, 0, -0.882669, 189.313, 0.181886, 12.2894)
+next_points = [NodePath("../Checkpoint20")]
 
-[node name="Checkpoint20" parent="Checkpoints" index="19" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint20" parent="Checkpoints" index="19" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.915761, 0, 0.401724, 0, 1, 0, -0.401724, 0, -0.915761, 189.801, 0.181886, 2.31455)
+next_points = [NodePath("../Checkpoint21")]
 
-[node name="Checkpoint21" parent="Checkpoints" index="20" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint21" parent="Checkpoints" index="20" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.652813, 0, 0.757519, 0, 1, 0, -0.757519, 0, -0.652813, 197.912, 0.181886, -6.75503)
+next_points = [NodePath("../Checkpoint22")]
 
-[node name="Checkpoint22" parent="Checkpoints" index="21" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint22" parent="Checkpoints" index="21" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.773962, 0, 0.633232, 0, 1, 0, -0.633232, 0, -0.773962, 212.971, 0.181886, -19.7322)
 is_key = true
+next_points = [NodePath("../Checkpoint23")]
 
-[node name="Checkpoint23" parent="Checkpoints" index="22" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint23" parent="Checkpoints" index="22" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.902443, 0, 0.43081, 0, 1, 0, -0.43081, 0, -0.902443, 221.155, 0.181886, -32.4477)
+next_points = [NodePath("../Checkpoint24")]
 
-[node name="Checkpoint24" parent="Checkpoints" index="23" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint24" parent="Checkpoints" index="23" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.956499, 0, -0.291737, 0, 1, 0, 0.291737, 0, -0.956499, 222.417, 0.181886, -43.8532)
+next_points = [NodePath("../Checkpoint25")]
 
-[node name="Checkpoint25" parent="Checkpoints" index="24" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint25" parent="Checkpoints" index="24" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.227331, 0, -0.973818, 0, 1, 0, 0.973818, 0, -0.227331, 211.171, 0.181886, -51.2288)
+next_points = [NodePath("../Checkpoint26")]
 
-[node name="Checkpoint26" parent="Checkpoints" index="25" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint26" parent="Checkpoints" index="25" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.306792, 0, -0.951777, 0, 1, 0, 0.951777, 0, 0.306792, 190.03, 0.181886, -56.1642)
+next_points = [NodePath("../Checkpoint27")]
 
-[node name="Checkpoint27" parent="Checkpoints" index="26" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint27" parent="Checkpoints" index="26" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.306792, 0, -0.951777, 0, 1, 0, 0.951777, 0, 0.306792, 162.475, 0.181886, -40.2139)
+next_points = [NodePath("../Checkpoint28")]
 
-[node name="Checkpoint28" parent="Checkpoints" index="27" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint28" parent="Checkpoints" index="27" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.238262, 0, -0.971201, 0, 1, 0, 0.971201, 0, -0.238262, 139.98, 0.181886, -38.7036)
 is_key = true
+next_points = [NodePath("../Checkpoint29")]
 
-[node name="Checkpoint29" parent="Checkpoints" index="28" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint29" parent="Checkpoints" index="28" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.238262, 0, -0.971201, 0, 1, 0, 0.971201, 0, -0.238262, 71.0295, 0.181886, -55.6192)
+next_points = [NodePath("../Checkpoint30")]
 
-[node name="Checkpoint30" parent="Checkpoints" index="29" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint30" parent="Checkpoints" index="29" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.864521, 0, -0.502598, 0, 1, 0, 0.502598, 0, -0.864521, 46.8415, 0.181886, -70.6611)
+next_points = [NodePath("../Checkpoint31")]
 
-[node name="Checkpoint31" parent="Checkpoints" index="30" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint31" parent="Checkpoints" index="30" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.999187, 0, 0.0403235, 0, 1, 0, -0.0403235, 0, -0.999187, 41.0341, 0.181886, -95.6718)
+next_points = [NodePath("../Checkpoint32")]
 
-[node name="Checkpoint32" parent="Checkpoints" index="31" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint32" parent="Checkpoints" index="31" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.966291, 0, -0.257453, 0, 1, 0, 0.257453, 0, -0.966291, 42.2202, 0.181886, -125.063)
+next_points = [NodePath("../Checkpoint33")]
 
-[node name="Checkpoint33" parent="Checkpoints" index="32" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint33" parent="Checkpoints" index="32" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.339181, 0, -0.940721, 0, 1, 0, 0.940721, 0, -0.339181, 28.9798, 0.181886, -140.219)
+next_points = [NodePath("../Checkpoint34")]
 
-[node name="Checkpoint34" parent="Checkpoints" index="33" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint34" parent="Checkpoints" index="33" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(-0.238855, 0, -0.971055, 0, 1, 0, 0.971055, 0, -0.238855, 3.54005, 0.181886, -148.497)
 is_key = true
+next_points = [NodePath("../Checkpoint35")]
 
-[node name="Checkpoint35" parent="Checkpoints" index="34" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint35" parent="Checkpoints" index="34" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.451376, 0, -0.892334, 0, 1, 0, 0.892334, 0, 0.451376, -31.7157, 0.181886, -157.074)
+next_points = [NodePath("../Checkpoint36")]
 
-[node name="Checkpoint36" parent="Checkpoints" index="35" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint36" parent="Checkpoints" index="35" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.996579, 0, -0.0826515, 0, 1, 0, 0.0826515, 0, 0.996579, -47.8498, 0.181886, -140.141)
+next_points = [NodePath("../Checkpoint37")]
 
-[node name="Checkpoint37" parent="Checkpoints" index="36" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint37" parent="Checkpoints" index="36" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.98899, 0, -0.147982, 0, 1, 0, 0.147982, 0, 0.98899, -45.2138, 0.181886, -106.138)
 is_key = true
+next_points = [NodePath("../Checkpoint38")]
 
-[node name="Checkpoint38" parent="Checkpoints" index="37" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint38" parent="Checkpoints" index="37" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.98899, 0, -0.147982, 0, 1, 0, 0.147982, 0, 0.98899, -55.3757, 0.181886, -50.9325)
+next_points = [NodePath("../Checkpoint39")]
 
-[node name="Checkpoint39" parent="Checkpoints" index="38" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint39" parent="Checkpoints" index="38" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.919424, 0, 0.393268, 0, 1, 0, -0.393268, 0, 0.919424, -55.6114, 0.181886, -21.1673)
+next_points = [NodePath("../Checkpoint40")]
 
-[node name="Checkpoint40" parent="Checkpoints" index="39" instance=ExtResource("3_yb4ep")]
+[node name="Checkpoint40" parent="Checkpoints" index="39" node_paths=PackedStringArray("next_points") instance=ExtResource("3_yb4ep")]
 transform = Transform3D(0.317569, 0, 0.948235, 0, 1, 0, -0.948235, 0, 0.317569, -42.2066, 0.181886, -12.8108)
 is_key = true
+end_node = true
+next_points = [NodePath("../Checkpoint")]
 
 [node name="EnemyPathPoints" parent="." index="4"]
 visible = false
@@ -522,9 +627,9 @@ next_points = [NodePath("../EnemyPath2")]
 
 [node name="EnemyPath2" parent="EnemyPathPoints" index="1" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(1.68835, 0, 1.0375, 0, 1.98165, 0, -1.0375, 0, 1.68835, 64.9737, 0.162177, 32.0922)
-next_points = [NodePath("../EnemyPath3")]
 curve_in = 5.0
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath3")]
 
 [node name="EnemyPath3" parent="EnemyPathPoints" index="2" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.984811, 0, -0.173631, 0, 1, 0, 0.173631, 0, 0.984811, 74.179, 0.162177, 57.5014)
@@ -536,8 +641,8 @@ next_points = [NodePath("../EnemyPath5")]
 
 [node name="EnemyPath5" parent="EnemyPathPoints" index="4" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.977944, 0, -0.208868, 0, 1, 0, 0.208868, 0, 0.977944, 53.4883, 0.162177, 145.878)
-next_points = [NodePath("../EnemyPath6")]
 curve_out = 4.0
+next_points = [NodePath("../EnemyPath6")]
 
 [node name="EnemyPath6" parent="EnemyPathPoints" index="5" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.225342, 0, 0.97428, 0, 1, 0, -0.97428, 0, 0.225342, 61.8631, 0.162177, 154.477)
@@ -549,24 +654,24 @@ next_points = [NodePath("../EnemyPath9")]
 
 [node name="EnemyPath9" parent="EnemyPathPoints" index="7" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.233157, 0, 0.972439, 0, 1, 0, -0.972439, 0, 0.233157, 155.343, 0.162177, 179.571)
-next_points = [NodePath("../EnemyPath11")]
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath11")]
 
 [node name="EnemyPath11" parent="EnemyPathPoints" index="8" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.0377599, 0, 0.999287, 0, 1, 0, -0.999287, 0, -0.0377599, 169.189, 0.162177, 163.55)
-next_points = [NodePath("../EnemyPath13")]
 curve_in = 5.0
+next_points = [NodePath("../EnemyPath13")]
 
 [node name="EnemyPath13" parent="EnemyPathPoints" index="9" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.0339049, 0, 0.665155, 0, 0.666019, 0, -0.665155, 0, -0.0339049, 205.559, 0.162177, 172.856)
-next_points = [NodePath("../EnemyPath14")]
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath14")]
 
 [node name="EnemyPath14" parent="EnemyPathPoints" index="10" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.161775, 0, 0.538302, 0, 0.562086, 0, -0.538302, 0, -0.161775, 220.634, 0.162177, 169.257)
-next_points = [NodePath("../EnemyPath15")]
 curve_in = 5.0
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath15")]
 
 [node name="EnemyPath15" parent="EnemyPathPoints" index="11" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.0153661, 0, 0.804667, 0, 0.804814, 0, -0.804667, 0, 0.0153661, 241.559, 0.162177, 163.856)
@@ -574,19 +679,19 @@ next_points = [NodePath("../EnemyPath16")]
 
 [node name="EnemyPath16" parent="EnemyPathPoints" index="12" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.319489, 0, 0.94759, 0, 1, 0, -0.94759, 0, 0.319489, 264.559, 0.162177, 169.856)
-next_points = [NodePath("../EnemyPath18")]
 curve_in = 5.0
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath18")]
 
 [node name="EnemyPath18" parent="EnemyPathPoints" index="13" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.450706, 0, 0.892672, 0, 1, 0, -0.892672, 0, -0.450706, 288.496, 0.162177, 170.331)
-next_points = [NodePath("../EnemyPath19")]
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath19")]
 
 [node name="EnemyPath19" parent="EnemyPathPoints" index="14" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.999977, 0, 0.00678931, 0, 1, 0, -0.00678931, 0, -0.999977, 298.331, 0.162177, 154.293)
-next_points = [NodePath("../EnemyPath20")]
 curve_in = 5.0
+next_points = [NodePath("../EnemyPath20")]
 
 [node name="EnemyPath20" parent="EnemyPathPoints" index="15" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.988756, 0.05207, -0.140177, 0, 0.937416, 0.348212, 0.149535, 0.344297, -0.926876, 297.438, 4.01799, 136.657)
@@ -594,13 +699,13 @@ next_points = [NodePath("../EnemyPath21")]
 
 [node name="EnemyPath21" parent="EnemyPathPoints" index="16" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.977637, 0.101259, -0.184318, 0, 0.87645, 0.481494, 0.210301, 0.470726, -0.856849, 290.456, 19.3303, 97.6255)
-next_points = [NodePath("../EnemyPath22")]
 curve_out = 30.0
+next_points = [NodePath("../EnemyPath22")]
 
 [node name="EnemyPath22" parent="EnemyPathPoints" index="17" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.364958, 0, -0.931024, 0, 1, 0, 0.931024, 0, -0.364958, 244.151, 0.162177, -1.21238)
-next_points = [NodePath("../EnemyPath24")]
 curve_in = 20.0
+next_points = [NodePath("../EnemyPath24")]
 
 [node name="EnemyPath24" parent="EnemyPathPoints" index="18" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.632102, 0, -0.445965, 0, 0.773588, 0, 0.445965, 0, 0.632102, 221.331, 0.162177, 3.95231)
@@ -608,47 +713,47 @@ next_points = [NodePath("../EnemyPath25")]
 
 [node name="EnemyPath25" parent="EnemyPathPoints" index="19" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.186713, 0, -0.982415, 0, 1, 0, 0.982415, 0, 0.186713, 201.832, 0.162177, 17.6131)
-next_points = [NodePath("../EnemyPath28")]
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath28")]
 
 [node name="EnemyPath28" parent="EnemyPathPoints" index="20" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.734014, 0, 0.679134, 0, 1, 0, -0.679134, 0, -0.734014, 193.249, 0.162177, -1.57855)
-next_points = [NodePath("../EnemyPath29")]
 curve_in = 5.0
+next_points = [NodePath("../EnemyPath29")]
 
 [node name="EnemyPath29" parent="EnemyPathPoints" index="21" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.803919, 0, 0.594739, 0, 1, 0, -0.594739, 0, -0.803919, 213.579, 0.162177, -21.0014)
-next_points = [NodePath("../EnemyPath30")]
 curve_in = 5.0
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath30")]
 
 [node name="EnemyPath30" parent="EnemyPathPoints" index="22" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.991839, 0, -0.127497, 0, 1, 0, 0.127497, 0, -0.991839, 222.849, 0.162177, -40.5707)
-next_points = [NodePath("../EnemyPath32")]
 curve_in = 5.0
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath32")]
 
 [node name="EnemyPath32" parent="EnemyPathPoints" index="23" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.170055, 0, -0.985435, 0, 1, 0, 0.985435, 0, -0.170055, 199.579, 0.162177, -55.0014)
-next_points = [NodePath("../EnemyPath33")]
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath33")]
 
 [node name="EnemyPath33" parent="EnemyPathPoints" index="24" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.779972, 0, -0.625815, 0, 1, 0, 0.625815, 0, 0.779972, 183.579, 0.162177, -55.0014)
-next_points = [NodePath("../EnemyPath34")]
 curve_in = 5.0
+next_points = [NodePath("../EnemyPath34")]
 
 [node name="EnemyPath34" parent="EnemyPathPoints" index="25" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.610394, 0, -0.792098, 0, 1, 0, 0.792098, 0, 0.610394, 171.579, 0.162177, -46.0014)
-next_points = [NodePath("../EnemyPath35")]
 curve_in = 5.0
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath35")]
 
 [node name="EnemyPath35" parent="EnemyPathPoints" index="26" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.251442, 0, -1.46683, 0, 1.48823, 0, 1.46683, 0, 0.251442, 154.579, 0.162177, -39.0014)
-next_points = [NodePath("../EnemyPath36")]
 curve_in = 5.0
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath36")]
 
 [node name="EnemyPath36" parent="EnemyPathPoints" index="27" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.200815, 0, -1.45409, 0, 1.46789, 0, 1.45409, 0, -0.200815, 136.579, 0.162177, -40.0014)
@@ -664,9 +769,9 @@ next_points = [NodePath("../EnemyPath39")]
 
 [node name="EnemyPath39" parent="EnemyPathPoints" index="30" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.865554, 0, -0.500816, 0, 1, 0, 0.500816, 0, -0.865554, 46.6421, 0.162177, -73.7141)
-next_points = [NodePath("../EnemyPath40")]
 curve_in = 5.0
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath40")]
 
 [node name="EnemyPath40" parent="EnemyPathPoints" index="31" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(-0.998747, 0, -0.0500526, 0, 1, 0, 0.0500526, 0, -0.998747, 41.6855, 0.162177, -92.3178)
@@ -690,8 +795,8 @@ next_points = [NodePath("../EnemyPath46")]
 
 [node name="EnemyPath46" parent="EnemyPathPoints" index="36" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.984451, 0, -0.175659, 0, 1, 0, 0.175659, 0, 0.984451, -45.3214, 0.162177, -145.896)
-next_points = [NodePath("../EnemyPath47")]
 curve_in = 5.0
+next_points = [NodePath("../EnemyPath47")]
 
 [node name="EnemyPath47" parent="EnemyPathPoints" index="37" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(1.14534, 0, 0, 0, 1.14534, 0, 0, 0, 1.14534, -46.3214, 0.162177, -129.639)
@@ -723,31 +828,31 @@ next_points = [NodePath("../EnemyPath54")]
 
 [node name="EnemyPath54" parent="EnemyPathPoints" index="44" node_paths=PackedStringArray("next_points") instance=ExtResource("4_4vv2t")]
 transform = Transform3D(0.404406, 0, 1.89235, 0, 1.93508, 0, -1.89235, 0, 0.404406, -6.32138, 0.162177, -2.63881)
-next_points = [NodePath("../EnemyPath")]
 curve_in = 5.0
 curve_out = 5.0
+next_points = [NodePath("../EnemyPath")]
 
 [node name="MapCamera" parent="." index="10"]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 138.473, 1000, 0)
 
 [node name="ItemPickup" parent="." index="12" instance=ExtResource("5_xes7l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, -7.33691, 25.4422)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, 0.339813, 25.4422)
 guaranteed_item = ExtResource("9_uttjj")
 
 [node name="ItemPickup2" parent="." index="13" instance=ExtResource("5_xes7l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, -7.33691, 29.9671)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.6445, 0.251276, 29.9671)
 guaranteed_item = ExtResource("10_wies2")
 
 [node name="ItemPickup3" parent="." index="14" instance=ExtResource("5_xes7l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5767, -7.33691, 29.9671)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.5767, 0.339813, 29.9671)
 guaranteed_item = ExtResource("11_v1cpl")
 
 [node name="ItemPickup4" parent="." index="15" instance=ExtResource("5_xes7l")]
-transform = Transform3D(-0.172273, 0, -0.985049, 0, 1, 0, 0.985049, 0, -0.172273, 47.4262, -4.56539, 0.869619)
-guaranteed_item = ExtResource("13_shrl0")
+transform = Transform3D(-0.172273, 0, -0.985049, 0, 1, 0, 0.985049, 0, -0.172273, 47.4262, 0.155578, 0.869619)
+guaranteed_item = ExtResource("15_1rjps")
 
 [node name="IntroCamera" parent="." index="16"]
-transform = Transform3D(0.959122, 0.136787, -0.247739, 1.49012e-08, 0.875422, 0.483359, 0.282994, -0.463599, 0.839637, 20.3407, 31.7122, -75.6739)
+transform = Transform3D(0.959122, 0.136787, -0.247739, 1.49012e-08, 0.875422, 0.483358, 0.282994, -0.463599, 0.839637, 20.3407, 31.7122, -75.6739)
 
 [node name="IntroCameraAnimationPlayer" parent="." index="17"]
 libraries = {

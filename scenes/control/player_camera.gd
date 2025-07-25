@@ -25,10 +25,10 @@ var look_target: Array = []
 var cur_target: Vector3 = Vector3.INF
 
 var intro_degrees_offset: float = 180
-var intro_distance_multi: float = 3.0
+var intro_distance_multi: float = 2.0
 var intro_lerp: float = 0.0
 var intro_skipped: bool = false
-var intro_playing: bool = true
+var intro_playing: bool = false
 
 var target_gravity: Vector3 = Vector3.DOWN
 var gravity_change_speed: float = 3.0
@@ -238,7 +238,7 @@ func _process(delta: float) -> void:
 	player_debug.draw(target)
 		
 	fov = default_fov + target.extra_fov
-	if intro_lerp > 0.0:
+	if intro_lerp > 0.0 and !intro_skipped:
 		fov += lerpf(target.world.intro_camera.fov - default_fov, 0.0, intro_lerp)
 	
 	handle_sound(delta)

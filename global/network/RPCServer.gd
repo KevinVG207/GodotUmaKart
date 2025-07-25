@@ -43,3 +43,7 @@ func race_item_state(list: Array[Variant]) -> void:
 @rpc("any_peer", "reliable")
 func race_item_transfer_owner(key: String, new_owner_id: int) -> void:
 	return
+
+@rpc("any_peer", "reliable")
+func race_object_state(object: String, opcode: int, data: Array[Variant]) -> void:
+	return

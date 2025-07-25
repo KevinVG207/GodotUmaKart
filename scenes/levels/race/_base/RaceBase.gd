@@ -163,6 +163,8 @@ var network_room: DomainRoom.Race
 
 var course_intro_tween: Tween = null
 
+var stage_objects: Array[String] = []
+
 func _ready() -> void:
 	course_name = Util.get_race_course_name_from_path(scene_file_path)
 	
@@ -956,6 +958,7 @@ func join():
 	RPCClient.race_finished_received.connect(_on_race_finished)
 	RPCClient.race_item_transfer_owner_received.connect(_on_item_transfer_owner)
 	RPCClient.ping_received.connect(_on_ping)
+	RPCClient.race_object_state_received.connect(apply_object_state)
 
 	UI.end_scene_change()
 	
@@ -1287,3 +1290,26 @@ func _on_item_transfer_owner(key: String, new_owner_id: int):
 
 	if not old_owner_id == player_user_id:
 		item._on_owner_changed(players_dict[old_owner_id], players_dict[new_owner_id])
+
+func register_object(object: StageObject) -> void:
+	stage_objects.append(str(object.get_path()))
+
+func send_object_state(object: StageObject, opcode: int, data: Array[Variant]) -> void:
+	if Global.MODE1 == Global.MODE1_OFFLINE:
+		return
+	
+	var path := str(object.get_path())
+	
+	if path not in stage_objects:
+		print("WARN: Attempted to send stage object state, but object not registered: " + path)
+		return
+	
+	RPCServer.race_object_state.rpc_id(1, path, opcode, data)
+
+func apply_object_state(object_path: String, opcode: int, data: Array[Variant]) -> void:
+	if not object_path in stage_objects:
+		print("WARN: Object " + object_path + " is not registered as Stage Object! Ignoring")
+		return
+	
+	var object := get_node(object_path) as NetworkStageObject
+	object.receive_state(opcode, data)

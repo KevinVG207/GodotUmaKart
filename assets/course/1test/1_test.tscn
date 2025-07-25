@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://xsnx2ivfgbbr"]
 
 [ext_resource type="PackedScene" uid="uid://bh0j3hp34cn23" path="res://assets/course/1test/1test.blend" id="1_or65s"]
-[ext_resource type="ArrayMesh" uid="uid://dlyuwsp1u3v8s" path="res://scenes/levels/race/1test/map_mash.tres" id="2_pkuhf"]
+[ext_resource type="ArrayMesh" uid="uid://dlyuwsp1u3v8s" path="res://scenes/levels/race/_1test/map_mash.tres" id="2_pkuhf"]
 
 [node name="1test" instance=ExtResource("1_or65s")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
