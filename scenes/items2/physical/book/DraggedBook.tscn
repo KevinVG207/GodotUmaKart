@@ -11,6 +11,7 @@ script = ExtResource("1_4nxxb")
 area = NodePath("Area")
 damage_type = 1
 next_item_key = "ThrownBook"
+destroys_objects = false
 metadata/_custom_type_script = "uid://ci3rabmu3lfwm"
 
 [node name="Area" type="Area3D" parent="." groups=["item_draggable"]]

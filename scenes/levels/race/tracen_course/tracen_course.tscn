@@ -220,9 +220,9 @@ tracks/0/path = NodePath("IntroCamera:position:x")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"handle_modes": PackedInt32Array(2, 0, 0, 0),
-"points": PackedFloat32Array(66.8419, 0, 0, 0.166667, 0.839516, 71.879, -0.166667, 0.35645, 0.166667, -0.35645, 62.5645, -0.166667, 1.90412, 0.333333, -3.80823, 37.6049, -0.75, 0.057, 0, 0),
-"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+"handle_modes": PackedInt32Array(2, 0, 2, 2, 2),
+"points": PackedFloat32Array(66.8419, 0, 0, 0.166667, 0.839516, 71.879, -0.166667, 0.35645, 0.166667, -0.35645, 62.5645, -0.133333, 1.48009, 0.135, -1.49859, 54.007, -0.135, 1.42402, 0.165, -1.74047, 43.5775, -0.25, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.4, 1.2, 2.01, 3)
 }
 tracks/1/type = "bezier"
 tracks/1/imported = false
@@ -231,9 +231,9 @@ tracks/1/path = NodePath("IntroCamera:position:y")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"handle_modes": PackedInt32Array(2, 0, 0, 0),
-"points": PackedFloat32Array(3.20461, 0, 0, 0.166667, 0.32375, 5.14711, -0.166667, -0.633308, 0.166667, 0.633308, 10.8043, -0.166667, 0.0106639, 0.333333, -0.0213278, 4.95516, -0.5, 0.280123, 0, 0),
-"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+"handle_modes": PackedInt32Array(2, 2, 0, 0, 2),
+"points": PackedFloat32Array(3.20461, 0, 0, 0.166667, 0.32375, 5.14711, -0.0666667, -0.422205, 0.133333, 0.84441, 10.8043, -0.166667, 0.0106639, 0.333333, -0.0213278, 4.59948, -0.199014, 0.199604, 0.150676, -0.151122, 4.95516, -0.25, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.4, 1.2, 2.4, 3)
 }
 tracks/2/type = "bezier"
 tracks/2/imported = false
@@ -242,9 +242,9 @@ tracks/2/path = NodePath("IntroCamera:position:z")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"handle_modes": PackedInt32Array(2, 2, 2, 0),
-"points": PackedFloat32Array(87.9776, 0, 0, 0.166667, -3.16113, 69.0108, -0.116667, 3.44767, 0.183333, -5.41778, 34.7849, -0.183333, 4.81383, 0.2, -5.25145, 8.61913, -0.5, 0.751105, 0, 0),
-"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+"handle_modes": PackedInt32Array(2, 2, 2, 2, 2),
+"points": PackedFloat32Array(87.9776, 0, 0, 0.166667, -3.16113, 69.0108, -0.0666667, 2.95515, 0.133333, -5.9103, 34.7849, -0.133333, 3.79085, 0.168333, -4.78594, 17.5501, -0.168333, 2.33681, 0.131667, -1.8278, 9.7972, -0.243, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.4, 1.2, 2.21, 3)
 }
 tracks/3/type = "bezier"
 tracks/3/imported = false
@@ -253,9 +253,9 @@ tracks/3/path = NodePath("IntroCamera:rotation:x")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"handle_modes": PackedInt32Array(2, 0, 0, 0),
-"points": PackedFloat32Array(-0.0359364, 0, 0, 0.166667, 0, -0.0359364, -0.166667, 0.0163544, 0.166667, -0.0163544, -0.232189, -0.166667, 0.0108996, 0.333333, -0.0217992, -0.232129, -0.333333, -1.00012e-05, 0, 0),
-"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+"handle_modes": PackedInt32Array(2, 0, 0, 0, 2),
+"points": PackedFloat32Array(-0.0359364, 0, 0, 0.166667, 0, -0.0359364, -0.166667, 0.0163544, 0.166667, -0.0163544, -0.232189, -0.166667, 0.0108996, 0.333333, -0.0217992, -0.170168, -0.198333, -7.93426e-06, 0.0516667, 2.06691e-06, -0.232129, -0.25, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.4, 1.2, 2.4, 3)
 }
 tracks/4/type = "bezier"
 tracks/4/imported = false
@@ -264,9 +264,9 @@ tracks/4/path = NodePath("IntroCamera:rotation:y")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"handle_modes": PackedInt32Array(2, 2, 2, 0),
-"points": PackedFloat32Array(-0.259583, 0, 0, 0.166667, 0, -0.259583, -0.1, -0.0282527, 0.184431, 0.0521068, 0.535926, -0.183333, -0.125032, 0.2, 0.136399, 1.309, -0.4, -0.0128914, 0, 0),
-"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+"handle_modes": PackedInt32Array(2, 0, 0, 2, 2),
+"points": PackedFloat32Array(-0.259583, 0, 0, 0.166667, 0, -0.259583, -0.1, -0.0282527, 0.184431, 0.0521068, 0.535926, -0.183333, -0.125032, 0.2, 0.136399, 1.30027, -0.2, -0.0858971, 0.1, 0.0429486, 1.309, -0.25, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.4, 1.2, 2.4, 3)
 }
 tracks/5/type = "bezier"
 tracks/5/imported = false
@@ -275,9 +275,9 @@ tracks/5/path = NodePath("IntroCamera:rotation:z")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
-"handle_modes": PackedInt32Array(2, 0, 0, 0),
-"points": PackedFloat32Array(3.7277e-08, 0, 0, 0.166667, 0, 3.7277e-08, -0.166667, 0.00218529, 0.166667, -0.00218529, -0.0262235, -0.166667, 2.07094e-09, 0.333333, -4.14189e-09, 0, -0.563364, 0.00340402, 0, 0),
-"times": PackedFloat32Array(0, 0.7, 1.8, 3)
+"handle_modes": PackedInt32Array(2, 0, 0, 0, 2),
+"points": PackedFloat32Array(3.7277e-08, 0, 0, 0.166667, 0, 3.7277e-08, -0.166667, 0.00218529, 0.166667, -0.00218529, -0.0262235, -0.166667, 2.07094e-09, 0.333333, -4.14189e-09, 0, -0.198333, -0.00346733, 0.0516667, 0.000903254, 0, -0.25, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.4, 1.2, 2.4, 3)
 }
 tracks/6/type = "bezier"
 tracks/6/imported = false
@@ -286,9 +286,9 @@ tracks/6/path = NodePath("IntroCamera:fov")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
-"handle_modes": PackedInt32Array(2, 0),
-"points": PackedFloat32Array(75, 0, 0, 0.5, -6, 39, -1, 0, 0.25, 0),
-"times": PackedFloat32Array(0, 3)
+"handle_modes": PackedInt32Array(1, 0, 2),
+"points": PackedFloat32Array(75, 0, 0, 0, 0, 75, 0, 0, 0.5, 0, 39, -0.5, 0, 0, 0),
+"times": PackedFloat32Array(0, 1.5, 3)
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_b0os0"]
@@ -328,7 +328,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5289, 1.30333, 31.1347)
 guaranteed_item = ExtResource("6_3upyf")
 
 [node name="ItemPickup25" parent="Objects/Pickups" index="1" instance=ExtResource("5_xes7l")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2411, 1.30333, 28.7649)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.158, 0.0727248, 85.4839)
 guaranteed_item = ExtResource("7_1rjps")
 
 [node name="ItemPickup" parent="Objects/Pickups" index="2" instance=ExtResource("5_xes7l")]
@@ -852,7 +852,7 @@ transform = Transform3D(-0.172273, 0, -0.985049, 0, 1, 0, 0.985049, 0, -0.172273
 guaranteed_item = ExtResource("15_1rjps")
 
 [node name="IntroCamera" parent="." index="16"]
-transform = Transform3D(0.959122, 0.136787, -0.247739, 1.49012e-08, 0.875422, 0.483358, 0.282994, -0.463599, 0.839637, 20.3407, 31.7122, -75.6739)
+transform = Transform3D(0.959121, 0.136787, -0.247739, 1.49012e-08, 0.875422, 0.483358, 0.282994, -0.463599, 0.839637, 20.3407, 31.7122, -75.6739)
 
 [node name="IntroCameraAnimationPlayer" parent="." index="17"]
 libraries = {

@@ -906,14 +906,14 @@ func handle_body_collisions() -> void:
 	expire_vehicle_collisions()
 	build_body_collisions()
 	handle_vehicle_collisions()
-	handle_stage_object_collisions()
+	#handle_stage_object_collisions()
 
-func handle_stage_object_collisions() -> void:
-	for body in colliding_bodies:
-		if not body is StageObjectCharacterBody3D:
-			continue
-		var object := (body as StageObjectCharacterBody3D).object_root
-		object._hit_by_vehicle(self)
+#func handle_stage_object_collisions() -> void:
+	#for body in colliding_bodies:
+		#if not body is StageObjectCharacterBody3D:
+			#continue
+		#var object := (body as StageObjectCharacterBody3D).object_root
+		#object._hit_by_vehicle(self)
 
 func expire_vehicle_collisions() -> void:
 	var keys := collided_with.keys()
@@ -1002,6 +1002,8 @@ func build_contacts() -> void:
 		
 		if collider is StageObjectCharacterBody3D:
 			var object := (collider as StageObjectCharacterBody3D).object_root
+			object._hit_by_vehicle(self)
+			print("StageObject no_bounce: ", object.no_bounce)
 			if object.no_bounce:
 				ignore_wall_slide = true
 

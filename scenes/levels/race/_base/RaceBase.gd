@@ -161,8 +161,6 @@ var loaded_replay_vehicle: Vehicle4 = null
 
 var network_room: DomainRoom.Race
 
-var course_intro_tween: Tween = null
-
 var stage_objects: Array[String] = []
 
 func _ready() -> void:
@@ -683,11 +681,8 @@ func _physics_process(_delta: float) -> void:
 	#return
 
 func start_course_intro() -> void:
-	if course_intro_tween != null:
-		if Util.just_pressed_accept_or_cancel() and !player_camera.intro_skipped:
-			course_intro_tween.pause()
-			course_intro_tween.custom_step(999)
-			skip_course_intro()
+	if Util.just_pressed_accept_or_cancel() and !player_camera.intro_skipped:
+		skip_course_intro()
 		return
 	
 	if not %IntroCameraAnimationPlayer.is_playing():
@@ -695,18 +690,22 @@ func start_course_intro() -> void:
 		for anim: String in %IntroCameraAnimationPlayer.intro_animations:
 			%IntroCameraAnimationPlayer.queue(anim)
 		
-		course_intro_tween = create_tween()
-		course_intro_tween.tween_property(UI.black_overlay, "modulate:a", 0.0, 0.25).set_delay(7.75)
-		course_intro_tween.finished.connect(_on_course_intro_finished)
+		%IntroCameraAnimationPlayer.animation_finished.connect(_on_intro_animation_finished)
+
+func _on_intro_animation_finished(anim_name: String) -> void:
+	if !state == STATE_COURSE_INTRO:
+		return
+	
+	if anim_name == %IntroCameraAnimationPlayer.intro_animations.get(%IntroCameraAnimationPlayer.intro_animations.size()-1):
+		_on_course_intro_finished()
 
 func _on_course_intro_finished() -> void:
-	#create_tween().tween_property(UI.black_overlay, "modulate:a", 0.0, 0.25)
+	print("DRIVER INTRO START")
 	start_driver_intro()
 
 func skip_course_intro() -> void:
-	%IntroCameraAnimationPlayer.play(%IntroCameraAnimationPlayer.intro_animations[%IntroCameraAnimationPlayer.intro_animations.size()-1])
-	%IntroCameraAnimationPlayer.seek(10.0, true)
 	player_camera.intro_skipped = true
+	_on_course_intro_finished()
 
 func start_driver_intro() -> void:
 	state = STATE_DRIVER_INTRO

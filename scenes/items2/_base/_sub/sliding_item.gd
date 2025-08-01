@@ -111,7 +111,7 @@ func _on_area_3d_body_entered(body: Variant) -> void:
 	if other_item == self:
 		return
 	
-	if other_item and destroys_objects and other_item.destroys_objects:
+	if other_item and (destroys_objects or other_item.destroys_objects):
 		destroy()
 		other_item.destroy()
 		return

@@ -65,9 +65,11 @@ func start_driver_intro() -> void:
 	
 	intro_playing = true
 	
+	var ease := Tween.EASE_OUT if intro_skipped else Tween.EASE_IN_OUT
+	
 	var tween := create_tween().set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
 	tween.set_parallel(true)
-	tween.set_ease(Tween.EASE_IN_OUT)
+	tween.set_ease(ease)
 	tween.set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(self, "intro_degrees_offset", 0.0, 2.0)
 	tween.tween_property(self, "intro_distance_multi", 1.0, 2.0)

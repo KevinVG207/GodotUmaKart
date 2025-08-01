@@ -16,6 +16,7 @@ script = ExtResource("1_cdbfi")
 body = NodePath("ThrownBook")
 area = NodePath("ThrownBook/Area3D")
 despawn_time = 300
+destroys_objects = false
 metadata/_custom_type_script = "uid://bvaap4p81lp84"
 
 [node name="ThrownBook" type="RigidBody3D" parent="."]

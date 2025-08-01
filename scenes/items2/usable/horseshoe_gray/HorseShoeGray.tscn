@@ -4,8 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://cgg2vaw8tnx4a" path="res://assets/items/horseshoe/horseshoe-gray.png" id="2_pot57"]
 
 [sub_resource type="Curve" id="Curve_nwkb5"]
-_data = [Vector2(0, 0.518103), 0.0, 0.0, 0, 0, Vector2(0.502024, 0), 0.0, 0.0, 0, 0]
-point_count = 2
+_data = [Vector2(0.0552486, 0), 0.0, 0.0, 0, 0, Vector2(0.248619, 0.280899), 0.0, 0.0, 0, 0, Vector2(0.502024, 0), 0.0, 0.0, 0, 0]
+point_count = 3
 
 [node name="HorseShoeGray" type="Node"]
 script = ExtResource("1_qagso")

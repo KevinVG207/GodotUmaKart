@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://7aaku8st0qgp" path="res://assets/items/glass/glass.png" id="2_iui7f"]
 
 [sub_resource type="Curve" id="Curve_4ou06"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.497006, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.213483), 0.0, 0.0, 0, 0, Vector2(0.497006, 0), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [node name="GreenJuice" type="Node"]

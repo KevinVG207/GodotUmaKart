@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://biyye6bt4cff1" path="res://scenes/objects/stage_object_staticbody.gd" id="3_vfskr"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_vfskr"]
-size = Vector3(2, 0.1, 2)
+size = Vector3(3.77344, 0.1, 2)
 
 [node name="door" instance=ExtResource("1_686rl")]
 transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
@@ -18,9 +18,10 @@ player_trigger_with_damage = true
 transform = Transform3D(0, 0.5, 0, -0.5, 0, 0, 0, 0, 0.5, 0, 0, 0)
 collision_layer = 9
 collision_mask = 8
+collision_priority = -10.0
 script = ExtResource("3_vfskr")
 object_root = NodePath("..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" index="0" groups=["col_wall"]]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -0.96)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.02441, 0, -0.96)
 shape = SubResource("BoxShape3D_vfskr")

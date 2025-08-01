@@ -116,7 +116,7 @@ func _on_area_3d_body_entered(body: Variant) -> void:
 		if destroys_objects:
 			var staticbody := body as StageObjectCharacterBody3D
 			staticbody.object_root._hit_by_item(self)
-		destroy()
+			destroy()
 		return
 	
 	if not body is Vehicle4:
